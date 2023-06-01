@@ -1,0 +1,29 @@
+主群: 
+#wtfipfs:matrix.org <=> irc( #wtfipfs )
+#wtfipfs:matrix.org <=> discord( https://discord.gg/G6YmQuCJFD )
+
+备用镜像群: #ipfs:mozilla.org => telegram ( @wtfipfs 无管理)
+
+rss: 
+  新闻: #ipfsrss:matrix.org <=> discord
+  ACG:  #acgchinese:matrix.org <=> discord
+
+
+A => B : 在A群会生成傀儡用户模仿B群用户发消息
+
+群组管理:
+@liqsliu:matrix.org
+
+第三方(非本频道管理，无管理)镜像频道:
+#xmpp_ipfs_salas.suchat.org:matrix.org <=> xmpp( ipfs@salas.suchat.org )
+#_bifrost_ipfs_salas.suchat.org:aria-net.org <=> xmpp( ipfs@salas.suchat.org )
+
+
+关于matrix官方桥的介绍: https://github.com/matrix-org/matrix-bifrost/wiki/Address-syntax
+第三方维护的桥: 
+https://aria-net.org/SitePages/Portal/Bridges.aspx
+https://t2bot.io/
+
+
+友情链接: https://matrix.to/#/#serverless:encom.eu.org
+友情链接: https://matrix.to/#/#wallcountry:matrix.org 

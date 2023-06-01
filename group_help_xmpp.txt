@@ -1,0 +1,55 @@
+xmpp群介绍：中文 chinese cn ，话题不限。
+
+频道地址(内容相同，地位相同，互为镜像频道):
+ipfs@salas.suchat.org
+wtfipfs@chat.yax.im
+wtfipfs@muc.pimux.de
+wtfipfs@conference.xmpp.jp
+
+备用入群链接:
+xmpp:ipfs@salas.suchat.org?join
+xmpp:wtfipfs@chat.yax.im?join
+xmpp:wtfipfs@muc.pimux.de?join
+xmpp:wtfipfs@conference.xmpp.jp?join
+
+群组管理:
+xmpp: liqsliu@suchat.org liqsliu@yax.im liqsliu@pimux.de liqsliu@macaw.me
+
+xmpp服务大部分都是免费的，建议从公共服务器列表里找一个自己喜欢的。
+公共XMPP服务器列表:
+https://www.jabberes.org/servers/ 
+https://list.jabber.at 
+https://www.freie-messenger.de/sys_xmpp/server/  
+https://providers.xmpp.net/ 
+https://xmpp.net/directory.php
+https://compliance.conversations.im/old/
+建议忽略 https://xmpp-servers.404.city/
+
+XMPP客户端列表: https://xmpp.org/software/clients/
+android平台推荐使用:
+Conversations( https://f-droid.org/packages/eu.siacs.conversations )
+blabber( https://f-droid.org/app/de.pixart.messenger )
+monocles( https://f-droid.org/packages/de.monocles.chat )
+
+其他xmpp相关的东西：
+开始使用xmpp: https://xmpp.org/getting-started/
+rssbot: xmpp:jabrss@jotwewe.de
+rssbot: xmpp:jabrss@cmeerw.net
+
+
+副频道(主要用来推送RSS以及抓取自telegram频道的内容,非bot消息会同步到主群):
+news: xmpp:ipfsrss@chat.yax.im?join
+acg: xmpp:acg@muc.pimux.de?join
+
+
+
+注意: 下面的xmpp频道, 进入后会暴漏自己的xmpp地址, 在意这个的话请不要进入这些频道。
+
+第三方(非本频道管理)提供的本频道的镜像频道:
+xmpp:#wtfipfs#matrix.org@matrix.org?join 
+xmpp:#ipfs#mozilla.org@matrix.org?join 
+xmpp:#wtfipfs#matrix.org@aria-net.org?join 
+
+友情链接: xmpp:#btsync#matrix.org@aria-net.org?join
+友情链接: xmpp:#wallcountry#matrix.org@aria-net.org?join 
+
