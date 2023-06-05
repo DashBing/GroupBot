@@ -277,7 +277,7 @@ send_to_mt(){
 echo "res: $res"
 echo "json: $text"
   if [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
-    curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: $(echo "$res" | jq -r ".message")" $gateway)" http://127.0.0.1:4240/api/message
+    curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: $(echo "$res" | jq -r ".message") b64: $(echo $text|base64)" $gateway)" http://127.0.0.1:4240/api/message
   else
     [[ -z "$(echo "$res" | jq -r ".text")" ]] && curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: empty message" $gateway)" http://127.0.0.1:4240/api/message
   fi
@@ -290,6 +290,7 @@ echo "json: $text"
 #text=$(cmds $text)
 #text=$(cmds $text 2>&1)
 text=$(cmds $text 2>"$SH_PATH/error")
+text=$(echo "$text"|sed 's/\r//g')
 [[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
 
 [[ -n "$text_e" ]] && text="$text
@@ -299,3 +300,5 @@ E: $text_e
 
 send_to_mt "$text"
 # send_to_mt "E: $text_e"
+
+
