@@ -11,29 +11,33 @@ MAX_SHARE_FILE_SIZE=${MAX_SHARE_FILE_SIZE:-64000000}
 
 export IPFS_PATH="/home/liqsliu/tera/var/ipfs"
 
+PRIVATE_KEYS_PATH="${HOME}/.ssh/private_keys.txt"
+IPFS_API_KEY=$(grep IPFS_API_KEY "$PRIVATE_KEYS_PATH")
+IPFS_API_KEY=${IPFS_API_KEY#* }
+
 
 #ipfs
 get_gateways(){
 
 #check 400
 #   GATEWAY_URL=https://ipfs.stibarc.com; curl -m 5 -X POST -w '%{http_code}' $GATEWAY_URL/api/v0/add -v
+# https://infura-ipfs.io GATEWAY_URL/ipfs/HASH_CID 0 1
+# https://ipfs.smartholdem.io GATEWAY_URL/ipfs/HASH_CID 0 0
+# https://snap1.d.tube GATEWAY_URL/ipfs/HASH_CID 0 0
+# https://ipfs.infura.io:5001 https://HASH_CID.ipfs.infura-ipfs.io/ 1 1
+# http://127.0.0.1:5001 http://127.0.0.1:8080/ipfs/HASH_CID 0 0
+# https://$DOMAIN GATEWAY_URL/ipfs/HASH_CID 0 0
 
-# URL IPFS_URL cid_version gfwed
+# upload_URL(need /api/v0/add) IPFS_URL cid_version gfwed [token]
 local IPFS_GATEWAYS="
-https://infura-ipfs.io GATEWAY_URL/ipfs/HASH_CID 0 1
-https://ipfs.smartholdem.io GATEWAY_URL/ipfs/HASH_CID 0 0
-https://ipfs1.pixura.io GATEWAY_URL/ipfs/HASH_CID 0 0
-https://snap1.d.tube GATEWAY_URL/ipfs/HASH_CID 0 0
-https://ipfs.infura.io:5001 https://HASH_CID.ipfs.infura-ipfs.io/ 1 1
-http://127.0.0.1:5001 http://127.0.0.1:8080/ipfs/HASH_CID 0 0
-https://$DOMAIN GATEWAY_URL/ipfs/HASH_CID 0 0
-
+https://api.nft.storage/upload https://HASH_CID.ipfs.nftstorage.link/ 1 0 ${IPFS_API_KEY}
+https://ipfs.pixura.io/api/v0/add https://ipfs.pixura.io/ipfs/HASH_CID 0 0
 "
 
 
 
 if [[ "$1" == "" ]]; then
-  echo "$IPFS_GATEWAYS" | sed '/^ *$/d' | cut -d" " -f1
+  echo "$IPFS_GATEWAYS" | shuf | sed '/^ *$/d' | cut -d" " -f1
 elif [[ $(echo "$IPFS_GATEWAYS" | grep -c -G "^$1 ") -eq 1 ]]; then
   local gateway=$(echo "$IPFS_GATEWAYS" | grep -G "^$1 ")
   if [[ -z "$2" ]]; then
@@ -42,6 +46,8 @@ elif [[ $(echo "$IPFS_GATEWAYS" | grep -c -G "^$1 ") -eq 1 ]]; then
     echo "$gateway" | cut -d" " -f3
   elif [[ "$2" == "gfwed" ]]; then
     echo "$gateway" | cut -d" " -f4
+  elif [[ "$2" == "token" ]]; then
+    echo "$gateway" | cut -d" " -f5
   else
     :
   fi
@@ -118,11 +124,12 @@ upload_to_ipfs_gateway(){
   # not get cid for speed up vps
   if [[ "$(get_gateways $GATEWAY_URL cid_version)" == 1 ]]; then
     local cid_version="?cid-version=1"
-#    local HASH_CID=$(ipfs add --cid-version 1 -n -Q "$FILE_PATH")
+    local HASH_CID=$(ipfs add --cid-version 1 -n -Q "$FILE_PATH")
   else
     local cid_version=
-#    local HASH_CID=$(ipfs add -n -Q "$FILE_PATH")
+    local HASH_CID=$(ipfs add -n -Q "$FILE_PATH")
   fi
+  local token=$(get_gateways $GATEWAY_URL token)
 
   local try_time=0
   local delay_time=0
@@ -142,7 +149,9 @@ upload_to_ipfs_gateway(){
 #    if [[ "$(curl -m 3 -X POST -s -o /dev/null -w '%{http_code}' $GATEWAY_URL/api/v0/version | tail -n 1)" == "200" ]] ; then
 #echo  "check:  $GATEWAY_URL/api/v0/add " 
 #echo  "check: $(curl -m 3 -X POST -s -o /dev/null -w '%{http_code}' $GATEWAY_URL/api/v0/add)" 
-    if [[ "$(curl -m 5 -X POST -s -o /dev/null -w '%{http_code}' $GATEWAY_URL/api/v0/add | tail -n 1 2>/dev/null )" == "400" ]] ; then
+    # res_code=$(curl -m 5 -X POST -s -o /dev/null -w '%{http_code}' $GATEWAY_URL/api/v0/add | tail -n 1 2>/dev/null )
+    res_code=$(curl -m 5 -X POST -s -o /dev/null -w '%{http_code}' $GATEWAY_URL | tail -n 1 2>/dev/null )
+    if [[ "$res_code" == "411" ]] || [[ "$res_code" == "401" ]] || [[ "$res_code" == "400" ]] ; then
       local existed=0
       # if [[ "$GATEWAY_URL" == "https://ipfs.infura.io:5001" ]] ; then
       #   if [[ "$(curl -m 2 --max-filesize 1 -s -o /dev/null -w '%{http_code}' https://${HASH_CID}.ipfs.infura-ipfs.io | tail -n 1)" == "200" ]] ; then
@@ -166,9 +175,23 @@ upload_to_ipfs_gateway(){
         hash=$HASH_CID
       fi
 
-
       if [[ $existed -eq 0 ]]; then
-        hash=$(curl -m $MAX_UPLOAD_TIME -s --compressed -X POST -F file=@"$FILE_PATH" "$GATEWAY_URL/api/v0/add${cid_version}" | jq -r '.Hash' 2>/dev/null )
+        # if [[ "$GATEWAY_URL" == 'https://api.nft.storage/upload' ]]; then
+        if [[ -n "$token" ]]; then
+          if [[ "$GATEWAY_URL" == 'https://api.nft.storage/upload' ]]; then
+            # local res=$(curl -m $MAX_UPLOAD_TIME -H "Authorization: Bearer ${token}" -s --compressed -X POST -F file=@"$FILE_PATH" "$GATEWAY_URL" )
+            # echo "res: $res" >&2
+            # hash=$(echo "$res" | jq -r '.value.cid' )
+            # echo "hash: $hash" >&2
+            hash=$(curl -m $MAX_UPLOAD_TIME -H "Authorization: Bearer ${token}" -s --compressed -X POST -F file=@"$FILE_PATH" "$GATEWAY_URL" | jq -r '.value.cid' )
+          else
+            hash=$(curl -m $MAX_UPLOAD_TIME -H "Authorization: Bearer ${token}" -s --compressed -X POST -F file=@"$FILE_PATH" "$GATEWAY_URL${cid_version}" | jq -r '.Hash' )
+          fi
+        else
+          # hash=$(curl -m $MAX_UPLOAD_TIME -s --compressed -X POST -F file=@"$FILE_PATH" "$GATEWAY_URL/api/v0/add${cid_version}" | jq -r '.Hash' 2>/dev/null )
+          # hash=$(curl -m $MAX_UPLOAD_TIME -s --compressed -X POST -F file=@"$FILE_PATH" "$GATEWAY_URL/api/v0/add${cid_version}" | jq -r '.Hash')
+          hash=$(curl -m $MAX_UPLOAD_TIME -s --compressed -X POST -F file=@"$FILE_PATH" "$GATEWAY_URL${cid_version}" | jq -r '.Hash')
+        fi
       fi
 
 
@@ -252,6 +275,8 @@ file_to_ipfs() {
           # hash=$( bash "$SH_PATH/upload_to_ipfs.sh" https://ipfs.infura.io:5001 "$FILE_PATH" || bash "$SH_PATH/upload_to_ipfs.sh" https://snap1.d.tube "$FILE_PATH" || bash "$SH_PATH/upload_to_ipfs.sh" http://127.0.0.1:5001 "$FILE_PATH" || bash "$SH_PATH/upload_to_ipfs.sh" https://liuu.tk "$FILE_PATH" )
           # hash=$(auto_to_all)
           auto_to_all || {
+            hash=$( cd ~/nft-storage-quickstart && node ntf.storage.mjs "$FILE_PATH" wtfipfs "$fn" |grep -o -P 'baf[a-z0-9]+'|head -n1 ) && real_ipfs_url="https://$hash.ipfs.nftstorage.link/"
+          } || {
             echo "E: no open ipfs gateway" >&2
             [[ -e "$LP/$fn" ]] || cp "$FILE_PATH" "${LP}/"
             echo "tmp link: https://$DOMAIN/$(bash "$SH_PATH/"urldecode.sh "$fn")" >&2

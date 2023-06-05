@@ -105,6 +105,10 @@ cmds() {
     shift
     bash "$SH_PATH/an.sh" "$@" || echo "E: $?"
     ;;
+  icp)
+    shift
+    bash "$SH_PATH/icp.sh" "$@" || echo "E: $?"
+    ;;
   tw)
     shift
     bash "$SH_PATH/twitter_to_text.sh" "$@" || echo "E: $?"
@@ -134,7 +138,7 @@ cmds() {
           echo "$host"
           echo -n "纯真: "
           nali "$host" | grep -o -P "\[.*\]" | grep -o -P "[^[\]]+" || echo "E: $?"
-          echo "$res"
+          # echo "$res"
         else
           echo "W: 格式不正确: $2"
         fi
