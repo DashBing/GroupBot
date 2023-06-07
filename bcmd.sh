@@ -61,7 +61,7 @@ cmds() {
     fi
     ;;
   qy)
-    shift
+    # shift
     bash "$SH_PATH/qy.sh" "$@" || echo "E: $?"
     ;;
   ai|AI)

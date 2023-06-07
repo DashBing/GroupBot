@@ -26,15 +26,16 @@ _(){
 }
 
 
-if [[ -z "$1" ]]; then
-  echo ".$0 \$str"
-  echo "/$0 \$str"
+if [[ -z "$2" ]]; then
+  echo "$1 \$str"
+  echo "$1 \$str"
   echo '---'
   echo 'qingyunke.com'
 # elif [[ "$2" == "on" ]]; then
 #   :
 else
-# ai "$@"
-_ "$*"
+  shift
+  # ai "$@"
+  _ "$*"
 fi
 
