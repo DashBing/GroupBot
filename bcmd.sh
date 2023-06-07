@@ -60,6 +60,10 @@ cmds() {
       [[ -z "$ms" ]] && echo "超时" || echo "$ms"
     fi
     ;;
+  qy)
+    shift
+    bash "$SH_PATH/qy.sh" "$@" || echo "E: $?"
+    ;;
   ai|AI)
     shift
     bash "$SH_PATH/ai.sh" "$@" || echo "E: $?"
