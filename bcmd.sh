@@ -49,6 +49,9 @@ cmds() {
   cmd)
     cat "$SH_PATH/group_cmd.txt"
     ;;
+  echo)
+    echo -e "$text"
+    ;;
   ping)
     if [[ -z "$2" ]]; then
       echo "pong"
