@@ -50,7 +50,7 @@ cmds() {
     cat "$SH_PATH/group_cmd.txt"
     ;;
   echo)
-    echo -e "$text"
+    echo -e "${text#.echo }"
     ;;
   ping)
     if [[ -z "$2" ]]; then
