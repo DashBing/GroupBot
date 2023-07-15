@@ -84,7 +84,7 @@ for (( ; i < 4; i++)); do
       elif [[ $(echo "$text" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/?[\S]*$") -eq 1 ]]; then
         text=".type $text autocheck"
       elif [[ "$text" == "help" ]]; then
-        text=".ping"
+        text=".help"
       elif [[ "$text" == "ping" ]]; then
         text=".ping"
       fi
