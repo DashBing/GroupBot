@@ -36,9 +36,14 @@ get_tw(){
   local id=$1
   id=${id%%\"}
   id=${id##\"}
-#  local tw_res=$(curl -s --request GET "https://api.twitter.com/2/tweets?ids=$id&tweet.fields=text,author_id,entities&expansions=attachments.media_keys&media.fields=url,preview_image_url" --header "Authorization: Bearer $BEARER_TOKEN")
-#  local tw_res=$(curl -s --request GET "https://api.twitter.com/2/tweets?ids=$id&tweet.fields=text,author_id,entities&user.fields=name,username&expansions=attachments.media_keys,author_id&media.fields=url,preview_image_url" --header "Authorization: Bearer $BEARER_TOKEN")
+  # local tw_res=$(curl -s --request GET "https://api.twitter.com/2/tweets?ids=$id&tweet.fields=text,author_id,entities&expansions=attachments.media_keys&media.fields=url,preview_image_url" --header "Authorization: Bearer $BEARER_TOKEN")
+  # local tw_res=$(curl -s --request GET "https://api.twitter.com/2/tweets?ids=$id&tweet.fields=text,author_id,entities&user.fields=name,username&expansions=attachments.media_keys,author_id&media.fields=url,preview_image_url" --header "Authorization: Bearer $BEARER_TOKEN")
+
+
+  # 20230716: no worked https://stackoverflow.com/questions/65595139/twitter-api-version-2-throws-client-forbidden-error https://developer.twitter.com/en/portal/products/basic
   local tw_res=$(curl -s --request GET "https://api.twitter.com/2/tweets/$id?tweet.fields=text,author_id,entities&user.fields=name,username&expansions=attachments.media_keys,author_id&media.fields=url,preview_image_url" --header "Authorization: Bearer $BEARER_TOKEN")
+
+
   [[ "$2" == "debug" ]] && echo "tw_res: $tw_res"
   #local text=$(echo $tw_res | jq '.data[0].text' )
 #  text=${text%%\"}
