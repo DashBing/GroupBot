@@ -120,3 +120,5 @@
 #faq X liqsliu: 没人|哈哈
 #faq X liqsliu: 你好|你好
 #default O hh: telegram
+#faq X liqsliu: help|命令要以英文句号开头
+#faq X liqsliu: fuck|fuck!
