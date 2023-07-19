@@ -32,16 +32,28 @@ import prof
 
 def prof_pre_priv_message_display(prof_pre_priv_message_send):
   prof.cons_show("I: before user msg")
+  if arg1 == "ab ping":
+    prof.cons_show("I: ping")
+    prof.send_line('pong from xmppbot')
 
 def prof_post_priv_message_display(prof_pre_priv_message_send):
   prof.cons_show("I: after user msg")
+  if arg1 == "ab ping":
+    prof.cons_show("I: ping")
+    prof.send_line('pong from xmppbot')
 
 
 def prof_pre_room_message_display(barejid, nick, message):
   prof.cons_show("I: before group msg")
+  if arg1 == "ab ping":
+    prof.cons_show("I: ping")
+    prof.send_line('pong from xmppbot')
 
 def prof_post_room_message_display(barejid, nick, message):
   prof.cons_show("I: after group msg")
+  if arg1 == "ab ping":
+    prof.cons_show("I: ping")
+    prof.send_line('pong from xmppbot')
 
 
 def prof_on_presence_stanza_receive(stanza):
