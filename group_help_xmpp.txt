@@ -1,6 +1,6 @@
-xmpp群介绍：中文 chinese cn ，话题不限。
+xmpp群介绍：中文 zh cn chinese ，话题不限。
 
-频道地址(内容相同，地位相同，互为镜像频道):
+频道地址(地位相同，互为镜像频道):
 ipfs@salas.suchat.org
 wtfipfs@muc.pimux.de
 wtfipfs@chat.yax.im
@@ -13,15 +13,21 @@ xmpp:wtfipfs@chat.yax.im?join
 xmpp:wtfipfs@conference.xmpp.jp?join
 
 群组管理:
-xmpp: liqsliu@suchat.org liqsliu@yax.im liqsliu@pimux.de liqsliu@macaw.me
+xmpp(可群内私聊或加好友): liqsliu@suchat.org liqsliu@pimux.de liqsliu@yax.im liqsliu@macaw.me
 
-XMPP客户端列表: https://xmpp.org/software/clients/
-android平台推荐使用:
-Conversations( https://f-droid.org/packages/eu.siacs.conversations ) 功能够用
-blabber( https://f-droid.org/app/de.pixart.messenger ) 好用，但是需要更多系统资源
-monocles( https://f-droid.org/packages/de.monocles.chat ) 好用，但是需要更多系统资源
+分群/避难区(由于主群是公开群，难免会有机器人账号发送垃圾信息甚至进行消息轰炸，故特设此群。新人被管理邀请或私聊管理获取到成员身份才能正常发言，有需要的请私聊管理): xmpp:wtfipfs@salas.suchat.org?join
 
-PC推荐 gajim
+XMPP客户端列表: https://xmpp.org/software/
+
+android平台:
+Conversations( https://f-droid.org/packages/eu.siacs.conversations ) 功能简陋，但运行稳定
+blabber( https://f-droid.org/app/de.pixart.messenger ) 功能稍多，bug也多
+monocles( https://f-droid.org/packages/de.monocles.chat ) 功能稍多，bug也多
+atalk( https://github.com/cmeng-git/atalk-android ) 不支持gpg，功能更多，但运行不太稳定
+
+PC推荐使用gajim，相比移动端，支持的功能最多
+
+无gui: profanity
 
 
 xmpp服务大部分都是免费的，建议从公共服务器列表里找一个自己喜欢的。
@@ -44,13 +50,14 @@ news: xmpp:ipfsrss@chat.yax.im?join
 acg: xmpp:acg@muc.pimux.de?join
 
 
-注意: 下面的xmpp频道, 进入后会暴漏自己的xmpp地址, 在意这个的话请不要进入这些频道。
+注意: 下面的xmpp频道, 进入后会暴漏自己的xmpp地址(jid), 在意这个的话请不要进入这些频道。
 
 第三方(非本频道管理)提供的本频道的镜像频道:
 xmpp:#wtfipfs#matrix.org@matrix.org?join 
 xmpp:#ipfs#mozilla.org@matrix.org?join 
 xmpp:#wtfipfs#matrix.org@aria-net.org?join 
 
-友情链接: xmpp:#btsync#matrix.org@aria-net.org?join
-友情链接: xmpp:#wallcountry#matrix.org@aria-net.org?join 
+友情链接:
+xmpp:#btsync#matrix.org@aria-net.org?join
+xmpp:#wallcountry#matrix.org@aria-net.org?join 
 
