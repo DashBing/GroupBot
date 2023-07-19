@@ -30,30 +30,33 @@ import prof
 #      prof.register_command("/ascii", 1, 1, synopsis, description, args, examples, _cmd_ascii)
 
 
-def prof_pre_priv_message_display(prof_pre_priv_message_send):
+def prof_pre_priv_message_display(barejid, nick, message):
   prof.cons_show("I: before user msg")
-  if arg1 == "ab ping":
+  if message == "/ab ping":
     prof.cons_show("I: ping")
     prof.send_line('pong from xmppbot')
 
-def prof_post_priv_message_display(prof_pre_priv_message_send):
+def prof_post_priv_message_display(barejid, nick, message):
   prof.cons_show("I: after user msg")
-  if arg1 == "ab ping":
+  if message == "/ab ping":
     prof.cons_show("I: ping")
     prof.send_line('pong from xmppbot')
 
 
 def prof_pre_room_message_display(barejid, nick, message):
   prof.cons_show("I: before group msg")
-  if arg1 == "ab ping":
+  if message == "/ab ping":
     prof.cons_show("I: ping")
     prof.send_line('pong from xmppbot')
 
 def prof_post_room_message_display(barejid, nick, message):
   prof.cons_show("I: after group msg")
-  if arg1 == "ab ping":
+  if message == "/ab ping":
     prof.cons_show("I: ping")
     prof.send_line('pong from xmppbot')
+  elif message:
+    if message == '/ab' or message[0:4] == '/ab ':
+      _auto_ban(message[1:].split(' '))
 
 
 def prof_on_presence_stanza_receive(stanza):
@@ -71,8 +74,9 @@ def _auto_ban(arg1=None, arg2=None):
   #  room = prof.get_current_muc()
   #  prof.send_line("/who online")
   if arg1 == "off":
-    prof.settings_boolean_set("ab", "off", True)
-    prof.cons_show("I: auto ban mode is off")
+    off = True
+    prof.send_line('stop to auto ban')
+    
   #  elif arg1 == "on":
   #    prof.settings_boolean_set("ab", "off", False)
   #    prof.cons_show("I: auto ban mode")
@@ -82,7 +86,7 @@ def _auto_ban(arg1=None, arg2=None):
   else:
     if arg1 == "now":
       now= prof.settings_boolean_get("ab", "now", True)
-      if now == 'on':
+      if now == True:
         now = False
       prof.settings_boolean_set("ab", "now", now)
     elif arg1 == "new":
@@ -107,7 +111,16 @@ def _auto_ban(arg1=None, arg2=None):
       prof.settings_int_set("ab", "max", max)
     else:
       pass
-    prof.settings_boolean_set("ab", "off", False)
+    off = False
+    prof.send_line('start to auto ban')
+  prof.cons_show("I: auto ban mode off: "+off)
+  prof.settings_boolean_set("ab", "off", off)
+  prof.cons_show("I: now: "+now)
+  prof.settings_boolean_set("ab", "now", now)
+  prof.settings_boolean_set("ab", "new", new)
+  prof.settings_boolean_set("ab", "slow", slow)
+  prof.cons_show("I: max: "+max)
+  prof.settings_int_set("ab", "max", max)
 
 
 
