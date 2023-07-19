@@ -9,7 +9,12 @@
 
 cp SH_PATH "$SH_PATH/"
 cp DOMAIN "$SH_PATH/"
+cp BOTID "$SH_PATH/"
 
+
+BOTID=$(cat $SH_PATH/BOTID)
+sed -i 's/BOTID: [^ ]* /BOTID: '$BOTID' /g' group_help.txt
+sed -i 's/BOTID: [^ ]* /BOTID: '$BOTID' /g' group_help_tox.txt
 
 cp *.sh "$SH_PATH"/
 rm "$SH_PATH/init.sh"
@@ -38,6 +43,9 @@ cp group_help_*.txt "$SH_PATH/"
 # [[ -e "$SH_PATH/$file_name" ]] && cp "$SH_PATH/$file_name" "$(cd $(dirname ${BASH_SOURCE[0]}); pwd )/"
 file_name=group_note.txt
 [[ -e "$SH_PATH/$file_name" ]] && cp "$SH_PATH/$file_name" "$(cd $(dirname ${BASH_SOURCE[0]}); pwd )/" || cp "$(cd $(dirname ${BASH_SOURCE[0]}); pwd )/$file_name" "$SH_PATH/"
+
+
+
 
 
 
