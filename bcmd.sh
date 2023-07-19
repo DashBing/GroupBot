@@ -18,7 +18,8 @@ cmds() {
   # else
   #   cmd=$1
   # fi
-  if [[ "${cmd:0:1}" != "." && "${cmd:0:1}" != "/" ]]; then
+  # if [[ "${cmd:0:1}" != "." && "${cmd:0:1}" != "/" ]]; then
+  if [[ "${cmd:0:1}" != "."; then
     if bash "$SH_PATH/faq.sh" "$text" ; then
       return 0
     elif [[ -e $SH_PATH/.botmode_for_$gateway ]]; then

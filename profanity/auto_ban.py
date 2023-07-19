@@ -1,4 +1,5 @@
 
+from lxml import etree
 import prof
 #  import subprocess
 #
@@ -29,34 +30,65 @@ import prof
 #
 #      prof.register_command("/ascii", 1, 1, synopsis, description, args, examples, _cmd_ascii)
 
+from time import time
+
+msgs={}
+
+enable = False
+
+# 1s
+slow_mmode=1
+
+
+# max length of a msg
+max_length=64
+
+
+
+
+
+
+
+def _reply(barejid, message):
+  prof.send_line('/win '+barejid)
+  prof.send_line(message)
+
+def prof_pre_chat_message_display(barejid, resource, message):
+  prof.cons_show("I: before user msg: "+message)
+  if message:
+    if message == '.ab' or message[0:4] == '.ab ':
+      prof.send_line('/win '+barejid)
+      _auto_ban(message[1:].split(' '))
+  return None
+
+#  def prof_post_chat_message_display(barejid, resource, message):
+#    prof.cons_show("I: after user msg: "+message)
 
 def prof_pre_priv_message_display(barejid, nick, message):
-  prof.cons_show("I: before user msg")
-  if message == "/ab ping":
-    prof.cons_show("I: ping")
-    prof.send_line('pong from xmppbot')
+  prof.cons_show("I: before priv msg: "+message)
+  if message:
+    if message == '.ab' or message[0:4] == '.ab ':
+      prof.send_line('/win '+barejid)
+      _auto_ban(message[1:].split(' '))
+  return None
 
-def prof_post_priv_message_display(barejid, nick, message):
-  prof.cons_show("I: after user msg")
-  if message == "/ab ping":
-    prof.cons_show("I: ping")
-    prof.send_line('pong from xmppbot')
+#  def prof_post_priv_message_display(barejid, nick, message):
+#    prof.cons_show("I: after priv msg: "+message)
 
 
 def prof_pre_room_message_display(barejid, nick, message):
-  prof.cons_show("I: before group msg")
-  if message == "/ab ping":
-    prof.cons_show("I: ping")
-    prof.send_line('pong from xmppbot')
-
-def prof_post_room_message_display(barejid, nick, message):
-  prof.cons_show("I: after group msg")
-  if message == "/ab ping":
-    prof.cons_show("I: ping")
-    prof.send_line('pong from xmppbot')
-  elif message:
-    if message == '/ab' or message[0:4] == '/ab ':
+  prof.cons_show("I: before group msg: "+message)
+  #  if message == ".ab ping":
+  #    prof.cons_show("I: ping")
+  #    prof.send_line('pong from xmppbot')
+  if message:
+    if message == '.ab' or message[0:4] == '.ab ':
+      prof.send_line('/win '+barejid)
       _auto_ban(message[1:].split(' '))
+  return None
+
+#  def prof_post_room_message_display(barejid, nick, message):
+#    prof.cons_show("I: after group msg: "+message)
 
 
 def prof_on_presence_stanza_receive(stanza):
@@ -71,17 +103,19 @@ def prof_on_presence_stanza_receive(stanza):
 # /plugins update ~/bot/profanity/auto_ban.py
 
 def _auto_ban(arg1=None, arg2=None):
+  global enable
   #  room = prof.get_current_muc()
   #  prof.send_line("/who online")
   if arg1 == "off":
-    off = True
-    prof.send_line('stop to auto ban')
+    enable = False
+    #  off = True
+    #  prof.send_line('stop to auto ban')
+    prof.cons_show("I: auto ban mode: off")
     
   #  elif arg1 == "on":
   #    prof.settings_boolean_set("ab", "off", False)
   #    prof.cons_show("I: auto ban mode")
   elif arg1 == "ping":
-    prof.cons_show("I: ping")
     prof.send_line('pong from xmppbot')
   else:
     if arg1 == "now":
@@ -111,8 +145,8 @@ def _auto_ban(arg1=None, arg2=None):
       prof.settings_int_set("ab", "max", max)
     else:
       pass
-    off = False
-    prof.send_line('start to auto ban')
+    enable = True
+    prof.cons_show("I: auto ban mode: on")
   prof.cons_show("I: auto ban mode off: "+off)
   prof.settings_boolean_set("ab", "off", off)
   prof.cons_show("I: now: "+now)
