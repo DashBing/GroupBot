@@ -32,11 +32,9 @@ PC推荐使用gajim，相比移动端，支持的功能最多
 
 xmpp服务大部分都是免费的，建议从公共服务器列表里找一个自己喜欢的。
 公共XMPP服务器列表:
-https://www.jabberes.org/servers/ 
+https://providers.xmpp.net/ 
 https://list.jabber.at 
 https://www.freie-messenger.de/sys_xmpp/server/  
-https://providers.xmpp.net/ 
-https://xmpp.net/directory.php
 https://compliance.conversations.im/old/
 建议忽略 https://xmpp-servers.404.city/
 
