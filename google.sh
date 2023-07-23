@@ -11,10 +11,12 @@ if [[ -z "$1" ]]; then
 else
   if [[ "$1" != "-n" ]]; then
 #    res=$( googler -n 1 -c en -l en --json -6 search "$@" )
-    res=$( googler -n 64 -c en -l en --json -6 "$@" )
+    # res=$( googler -n 64 -c en -l en --json -6 "$@" )
+    res=$( googler -n 64 -c en -l en --json "$@" )
     url=$(echo "$res" | jq -r ".[0].url")
     if [[ "$url" == "null" ]]; then
-      res=$( googler -n 1 -c en -l en --json -6 "$@" )
+      # res=$( googler -n 1 -c en -l en --json -6 "$@" )
+      res=$( googler -n 1 -c en -l en --json "$@" )
       url=$(echo "$res" | jq -r ".[0].url")
       if [[ "$url" == "null" ]]; then
         echo "E: $res"
@@ -27,7 +29,9 @@ else
     num=$2
     shift
     shift
-    res=$( googler -n $num -c en -l en --np -6 "$@" )
+   # res=$( googler -n $num -c en -l en --np -6 "$@" )
+    res=$( googler -n $num -c en -l en --np "$@" )
+
     echo "$res"
   fi
 fi

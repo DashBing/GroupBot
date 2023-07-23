@@ -72,10 +72,6 @@ curl_exit: $error: $curl_res"
     [[ -z "$fs" ]] && fs=0
     if [[ $fs -ge $MAX_SHARE_FILE_SIZE ]]; then
       flag=1
-      echo test
-      echo $fs
-      echo $MAX_SHARE_FILE_SIZE
-      echo $fs
     elif [[ "$fs" == "0" ]]; then
       flag=2
 #    elif [[ "$ft" = *image/* || "$ft" = *video/* ]]; then
