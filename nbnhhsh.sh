@@ -23,6 +23,7 @@ nbnhhsh(){
     echo "https://lab.magiconch.com/api/nbnhhsh/guess"
   else
     res=$( curl -s -XPOST -H 'Content-Type: application/json' -d "$(get_text "$@")" https://lab.magiconch.com/api/nbnhhsh/guess )
+    # res=$( curl -v -XPOST -H 'Content-Type: application/json' -d "$(get_text "$@")" https://lab.magiconch.com/api/nbnhhsh/guess )
 
     echo -n $(echo "$res" | jq -r ".[0].name")
     echo -n ":"
