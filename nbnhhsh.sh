@@ -19,6 +19,8 @@ nbnhhsh(){
     echo "能不能好好说话？(翻译看不懂的拼音缩写)"
 #    echo ".hhsh \$text"
     echo "用法: .hhsh 缩写"
+    echo "https://github.com/itorr/nbnhhsh"
+    echo "https://lab.magiconch.com/api/nbnhhsh/guess"
   else
     res=$( curl -s -XPOST -H 'Content-Type: application/json' -d "$(get_text "$@")" https://lab.magiconch.com/api/nbnhhsh/guess )
 
