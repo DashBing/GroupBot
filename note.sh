@@ -83,9 +83,11 @@ tag可以写在命令（add del list等）前面
 示例：
 列出已经在使用的tag: .note tag
 查看默认tag下的记录: .note list
-添加记录到默认tag: .note text
+添加记录到默认tag: .note add #default some text
+添加记录到默认tag: .note #default some text
+添加记录到默认tag: .note some text
 
-备份： https://github.com/liqsliu/toxbot/blob/master/group_note.txt "
+备份： https://github.com/liqsliu/bot/blob/master/group_note.txt "
 
 }
 

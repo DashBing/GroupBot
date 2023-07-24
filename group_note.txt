@@ -123,3 +123,6 @@
 #faq X liqsliu: help|命令要以英文句号开头
 #faq X liqsliu: fuck|fuck!
 #xmpp X liqsliu: 测试xmpp服务器\n> **O QQ2000:** https://connect.xmpp.net/
+#tox X liqsliu: 客户端 https://tox.chat/clients.html
+#default X honeybee: tags
+#rss X honeybee: https://ptah-alexs.info/rss-bridge/?action=display&bridge=VkBridge&u=sovuche&format=Atom

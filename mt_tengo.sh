@@ -413,8 +413,9 @@ if [[ -n "$4" ]] ; then
           msg_text="$P ?: $qt_text"
         fi
       fi
-      bash "$SH_PATH/tg.sh" settoken wtfipfs setcid "${10}" "--reply" "$msg_text" "$msg_sender" "--md" "$NAME$(bash "$SH_PATH/text2markdown.sh" "$1")"
-      TEXT='.>)\`'
+      # use user api to send msg to tg and block this TEXT to tg
+      # bash "$SH_PATH/tg.sh" settoken wtfipfs setcid "${10}" "--reply" "$msg_text" "$msg_sender" "--md" "$NAME$(bash "$SH_PATH/text2markdown.sh" "$1")"
+      # TEXT='.>)\`'
     else
       TEXT=$(bash "$SH_PATH/text2markdown.sh" "$TEXT")
     fi
