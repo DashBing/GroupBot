@@ -12,7 +12,6 @@ xmpp(可群内私聊或加好友):
   liqsliu@suchat.org
   liqsliu@pimux.de
   liqsliu@yax.im
-  liqsliu@macaw.me
   liqsliu@conversations.im
 
 
