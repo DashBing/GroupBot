@@ -303,10 +303,10 @@ api.in)
   LABLE="0"
   ;;
 api.cmd)
-  LABLE="C"
+  LABLE="0"
   ;;
 api.cmdres)
-  LABLE="C"
+  LABLE="0"
   ;;
 api.tg)
   LABLE="T"
@@ -457,6 +457,7 @@ $M *$NAME*: "
     NAME="**${NAME}:** "
     qt=$(echo "$tmp" | sed '$d')
     [[ -n "$qt" ]] && NAME="$qt
+
 $NAME"
     if [[ -z "$TEXT" ]]; then
 #      [[ $(echo "$NAME" | wc -l) -ge 3 ]] && [[ $(echo "$NAME" | grep -c -G '^$') -ge 1 ]] && echo "$NAME" | tail -n1 && echo "$NAME" | sed '/^$/,$d' && NAME=""
