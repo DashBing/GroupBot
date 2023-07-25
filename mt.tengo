@@ -1,8 +1,24 @@
 os := import("os")
-cmd := os.exec("/run/user/1000/mt_tengo.sh", msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent)
+fmt := import("fmt")
+
+/* fmt.println("####") */
+/* fmt.println(msgText) */
+/* fmt.println(msgUsername) */
+/* fmt.println(inAccount) */
+/* fmt.println(inProtocol) */
+/* fmt.println(inChannel) */
+/* fmt.println(inGateway) */
+/* fmt.println(inEvent) */
+/* fmt.println(outAccount) */
+/* fmt.println(outProtocol) */
+/* fmt.println(outChannel) */
+/* fmt.println(outGateway) */
+/* fmt.println(outEvent) */
+/* fmt.println("####") */
+
+cmd := os.exec("/run/user/1000/bot/mt_tengo.sh", msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent)
 /* msgUsername = string(cmd.output()) */
 msgUsername = string(cmd.combined_output())
-/* fmt := import("fmt") */
 /* fmt.println(msgUsername) */
 if msgUsername == "blockthismessage" {
 msgDrop = true

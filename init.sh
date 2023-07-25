@@ -7,6 +7,9 @@
 #echo "$SH_PATH" > SH_PATH
 [[ -n "$1" ]] && SH_PATH=$1 || SH_PATH=$(cat SH_PATH)
 
+[[ -e  "$SH_PATH" ]] || mkdir -p "$SH_PATH"
+
+
 cp SH_PATH "$SH_PATH/"
 cp DOMAIN "$SH_PATH/"
 cp BOTID "$SH_PATH/"

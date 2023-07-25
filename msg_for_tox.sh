@@ -34,12 +34,22 @@ for (( ; i < 4; i++)); do
             if [[ -z "$text" ]]; then
               continue
             else
-              :
               #            [[ "$gateway" == "gateway1" ]] && echo -n "$(echo "$text" | sed "s/^/$username/g")"
               # [[ "$gateway" == "gateway1" ]] && echo -n "$(bash "$SH_PATH/change_long_text.sh" "$username$text")"
-              # echo -n "$(bash "$SH_PATH/change_long_text.sh" "$username$text")"
+              echo -n "$(bash "$SH_PATH/change_long_text.sh" "$username$text")"
             fi
           else
+            # if [[ "$gateway" == "gateway1" ]]; then
+            if [[ -n "$gateway" ]]; then
+              Comment=$(echo "$restmp" | jq -r ".Extra.file[0].Comment")
+              if [[ -z "$Comment" ]]; then
+  #              echo -n "$username$text$URL"
+                echo -n "$(bash "$SH_PATH/change_long_text.sh" "$username$text $URL")"
+              else
+                # text="$username$Comment: $URL"
+                echo -n "$(bash "$SH_PATH/change_long_text.sh" "$username$text$Comment: $URL")"
+              fi
+            fi
             text=".ipfs $URL only"
           fi
         fi
@@ -56,33 +66,6 @@ for (( ; i < 4; i++)); do
     # continue # run cmd by python: mybots.py. but not running now
     # ########################################################
 
-    [[ "$username" == "C bot: " ]] && continue
-    [[ "$username" == "C twitter: " ]] && continue
-    # [[ $(echo "$text" | wc -l) -ne 1 ]] && continue
-    username=$(echo "$username" | tail -n1 )
-
-    if [[ "$gateway" != "gateway2" && $(echo "$text" | wc -l) -eq 1 ]]; then
-      # if [[ "$gateway" == "gateway1" ]]; then
-      #   gateway=gateway11
-      # fi
-      if [[ $(echo "$text" | grep -c -P "^https://(mobile\.)?twitter\.com/[a-zA-Z0-9_./?=&%-]+$") -eq 1 ]]; then
-        text=".tw $text"
-      # elif [[ $(echo "$text" | grep -c -P "^https://wtfipfs\.eu\.org/[a-zA-Z0-9_./?=%-]+$") -eq 1 ]]; then
-      #   text=".ipfs $text only"
-      elif [[ $(echo "$text" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/?[\S]*(jpe?g|png|mp4|gif)$") -eq 1 ]]; then
-        text=".ipfs $text only"
-      elif [[ $(echo "$text" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/?[\S]*$") -eq 1 ]]; then
-        text=".type $text autocheck"
-      elif [[ "$text" == "help" ]]; then
-        # text=".help"
-        nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" ".help" "$restmp" &>/dev/null &
-        sleep 3
-      elif [[ "$text" == "ping" ]]; then
-        text=".ping"
-      fi
-    fi
-    # gateway=cmd
-    nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" &>/dev/null &
 
   fi
 

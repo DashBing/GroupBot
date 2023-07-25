@@ -42,9 +42,18 @@ block_msg(){
   echo -n "blockthismessage"
   exit 0
 }
+if [[ $6 = gateway6 ]]; then
+  :
 
-
-
+elif [[ $2 = "liqsliu" ]] && [[ $8 = api.cmd ]] && [[ $3 = xmpp.myxmpp ]]; then
+  :
+elif [[ $3 = api.cmd ]]; then
+  :
+else
+  if [[ -e "$SH_PATH/STOP" ]]; then
+    block_msg
+  fi
+fi
 
 LABLE="C"
 
@@ -317,8 +326,6 @@ fi
 if [[ "$(echo "$QT" | tail -n1 | grep -c -G "^$" )" -eq 1 ]]; then
   QT=$( echo "$QT" | sed '$d')
 fi
-
-
 
 
 

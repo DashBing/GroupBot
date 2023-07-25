@@ -5,6 +5,18 @@ set -f
 
 
 
+
+is_me(){
+
+  if [[ "$username" = 'X liqsliu: ' ]]; then
+    return
+  else
+    return 1
+
+
+}
+
+
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
 cmds() {
@@ -53,9 +65,29 @@ cmds() {
   echo)
     echo -e "${text#.echo }"
     ;;
+  ok)
+    rm "$SH_PATH/STOP"
+    if [[ -e "$SH_PATH/STOP" ]]; then
+      echo stoped
+    else
+      echo running
+    fi
+    ;;
+  stop|sb)
+    touch "$SH_PATH/STOP"
+    if [[ -e "$SH_PATH/STOP" ]]; then
+      echo stoped
+    else
+      echo running
+    fi
+    ;;
   ping)
     if [[ -z "$2" ]]; then
       echo "pong"
+      if is_me; then
+        echo "pong"
+      fi
+
     else
       local host=$(echo "$2" | grep -o -P "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" | head -n1)
       [[ -z "$host" ]] && host=$(echo "$2" | grep -o -P "[0-9a-zA-Z.-]+\.[a-zA-Z]+" | head -n1)
