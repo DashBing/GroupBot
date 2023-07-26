@@ -15,7 +15,6 @@ xmpp(可群内私聊或加好友):
   liqsliu@conversations.im
 
 
-
 XMPP客户端列表: https://xmpp.org/software/
 
 android平台:
@@ -53,8 +52,10 @@ rssbot: xmpp:jabrss@jotwewe.de
 news: xmpp:ipfsrss@chat.yax.im?join
 acg: xmpp:acg@muc.pimux.de?join
 
+关于xmpp群发言权(仅限上面这几个群)：除非该群所在的xmpp服务器不支持，否则新人进群默认身份都是有发言权的群成员。目前有个xmppbot在管理监视群组: 检测到刷屏会撤销其发言权并尝试撤回消息，不过检测很保守，禁言时间也不会很长，普通用户应该感觉不到影响。同时自动发放发言权（临时，如果你近期被禁言过）和群成员身份（永久）。
+
 分群/避难区(由于主群是公开群，难免会有机器人账号发送垃圾信息甚至进行消息轰炸，故特设此群。新人被管理邀请或私聊管理获取到成员身份才能正常发言，有需要的请私聊管理): xmpp:wtfipfs@salas.suchat.org?join
-另外，有个防刷屏的脚本在运行，检测到刷屏会撤销其发言权并尝试撤回消息，不过检测很保守，禁言时间也不会很长，普通用户应该感觉不到影响。
+
 
 注意: 下面的xmpp频道, 进入后会暴漏自己的xmpp地址(jid), 在意这个的话请不要进入这些频道。
 
