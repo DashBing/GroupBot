@@ -53,11 +53,11 @@
 /** char *DATA_FILE = "toxbot_save"; */
 /** char *MASTERLIST_FILE = "masterkeys"; */
 /** char *BLOCKLIST_FILE = "blockedkeys"; */
-char *GM_SH_PATH = "/run/user/1000/gm.sh";
+char *GM_SH_PATH = "/run/user/1000/bot/gm.sh";
 //char *SM_SH_PATH = "/run/user/1000/sm.sh";
 //char *SM_SH_PATH = "bash /run/user/1000/sm.sh \"$(cat <<EOF\n";
 
-#define SM_SH_PATH "bash /run/user/1000/sm.sh \"$(cat <<EOF\n"
+#define SM_SH_PATH "bash /run/user/1000/bot/sm.sh \"$(cat <<EOF\n"
 
 //char smsg[2048];
 //char gmsg[2048];
