@@ -92,6 +92,14 @@ xmpp.*)
     fi
     TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
   fi
+  if [[ "$2" == "wtfipfs" ]]; then
+    NAME=$( echo "$TEXT" | grep -P -o '^\*\*\w+ \S+?:\*\* ')
+    NAME=${NAME:2}
+    LABLE=${NAME%%\ *}
+    NAME=${NAME%:\*\*\ }
+    NAME=${NAME#* }
+    TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
+  fi
   ;;
 # elif [[ "$3" == "telegram.mytelegram" ]]; then
 # telegram.mytelegram)
