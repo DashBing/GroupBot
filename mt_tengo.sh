@@ -307,7 +307,7 @@ irc.irc2p)
   LABLE="2"
   ;;
 api.tox)
-  LABLE="O"
+  LABLE="T"
   ;;
 api.in)
   LABLE="0"
@@ -319,7 +319,7 @@ api.cmdres)
   LABLE="0"
   ;;
 api.tg)
-  LABLE="T"
+  LABLE="G"
   ;;
 mattermost.mymattermost)
   LABLE="m"

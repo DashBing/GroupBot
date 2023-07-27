@@ -126,3 +126,4 @@
 #tox X liqsliu: 客户端 https://tox.chat/clients.html
 #default X honeybee: tags
 #rss X honeybee: https://ptah-alexs.info/rss-bridge/?action=display&bridge=VkBridge&u=sovuche&format=Atom
+#xmpp X liqsliu: 2023年07月27日 星期四 11时15分52秒 - 纽斯新闻时间: 服务器\nhttps://jabberfr.org/inscription/\nhttps://www.jabjab.de/register\nhttps://5222.de/register/\nhttps://www.xmpp.jp/signup\nhttps://www.jabjab.de/register\nhttps://xmpp.is/account/register/xmpp_is/\nhttps://jabber.hot-chilli.net/forms/create/#new_tab\nhttps://www.suchat.org/crear-una-cuenta/\nhttps://jabb.im/reg/
