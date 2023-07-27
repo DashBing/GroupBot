@@ -9,17 +9,18 @@ elif [[ "$2" == "blockthismessage" ]]; then
 fi
 
 
-SPLIT="_SPLIT_FOR_MT_"
 
-
-
-TEXT="$1"
 NAME="$2"
 
 [[ $( echo "${NAME}" | wc -l ) -ge 3 ]] && echo -n "$2" && exit 0
 [[ "${NAME:0:1}" == ">" ]] && echo -n "$2" && exit 0
 [[ "${NAME:0:2}" == "> " ]] && echo -n "$2" && exit 0
 [[ "${NAME:1:1}" == " " ]] && [[ "${NAME: -2}" == ": " ]] && echo -n "$2" && exit 0
+[[ "${NAME:3:1}" == " " ]] && [[ "${NAME: -4}" == ":** " ]] && echo -n "$2" && exit 0
+
+
+SPLIT="_SPLIT_FOR_MT_"
+TEXT="$1"
 
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
@@ -278,15 +279,6 @@ zulip.myzulip)
   #   TEXT="${TEXT%](/user_uploads/*}](https://wtfipfs.zulipchat.com/user_uploads/${TEXT##*](/user_uploads/}"
   # fi
   ;;
-api.tox)
-  LABLE="O"
-  ;;
-irc.myirc)
-  LABLE="I"
-  ;;
-irc.irc2p)
-  LABLE="2"
-  ;;
 discord.mydiscord)
   LABLE="D"
       # block_msg
@@ -307,6 +299,15 @@ discord.mydiscord)
     fi
   fi
 
+  ;;
+irc.myirc)
+  LABLE="I"
+  ;;
+irc.irc2p)
+  LABLE="2"
+  ;;
+api.tox)
+  LABLE="O"
   ;;
 api.in)
   LABLE="0"
