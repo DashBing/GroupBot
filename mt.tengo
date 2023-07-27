@@ -1,7 +1,9 @@
 os := import("os")
 fmt := import("fmt")
 
-/* fmt.println("####") */
+/* fmt.println("############") */
+/* fmt.println("## START") */
+/* fmt.println("############") */
 /* fmt.println(msgText) */
 /* fmt.println(msgUsername) */
 /* fmt.println(inAccount) */
