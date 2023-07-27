@@ -61,7 +61,8 @@ for (( ; i < 4; i++)); do
     # [[ $(echo "$text" | wc -l) -ne 1 ]] && continue
     username=$(echo "$username" | tail -n1 )
 
-    if [[ "$gateway" != "gateway2" && $(echo "$text" | wc -l) -eq 1 ]]; then
+    # if [[ "$gateway" != "gateway2" && $(echo "$text" | wc -l) -eq 1 ]]; then
+    if $(echo "$text" | wc -l) -eq 1 ]]; then
       # if [[ "$gateway" == "gateway1" ]]; then
       #   gateway=gateway11
       # fi

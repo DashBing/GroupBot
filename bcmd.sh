@@ -4,14 +4,13 @@
 set -f
 
 
-
-
 is_me(){
 
   if [[ "$username" = 'X liqsliu: ' ]]; then
     return
   else
     return 1
+  fi
 
 
 }
