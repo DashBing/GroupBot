@@ -43,12 +43,15 @@ block_msg(){
   echo -n "blockthismessage"
   exit 0
 }
+
+
+
 if [[ $3 = api.cmd ]]; then
   :
 elif [[ $6 = gateway6 ]]; then
   :
-elif [[ $2 = "wtfipfs" ]] && [[ $8 = xmpp.myxmpp ]]; then
-  block_msg
+# elif [[ $2 = "wtfipfs" ]] && [[ $8 = xmpp.myxmpp ]]; then
+#   block_msg
 elif [[ $2 = "liqsliu" ]] && [[ $8 = api.cmd ]] && [[ $3 = xmpp.myxmpp ]]; then
   :
 else
@@ -101,53 +104,6 @@ xmpp.*)
     NAME=${NAME%:\*\*\ }
     NAME=${NAME#* }
     TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
-  fi
-  ;;
-# elif [[ "$3" == "telegram.mytelegram" ]]; then
-# telegram.mytelegram)
-telegram.*)
-  if [[ "$2" == "Telegram" ]]; then
-    block_msg
-  fi
-  LABLE="T"
-  if [[ "$2" == "Telegram" ]]; then
-# https://github.com/42wim/matterbridge/pull/1272
-#    echo "block the msg" &>> ~/tera/test_tengo.log
-    echo -n "blockthismessage"
-    # echo -n "bot"
-    exit 0
-  fi
-
-  if [[ "${TEXT:0:15}" == "Forwarded from " ]]; then
-    # echo -n "bot"
-    echo -n "blockthismessage"
-    exit 0
-  fi
-
-
-
-  if [[ $(echo "$TEXT" | grep -c -G "^> reply_from_telegram$" ) -eq 1 ]]; then
-    # QT=$( python3 "$SH_PATH/get_msg.py" reply_msg "$(echo "$TEXT" | sed '/^> reply_from_telegram$/,$d')" "$2" "$5" ) || QT=""
-    QT=""
-    [[ -z "$QT" ]] && QT=$( echo "$TEXT" | sed '0,/^> reply_from_telegram$/d' )
-    QT=$(echo "$QT" | sed '1s/^T bot: //' | sed 's/^/> /' )
-
-  fi
-
-  if [[ "$NAME" == "Group" ]]; then
-    NAME="liqsliu"
-  elif [[ "$NAME" == "‏⁠‎ l​i​q​s‏l​i​u​‎" ]]; then
-    NAME="liqsliu"
-  fi
-
-  if [[ "${TEXT:0:15}" == "Forwarded from " ]]; then
-#    TEXT=$( echo "${TEXT}" | sed -r '1s/[^:]+: //' )
-    block_msg
-  fi
-
-  if [[ $(echo "$TEXT" | grep -c -G "^> reply_from_telegram$" ) -eq 1 ]]; then
-    #skip nick
-    TEXT=$(echo "$TEXT" | sed '/^> reply_from_telegram$/,$d';)
   fi
   ;;
 # elif [[ "$3" == "matrix.mymatrix" ]]; then
@@ -273,6 +229,53 @@ chang_name_for_qt_from_matrix(){
     TEXT=$( echo "$TEXT" | sed -E '/^([^$>]|>[^ ])/,$!d' )
   fi
   ;;
+# elif [[ "$3" == "telegram.mytelegram" ]]; then
+# telegram.mytelegram)
+telegram.*)
+  if [[ "$2" == "Telegram" ]]; then
+    block_msg
+  fi
+  LABLE="T"
+  if [[ "$2" == "Telegram" ]]; then
+# https://github.com/42wim/matterbridge/pull/1272
+#    echo "block the msg" &>> ~/tera/test_tengo.log
+    echo -n "blockthismessage"
+    # echo -n "bot"
+    exit 0
+  fi
+
+  if [[ "${TEXT:0:15}" == "Forwarded from " ]]; then
+    # echo -n "bot"
+    echo -n "blockthismessage"
+    exit 0
+  fi
+
+
+
+  if [[ $(echo "$TEXT" | grep -c -G "^> reply_from_telegram$" ) -eq 1 ]]; then
+    # QT=$( python3 "$SH_PATH/get_msg.py" reply_msg "$(echo "$TEXT" | sed '/^> reply_from_telegram$/,$d')" "$2" "$5" ) || QT=""
+    QT=""
+    [[ -z "$QT" ]] && QT=$( echo "$TEXT" | sed '0,/^> reply_from_telegram$/d' )
+    QT=$(echo "$QT" | sed '1s/^T bot: //' | sed 's/^/> /' )
+
+  fi
+
+  if [[ "$NAME" == "Group" ]]; then
+    NAME="liqsliu"
+  elif [[ "$NAME" == "‏⁠‎ l​i​q​s‏l​i​u​‎" ]]; then
+    NAME="liqsliu"
+  fi
+
+  if [[ "${TEXT:0:15}" == "Forwarded from " ]]; then
+#    TEXT=$( echo "${TEXT}" | sed -r '1s/[^:]+: //' )
+    block_msg
+  fi
+
+  if [[ $(echo "$TEXT" | grep -c -G "^> reply_from_telegram$" ) -eq 1 ]]; then
+    #skip nick
+    TEXT=$(echo "$TEXT" | sed '/^> reply_from_telegram$/,$d';)
+  fi
+  ;;
 zulip.myzulip)
   LABLE="Z"
   # if [[ $(echo "$TEXT" | grep -c -P "^\[.*\]\(/user_uploads/.*\)$" ) -eq 1 ]]; then
@@ -361,7 +364,9 @@ unset QT
 
 
 if [[ -n "$4" ]] ; then
-  if [[ "$9" == "xmpp" ]] ; then
+  case $9 in
+  xmpp)
+  # if [[ "$9" == "xmpp" ]] ; then
     if [[ "$NAME" == "C twitter: " ]]; then
       TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' )
     elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
@@ -387,7 +392,97 @@ if [[ -n "$4" ]] ; then
     fi
     NAME="$QT
 **${NAME}:** "
-  elif [[ "$9" == "telegram" ]] ; then
+    ;;
+  irc)
+  # elif [[ "$9" == "irc" ]] ; then
+    NAME=$(echo "$NAME" | tail -n1)
+#    echo -n "$(echo "$NAME" | tail -n1)"
+    TEXT=$(echo "$TEXT" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
+    if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
+      QT=$(echo "$NAME" | head -n 1 | sed 's/> //' )
+      TEXT="$TEXT RE: $QT"
+    fi
+    ;;
+  matrix)
+  # elif [[ "$9" == "matrix" ]] ; then
+    if [[ "${5}" == "-1001193563578" ]] ; then
+      if [[ "${10}" == "#ipfs:mozilla.org" ]] ; then
+        block_msg
+      fi
+    fi
+    tmp=$NAME
+    NAME=$(echo "$NAME" | tail -n1)
+    # NAME=$(echo "$NAME" | cut -d ":" -f 1)
+    NAME=${NAME%: }
+    NAME="**${NAME}:** "
+    qt=$(echo "$tmp" | sed '$d')
+    [[ -n "$qt" ]] && NAME="$qt
+
+$NAME"
+    if [[ -z "$TEXT" ]]; then
+#      [[ $(echo "$NAME" | wc -l) -ge 3 ]] && [[ $(echo "$NAME" | grep -c -G '^$') -ge 1 ]] && echo "$NAME" | tail -n1 && echo "$NAME" | sed '/^$/,$d' && NAME=""
+      [[ $(echo "$NAME" | wc -l) -ge 3 ]] && NAME=$(echo "$NAME" | tail -n1; echo "$NAME" | sed '/^$/,$d')
+    else
+      if [[ "$NAME" == "C twitter: " ]]; then
+        TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' | sed '2s/^/\n/')
+      elif [[ "$NAME" == "C bot: " && "${1:0:16}" == "twitter to text:" ]]; then
+        TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' | sed '2s/^/\n/')
+      elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
+        TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' | sed '2s/^/\n/')
+      else
+        :
+        # if [[ -n "$(echo "$NAME" | sed '$d')" ]]; then
+        # if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
+        #   QT=$(echo "$NAME" | sed '$d')
+        # fi
+      fi
+      TEXT="$NAME$TEXT"
+      unset NAME
+    fi
+    ;;
+  discord)
+  # elif [[ "$9" == "discord" ]] ; then
+    if [[ "${10}" == "wtfipfs" ]] ; then
+      if [[ "${5}" == "#wtfipfs:matrix.org" ]] ; then
+        block_msg
+      elif [[ "${5}" == "-1001503043923" ]] ; then
+        # new wtfipfs tg group
+        block_msg
+      fi
+    elif [[ "${10}" == "wtfipfs2" ]] ; then
+      # if [[ "${3}" != "api.in" ]] ; then
+      if [[ "${5}" == "#ipfs:mozilla.org" ]] ; then
+        block_msg
+      elif [[ "${5}" == "-1001193563578" ]] ; then
+        block_msg
+      fi
+    fi
+#     if [[ "$NAME" == "C twitter: " ]]; then
+#       :
+# #      NAME="bot"
+#     else
+#     fi
+    if [[ "$NAME" == "C twitter: " ]]; then
+      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' )
+    elif [[ "$NAME" == "C bot: " && "${1:0:16}" == "twitter to text:" ]]; then
+      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
+    elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
+      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
+    fi
+
+    if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
+      TEXT="$(echo "$NAME" | sed '$d')
+$TEXT"
+    fi
+
+    NAME=$(echo "$NAME" | tail -n1)
+    NAME="${NAME:0:-2}"
+    if [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
+      NAME="fixme"
+    fi
+    ;;
+  telegram)
+  # elif [[ "$9" == "telegram" ]] ; then
     if [[ "${10}" == "-1001193563578" ]] ; then
       block_msg
     fi
@@ -446,50 +541,10 @@ if [[ -n "$4" ]] ; then
     NAME="$QT
 $M *$NAME*: "
 
-  elif [[ "$9" == "irc" ]] ; then
-    NAME=$(echo "$NAME" | tail -n1)
-#    echo -n "$(echo "$NAME" | tail -n1)"
-    TEXT=$(echo "$TEXT" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
-    if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
-      QT=$(echo "$NAME" | head -n 1 | sed 's/> //' )
-      TEXT="$TEXT RE: $QT"
-    fi
-  elif [[ "$9" == "matrix" ]] ; then
-    if [[ "${5}" == "-1001193563578" ]] ; then
-      if [[ "${10}" == "#ipfs:mozilla.org" ]] ; then
-        block_msg
-      fi
-    fi
-    tmp=$NAME
-    NAME=$(echo "$NAME" | tail -n1)
-    # NAME=$(echo "$NAME" | cut -d ":" -f 1)
-    NAME=${NAME%: }
-    NAME="**${NAME}:** "
-    qt=$(echo "$tmp" | sed '$d')
-    [[ -n "$qt" ]] && NAME="$qt
 
-$NAME"
-    if [[ -z "$TEXT" ]]; then
-#      [[ $(echo "$NAME" | wc -l) -ge 3 ]] && [[ $(echo "$NAME" | grep -c -G '^$') -ge 1 ]] && echo "$NAME" | tail -n1 && echo "$NAME" | sed '/^$/,$d' && NAME=""
-      [[ $(echo "$NAME" | wc -l) -ge 3 ]] && NAME=$(echo "$NAME" | tail -n1; echo "$NAME" | sed '/^$/,$d')
-    else
-      if [[ "$NAME" == "C twitter: " ]]; then
-        TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' | sed '2s/^/\n/')
-      elif [[ "$NAME" == "C bot: " && "${1:0:16}" == "twitter to text:" ]]; then
-        TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' | sed '2s/^/\n/')
-      elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
-        TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' | sed '2s/^/\n/')
-      else
-        :
-        # if [[ -n "$(echo "$NAME" | sed '$d')" ]]; then
-        # if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
-        #   QT=$(echo "$NAME" | sed '$d')
-        # fi
-      fi
-      TEXT="$NAME$TEXT"
-      unset NAME
-    fi
-  elif [[ "$9" == "zulip" ]] ; then
+    ;;
+  zulip)
+  # elif [[ "$9" == "zulip" ]] ; then
     if [[ "$NAME" == "C twitter: " ]]; then
       TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' )
     elif [[ "$NAME" == "C bot: " && "${1:0:16}" == "twitter to text:" ]]; then
@@ -497,43 +552,9 @@ $NAME"
     elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
       TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
     fi
-  elif [[ "$9" == "discord" ]] ; then
-    if [[ "${10}" == "wtfipfs" ]] ; then
-      if [[ "${5}" == "#wtfipfs:matrix.org" ]] ; then
-        block_msg
-      elif [[ "${5}" == "-1001503043923" ]] ; then
-        # new wtfipfs tg group
-        block_msg
-      fi
-    elif [[ "${10}" == "wtfipfs2" ]] ; then
-      # if [[ "${3}" != "api.in" ]] ; then
-      if [[ "${5}" == "#ipfs:mozilla.org" ]] ; then
-        block_msg
-      elif [[ "${5}" == "-1001193563578" ]] ; then
-        block_msg
-      fi
-    fi
-#     if [[ "$NAME" == "C twitter: " ]]; then
-#       :
-# #      NAME="bot"
-#     else
-#     fi
-    if [[ "$NAME" == "C twitter: " ]]; then
-      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' )
-    elif [[ "$NAME" == "C bot: " && "${1:0:16}" == "twitter to text:" ]]; then
-      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
-    elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
-      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
-    fi
-
-    if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
-      TEXT="$(echo "$NAME" | sed '$d')
-$TEXT"
-    fi
-
-    NAME=$(echo "$NAME" | tail -n1)
-    NAME="${NAME:0:-2}"
-  fi
+    ;;
+  esac
+  # fi
 fi
 
 
