@@ -15,6 +15,7 @@ A => B : 在A群会生成傀儡用户模仿B群用户发消息
 @liqsliu:matrix.org
 
 第三方(非本频道管理，无管理)镜像频道:
+#wtfipfs:libera.chat <=> irc( #wtfipfs )
 #xmpp_ipfs_salas.suchat.org:matrix.org <=> xmpp( ipfs@salas.suchat.org )
 #_bifrost_ipfs_salas.suchat.org:aria-net.org <=> xmpp( ipfs@salas.suchat.org )
 
