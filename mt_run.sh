@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd ~/bot/ && bash init.sh || exit 1
 
 cd ~/
 

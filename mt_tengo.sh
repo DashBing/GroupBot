@@ -129,6 +129,30 @@ chang_name_from_bifrost(){
   # local matrix_name=$1
   if [[ "${matrix_name: -12}" == ":libera.chat" ]]; then
     LABLE=I
+    if [[ "${matrix_name:0:6}" == "_xmpp_" ]]; then
+      block_msg
+      LABLE="X"
+      matrix_name=${matrix_name:6}
+      _chang_name_from_bifrost
+      return 0
+    elif [[ "${matrix_name:0:9}" == "_discord_" ]]; then
+      block_msg
+      LABLE="D"
+    elif [[ "${matrix_name:0:9}" == "telegram_" ]]; then
+      block_msg
+      LABLE="T"
+    elif [[ "${matrix_name%%=40*}" == "_neb_rssbot_" ]]; then
+      block_msg
+      LABLE="M"
+      # NAME="rssbot"
+      matrix_name=rssbot
+      return 0
+    elif [[ "${matrix_name: -15}" == "[m]:libera.chat" ]]; then
+      # from matrix to irc, then back to matrix
+      block_msg
+      LABLE="T"
+    fi
+    return 1
   elif [[ "${matrix_name: -13}" == ":aria-net.org" ]]; then
     if [[ "${matrix_name:0:9}" == "_bifrost_" ]]; then
       LABLE="X"
@@ -137,11 +161,13 @@ chang_name_from_bifrost(){
     fi
   elif [[ "${matrix_name: -11}" == ":matrix.org" ]]; then
     if [[ "${matrix_name:0:6}" == "_xmpp_" ]]; then
+      block_msg
       LABLE="X"
       matrix_name=${matrix_name:6}
       _chang_name_from_bifrost
       return 0
     elif [[ "${matrix_name%%=40*}" == "_neb_rssbot_" ]]; then
+      block_msg
       LABLE="M"
       # NAME="rssbot"
       matrix_name=rssbot

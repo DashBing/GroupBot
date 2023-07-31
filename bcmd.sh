@@ -83,9 +83,9 @@ cmds() {
   ping)
     if [[ -z "$2" ]]; then
       echo "pong"
-      if is_me; then
-        echo "pong"
-      fi
+      # if is_me; then
+      #   echo "pong"
+      # fi
 
     else
       local host=$(echo "$2" | grep -o -P "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" | head -n1)
