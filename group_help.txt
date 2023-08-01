@@ -6,7 +6,7 @@
 X xmpp群( ipfs@salas.suchat.org wtfipfs@chat.yax.im )
 I irc频道( #wtfipfs )
 M matrix群( #wtfipfs:matrix.org )
-O tox群(BOTID: 2436380A97D9FE41898C2482DF9B52428EBE5E86E2427B4A3EFEDCC7E139136FB40917DAAFFF )
+T tox群(BOTID: 2436380A97D9FE41898C2482DF9B52428EBE5E86E2427B4A3EFEDCC7E139136FB40917DAAFFF )
 D discord( https://discord.gg/G6YmQuCJFD )
 ...
 C bot自动回复或推送的新闻
@@ -29,5 +29,8 @@ C bot自动回复或推送的新闻
 xmpp: liqsliu@suchat.org liqsliu@yax.im liqsliu@pimux.de liqsliu@macaw.me
 matrix: @liqsliu:matrix.org @liqsliu:mozilla.org
 discord: liqsliu
+
+
+G telegram群( https://t.me/wtfipfs_fucktelegram )，需要的话可以进，不推荐。
 
 本群和ipfs官方没关系。
