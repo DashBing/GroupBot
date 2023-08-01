@@ -739,3 +739,630 @@
 01/08/2023 17:55:08: prof: ERR: Error sending desktop notification:
 01/08/2023 17:55:08: prof: ERR:   -> Message : Mao-Tse-Tung in 红岸青芽外部交流群 (win 13)
 01/08/2023 17:55:08: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:56:41: prof: ERR: Error sending desktop notification:
+01/08/2023 17:56:41: prof: ERR:   -> Message : wtugsjiidxv in 红岸青芽外部交流群 (win 13)
+01/08/2023 17:56:41: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:56:49: prof: ERR: Error sending desktop notification:
+01/08/2023 17:56:49: prof: ERR:   -> Message : liqsliu in ipfs (win 2)
+01/08/2023 17:56:49: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:56:49: prof: ERR: Error sending desktop notification:
+01/08/2023 17:56:49: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 17:56:49: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:56:50: prof: ERR: Error sending desktop notification:
+01/08/2023 17:56:50: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 17:56:50: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:56:50: prof: ERR: Error sending desktop notification:
+01/08/2023 17:56:50: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 17:56:50: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:56:51: prof: ERR: Error sending desktop notification:
+01/08/2023 17:56:51: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 17:56:51: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:56:51: prof: ERR: Error sending desktop notification:
+01/08/2023 17:56:51: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 17:56:51: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:56:51: prof: ERR: Error sending desktop notification:
+01/08/2023 17:56:51: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 17:56:51: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:56:51: prof: ERR: Error sending desktop notification:
+01/08/2023 17:56:51: prof: ERR:   -> Message : 海参崴城市投资 in 红岸青芽外部交流群 (win 13)
+01/08/2023 17:56:51: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:56:51: prof: ERR: Error sending desktop notification:
+01/08/2023 17:56:51: prof: ERR:   -> Message : wtugsjiidxv in 红岸青芽外部交流群 (win 13)
+01/08/2023 17:56:51: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:56:55: prof: ERR: Error sending desktop notification:
+01/08/2023 17:56:55: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 17:56:55: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:56:55: prof: ERR: Error sending desktop notification:
+01/08/2023 17:56:55: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 17:56:55: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:57:05: prof: ERR: Error sending desktop notification:
+01/08/2023 17:57:05: prof: ERR:   -> Message : liqsliu in ipfs (win 2)
+01/08/2023 17:57:05: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:57:05: prof: ERR: Error sending desktop notification:
+01/08/2023 17:57:05: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 17:57:05: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:57:05: prof: ERR: Error sending desktop notification:
+01/08/2023 17:57:05: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 17:57:05: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:57:05: prof: ERR: Error sending desktop notification:
+01/08/2023 17:57:05: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 17:57:05: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:57:05: prof: ERR: Error sending desktop notification:
+01/08/2023 17:57:05: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 17:57:05: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:57:15: prof: ERR: Error sending desktop notification:
+01/08/2023 17:57:15: prof: ERR:   -> Message : 海参崴城市投资 in 红岸青芽外部交流群 (win 13)
+01/08/2023 17:57:15: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:57:23: prof: ERR: Error sending desktop notification:
+01/08/2023 17:57:23: prof: ERR:   -> Message : 海参崴城市投资 in 红岸青芽外部交流群 (win 13)
+01/08/2023 17:57:23: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:57:35: prof: ERR: Error sending desktop notification:
+01/08/2023 17:57:35: prof: ERR:   -> Message : 海参崴城市投资 in 红岸青芽外部交流群 (win 13)
+01/08/2023 17:57:35: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:58:23: prof: ERR: Error sending desktop notification:
+01/08/2023 17:58:23: prof: ERR:   -> Message : wtugsjiidxv in 红岸青芽外部交流群 (win 13)
+01/08/2023 17:58:23: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:58:38: prof: ERR: Error sending desktop notification:
+01/08/2023 17:58:38: prof: ERR:   -> Message : honeybee in ipfs (win 2)
+01/08/2023 17:58:38: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:58:38: prof: ERR: Error sending desktop notification:
+01/08/2023 17:58:38: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 17:58:38: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:58:38: prof: ERR: Error sending desktop notification:
+01/08/2023 17:58:38: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 17:58:38: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:58:39: prof: ERR: Error sending desktop notification:
+01/08/2023 17:58:39: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 17:58:39: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:58:39: prof: ERR: Error sending desktop notification:
+01/08/2023 17:58:39: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 17:58:39: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:58:55: prof: ERR: Error sending desktop notification:
+01/08/2023 17:58:55: prof: ERR:   -> Message : pxlji in ipfs (win 2)
+01/08/2023 17:58:55: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:58:56: prof: ERR: Error sending desktop notification:
+01/08/2023 17:58:56: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 17:58:56: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:58:56: prof: ERR: Error sending desktop notification:
+01/08/2023 17:58:56: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 17:58:56: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:58:56: prof: ERR: Error sending desktop notification:
+01/08/2023 17:58:56: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 17:58:56: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:59:00: prof: ERR: Error sending desktop notification:
+01/08/2023 17:59:00: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 17:59:00: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:59:08: prof: ERR: Error sending desktop notification:
+01/08/2023 17:59:08: prof: ERR:   -> Message : 海参崴城市投资 in 红岸青芽外部交流群 (win 13)
+01/08/2023 17:59:08: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:59:51: prof: ERR: Error sending desktop notification:
+01/08/2023 17:59:51: prof: ERR:   -> Message : pxlji in ipfs (win 2)
+01/08/2023 17:59:51: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:59:51: prof: ERR: Error sending desktop notification:
+01/08/2023 17:59:51: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 17:59:51: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:59:51: prof: ERR: Error sending desktop notification:
+01/08/2023 17:59:51: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 17:59:51: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:59:51: prof: ERR: Error sending desktop notification:
+01/08/2023 17:59:51: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 17:59:51: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 17:59:52: prof: ERR: Error sending desktop notification:
+01/08/2023 17:59:52: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 17:59:52: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:00:03: prof: ERR: Error sending desktop notification:
+01/08/2023 18:00:03: prof: ERR:   -> Message : 海参崴城市投资 in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:00:03: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:00:27: prof: ERR: Error sending desktop notification:
+01/08/2023 18:00:27: prof: ERR:   -> Message : 海参崴城市投资 in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:00:27: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:01:27: prof: ERR: Error sending desktop notification:
+01/08/2023 18:01:27: prof: ERR:   -> Message : pxlji in ipfs (win 2)
+01/08/2023 18:01:27: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:01:27: prof: ERR: Error sending desktop notification:
+01/08/2023 18:01:27: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:01:27: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:01:27: prof: ERR: Error sending desktop notification:
+01/08/2023 18:01:27: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:01:27: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:01:27: prof: ERR: Error sending desktop notification:
+01/08/2023 18:01:27: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:01:27: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:01:30: prof: ERR: Error sending desktop notification:
+01/08/2023 18:01:30: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:01:30: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:01:39: prof: ERR: Error sending desktop notification:
+01/08/2023 18:01:39: prof: ERR:   -> Message : bot in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:01:39: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:01:55: prof: ERR: Error sending desktop notification:
+01/08/2023 18:01:55: prof: ERR:   -> Message : bot in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:01:55: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:02:04: prof: ERR: Error sending desktop notification:
+01/08/2023 18:02:04: prof: ERR:   -> Message : liqsliu in wtfipfs (win 5)
+01/08/2023 18:02:04: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:02:04: prof: ERR: Error sending desktop notification:
+01/08/2023 18:02:04: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:02:04: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:02:06: prof: ERR: Error sending desktop notification:
+01/08/2023 18:02:06: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:02:06: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:02:07: prof: ERR: Error sending desktop notification:
+01/08/2023 18:02:07: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:02:07: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:02:14: prof: ERR: Error sending desktop notification:
+01/08/2023 18:02:14: prof: ERR:   -> Message : 海参崴城市投资 in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:02:14: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:02:56: prof: ERR: Error sending desktop notification:
+01/08/2023 18:02:56: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:02:56: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:02:56: prof: ERR: Error sending desktop notification:
+01/08/2023 18:02:56: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:02:56: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:02:56: prof: ERR: Error sending desktop notification:
+01/08/2023 18:02:56: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:02:56: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:02:56: prof: ERR: Error sending desktop notification:
+01/08/2023 18:02:56: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:02:56: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:02:56: prof: ERR: Error sending desktop notification:
+01/08/2023 18:02:56: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:02:56: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:02:57: prof: ERR: Error sending desktop notification:
+01/08/2023 18:02:57: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:02:57: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:02:58: prof: ERR: Error sending desktop notification:
+01/08/2023 18:02:58: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:02:58: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:02:58: prof: ERR: Error sending desktop notification:
+01/08/2023 18:02:58: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:02:58: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:02:59: prof: ERR: Error sending desktop notification:
+01/08/2023 18:02:59: prof: ERR:   -> Message : bot in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:02:59: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:03:36: prof: ERR: Error sending desktop notification:
+01/08/2023 18:03:36: prof: ERR:   -> Message : wtugsjiidxv in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:03:36: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:03:46: prof: ERR: Error sending desktop notification:
+01/08/2023 18:03:46: prof: ERR:   -> Message : 泰伦 in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:03:46: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:04: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:04: prof: ERR:   -> Message : 泰伦 in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:04:04: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:09: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:09: prof: ERR:   -> Message : pxlji in ipfs (win 2)
+01/08/2023 18:04:09: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:09: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:09: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:04:09: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:10: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:10: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:04:10: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:10: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:10: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:04:10: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:11: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:11: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:04:11: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:14: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:14: prof: ERR:   -> Message : liqsliu in ipfs (win 2)
+01/08/2023 18:04:14: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:14: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:14: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:04:14: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:14: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:14: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:04:14: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:14: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:14: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:04:14: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:14: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:14: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:04:14: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:25: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:25: prof: ERR:   -> Message : pxlji in ipfs (win 2)
+01/08/2023 18:04:25: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:25: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:25: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:04:25: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:25: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:25: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:04:25: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:25: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:25: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:04:25: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:26: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:26: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:04:26: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:34: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:34: prof: ERR:   -> Message : ldpc in ipfs (win 2)
+01/08/2023 18:04:34: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:34: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:34: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:04:34: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:35: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:35: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:04:35: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:35: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:35: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:04:35: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:35: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:35: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:04:35: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:42: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:42: prof: ERR:   -> Message : liqsliu in ipfs (win 2)
+01/08/2023 18:04:42: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:42: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:42: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:04:42: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:43: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:43: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:04:43: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:43: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:43: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:04:43: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:44: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:44: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:04:44: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:53: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:53: prof: ERR:   -> Message : liqsliu in ipfs (win 2)
+01/08/2023 18:04:53: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:53: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:53: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:04:53: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:53: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:53: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:04:53: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:53: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:53: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:04:53: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:04:54: prof: ERR: Error sending desktop notification:
+01/08/2023 18:04:54: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:04:54: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:02: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:02: prof: ERR:   -> Message : liqsliu in ipfs (win 2)
+01/08/2023 18:05:02: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:02: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:02: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:05:02: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:03: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:03: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:05:03: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:03: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:03: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:05:03: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:05: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:05: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:05:05: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:05: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:05: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:05:05: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:05: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:05: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:05:05: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:07: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:07: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:05:07: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:07: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:07: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:05:07: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:17: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:17: prof: ERR:   -> Message : pxlji in ipfs (win 2)
+01/08/2023 18:05:17: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:17: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:17: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:05:17: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:18: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:18: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:05:18: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:18: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:18: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:05:18: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:18: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:18: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:05:18: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:34: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:34: prof: ERR:   -> Message : pxlji in ipfs (win 2)
+01/08/2023 18:05:34: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:34: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:34: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:05:34: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:34: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:34: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:05:34: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:35: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:35: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:05:35: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:36: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:36: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:05:36: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:39: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:39: prof: ERR:   -> Message : liqsliu in ipfs (win 2)
+01/08/2023 18:05:39: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:39: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:39: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:05:39: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:40: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:40: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:05:40: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:40: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:40: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:05:40: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:40: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:40: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:05:40: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:50: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:50: prof: ERR:   -> Message : liqsliu in ipfs (win 2)
+01/08/2023 18:05:50: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:50: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:50: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:05:50: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:51: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:51: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:05:51: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:51: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:51: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:05:51: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:05:51: prof: ERR: Error sending desktop notification:
+01/08/2023 18:05:51: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:05:51: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:06:02: prof: ERR: Error sending desktop notification:
+01/08/2023 18:06:02: prof: ERR:   -> Message : 海参崴城市投资 in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:06:02: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:06:10: prof: ERR: Error sending desktop notification:
+01/08/2023 18:06:10: prof: ERR:   -> Message : 海参崴城市投资 in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:06:10: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:06:10: prof: ERR: Error sending desktop notification:
+01/08/2023 18:06:10: prof: ERR:   -> Message : pxlji in ipfs (win 2)
+01/08/2023 18:06:10: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:06:12: prof: ERR: Error sending desktop notification:
+01/08/2023 18:06:12: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:06:12: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:06:12: prof: ERR: Error sending desktop notification:
+01/08/2023 18:06:12: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:06:12: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:06:12: prof: ERR: Error sending desktop notification:
+01/08/2023 18:06:12: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:06:12: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:06:13: prof: ERR: Error sending desktop notification:
+01/08/2023 18:06:13: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:06:13: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:06:31: prof: ERR: Error sending desktop notification:
+01/08/2023 18:06:31: prof: ERR:   -> Message : jabrss@cmeerw.net/JabRSS (win 14)
+01/08/2023 18:06:31: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:06:54: prof: ERR: Error sending desktop notification:
+01/08/2023 18:06:54: prof: ERR:   -> Message : liqsliu in ipfs (win 2)
+01/08/2023 18:06:54: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:06:55: prof: ERR: Error sending desktop notification:
+01/08/2023 18:06:55: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:06:55: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:06:55: prof: ERR: Error sending desktop notification:
+01/08/2023 18:06:55: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:06:55: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:06:55: prof: ERR: Error sending desktop notification:
+01/08/2023 18:06:55: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:06:55: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:07:04: prof: ERR: Error sending desktop notification:
+01/08/2023 18:07:04: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:07:04: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:07:58: prof: ERR: Error sending desktop notification:
+01/08/2023 18:07:58: prof: ERR:   -> Message : 泰伦 in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:07:58: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:08:20: prof: ERR: Error sending desktop notification:
+01/08/2023 18:08:20: prof: ERR:   -> Message : 海参崴城市投资 in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:08:20: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:09:27: prof: ERR: Error sending desktop notification:
+01/08/2023 18:09:27: prof: ERR:   -> Message : 泰伦 in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:09:27: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:09:42: prof: ERR: Error sending desktop notification:
+01/08/2023 18:09:42: prof: ERR:   -> Message : 泰伦 in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:09:42: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:10:47: prof: ERR: Error sending desktop notification:
+01/08/2023 18:10:47: prof: ERR:   -> Message : pxlji in ipfs (win 2)
+01/08/2023 18:10:47: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:10:47: prof: ERR: Error sending desktop notification:
+01/08/2023 18:10:47: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:10:47: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:10:47: prof: ERR: Error sending desktop notification:
+01/08/2023 18:10:47: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:10:47: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:10:47: prof: ERR: Error sending desktop notification:
+01/08/2023 18:10:47: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:10:47: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:10:48: prof: ERR: Error sending desktop notification:
+01/08/2023 18:10:48: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:10:48: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:11:25: prof: ERR: Error sending desktop notification:
+01/08/2023 18:11:25: prof: ERR:   -> Message : pxlji in ipfs (win 2)
+01/08/2023 18:11:25: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:11:25: prof: ERR: Error sending desktop notification:
+01/08/2023 18:11:25: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:11:25: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:11:25: prof: ERR: Error sending desktop notification:
+01/08/2023 18:11:25: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:11:25: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:11:25: prof: ERR: Error sending desktop notification:
+01/08/2023 18:11:25: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:11:25: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:11:26: prof: ERR: Error sending desktop notification:
+01/08/2023 18:11:26: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:11:26: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:12:30: prof: ERR: Error sending desktop notification:
+01/08/2023 18:12:30: prof: ERR:   -> Message : liqsliu in ipfs (win 2)
+01/08/2023 18:12:30: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:12:30: prof: ERR: Error sending desktop notification:
+01/08/2023 18:12:30: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:12:30: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:12:30: prof: ERR: Error sending desktop notification:
+01/08/2023 18:12:30: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:12:30: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:12:30: prof: ERR: Error sending desktop notification:
+01/08/2023 18:12:30: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:12:30: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:12:30: prof: ERR: Error sending desktop notification:
+01/08/2023 18:12:30: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:12:30: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:14:04: prof: ERR: Error sending desktop notification:
+01/08/2023 18:14:04: prof: ERR:   -> Message : 海参崴城市投资 in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:14:04: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:14:20: prof: ERR: Error sending desktop notification:
+01/08/2023 18:14:20: prof: ERR:   -> Message : 海参崴城市投资 in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:14:20: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:15:40: prof: ERR: Error sending desktop notification:
+01/08/2023 18:15:40: prof: ERR:   -> Message : 泰伦 in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:15:40: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:16:00: prof: ERR: Error sending desktop notification:
+01/08/2023 18:16:00: prof: ERR:   -> Message : pxlji in ipfs (win 2)
+01/08/2023 18:16:00: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:16:00: prof: ERR: Error sending desktop notification:
+01/08/2023 18:16:00: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:16:00: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:16:00: prof: ERR: Error sending desktop notification:
+01/08/2023 18:16:00: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:16:00: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:16:01: prof: ERR: Error sending desktop notification:
+01/08/2023 18:16:01: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:16:01: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:16:01: prof: ERR: Error sending desktop notification:
+01/08/2023 18:16:01: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:16:01: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:16:08: prof: ERR: Error sending desktop notification:
+01/08/2023 18:16:08: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:16:08: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:16:08: prof: ERR: Error sending desktop notification:
+01/08/2023 18:16:08: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:16:08: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:16:08: prof: ERR: Error sending desktop notification:
+01/08/2023 18:16:08: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:16:08: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:16:09: prof: ERR: Error sending desktop notification:
+01/08/2023 18:16:09: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:16:09: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:16:10: prof: ERR: Error sending desktop notification:
+01/08/2023 18:16:10: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:16:10: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:16:10: prof: ERR: Error sending desktop notification:
+01/08/2023 18:16:10: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:16:10: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:16:10: prof: ERR: Error sending desktop notification:
+01/08/2023 18:16:10: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:16:10: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:16:11: prof: ERR: Error sending desktop notification:
+01/08/2023 18:16:11: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:16:11: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:17:38: prof: ERR: Error sending desktop notification:
+01/08/2023 18:17:38: prof: ERR:   -> Message : 美鸡conversations.im in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:17:38: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:17:40: prof: ERR: Error sending desktop notification:
+01/08/2023 18:17:40: prof: ERR:   -> Message : 美鸡conversations.im in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:17:40: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:17:43: prof: ERR: Error sending desktop notification:
+01/08/2023 18:17:43: prof: ERR:   -> Message : 美鸡conversations.im in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:17:43: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:37: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:37: prof: ERR:   -> Message : wtugsjiidxv in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:18:37: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:40: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:40: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:18:40: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:40: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:40: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:18:40: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:40: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:40: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:18:40: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:41: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:41: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:18:41: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:42: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:42: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:18:42: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:42: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:42: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:18:42: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:42: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:42: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:18:42: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:42: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:42: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:18:42: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:47: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:47: prof: ERR:   -> Message : wtugsjiidxv in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:18:47: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:51: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:51: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:18:51: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:51: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:51: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:18:51: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:51: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:51: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:18:51: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:52: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:52: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:18:52: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:53: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:53: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:18:53: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:53: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:53: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:18:53: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:53: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:53: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:18:53: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:54: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:54: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:18:54: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:57: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:57: prof: ERR:   -> Message : wtugsjiidxv in 红岸青芽外部交流群 (win 13)
+01/08/2023 18:18:57: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:18:59: prof: ERR: Error sending desktop notification:
+01/08/2023 18:18:59: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:18:59: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:19:00: prof: ERR: Error sending desktop notification:
+01/08/2023 18:19:00: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:19:00: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:19:00: prof: ERR: Error sending desktop notification:
+01/08/2023 18:19:00: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:19:00: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:19:00: prof: ERR: Error sending desktop notification:
+01/08/2023 18:19:00: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:19:00: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:20:04: prof: ERR: Error sending desktop notification:
+01/08/2023 18:20:04: prof: ERR:   -> Message : pxlji in ipfs (win 2)
+01/08/2023 18:20:04: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:20:04: prof: ERR: Error sending desktop notification:
+01/08/2023 18:20:04: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:20:04: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:20:05: prof: ERR: Error sending desktop notification:
+01/08/2023 18:20:05: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:20:05: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:20:05: prof: ERR: Error sending desktop notification:
+01/08/2023 18:20:05: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:20:05: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:20:07: prof: ERR: Error sending desktop notification:
+01/08/2023 18:20:07: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:20:07: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:21:01: prof: ERR: Error sending desktop notification:
+01/08/2023 18:21:01: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:21:01: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:21:01: prof: ERR: Error sending desktop notification:
+01/08/2023 18:21:01: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:21:01: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:21:01: prof: ERR: Error sending desktop notification:
+01/08/2023 18:21:01: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:21:01: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:21:02: prof: ERR: Error sending desktop notification:
+01/08/2023 18:21:02: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:21:02: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:21:03: prof: ERR: Error sending desktop notification:
+01/08/2023 18:21:03: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:21:03: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:21:03: prof: ERR: Error sending desktop notification:
+01/08/2023 18:21:03: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:21:03: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:21:03: prof: ERR: Error sending desktop notification:
+01/08/2023 18:21:03: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:21:03: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:21:09: prof: ERR: Error sending desktop notification:
+01/08/2023 18:21:09: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:21:09: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus

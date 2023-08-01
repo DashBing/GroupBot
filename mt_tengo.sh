@@ -261,7 +261,7 @@ telegram.*)
   if [[ "$2" == "Telegram" ]]; then
     block_msg
   fi
-  LABLE="T"
+  LABLE="G"
   if [[ "$2" == "Telegram" ]]; then
 # https://github.com/42wim/matterbridge/pull/1272
 #    echo "block the msg" &>> ~/tera/test_tengo.log
