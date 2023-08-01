@@ -1366,3 +1366,18 @@
 01/08/2023 18:21:09: prof: ERR: Error sending desktop notification:
 01/08/2023 18:21:09: prof: ERR:   -> Message : bot in wtfipfs (win 9)
 01/08/2023 18:21:09: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:23:23: prof: ERR: Error sending desktop notification:
+01/08/2023 18:23:23: prof: ERR:   -> Message : liqsliu in ipfs (win 2)
+01/08/2023 18:23:23: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:23:23: prof: ERR: Error sending desktop notification:
+01/08/2023 18:23:23: prof: ERR:   -> Message : bot in wtfipfs (win 8)
+01/08/2023 18:23:23: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:23:23: prof: ERR: Error sending desktop notification:
+01/08/2023 18:23:23: prof: ERR:   -> Message : bot in wtfipfs (win 5)
+01/08/2023 18:23:23: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:23:23: prof: ERR: Error sending desktop notification:
+01/08/2023 18:23:23: prof: ERR:   -> Message : bot in wtfipfs (win 0)
+01/08/2023 18:23:23: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
+01/08/2023 18:23:24: prof: ERR: Error sending desktop notification:
+01/08/2023 18:23:24: prof: ERR:   -> Message : bot in wtfipfs (win 9)
+01/08/2023 18:23:24: prof: ERR:   -> Error   : 无法在没有 X11 $DISPLAY 的情况下自动启动 D-Bus
