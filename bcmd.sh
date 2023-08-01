@@ -237,12 +237,12 @@ cmds() {
     # trans -brief "${@}"
     bash "$SH_PATH/trans.sh" "$@"
     ;;
-  pong | xd)
-    shift
-    echo
-    echo pong
-    echo pong
-    ;;
+  # pong | xd)
+  #   shift
+  #   echo
+  #   echo pong
+  #   echo pong
+  #   ;;
   type)
     if [[ -z "$2" ]]; then
       echo ".type \$URL"
