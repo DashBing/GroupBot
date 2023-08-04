@@ -394,10 +394,13 @@ static void init_public_group(Tox *tox)
     }
   } else {
     log_timestamp("init error, failed to join publice group");
-    uint8_t chat_id[TOX_GROUP_CHAT_ID_SIZE];
+    uint8_t chat_id[TOX_GROUP_CHAT_ID_SIZE]="\0";
     if (tox_group_get_chat_id(tox, 0, chat_id, NULL))
     {
       log_timestamp("first group id is %s", chat_id);
+      uint8_t group_name[TOX_MAX_NAME_LENGTH] = "\0";
+      if (tox_group_get_name(tox, 0, group_name, NULL))
+        log_timestamp("first group name is %s", chat_id);
     } else {
       log_timestamp("no joined group");
     }
