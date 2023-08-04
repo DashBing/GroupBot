@@ -1143,7 +1143,7 @@ static void gm(Tox *m, char *gmsg, size_t len)
 
         if (MY_GROUP_NUM != UINT32_MAX)
         {
-          if (tox_group_send_message(m, MY_GROUP_NUM, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *gmsg, len, NULL, NULL) != true)
+          if (tox_group_send_message(m, MY_GROUP_NUM, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *)gmsg, len, NULL, NULL) != true)
           {
            log_timestamp("failed to send msg to group: %s", gmsg);
           }
