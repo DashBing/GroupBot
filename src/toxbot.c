@@ -438,7 +438,7 @@ static void cb_friend_message(Tox *m, uint32_t friendnumber, TOX_MESSAGE_TYPE ty
     /** if (message == "invite") */
     if (strcmp(message, "invite") == 0)
     {
-      /** init_public_group(m); */
+      init_public_group(m);
     }
 }
 
