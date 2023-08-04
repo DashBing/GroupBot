@@ -860,8 +860,16 @@ static Tox *init_tox(void)
 
 
     // maybe ok
-  uint32_t tox_group_join(Tox *tox, const uint8_t *chat_id, const uint8_t *name, size_t name_length,
-                        const uint8_t *password, size_t password_length, Tox_Err_Group_Join *error)
+  char *chat_id="5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66";
+  char *name="wtfipfs";
+  uint32_t groupnum = tox_group_join(m, (uint8_t *)chat_id, (uint8_t *)name, strlen(name), NULL, 0, NULL);
+  if (groupnum != UINT32_MAX)
+  {
+    MY_GROUP_NUM = groupnum;
+    log_timestamp("init ok, joined publice group");
+  } else {
+    log_timestamp("init error, failed to join publice group");
+  }
 
 
 
