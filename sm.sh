@@ -12,7 +12,6 @@ username=$1
 
 
 [[ -z "$username" ]] && username="null"
-username="$(echo "$username" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')"
 
 # if [[ "${username:0:2}" == "C " ]]
 # then
