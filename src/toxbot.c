@@ -20,6 +20,7 @@
  *
  */
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -59,6 +60,7 @@ char *GM_SH_PATH = "/run/user/1000/bot/gm.sh";
 
 #define SM_SH_PATH "bash /run/user/1000/bot/sm.sh \"$(cat <<EOF\n"
 
+uint32_t MY_GROUP_NUM = UINT32_MAX;
 //char smsg[2048];
 //char gmsg[2048];
 char gmsg[TOX_MAX_MESSAGE_LENGTH];
@@ -153,17 +155,119 @@ static void exit_toxbot(Tox *m)
 // ##############################################
 
 
+/**
+ * Joins a group chat with specified Chat ID.
+ *
+ * This function creates a new group chat object, adds it to the chats array, and sends
+ * a DHT announcement to find peers in the group associated with chat_id. Once a peer has been
+ * found a join attempt will be initiated.
+ *
+ * @param chat_id The Chat ID of the group you wish to join. This must be TOX_GROUP_CHAT_ID_SIZE bytes.
+ * @param password The password required to join the group. Set to NULL if no password is required.
+ * @param password_length The length of the password. If length is equal to zero,
+ *   the password parameter is ignored. length must be no larger than TOX_GROUP_MAX_PASSWORD_SIZE.
+ * @param name The name of the peer joining the group.
+ * @param name_length The length of the peer's name. This must be greater than zero and no larger
+ *   than TOX_MAX_NAME_LENGTH.
+ *
+ * @return group_number on success, UINT32_MAX on failure.
+ */
+// https://github.com/TokTok/c-toxcore/blob/172f279dc0647a538b30e62c96bab8bb1b0c8960/toxcore/tox.h#L3580
 
 
+// init public group with chat_id
+/** bool init_for_my_group(Tox *tox, uint32_t friendnum) */
+/** { */
+/**   // uint32_t tox_group_new(Tox *tox, Tox_Group_Privacy_State privacy_state, const uint8_t *group_name, size_t group_name_length, const uint8_t *name, size_t name_length, Tox_Err_Group_New *error); */
+/**    */
+/** [> uint32_t tox_group_join(Tox *tox, const uint8_t *chat_id, const uint8_t *name, size_t name_length, const uint8_t *password, size_t password_length, Tox_Err_Group_Join *error) <] */
+/**     uint8_t *chat_id="5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66"; */
+/**     uint8_t *name="wtfipfs"; */
+/**     Tox_Err_Group_Join error; */
+/**     groupnum = tox_group_join(tox, chat_id, name, strlen(name), NULL, 0, Tox_Err_Group_Join *error) */
+/**     if (error != TOX_ERR_GROUP_JOIN_OK) { */
+/**       log_error_timestamp(error, "failed to join public group %s", name); */
+/**       outmsg = "failed to join public group"; */
+/**       tox_friend_send_message(m, friendnum, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *) outmsg, strlen(outmsg), NULL); */
+/**       return false; */
+/**     } else { */
+/**       log_error_timestamp(error, "joined public group %s", name); */
+/**       outmsg = "joined public group"; */
+/**       tox_friend_send_message(m, friendnum, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *) outmsg, strlen(outmsg), NULL); */
+/**  */
+/**  */
+/**     } */
+/**     return true; */
+/** } */
 
 
-// for public group with chat_id
-bool init_for_my_group(Tox *tox)
+static void cb_public_group_invite(Tox *tox, uint32_t friend_number, const uint8_t *invite_data, size_t length, const uint8_t *group_name, size_t group_name_length, void *user_data)
 {
-/** uint32_t tox_group_join(Tox *tox, const uint8_t *chat_id, const uint8_t *name, size_t name_length, const uint8_t *password, size_t password_length, Tox_Err_Group_Join *error) */
-    Tox_Err_Group_Join error;
-    tox_group_join(tox, chat_id, name, name_length, password, password_length, Tox_Err_Group_Join *error)
+    if (!friend_is_master(tox, friendnumber))
+    {
+        return;
+    }
+    if (MY_GROUP_NUM != UINT32_MAX)
+    {
+      log_error_timestamp(error, "existed group %s", MY_GROUP_NUM);
+      outmsg = "existed group";
+      tox_friend_send_message(m, friendnum, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *) outmsg, strlen(outmsg), NULL);
+      return;
+    }
+    Tox_Err_Group_Invite_Accept error;
+    // https://github.com/TokTok/c-toxcore/blob/172f279dc0647a538b30e62c96bab8bb1b0c8960/toxcore/tox.h#L4814
+    groupnum =  tox_group_invite_accept(tox, friend_number, invite_data, length, group_name, group_name_length, NULL, 0, &error)
+    if (error != TOX_ERR_GROUP_INVITE_ACCEPT_OK) {
+      log_error_timestamp(error, "failed to join public group %s", name);
+      outmsg = "failed to join public group";
+      tox_friend_send_message(m, friendnum, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *) outmsg, strlen(outmsg), NULL);
+      return;
+    } else {
+      log_timestamp("joined public group %s", name);
+      outmsg = "joined public group";
+      tox_friend_send_message(m, friendnum, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *) outmsg, strlen(outmsg), NULL);
+      if (groupnum != UINT32_MAX)
+      {
+        MY_GROUP_NUM = groupnum;
+
+      } else {
+        log_error_timestamp(-1, "failed to join %s (core failure)", group_name);
+        return;
+      }
+    }
+    return;
+
 }
+
+static void cb_public_group_message(Tox *tox, uint32_t group_number, uint32_t peer_id, Tox_Message_Type type, const uint8_t *message, size_t length, uint32_t message_id, void *user_data)
+{
+  if (type != TOX_MESSAGE_TYPE_NORMAL)
+    return;
+  if (group_number == MY_GROUP_NUM)
+  {
+    /** char peername[TOX_MAX_NAME_LENGTH] = "\0"; */
+    char peername[TOX_MAX_NAME_LENGTH];
+    // https://github.com/TokTok/c-toxcore/blob/172f279dc0647a538b30e62c96bab8bb1b0c8960/toxcore/tox.h#L3915C8-L3916C69
+    size_t len = tox_group_peer_get_name_size(tox, group_number, peer_id, NULL);
+    peername[len] = "\0";
+    // https://github.com/TokTok/c-toxcore/blob/172f279dc0647a538b30e62c96bab8bb1b0c8960/toxcore/tox.h#L3933C6-L3934C62
+    tox_group_peer_get_name(tox, group_number, peer_id, name, NULL);
+    if (strcmp(peername, "bot") == 0)
+      return;
+    char smsg[2048] = SM_SH_PATH;
+    strcat(smsg, peername);
+    strcat(smsg, "\nEOF\n)\" \"$(cat <<EOF\n");
+    strcat(smsg, (char *)message);
+    strcat(smsg, "\nEOF\n)\"");
+    system(smsg);
+
+  }
+
+}
+
+
+
+
 
 
 
@@ -295,8 +399,7 @@ static void cb_friend_message(Tox *m, uint32_t friendnumber, TOX_MESSAGE_TYPE ty
     }
 }
 
-static void cb_group_invite(Tox *m, uint32_t friendnumber, TOX_CONFERENCE_TYPE type,
-                                                        const uint8_t *cookie, size_t length, void *userdata)
+static void cb_group_invite(Tox *m, uint32_t friendnumber, TOX_CONFERENCE_TYPE type, const uint8_t *cookie, size_t length, void *userdata)
 {
     if (!friend_is_master(m, friendnumber))
     {
@@ -732,6 +835,14 @@ static Tox *init_tox(void)
     tox_callback_conference_title(m, cb_group_titlechange);
 
     tox_callback_conference_message(m, cb_group_message);
+
+
+    // add by liqsliu 20230804
+    tox_callback_group_invite(m, cb_public_group_invite);
+    tox_callback_group_message(m, cb_public_group_message);
+    // add by liqsliu 20230804
+
+
 
     size_t s_len = tox_self_get_status_message_size(m);
 
