@@ -51,6 +51,7 @@
 
 
 #define BOT_NAME "bot"
+#define GROUP_NAME "wtfipfs"
 #define CHAT_ID "5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66"
 #define SM_SH_PATH "bash /run/user/1000/bot/sm.sh \"$(cat <<EOF\n"
 /** <<<<<<< HEAD */
@@ -394,13 +395,30 @@ static void init_public_group(Tox *tox)
     }
   } else {
     log_timestamp("init error, failed to join publice group");
-    uint8_t chat_id[TOX_GROUP_CHAT_ID_SIZE]="\0";
-    if (tox_group_get_chat_id(tox, 0, chat_id, NULL))
+    char chat_id[TOX_GROUP_CHAT_ID_SIZE];
+    if (tox_group_get_chat_id(tox, 0, (uint8_t *)chat_id, NULL))
     {
       log_timestamp("first group id is %x", chat_id);
       uint8_t group_name[TOX_MAX_NAME_LENGTH] = "\0";
       if (tox_group_get_name(tox, 0, group_name, NULL))
         log_timestamp("first group name is %s", group_name);
+      if (strcmp(chat_id, CHAT_ID) == 0)
+      {
+        log_timestamp("chat_id is ok");
+        MY_GROUP_NUM = 0;
+      }
+      if (strcmp(group_name, GROUP_NAME) == 0)
+      {
+        log_timestamp("group name is ok");
+        MY_GROUP_NUM = 0;
+      }
+      if (MY_GROUP_NUM != UINT32_MAX)
+      {
+        if (tox_group_self_set_name(tox, 0, (uint8_t *)BOT_NAME, strlen(BOT_NAME), NULL))
+        {
+          log_timestamp("set name for bot");
+        }
+      }
     } else {
       log_timestamp("no joined group");
     }
@@ -448,11 +466,13 @@ static void cb_friend_message(Tox *m, uint32_t friendnumber, TOX_MESSAGE_TYPE ty
 
 static void cb_group_self_join(Tox *tox, uint32_t group_number, void *user_data)
 {
-  uint8_t chat_id[TOX_GROUP_CHAT_ID_SIZE];
-  if (tox_group_get_chat_id(tox, group_number, chat_id, NULL))
+  if (MY_GROUP_NUM != UINT32_MAX)
+    return;
+  char chat_id[TOX_GROUP_CHAT_ID_SIZE];
+  if (tox_group_get_chat_id(tox, group_number, (uint8_t *)chat_id, NULL))
   {
     /** if (chat_id == CHAT_ID) */
-    if (strcmp((char *)chat_id, CHAT_ID) == 0)
+    if (strcmp(chat_id, CHAT_ID) == 0)
     {
       MY_GROUP_NUM = group_number;
       if (tox_group_self_set_name(tox, group_number, (uint8_t *)BOT_NAME, strlen(BOT_NAME), NULL))
