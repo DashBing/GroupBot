@@ -375,20 +375,20 @@ static void cb_friend_request(Tox *m, const uint8_t *public_key, const uint8_t *
     save_data(m, DATA_FILE);
 }
 
-static void init_public_group(Tox *m)
+static void init_public_group(Tox *tox)
 {
 
   if (MY_GROUP_NUM != UINT32_MAX)
     return;
     // maybe ok
   char *name="wtfipfs";
-  uint32_t group_number = tox_group_join(m, (uint8_t *)CHAT_ID, (uint8_t *)name, strlen(name), NULL, 0, NULL);
+  uint32_t group_number = tox_group_join(tox, (uint8_t *)CHAT_ID, (uint8_t *)name, strlen(name), NULL, 0, NULL);
     /** if tox_group_is_connected(const Tox *tox, uint32_t group_number, Tox_Err_Group_Is_Connected *error); */
   if (group_number != UINT32_MAX)
   {
     MY_GROUP_NUM = group_number;
     log_timestamp("init ok, joined publice group");
-    if (tox_group_self_set_name(m, group_number, (uint8_t *)BOT_NAME, strlen(BOT_NAME), NULL))
+    if (tox_group_self_set_name(tox, group_number, (uint8_t *)BOT_NAME, strlen(BOT_NAME), NULL))
     {
       log_timestamp("set name for bot");
     }
@@ -448,7 +448,9 @@ static void cb_group_self_join(Tox *tox, uint32_t group_number, void *user_data)
   uint8_t chat_id[TOX_GROUP_CHAT_ID_SIZE];
   if (tox_group_get_chat_id(tox, group_number, chat_id, NULL))
   {
-    if (chat_id == CHAT_ID)
+    /** if (chat_id == CHAT_ID) */
+    if ((strcmp(
+            chat_id == CHAT_ID)
     {
       MY_GROUP_NUM = group_number
       if (tox_group_self_set_name(m, group_number, (uint8_t *)BOT_NAME, strlen(BOT_NAME), NULL))
