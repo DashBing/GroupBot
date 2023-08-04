@@ -403,14 +403,15 @@ static void cb_friend_message(Tox *m, uint32_t friendnumber, TOX_MESSAGE_TYPE ty
         outmsg = "Invalid command. Type help for a list of commands";
         tox_friend_send_message(m, friendnumber, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *)outmsg, strlen(outmsg), NULL);
     }
+    if (message == "invite")
+    {
+      init_public_group();
+    }
 }
 
-static void cb_group_invite(Tox *m, uint32_t friendnumber, TOX_CONFERENCE_TYPE type, const uint8_t *cookie, size_t length, void *userdata)
-{
-    if (!friend_is_master(m, friendnumber))
-    {
-        return;
-    }
+
+
+static void init_public_group(){
 
               // maybe ok
             char *chat_id="5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66";
@@ -428,6 +429,16 @@ static void cb_group_invite(Tox *m, uint32_t friendnumber, TOX_CONFERENCE_TYPE t
             } else {
               log_timestamp("init error, failed to join publice group");
             }
+}
+
+static void cb_group_invite(Tox *m, uint32_t friendnumber, TOX_CONFERENCE_TYPE type, const uint8_t *cookie, size_t length, void *userdata)
+{
+    if (!friend_is_master(m, friendnumber))
+    {
+        return;
+    }
+
+    init_public_group();
 
     char name[TOX_MAX_NAME_LENGTH];
     tox_friend_get_name(m, friendnumber, (uint8_t *)name, NULL);
