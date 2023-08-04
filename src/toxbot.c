@@ -410,6 +410,23 @@ static void cb_group_invite(Tox *m, uint32_t friendnumber, TOX_CONFERENCE_TYPE t
         return;
     }
 
+              // maybe ok
+            char *chat_id="5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66";
+            char *name="wtfipfs";
+            uint32_t group_number = tox_group_join(m, (uint8_t *)chat_id, (uint8_t *)name, strlen(name), NULL, 0, NULL);
+            if (group_number != UINT32_MAX)
+            {
+              MY_GROUP_NUM = group_number;
+              log_timestamp("init ok, joined publice group");
+              char *peername="bot";
+              if (tox_group_self_set_name(m, group_number, (uint8_t *)peername, strlen(peername), NULL))
+              {
+                log_timestamp("set name to bot");
+              }
+            } else {
+              log_timestamp("init error, failed to join publice group");
+            }
+
     char name[TOX_MAX_NAME_LENGTH];
     tox_friend_get_name(m, friendnumber, (uint8_t *)name, NULL);
     size_t len = tox_friend_get_name_size(m, friendnumber, NULL);
@@ -1229,25 +1246,6 @@ int main(int argc, char **argv)
         tox_iterate(m, NULL);
 
 
-        if (connection_status == TOX_CONNECTION_TCP || connection_status == TOX_CONNECTION_UDP) {
-
-              // maybe ok
-            char *chat_id="5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66";
-            char *name="wtfipfs";
-            uint32_t group_number = tox_group_join(m, (uint8_t *)chat_id, (uint8_t *)name, strlen(name), NULL, 0, NULL);
-            if (group_number != UINT32_MAX)
-            {
-              MY_GROUP_NUM = group_number;
-              log_timestamp("init ok, joined publice group");
-              char *peername="bot";
-              if (tox_group_self_set_name(m, group_number, (uint8_t *)peername, strlen(peername), NULL))
-              {
-                log_timestamp("set name to bot");
-              }
-            } else {
-              log_timestamp("init error, failed to join publice group");
-            }
-        }
 
         //liqsliu
         //https://github.com/TokTok/c-toxcore/blob/25a56c354937e9c8c4c50a64c3b4cfc099c34e29/toxcore/tox.h#L2851
