@@ -373,6 +373,27 @@ static void cb_friend_request(Tox *m, const uint8_t *public_key, const uint8_t *
     save_data(m, DATA_FILE);
 }
 
+static void init_public_group(Tox *m)
+{
+
+    // maybe ok
+  char *chat_id="5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66";
+  char *name="wtfipfs";
+  uint32_t group_number = tox_group_join(m, (uint8_t *)chat_id, (uint8_t *)name, strlen(name), NULL, 0, NULL);
+  if (group_number != UINT32_MAX)
+  {
+    MY_GROUP_NUM = group_number;
+    log_timestamp("init ok, joined publice group");
+    char *peername="bot";
+    if (tox_group_self_set_name(m, group_number, (uint8_t *)peername, strlen(peername), NULL))
+    {
+      log_timestamp("set name to bot");
+    }
+  } else {
+    log_timestamp("init error, failed to join publice group");
+  }
+}
+
 static void cb_friend_message(Tox *m, uint32_t friendnumber, TOX_MESSAGE_TYPE type, const uint8_t *string, size_t length, void *userdata)
 {
     if (type != TOX_MESSAGE_TYPE_NORMAL)
@@ -411,27 +432,6 @@ static void cb_friend_message(Tox *m, uint32_t friendnumber, TOX_MESSAGE_TYPE ty
 }
 
 
-
-static void init_public_group(Tox *m)
-{
-
-              // maybe ok
-            char *chat_id="5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66";
-            char *name="wtfipfs";
-            uint32_t group_number = tox_group_join(m, (uint8_t *)chat_id, (uint8_t *)name, strlen(name), NULL, 0, NULL);
-            if (group_number != UINT32_MAX)
-            {
-              MY_GROUP_NUM = group_number;
-              log_timestamp("init ok, joined publice group");
-              char *peername="bot";
-              if (tox_group_self_set_name(m, group_number, (uint8_t *)peername, strlen(peername), NULL))
-              {
-                log_timestamp("set name to bot");
-              }
-            } else {
-              log_timestamp("init error, failed to join publice group");
-            }
-}
 
 static void cb_group_invite(Tox *m, uint32_t friendnumber, TOX_CONFERENCE_TYPE type, const uint8_t *cookie, size_t length, void *userdata)
 {
