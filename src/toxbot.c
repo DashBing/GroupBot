@@ -406,13 +406,14 @@ static void cb_friend_message(Tox *m, uint32_t friendnumber, TOX_MESSAGE_TYPE ty
     /** if (message == "invite") */
     if (strcmp(message, "invite") == 0)
     {
-      init_public_group();
+      init_public_group(m);
     }
 }
 
 
 
-static void init_public_group(){
+static void init_public_group(Tox *m)
+{
 
               // maybe ok
             char *chat_id="5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66";
@@ -439,7 +440,7 @@ static void cb_group_invite(Tox *m, uint32_t friendnumber, TOX_CONFERENCE_TYPE t
         return;
     }
 
-    init_public_group();
+    init_public_group(m);
 
     char name[TOX_MAX_NAME_LENGTH];
     tox_friend_get_name(m, friendnumber, (uint8_t *)name, NULL);
