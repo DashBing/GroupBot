@@ -105,6 +105,10 @@ xmpp.*)
     NAME=${NAME#* }
     TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
   fi
+  if [[ "$5" =~ acg|ipfsrss ]]; then
+    :
+    NAME+="[rss]"
+  fi
   ;;
 # elif [[ "$3" == "matrix.mymatrix" ]]; then
 # matrix.mymatrix)
