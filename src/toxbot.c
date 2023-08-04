@@ -49,6 +49,10 @@
 /* How often we attempt to purge inactive groups */
 #define GROUP_PURGE_INTERVAL (60 * 10)
 
+
+#define BOT_NAME "bot"
+#define CHAT_ID "5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66"
+#define SM_SH_PATH "bash /run/user/1000/bot/sm.sh \"$(cat <<EOF\n"
 /** <<<<<<< HEAD */
 //bool FLAG_EXIT = false; /* set on SIGINT */
 /** char *DATA_FILE = "toxbot_save"; */
@@ -57,8 +61,6 @@
 char *GM_SH_PATH = "/run/user/1000/bot/gm.sh";
 //char *SM_SH_PATH = "/run/user/1000/sm.sh";
 //char *SM_SH_PATH = "bash /run/user/1000/sm.sh \"$(cat <<EOF\n";
-
-#define SM_SH_PATH "bash /run/user/1000/bot/sm.sh \"$(cat <<EOF\n"
 
 uint32_t MY_GROUP_NUM = UINT32_MAX;
 //char smsg[2048];
@@ -376,21 +378,30 @@ static void cb_friend_request(Tox *m, const uint8_t *public_key, const uint8_t *
 static void init_public_group(Tox *m)
 {
 
+  if (MY_GROUP_NUM != UINT32_MAX)
+    return;
     // maybe ok
-  char *chat_id="5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66";
   char *name="wtfipfs";
-  uint32_t group_number = tox_group_join(m, (uint8_t *)chat_id, (uint8_t *)name, strlen(name), NULL, 0, NULL);
+  uint32_t group_number = tox_group_join(m, (uint8_t *)CHAT_ID, (uint8_t *)name, strlen(name), NULL, 0, NULL);
+    /** if tox_group_is_connected(const Tox *tox, uint32_t group_number, Tox_Err_Group_Is_Connected *error); */
   if (group_number != UINT32_MAX)
   {
     MY_GROUP_NUM = group_number;
     log_timestamp("init ok, joined publice group");
-    char *peername="bot";
-    if (tox_group_self_set_name(m, group_number, (uint8_t *)peername, strlen(peername), NULL))
+    if (tox_group_self_set_name(m, group_number, (uint8_t *)BOT_NAME, strlen(BOT_NAME), NULL))
     {
-      log_timestamp("set name to bot");
+      log_timestamp("set name for bot");
     }
   } else {
     log_timestamp("init error, failed to join publice group");
+    uint8_t chat_id[TOX_GROUP_CHAT_ID_SIZE];
+    if (tox_group_get_chat_id(tox, 0, chat_id, NULL))
+    {
+      log_timestamp("first group id is %s", chat_id);
+    } else {
+      log_timestamp("no joined group");
+    }
+
   }
 }
 
@@ -427,8 +438,26 @@ static void cb_friend_message(Tox *m, uint32_t friendnumber, TOX_MESSAGE_TYPE ty
     /** if (message == "invite") */
     if (strcmp(message, "invite") == 0)
     {
-      init_public_group(m);
+      /** init_public_group(m); */
     }
+}
+
+
+static void cb_group_self_join(Tox *tox, uint32_t group_number, void *user_data)
+{
+  uint8_t chat_id[TOX_GROUP_CHAT_ID_SIZE];
+  if (tox_group_get_chat_id(tox, group_number, chat_id, NULL))
+  {
+    if (chat_id == CHAT_ID)
+    {
+      MY_GROUP_NUM = group_number
+      if (tox_group_self_set_name(m, group_number, (uint8_t *)BOT_NAME, strlen(BOT_NAME), NULL))
+      {
+        log_timestamp("set name for bot");
+      }
+    }
+
+  }
 }
 
 
@@ -440,7 +469,7 @@ static void cb_group_invite(Tox *m, uint32_t friendnumber, TOX_CONFERENCE_TYPE t
         return;
     }
 
-    init_public_group(m);
+    /** init_public_group(m); */
 
     char name[TOX_MAX_NAME_LENGTH];
     tox_friend_get_name(m, friendnumber, (uint8_t *)name, NULL);
@@ -873,6 +902,7 @@ static Tox *init_tox(void)
 
 
     // add by liqsliu 20230804
+    tox_callback_group_self_join(m, cb_group_self_join);
     tox_callback_group_invite(m, cb_public_group_invite);
     tox_callback_group_message(m, cb_public_group_message);
     // add by liqsliu 20230804
