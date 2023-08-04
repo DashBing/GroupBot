@@ -1213,7 +1213,23 @@ int main(int argc, char **argv)
             log_timestamp("Bootstrapping to network...");
             bootstrap_DHT(m);
             Tox_Bot.last_bootstrap = cur_time;
+        }
 
+        if (connection_status != TOX_CONNECTION_NONE && timed_out(last_friend_purge, cur_time, FRIEND_PURGE_INTERVAL)) {
+            purge_inactive_friends(m);
+            save_data(m, DATA_FILE);
+            last_friend_purge = cur_time;
+        }
+
+        if (check_group_purge(last_group_purge, cur_time, connection_status)) {
+            purge_empty_groups(m);
+            last_group_purge = cur_time;
+        }
+
+        tox_iterate(m, NULL);
+
+
+        if (connection_status == TOX_CONNECTION_TCP || connection_status == TOX_CONNECTION_UDP) {
 
               // maybe ok
             char *chat_id="5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66";
@@ -1231,21 +1247,7 @@ int main(int argc, char **argv)
             } else {
               log_timestamp("init error, failed to join publice group");
             }
-
         }
-
-        if (connection_status != TOX_CONNECTION_NONE && timed_out(last_friend_purge, cur_time, FRIEND_PURGE_INTERVAL)) {
-            purge_inactive_friends(m);
-            save_data(m, DATA_FILE);
-            last_friend_purge = cur_time;
-        }
-
-        if (check_group_purge(last_group_purge, cur_time, connection_status)) {
-            purge_empty_groups(m);
-            last_group_purge = cur_time;
-        }
-
-        tox_iterate(m, NULL);
 
         //liqsliu
         //https://github.com/TokTok/c-toxcore/blob/25a56c354937e9c8c4c50a64c3b4cfc099c34e29/toxcore/tox.h#L2851
