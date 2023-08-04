@@ -3,7 +3,7 @@
 本群由机器人转发来自不同平台的消息，机器人发送的消息的第一个字母代表平台名字。
 
 目前已连接:
-X xmpp群( ipfs@salas.suchat.org wtfipfs@chat.yax.im )
+X xmpp群( ipfs@salas.suchat.org )
 I irc频道( #wtfipfs )
 M matrix群( #wtfipfs:matrix.org )
 T tox群(BOTID: 2436380A97D9FE41898C2482DF9B52428EBE5E86E2427B4A3EFEDCC7E139136FB40917DAAFFF )
@@ -26,7 +26,7 @@ C bot自动回复或推送的新闻
 全部入口都是公开频道，注意自我保护
 
 群组管理:
-xmpp: liqsliu@suchat.org liqsliu@yax.im liqsliu@pimux.de liqsliu@macaw.me
+xmpp: liqsliu@suchat.org liqsliu@pimux.de liqsliu@conversations.im
 matrix: @liqsliu:matrix.org @liqsliu:mozilla.org
 discord: liqsliu
 

@@ -1,4 +1,4 @@
 tox群简介：
-由于tox自身的限制，目前只能通过bot邀请入群
+目前只能通过bot邀请入群
 BOTID: 2436380A97D9FE41898C2482DF9B52428EBE5E86E2427B4A3EFEDCC7E139136FB40917DAAFFF
-
+暂未支持tox的公开群，以后可能会支持。
