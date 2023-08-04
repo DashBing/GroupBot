@@ -250,12 +250,14 @@ static void cb_public_group_message(Tox *tox, uint32_t group_number, uint32_t pe
   if (group_number == MY_GROUP_NUM)
   {
     /** char peername[TOX_MAX_NAME_LENGTH] = "\0"; */
-    char peername[TOX_MAX_NAME_LENGTH];
+    /** char peername[TOX_MAX_NAME_LENGTH]; */
     // https://github.com/TokTok/c-toxcore/blob/172f279dc0647a538b30e62c96bab8bb1b0c8960/toxcore/tox.h#L3915C8-L3916C69
     size_t len = tox_group_peer_get_name_size(tox, group_number, peer_id, NULL);
-    peername[len] = "\0";
+    /** peername[len] = "\0"; */
+    char peername[len+1];
     // https://github.com/TokTok/c-toxcore/blob/172f279dc0647a538b30e62c96bab8bb1b0c8960/toxcore/tox.h#L3933C6-L3934C62
     tox_group_peer_get_name(tox, group_number, peer_id, (uint8_t *)peername, NULL);
+    peername[len] = "\0";
     if (strcmp(peername, "bot") == 0)
       return;
     char smsg[2048] = SM_SH_PATH;
@@ -550,8 +552,7 @@ peername
 }
 //void group_message_cb(Tox *tox, uint32_t group_num, uint32_t peer_number, TOX_MESSAGE_TYPE type, const uint8_t *message, size_t length, void *user_data) {
 //void group_peer_list_changed_cb(Tox *tox, uint32_t group_num, void *user_data) {         struct Group *cf = getgroup(group_num);
-static void cb_group_titlechange(Tox *m, uint32_t groupnumber, uint32_t peernumber, const uint8_t *title,
-                                                                 size_t length, void *userdata)
+static void cb_group_titlechange(Tox *m, uint32_t groupnumber, uint32_t peernumber, const uint8_t *title, size_t length, void *userdata)
 {
     char message[TOX_MAX_MESSAGE_LENGTH];
     length = copy_tox_str(message, sizeof(message), (const char *)title, length);
