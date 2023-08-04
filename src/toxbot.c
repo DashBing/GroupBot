@@ -203,29 +203,28 @@ static void exit_toxbot(Tox *m)
 
 static void cb_public_group_invite(Tox *tox, uint32_t friend_number, const uint8_t *invite_data, size_t length, const uint8_t *group_name, size_t group_name_length, void *user_data)
 {
-    if (!friend_is_master(tox, friendnumber))
-    {
+    if (!friend_is_master(tox, friend_number))
         return;
-    }
     if (MY_GROUP_NUM != UINT32_MAX)
     {
-      log_error_timestamp(error, "existed group %s", MY_GROUP_NUM);
-      outmsg = "existed group";
-      tox_friend_send_message(m, friendnum, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *) outmsg, strlen(outmsg), NULL);
+      log_timestamp("existed group %s", MY_GROUP_NUM);
+      char *outmsg = "existed group";
+      tox_friend_send_message(tox, friend_number, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *) outmsg, strlen(outmsg), NULL);
       return;
     }
     Tox_Err_Group_Invite_Accept error;
     // https://github.com/TokTok/c-toxcore/blob/172f279dc0647a538b30e62c96bab8bb1b0c8960/toxcore/tox.h#L4814
-    groupnum =  tox_group_invite_accept(tox, friend_number, invite_data, length, group_name, group_name_length, NULL, 0, &error)
-    if (error != TOX_ERR_GROUP_INVITE_ACCEPT_OK) {
-      log_error_timestamp(error, "failed to join public group %s", name);
-      outmsg = "failed to join public group";
-      tox_friend_send_message(m, friendnum, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *) outmsg, strlen(outmsg), NULL);
+    uint32_t groupnum =  tox_group_invite_accept(tox, friend_number, invite_data, length, group_name, group_name_length, NULL, 0, &error);
+    if (error != TOX_ERR_GROUP_INVITE_ACCEPT_OK)
+    {
+      log_error_timestamp(error, "failed to join public group %s", group_name);
+      char *outmsg = "failed to join public group";
+      tox_friend_send_message(tox, friend_number, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *) outmsg, strlen(outmsg), NULL);
       return;
     } else {
-      log_timestamp("joined public group %s", name);
-      outmsg = "joined public group";
-      tox_friend_send_message(m, friendnum, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *) outmsg, strlen(outmsg), NULL);
+      log_timestamp("joined public group %s", group_name);
+      char *outmsg = "joined public group";
+      tox_friend_send_message(tox, friend_number, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *) outmsg, strlen(outmsg), NULL);
       if (groupnum != UINT32_MAX)
       {
         MY_GROUP_NUM = groupnum;
@@ -858,6 +857,15 @@ static Tox *init_tox(void)
         tox_self_set_name(m, (uint8_t *) "Tox_Bot", strlen("Tox_Bot"), NULL);
     }
     tox_self_set_name(m, (uint8_t *) "bot", strlen("bot"), NULL);
+
+
+    // maybe ok
+  uint32_t tox_group_join(Tox *tox, const uint8_t *chat_id, const uint8_t *name, size_t name_length,
+                        const uint8_t *password, size_t password_length, Tox_Err_Group_Join *error)
+
+
+
+
 
     return m;
 }
