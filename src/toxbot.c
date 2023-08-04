@@ -1136,6 +1136,20 @@ static void gm(Tox *m, char *gmsg, size_t len)
     {
         if ( gmsg[len-1] == '\n' )
             gmsg[len-1] = '\0';
+
+
+        /** Tox_Err_Group_Send_Message error; */
+        // https://github.com/TokTok/c-toxcore/blob/172f279dc0647a538b30e62c96bab8bb1b0c8960/toxcore/tox.h#L4403
+
+        if (MY_GROUP_NUM != UINT32_MAX)
+        {
+          if (tox_group_send_message(m, MY_GROUP_NUM, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *gmsg, len, NULL, NULL) != true)
+          {
+           log_timestamp("failed to send msg to group: %s", gmsg);
+          }
+
+        }
+
         TOX_ERR_CONFERENCE_SEND_MESSAGE err;
         //tox_conference_send_message(m, 0, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *)gmsg, strlen(gmsg), &err);
         tox_conference_send_message(m, 0, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *)gmsg, len, &err);
@@ -1341,8 +1355,8 @@ int main(int argc, char **argv)
 		} else {
 		    if (strlen(gmsg)+strlen(gmsgtmp) > TOX_MAX_MESSAGE_LENGTH-1)
 		    {
-			gm(m, gmsg, strlen(gmsg));
-			gmsg[0] = '\0';
+          gm(m, gmsg, strlen(gmsg));
+          gmsg[0] = '\0';
 		    }
 		    strcat(gmsg, gmsgtmp);
                 }
@@ -1357,8 +1371,8 @@ int main(int argc, char **argv)
             }
             pclose(fd);
             //memset(msgfw, 0, sizeof(msgfw));
-	    gm(m, gmsg, strlen(gmsg));
-	    gmsg[0] = '\0';
+            gm(m, gmsg, strlen(gmsg));
+            gmsg[0] = '\0';
         }
         //liqsliu_
         //
