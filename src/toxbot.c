@@ -479,6 +479,8 @@ static void cb_group_self_join(Tox *tox, uint32_t group_number, void *user_data)
       {
         log_timestamp("set name for bot");
       }
+    } else {
+      log_timestamp("joined other group: %s", chat_id);
     }
 
   }
