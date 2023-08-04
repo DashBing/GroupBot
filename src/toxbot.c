@@ -141,6 +141,45 @@ static void exit_toxbot(Tox *m)
     exit(EXIT_SUCCESS);
 }
 
+
+
+
+
+
+
+
+
+// ##############################################
+// ##############################################
+
+
+
+
+
+
+// for public group with chat_id
+bool init_for_my_group(Tox *tox)
+{
+/** uint32_t tox_group_join(Tox *tox, const uint8_t *chat_id, const uint8_t *name, size_t name_length, const uint8_t *password, size_t password_length, Tox_Err_Group_Join *error) */
+    Tox_Err_Group_Join error;
+    tox_group_join(tox, chat_id, name, name_length, password, password_length, Tox_Err_Group_Join *error)
+}
+
+
+
+
+
+// ##############################################
+// ##############################################
+
+
+
+
+
+
+
+
+
 /* Returns true if friendnumber's Tox ID is in the masterkeys list. */
 bool friend_is_master(Tox *m, uint32_t friendnumber)
 {
@@ -224,8 +263,7 @@ static void cb_friend_request(Tox *m, const uint8_t *public_key, const uint8_t *
     save_data(m, DATA_FILE);
 }
 
-static void cb_friend_message(Tox *m, uint32_t friendnumber, TOX_MESSAGE_TYPE type, const uint8_t *string,
-                                                            size_t length, void *userdata)
+static void cb_friend_message(Tox *m, uint32_t friendnumber, TOX_MESSAGE_TYPE type, const uint8_t *string, size_t length, void *userdata)
 {
     if (type != TOX_MESSAGE_TYPE_NORMAL)
     {
