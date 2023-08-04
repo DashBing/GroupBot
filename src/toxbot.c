@@ -214,7 +214,7 @@ static void cb_public_group_invite(Tox *tox, uint32_t friend_number, const uint8
     }
     Tox_Err_Group_Invite_Accept error;
     // https://github.com/TokTok/c-toxcore/blob/172f279dc0647a538b30e62c96bab8bb1b0c8960/toxcore/tox.h#L4814
-    uint32_t groupnum =  tox_group_invite_accept(tox, friend_number, invite_data, length, group_name, group_name_length, NULL, 0, &error);
+    uint32_t group_number =  tox_group_invite_accept(tox, friend_number, invite_data, length, group_name, group_name_length, NULL, 0, &error);
     if (error != TOX_ERR_GROUP_INVITE_ACCEPT_OK)
     {
       log_error_timestamp(error, "failed to join public group %s", group_name);
@@ -222,12 +222,17 @@ static void cb_public_group_invite(Tox *tox, uint32_t friend_number, const uint8
       tox_friend_send_message(tox, friend_number, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *) outmsg, strlen(outmsg), NULL);
       return;
     } else {
+      char *peername="bot";
+      if (tox_group_self_set_name(tox, group_number, (uint8_t *)peername, strlen(peername), NULL))
+      {
+        log_timestamp("set name to bot");
+      }
       log_timestamp("joined public group %s", group_name);
       char *outmsg = "joined public group";
       tox_friend_send_message(tox, friend_number, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *) outmsg, strlen(outmsg), NULL);
-      if (groupnum != UINT32_MAX)
+      if (group_number != UINT32_MAX)
       {
-        MY_GROUP_NUM = groupnum;
+        MY_GROUP_NUM = group_number;
 
       } else {
         log_error_timestamp(-1, "failed to join %s (core failure)", group_name);
@@ -859,18 +864,6 @@ static Tox *init_tox(void)
     tox_self_set_name(m, (uint8_t *) "bot", strlen("bot"), NULL);
 
 
-    // maybe ok
-  char *chat_id="5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66";
-  char *name="wtfipfs";
-  uint32_t groupnum = tox_group_join(m, (uint8_t *)chat_id, (uint8_t *)name, strlen(name), NULL, 0, NULL);
-  if (groupnum != UINT32_MAX)
-  {
-    MY_GROUP_NUM = groupnum;
-    log_timestamp("init ok, joined publice group");
-  } else {
-    log_timestamp("init error, failed to join publice group");
-  }
-
 
 
 
@@ -1155,6 +1148,24 @@ int main(int argc, char **argv)
     init_toxbot_state();
     load_conferences(m);
     print_profile_info(m);
+
+    // maybe ok
+  char *chat_id="5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66";
+  char *name="wtfipfs";
+  uint32_t group_number = tox_group_join(m, (uint8_t *)chat_id, (uint8_t *)name, strlen(name), NULL, 0, NULL);
+  if (group_number != UINT32_MAX)
+  {
+    MY_GROUP_NUM = group_number;
+    log_timestamp("init ok, joined publice group");
+    char *peername="bot";
+    if (tox_group_self_set_name(m, group_number, (uint8_t *)peername, strlen(peername), NULL))
+    {
+      log_timestamp("set name to bot");
+    }
+  } else {
+    log_timestamp("init error, failed to join publice group");
+  }
+
 
     time_t cur_time = get_time();
 
