@@ -403,7 +403,8 @@ static void cb_friend_message(Tox *m, uint32_t friendnumber, TOX_MESSAGE_TYPE ty
         outmsg = "Invalid command. Type help for a list of commands";
         tox_friend_send_message(m, friendnumber, TOX_MESSAGE_TYPE_NORMAL, (uint8_t *)outmsg, strlen(outmsg), NULL);
     }
-    if (message == "invite")
+    /** if (message == "invite") */
+    if (strcmp(message, "invite") == 0)
     {
       init_public_group();
     }
