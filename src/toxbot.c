@@ -449,10 +449,9 @@ static void cb_group_self_join(Tox *tox, uint32_t group_number, void *user_data)
   if (tox_group_get_chat_id(tox, group_number, chat_id, NULL))
   {
     /** if (chat_id == CHAT_ID) */
-    if ((strcmp(
-            chat_id == CHAT_ID)
+    if (strcmp((char *)chat_id, CHAT_ID) == 0)
     {
-      MY_GROUP_NUM = group_number
+      MY_GROUP_NUM = group_number;
       if (tox_group_self_set_name(m, group_number, (uint8_t *)BOT_NAME, strlen(BOT_NAME), NULL))
       {
         log_timestamp("set name for bot");
