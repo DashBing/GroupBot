@@ -12,7 +12,7 @@ log_msg(){
   echo "#### end ####"
 }
 if [[ $3 = xmpp.myxmpp ]]; then
-  log_msg >> ~/tera/mt_msg.log
+  log_msg "$@" >> ~/tera/mt_msg.log
 fi
 
 if [[ -z "$2" ]]; then
