@@ -44,7 +44,7 @@ cmds() {
       bash "$SH_PATH/gpt.sh" "$@" || echo "E: $?"
     elif [[ -e $SH_PATH/.trmode_for_$gateway ]]; then
       echo -n "$username"
-      bash "$SH_PATH/tr.sh" "$*"
+      bash "$SH_PATH/tr.sh" "$*" || echo "E: $?"
     else
       :
     fi
