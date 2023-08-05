@@ -107,7 +107,7 @@ xmpp.*)
     fi
     TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
   fi
-  if [[ "$2" == "wtfipfs" ]] || [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
+  if [[ "$2" == "wtfipfs" ]] || [[ "$2" == " " ]]; then
     NAME=$( echo "$TEXT" | grep -P -o '^\*\*\w+ \S+?:\*\* ')
     NAME=${NAME:2}
     LABLE=${NAME%%\ *}
@@ -123,8 +123,11 @@ xmpp.*)
   #   NAME+="[rss]"
   # fi
 
-  if [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
-    NAME="fixme_no_name"
+  # if [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
+  if [[ -z "$NAME" ]]; then
+    NAME="fixme_empty_name"
+  elif [[ "$NAME" == " " ]]; then
+    NAME="fixme_error_name"
   fi
   ;;
 # elif [[ "$3" == "matrix.mymatrix" ]]; then
