@@ -42,6 +42,9 @@ cmds() {
     elif [[ -e $SH_PATH/.gptmode_for_$gateway ]]; then
       echo -n "$username"
       bash "$SH_PATH/gpt.sh" "$@" || echo "E: $?"
+    elif [[ -e $SH_PATH/.trmode_for_$gateway ]]; then
+      echo -n "$username"
+      bash "$SH_PATH/tr.sh" "$*"
     else
       :
     fi
@@ -230,6 +233,10 @@ cmds() {
     # bash "$SH_PATH/muxiaoguo.sh" Tn_google "$@"
     # trans -brief "${@}"
     bash "$SH_PATH/tr.sh" "$*"
+    ;;
+  trmode)
+    [[ -e $SH_PATH/.trmode_for_$gateway ]] && rm $SH_PATH/.trmode_for_$gateway || touch $SH_PATH/.trmode_for_$gateway
+    [[ -e $SH_PATH/.trmode_for_$gateway ]] && echo "trmode on" || echo "trmode off"
     ;;
   trans)
     shift
