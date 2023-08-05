@@ -104,11 +104,17 @@ xmpp.*)
     NAME=${NAME%:\*\*\ }
     NAME=${NAME#* }
     TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
+  elif [[ "$2" == "bot" ]]; then
+    NAME+="[xmpp]"
+    TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
   fi
   if [[ "$5" =~ acg|ipfsrss ]]; then
     :
     NAME+="[rss]"
   fi
+    if [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
+      NAME="fixme"
+    fi
   ;;
 # elif [[ "$3" == "matrix.mymatrix" ]]; then
 # matrix.mymatrix)

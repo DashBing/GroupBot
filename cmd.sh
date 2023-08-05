@@ -67,7 +67,8 @@ for (( ; i < 4; i++)); do
       #   gateway=gateway11
       # fi
       if [[ $(echo "$text" | grep -c -P "^https://(mobile\.)?twitter\.com/[a-zA-Z0-9_./?=&%-]+$") -eq 1 ]]; then
-        text=".tw $text"
+        :
+        # text=".tw $text" # not work because of fordiben by twitter
       # elif [[ $(echo "$text" | grep -c -P "^https://wtfipfs\.eu\.org/[a-zA-Z0-9_./?=%-]+$") -eq 1 ]]; then
       #   text=".ipfs $text only"
       elif [[ $(echo "$text" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/?[\S]*(jpe?g|png|mp4|gif)$") -eq 1 ]]; then
