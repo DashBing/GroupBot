@@ -108,7 +108,8 @@ xmpp.*)
     fi
     TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
   fi
-  if [[ "$2" == "wtfipfs" ]] || [[ "$2" == " " ]]; then
+  # if [[ "$2" == "wtfipfs" ]] || [[ "$2" == " " ]]; then
+  if [[ "$2" == "wtfipfs" ]]; then
     NAME=$( echo "$TEXT" | grep -P -o '^\*\*\w+ \S+?:\*\* ')
     NAME=${NAME:2}
     LABLE=${NAME%%\ *}
