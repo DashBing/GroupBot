@@ -335,7 +335,7 @@ echo "json: $text"
   # if [[ "${text:0:6}" == ".note " ]]; then
 #text=$(cmds $text)
 #text=$(cmds $text 2>&1)
-text=$(cmds $text 2>"$SH_PATH/error"| sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
+text=$(cmds $text 2>"$SH_PATH/error")
 text=$(echo "$text"|sed 's/\r//g')
 [[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
 
@@ -343,6 +343,7 @@ text=$(echo "$text"|sed 's/\r//g')
 --
 E: $text_e
 "
+text=$(echo "$text" | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
 
 send_to_mt "$text"
 # send_to_mt "E: $text_e"

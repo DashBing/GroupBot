@@ -51,5 +51,5 @@ else
   tl="-t zh-CN"
 fi
 
-run_trans $tl $opts "${*}"
+run_trans -no-auto $tl $opts "${*}"
 
