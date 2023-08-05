@@ -14,7 +14,8 @@ log_msg(){
   echo
   echo "#### end ####"
 }
-if [[ $3 = xmpp.myxmpp ]]; then
+#if [[ $3 = xmpp.myxmpp ]]; then
+if [[ $3 = xmpp.conversations ]]; then
   log_msg "$@" >> ~/tera/mt_msg.log
 fi
 
