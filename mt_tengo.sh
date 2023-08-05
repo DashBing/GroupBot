@@ -6,12 +6,14 @@ log_msg(){
   local i=0
   for i in "$@"
   do
-    echo -n "||$i"
+    echo -n "|$i|"
   done
   echo
   echo "#### end ####"
 }
 if [[ $3 = xmpp.myxmpp ]]; then
+  echo >> ~/tera/mt_msg.log
+  date >> ~/tera/mt_msg.log
   log_msg "$@" >> ~/tera/mt_msg.log
 fi
 
