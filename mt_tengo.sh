@@ -1,6 +1,9 @@
 #!/bin/bash
 
 log_msg(){
+  echo
+  echo
+  date
   echo "#### mt ####"
   echo "msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent"
   local i=0
@@ -12,8 +15,6 @@ log_msg(){
   echo "#### end ####"
 }
 if [[ $3 = xmpp.myxmpp ]]; then
-  echo >> ~/tera/mt_msg.log
-  date >> ~/tera/mt_msg.log
   log_msg "$@" >> ~/tera/mt_msg.log
 fi
 
