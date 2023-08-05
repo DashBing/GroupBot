@@ -1,5 +1,20 @@
 #!/bin/bash
 
+log_msg(){
+  echo "#### mt ####"
+  echo "msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent"
+  local i=0
+  for i in "$@"
+  do
+    echo -n "||$i"
+  done
+  echo
+  echo "#### end ####"
+}
+if [[ $3 = xmpp.myxmpp ]]; then
+  log_msg >> ~/tera/mt_msg.log
+fi
+
 if [[ -z "$2" ]]; then
   exit 0
 elif [[ "$2" == "blockthismessage" ]]; then
@@ -25,18 +40,6 @@ TEXT="$1"
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
 
-
-log_msg(){
-  echo "#### mt ####"
-  echo "msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent"
-  local i=0
-  for i in "$@"
-  do
-    echo -n "||$i"
-  done
-  echo
-  echo "#### end ####"
-}
 
 
 block_msg(){
@@ -68,6 +71,10 @@ LABLE="C"
 # inGateway, inEvent, outAccount, outProtocol, outChannel
 # outGateway, outEvent
 
+
+
+
+
 case $3 in
 # xmpp.myxmpp|xmpp.myxmpp2)
 xmpp.*)
@@ -97,7 +104,7 @@ xmpp.*)
     fi
     TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
   fi
-  if [[ "$2" == "wtfipfs" ]]; then
+  if [[ "$2" == "wtfipfs" ]] || [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
     NAME=$( echo "$TEXT" | grep -P -o '^\*\*\w+ \S+?:\*\* ')
     NAME=${NAME:2}
     LABLE=${NAME%%\ *}
@@ -108,13 +115,14 @@ xmpp.*)
     NAME+="[xmpp]"
     TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
   fi
-  if [[ "$5" =~ acg|ipfsrss ]]; then
-    :
-    NAME+="[rss]"
+  # if [[ "$5" =~ acg|ipfsrss ]]; then
+  #   :
+  #   NAME+="[rss]"
+  # fi
+
+  if [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
+    NAME="fixme_no_name"
   fi
-    if [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
-      NAME="fixme"
-    fi
   ;;
 # elif [[ "$3" == "matrix.mymatrix" ]]; then
 # matrix.mymatrix)
@@ -377,6 +385,9 @@ if [[ "$(echo "$QT" | tail -n1 | grep -c -G "^$" )" -eq 1 ]]; then
 fi
 
 
+if [[ $11 = "gateway1" ]] && { [[ $6 = ipfsrss ]] && [[ $6 = acg ]]; }; then
+  NAME+='[rss]'
+fi
 
 if [[ "$LABLE" == "0" ]]; then
 # echo -n "${NAME}: "
