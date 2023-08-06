@@ -445,7 +445,7 @@ if [[ -n "$4" ]] ; then
     elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
       TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
     fi
-    if [[ "$NAME" == "M rssbot: " ]]; then
+    if [[ "$NAME" == "M rssbot: " ]] || [[ "$NAME" == "M feeds: " ]]; then
       # forbid msg from ipfsrss sent by rssbot
       # if [[ "${11}" == "gateway1" ]]; then
       #   block_msg
@@ -462,9 +462,11 @@ if [[ -n "$4" ]] ; then
       NAME=$(echo "$NAME" | tail -n1)
       # NAME=$(echo "$NAME" | cut -d ":" -f 1)
       NAME=${NAME%: }
-    fi
-    NAME="$QT
+      if [[ -n "$QT" ]]; then
+        NAME="$QT
 **${NAME}:** "
+      fi
+    fi
     ;;
   irc)
   # elif [[ "$9" == "irc" ]] ; then
