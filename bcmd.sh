@@ -31,8 +31,9 @@ cmds() {
   # fi
   # if [[ "${cmd:0:1}" != "." ]] && [[ "${cmd:0:1}" != "/" ]]; then
   if [[ "${cmd:0:1}" != "." ]]; then
-    if bash "$SH_PATH/faq.sh" "$text" ; then
-      return 0
+    if [[ -e $SH_PATH/.trmode_for_$gateway ]]; then
+      echo -n "$username"
+      bash "$SH_PATH/tr.sh" "$*" || echo "E: $?"
     elif [[ -e $SH_PATH/.botmode_for_$gateway ]]; then
       echo -n "$username"
       bash "$SH_PATH/bot.sh" "$@" || echo "E: $?"
@@ -42,9 +43,8 @@ cmds() {
     elif [[ -e $SH_PATH/.gptmode_for_$gateway ]]; then
       echo -n "$username"
       bash "$SH_PATH/gpt.sh" "$@" || echo "E: $?"
-    elif [[ -e $SH_PATH/.trmode_for_$gateway ]]; then
-      echo -n "$username"
-      bash "$SH_PATH/tr.sh" "$*" || echo "E: $?"
+    elif bash "$SH_PATH/faq.sh" "$text" ; then
+      return 0
     else
       :
     fi
