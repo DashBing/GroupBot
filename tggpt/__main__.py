@@ -8,7 +8,8 @@ logger = logging.getLogger(__name__)
 async def run():
   #  from . import _init
   #  await _init()
-  global MY_NAME, MY_ID
+  global MY_NAME, MY_ID, UB
+  UB = await UB.start()
   me = await UB.get_me()
   print(me.stringify())
   #  me = await client.get_me()
