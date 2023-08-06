@@ -20,7 +20,7 @@ FORMATTER: logging.Formatter = logging.Formatter(LOG_FORMAT)
 LOGGER = logging.getLogger()
 
 debug = False
-#debug = True
+debug = True
 
 
 if debug:
