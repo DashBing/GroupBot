@@ -410,7 +410,7 @@ $LABLE ${NAME}: "
 fi
 
 #if [[ $3 = xmpp.myxmpp ]]; then
-if [[ $1 =~ *pong* ]]; then
+if [[ "$1" =~ *pong* ]]; then
 # if [[ $3 = xmpp.conversations ]]; then
   log_msg "$@" >> ~/tera/mt_msg.log
 fi
