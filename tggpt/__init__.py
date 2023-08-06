@@ -115,8 +115,8 @@ gpt_id = int(get_my_key("TELEGRAM_GPT_ID"))
 
 from telethon import TelegramClient
 #  client = TelegramClient('anon', api_id, api_hash)
-#  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=LOOP)
-UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, proxy=("socks5", '172.23.176.1', 6084), loop=LOOP)
+UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=LOOP)
+#  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, proxy=("socks5", '172.23.176.1', 6084), loop=LOOP)
 
 del api_id
 del api_hash
