@@ -60,6 +60,7 @@ else:
 import asyncio
 LOOP = asyncio.get_event_loop()
 
+
 #  import pyrogram
 #  from pyrogram import enums
 #
@@ -113,7 +114,7 @@ api_hash = get_my_key("TELEGRAM_API_HASH")
 
 from telethon import TelegramClient
 #  client = TelegramClient('anon', api_id, api_hash)
-UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash)
+UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=LOOP)
 
 del api_id
 del api_hash
