@@ -5,6 +5,16 @@ from . import *  # noqa: F403
 
 logger = logging.getLogger(__name__)
 
+
+
+
+
+
+
+
+
+
+
 async def run():
   #  from . import _init
   #  await _init()
@@ -45,6 +55,7 @@ async def run():
   #    forbid = getattr(modules, m).forbid
   #    CMD.add(handler, cmd=m, need=need, forbid=forbid)
 
+  from . import bot
 
   logger.warning("init ok, loop...")
   #  from pyrogram import idle
