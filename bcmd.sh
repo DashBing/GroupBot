@@ -264,6 +264,8 @@ cmds() {
   note)
     shift
     # bash "$SH_PATH/note.sh" "$username" "$@" || echo "E: $?"
+    # echo bash "$SH_PATH/note.sh" "$username" "${text:6}" &>>~/tera/mt_msg.log
+    # bash "$SH_PATH/note.sh" "$username" "${text:6}" &>>~/tera/mt_msg.log
     bash "$SH_PATH/note.sh" "$username" "${text:6}" || echo "E: $?"
     ;;
   faq)
@@ -316,12 +318,28 @@ res=$4
 
 
 
+  # if [[ "${text:0:6}" == ".note " ]]; then
+#text=$(cmds $text)
+#text=$(cmds $text 2>&1)
+text=$(cmds $text 2>"$SH_PATH/error")
+[[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
 
-send_to_mt(){
-  text=$1
+[[ -n "$text_e" ]] && text="$text
+--
+E: $text_e
+"
+# text=$(echo "$text"|sed 's/\r//g')
+# text=$(echo "$text" | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
 
-[[ -n "$text" ]] && {
+# send_to_mt "$text"
+# send_to_mt "E: $text_e"
+
+
+
+
+  [[ -z "$text" ]] && exit
   text=$(bash "$SH_PATH/gene_res.sh" "$text" $gateway)
+
 #  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4243/api/message)
   res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4240/api/message)
 echo "res: $res"
@@ -331,25 +349,5 @@ echo "json: $text"
   else
     [[ -z "$(echo "$res" | jq -r ".text")" ]] && curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: empty message" $gateway)" http://127.0.0.1:4240/api/message
   fi
-
-}
-}
-
-
-  # if [[ "${text:0:6}" == ".note " ]]; then
-#text=$(cmds $text)
-#text=$(cmds $text 2>&1)
-text=$(cmds $text 2>"$SH_PATH/error")
-text=$(echo "$text"|sed 's/\r//g')
-[[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
-
-[[ -n "$text_e" ]] && text="$text
---
-E: $text_e
-"
-text=$(echo "$text" | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
-
-send_to_mt "$text"
-# send_to_mt "E: $text_e"
 
 

@@ -121,17 +121,15 @@
 #faq X liqsliu: 你好|你好
 #default O hh: telegram
 #faq X liqsliu: help|命令要以英文句号开头
-#faq X liqsliu: fuck|fuck!
 #xmpp X liqsliu: 测试xmpp服务器\n> **O QQ2000:** https://connect.xmpp.net/
 #tox X liqsliu: 客户端 https://tox.chat/clients.html
 #default X honeybee: tags
 #rss X honeybee: https://ptah-alexs.info/rss-bridge/?action=display&bridge=VkBridge&u=sovuche&format=Atom
 #xmpp X liqsliu: 2023年07月27日 星期四 11时15分52秒 - 纽斯新闻时间: 服务器\nhttps://jabberfr.org/inscription/\nhttps://www.jabjab.de/register\nhttps://5222.de/register/\nhttps://www.xmpp.jp/signup\nhttps://www.jabjab.de/register\nhttps://xmpp.is/account/register/xmpp_is/\nhttps://jabber.hot-chilli.net/forms/create/#new_tab\nhttps://www.suchat.org/crear-una-cuenta/\nhttps://jabb.im/reg/
 #faq X liqsliu: 你是机器人|我是机器人
-#fat X liqsliu: 没人吗？|你好，该群确实没多少活人，如果您有什么问题可以直接发出来。另外，xmpp也支持保存离线消息，有人上线就会看到。
-#fat X liqsliu: 没人吗|你好，该群确实没多少活人，如果您有什么问题可以直接发出来。另外，xmpp也支持保存离线消息，有人上线就会看到。
 #faq X liqsliu: 没人吗？|你好，该群确实没多少活人，如果您有什么问题可以直接发出来。另外，xmpp也支持保存离线消息，有人上线就会看到。
 #tox X liqsliu: **T yue weikai:** 留个toxID:282CFC0B7F8E95CF06F52070D74770CE695B7B1ED6908038169DE6E64B8DAA0CAF4A8C10C927
 #simplex X liqsliu: https://simplex.chat/contact#/?v=1-2&smp=smp%3A%2F%2F6iIcWT_dF2zN_w5xzZEY7HI2Prbh3ldP07YTyDexPjE%3D%40smp10.simplex.im%2FE5iH2o5oWz2tfJEUwxqmwrTxqdlG3iEJ%23%2F%3Fv%3D1-2%26dh%3DMCowBQYDK2VuAyEAX59JqhAyVVYHp_hVvOdbZXCOtLPchXgjz3QtMDNt-jE%253D%26srv%3Drb2pbttocvnbrngnwziclp2f4ckjq65kebafws6g4hy22cdaiv5dwjqd.onion&data=%7B%22type%22%3A%22group%22%2C%22groupLinkId%22%3A%22zBZ_LHhJrlLU0p7fihJg-g%3D%3D%22%7D
 #ffsend X liqsliu: https://github.com/timvisee/send-instances/\n传文件实例\n\n1.https://transfer.acted.org/\n\n(支持上传单个文件最大5GB,上传文件可下载次数最多3000次，上传文件有效期最长14天)\n\n2.https://send.portailpro.net/\n\n(支持上传单个文件最大10GB,上传文件可下载次数最多100次，上传文件有效期最长30天)\n\n3.https://send.datenpost.app/\n\n(支持上传单个文件最大30GB,上传文件可下载次数最多3次，上传文件有效期最长7天)\n\n4.https://files.psu.ru/\n\n(支持上传单个文件最大16GB,上传文件可下载次数最多500次，上传文件有效期最长7天)\n\n5.https://send.cyberjake.xyz/\n\n(支持上传单个文件最大10GB,上传文件可下载次数最多100次，上传文件有效期最长30天)\n\n6.https://send.adminforge.de/\n\n(支持上传单个文件最大8GB,上传文件可下载次数最多1000次，上传文件有效期最长7天)\n\n7.https://send.ephemeral.land/\n\n(支持上传单个文件最大8GB,上传文件可下载次数最多1000次，上传文件有效期最长28天)
 #tox X liqsliu: 客户端 https://toktok.ltd/integrations
+#ffsend X liqsliu: 第三方服务列表 https://github.com/timvisee/send-instances/#instances
