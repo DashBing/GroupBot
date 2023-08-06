@@ -31,6 +31,9 @@ cmds() {
   # fi
   # if [[ "${cmd:0:1}" != "." ]] && [[ "${cmd:0:1}" != "/" ]]; then
   if [[ "${cmd:0:1}" != "." ]]; then
+    if echo "$text" | tail -n1 | grep -q -G "^> "; then
+      exit 0
+    fi
     if [[ -e $SH_PATH/.trmode_for_$gateway ]]; then
       echo -n "$username"
       bash "$SH_PATH/tr.sh" "$*" || echo "E: $?"
