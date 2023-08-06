@@ -106,6 +106,7 @@ def get_my_key(key, path=f"{HOME}/.ssh/private_keys.txt"):
 
 api_id = int(get_my_key("TELEGRAM_API_ID"))
 api_hash = get_my_key("TELEGRAM_API_HASH")
+gpt_id = get_my_key("TELEGRAM_GPT_ID")
 
 
 #  MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
