@@ -76,12 +76,12 @@ cmds() {
     fi
     ;;
   stop|sb)
-    touch "$SH_PATH/STOP"
     if [[ -e "$SH_PATH/STOP" ]]; then
-      echo stoped
-    else
       rm "$SH_PATH/STOP"
       echo running
+    else
+      touch "$SH_PATH/STOP"
+      echo stoped
     fi
     ;;
   ping)
