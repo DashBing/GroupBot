@@ -1,24 +1,4 @@
 #!/bin/bash
-
-log_msg(){
-  echo
-  echo
-  date
-  echo "#### mt ####"
-  echo "msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent"
-  local i=0
-  for i in "$@"
-  do
-    echo -n "|$i|"
-  done
-  echo
-  echo "#### end ####"
-}
-#if [[ $3 = xmpp.myxmpp ]]; then
-# if [[ $3 = xmpp.conversations ]]; then
-#   log_msg "$@" >> ~/tera/mt_msg.log
-# fi
-
 if [[ -z "$2" ]]; then
   exit 0
 elif [[ "$2" == "blockthismessage" ]]; then
@@ -50,6 +30,26 @@ block_msg(){
   echo -n "blockthismessage"
   exit 0
 }
+
+log_msg(){
+  echo
+  echo
+  date
+  echo "#### mt ####"
+  echo "msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent"
+  local i=0
+  for i in "$@"
+  do
+    echo -n "|$i|"
+  done
+  echo
+  echo "#### end ####"
+}
+#if [[ $3 = xmpp.myxmpp ]]; then
+# if [[ $3 = xmpp.conversations ]]; then
+#   log_msg "$@" >> ~/tera/mt_msg.log
+# fi
+
 
 
 
@@ -410,8 +410,8 @@ $LABLE ${NAME}: "
 fi
 
 #if [[ $3 = xmpp.myxmpp ]]; then
-if [[ "$1" =~ *pong* ]]; then
-# if [[ $3 = xmpp.conversations ]]; then
+# if [[ "$1" =~ *pong* ]]; then
+if [[ $3 = xmpp.conversations ]]; then
   log_msg "$@" >> ~/tera/mt_msg.log
 fi
 
