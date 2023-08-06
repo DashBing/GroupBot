@@ -12,7 +12,7 @@ username=${3-C bot}
 
 
 wtf(){
-echo "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\r/\\r/g' -e 's/\t/\\t/g' -e 's/\+/\\\+/g'
+echo "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\r/\\r/g' -e 's/\t/\\t/g' -e 's/+/\\+/g'
 }
 
 #text=$(bash "$SH_PATH/text2markdown.sh" "$text")

@@ -423,6 +423,11 @@ $LABLE ${NAME}: "
 fi
 
 
+if [[ "$6" = test ]]; then
+echo "mid NAME:|$NAME|" >> ~/tera/mt_msg.log
+echo "mid TEXT:|$TEXT|" >> ~/tera/mt_msg.log
+fi
+
 # echo -n "$NAME"
 # echo -n $SPLIT
 # echo -n "$TEXT"
@@ -633,3 +638,7 @@ echo -n "$NAME"
 echo -n $SPLIT
 echo -n "$TEXT"
 
+if [[ "$6" = test ]]; then
+echo "finally NAME:|$NAME|" >> ~/tera/mt_msg.log
+echo "finally TEXT:|$TEXT|" >> ~/tera/mt_msg.log
+fi
