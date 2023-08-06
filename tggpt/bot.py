@@ -318,7 +318,7 @@ async def mt2tg(msg):
           pass
         else:
           return
-        chat_id = tggpt_id
+        chat_id = gpt_id
         #  if msgd["gateway"] in MT_GATEWAY_LIST:
         #      chat_id = MT_GATEWAY_LIST[msgd["gateway"]][0]
         #  else:
