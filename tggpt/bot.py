@@ -5,6 +5,7 @@
 
 from . import *  # noqa: F403
 
+import json
 
 import logging
 
@@ -63,25 +64,25 @@ queue = {}
 LOADING="\n\n思考你发送的内容..."
 
 
-@exceptions_handler
-@UB.on(events.NewMessage(outgoing=True))
-async def my_event_handler(event):
-  #  if 'hello' in event.raw_text:
-  #    await event.reply('hi!')
-  #  if 'new_chat' in event.raw_text:
-  #    print(event.stringify())
-  msg = event.message
-  text = msg.raw_text
-  if event.chat_id != gpt_id:
-    if debug:
-      print("<%s %s" % (event.chat_id, text))
-    return
-  if event.chat_id != gpt_id:
-    if debug:
-      print(">%s %s" % (event.chat_id, text))
-    return
-  if text:
-    print("me: %s" % text)
+#  @exceptions_handler
+#  @UB.on(events.NewMessage(outgoing=True))
+#  async def my_event_handler(event):
+#    #  if 'hello' in event.raw_text:
+#    #    await event.reply('hi!')
+#    #  if 'new_chat' in event.raw_text:
+#    #    print(event.stringify())
+#    msg = event.message
+#    text = msg.raw_text
+#    if event.chat_id != gpt_id:
+#      if debug:
+#        print("<%s %s" % (event.chat_id, text))
+#      return
+#    if event.chat_id != gpt_id:
+#      if debug:
+#        print(">%s %s" % (event.chat_id, text))
+#      return
+#    if text:
+#      print("me: %s" % text)
 
 
 
@@ -90,6 +91,8 @@ async def my_event_handler(event):
 @exceptions_handler
 async def read_res(event):
   msg = event.message
+  if event.chat_id != gpt_id:
+    return
   text = msg.raw_text
   if text:
     if LOADING in text.splitlines()[-1]:
