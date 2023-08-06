@@ -461,10 +461,11 @@ if [[ -n "$4" ]] ; then
       [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(echo "$NAME" | sed '/^[^>]/d'; echo )
       NAME=$(echo "$NAME" | tail -n1)
       # NAME=$(echo "$NAME" | cut -d ":" -f 1)
-      NAME=${NAME%: }
+      # NAME=${NAME%: }
+      NAME="**${NAME%: }:** "
       if [[ -n "$QT" ]]; then
         NAME="$QT
-**${NAME}:** "
+${NAME}"
       fi
     fi
     ;;
