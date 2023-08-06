@@ -56,8 +56,11 @@ for (( ; i < 4; i++)); do
     # continue # run cmd by python: mybots.py. but not running now
     # ########################################################
 
-    [[ "$username" == "C bot: " ]] && continue
-    [[ "$username" == "C twitter: " ]] && continue
+    [[ "${username:0:2}" == "C " ]] && continue
+    # [[ "$username" == "C bot: " ]] && continue
+    # [[ "$username" == "C xmppbot: " ]] && continue
+    # [[ "$username" == "C titlebot: " ]] && continue
+    # [[ "$username" == "C twitter: " ]] && continue
     # [[ $(echo "$text" | wc -l) -ne 1 ]] && continue
     username=$(echo "$username" | tail -n1 )
 
