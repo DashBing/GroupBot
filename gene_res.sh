@@ -30,5 +30,5 @@ text=$(bash "$SH_PATH/change_long_text.sh" "$text" 4096)
 #text=$( echo "$text"  | od -An -tx1 | sed 's/ /\\x/g' )
 [[ -z "$text" ]] && exit 1
 cat <<EOF
-{"text":"${text}","username":"${username}","gateway":"${gateway}"}
+{"text":"bug ${text}","username":"${username}","gateway":"${gateway}"}
 EOF
