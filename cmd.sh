@@ -87,6 +87,7 @@ for (( ; i < 4; i++)); do
       fi
     fi
     # gateway=cmd
+    # echo nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" > ~/tera/mt_msg.log
     nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" &>/dev/null &
 
   fi

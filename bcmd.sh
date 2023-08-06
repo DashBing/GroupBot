@@ -326,8 +326,8 @@ text=$(cmds $text 2>"$SH_PATH/error")
 
 [[ -n "$text_e" ]] && text="$text
 --
-E: $text_e
-"
+E: $text_e"
+
 # text=$(echo "$text"|sed 's/\r//g')
 # text=$(echo "$text" | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
 
@@ -344,6 +344,7 @@ E: $text_e
   res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4240/api/message)
 echo "res: $res"
 echo "json: $text"
+# echo "4 :|$text|" >> ~/tera/mt_msg.log
   if [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
     curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: $(echo "$res" | jq -r ".message") b64: $(echo $text|base64)" $gateway)" http://127.0.0.1:4240/api/message
   else

@@ -11,7 +11,6 @@
 #faq T Group: 有人吗|没有
 #gemini X 笔下分海行摩西,矛锥落刺钉救主: https://gemini.circumlunar.space/docs/faq.gmi
 #音乐 X 笔下分海行摩西,矛锥落刺钉救主: https://rentry.co/ppvf7
-#faq T Group: 1+1|2
 #CC0 X 笔下分海行摩西,矛锥落刺钉救主: https://www.sharetextures.com
 #CC0 X 笔下分海行摩西,矛锥落刺钉救主: https://3dtextures.me
 #CC0 X 笔下分海行摩西,矛锥落刺钉救主: https://polyhaven.com
@@ -90,8 +89,6 @@
 #rss T liqsliu: xmpp:jabrss@jotwewe.de
 #magisk T liqsliu: 修改系统文件 build.prop 可以参考该项目自己写模块 https://github.com/wacko1805/Volume-steps-magisk
 #faq T liqsliu⁨⁣⁩᠎: test|ok
-#faq T liqsliu: test、
-#faq T liqsliu: test、
 #faq T liqsliu: 1|2
 #tools T liqsliu: X Katherine: https://suchat.org:5443/upload/8221638bab44d7c313e8d70da273edcb1b01782a/tdD2lRq4YR3HnPhLt5gvslE6Htwa7RWZF4eKNpsQ/org.chromium.webapk.a7e66a32d67646129_v2.apk
 #book T liqsliu: X Katherine: https://suchat.org:5443/upload/8221638bab44d7c313e8d70da273edcb1b01782a/YvBQP4PARSIZ82FSgfUyU3Bn9EpG5RVx1o8UWmWX/FNnP9_J8SY--0yoAImHxEg.pdf\n--\nps:X Katherine: 新课改出来了
@@ -101,11 +98,7 @@
 #default X liqsliu: https://suchat.org:5443/upload/8221638bab44d7c313e8d70da273edcb1b01782a/ddFRrzbpuCnCfxofsRbR03c06GRnsrZrT2LvwYjY/Jg86xNMxQg-qTJ3QEE-IaQ.mp3
 #default X Katherine: https://xmpp.pimux.de/share.php/e3532b8b-a84c-4cdf-a3d2-6af0d9c162a8/%e7%9f%b3%e8%bf%9b%20-%20%e5%a4%9c%e7%9a%84%e9%92%a2%e7%90%b4%e6%9b%b2.mp3
 #music T liqsliu: X Katherine: .note https://xmpp.pimux.de/share.php/e3532b8b-a84c-4cdf-a3d2-6af0d9c162a8/%e7%9f%b3%e8%bf%9b%20-%20%e5%a4%9c%e7%9a%84%e9%92%a2%e7%90%b4%e6%9b%b2.mp3
-#faq X liqsliu: faq|.faq
-#faq T liqsliu: ping|pong
-#faq T liqsliu: ping|pong
 #default X Katherine: landrop跨平台局域网互传\nhttps://xmpp.pimux.de/share.php/a707cc89-ed89-40ad-abdc-b630ccee933a/LANDrop-flutter-latest-android.apk
-#faq X liqsliu: ping|pong pong
 #rss T liqsliu: https://github.com/ipfs/go-ipfs/releases.atom\nhttps://github.com/eycorsican/leaf/releases.atom\nhttps://github.com/42wim/matterbridge/releases.atom\nhttps://www.solidot.org/index.rss\nhttps://www.reddit.com/r/China_irl/.rss\nhttps://www.reddit.com/r/worldnews/.rss\nhttps://www.reddit.com/r/TimedNews/.rss\nhttps://github.com/v2fly/v2ray-core/releases.atom\nhttps://github.com/SagerNet/SagerNet/releases.atom\nhttps://mikanani.me/RSS/Classic\nhttps://bbs.archlinuxcn.org/extern.php?action=feed&type=rss\nhttps://jac-animation-net.blogspot.com/feeds/posts/default\nhttps://feed.appinn.com/\nhttps://theinitium.com/newsfeed/\nhttps://www.archlinux.org/feeds/news/\nhttps://zh.greatfire.org/news/blog/rss\nhttps://www.chinagfw.org/feeds/posts/default\nhttps://www.ifanr.com/feed\nhttps://www.oschina.net/news/rss\nhttps://jandan.net/feed\nhttps://www.williamlong.info/rss.xml\nhttps://www.zhihu.com/rss\nhttps://www.ptt.cc/atom/MobileComm.xml\nhttps://ruby-china.org/topics/feed\nhttps://bangumi.moe/rss/latest\nhttps://www.ptt.cc/atom/HatePolitics.xml\nhttps://coolshell.cn/feed\nhttps://www.v2ex.com/index.xml\nhttps://iyouport.substack.com/feed\nhttps://www.gcores.com/rss\nhttps://www.ptt.cc/atom/Gossiping.xml\nhttps://pypi.org/rss/project/telethon/releases.xml\nhttps://www.ptt.cc/atom/sex.xml\nhttps://sspai.com/feed\nhttps://freeweibo.com/?rss\nhttps://feeds.feedburner.com/Freewechat\nhttps://bangumi.tv/feed/blog/anime\nhttps://www.debian.org/News/news\nhttps://lineageos.org/feed.xml\nhttps://gajim.org/index.xml\n\n\nhttps://rsshub.app/telegram/channel/v2ex_rss\nhttps://rsshub.app/telegram/channel/ipfsrss\nhttps://rsshub.app/telegram/channel/iyouport\nhttps://rsshub.app/telegram/channel/JISFW\nhttps://rsshub.app/telegram/channel/Yuan_En\nhttps://rsshub.app/telegram/channel/HouXuApp\nhttps://rsshub.app/telegram/channel/illusory_world\nhttps://rsshub.app/telegram/channel/realtimenewsbroadcasts\nhttps://rsshub.app/telegram/channel/tnews365\nhttps://rsshub.app/telegram/channel/atashare\nhttps://rsshub.app/telegram/channel/readhub_cn\nhttps://rsshub.app/telegram/channel/inmediahknet\nhttps://rsshub.app/telegram/channel/freeweibo\nhttps://rsshub.app/telegram/channel/anime1notify\nhttps://rsshub.app/telegram/channel/PikPak_Share_Channel\nhttps://rsshub.app/telegram/channel/zuanke8\nhttps://rsshub.app/telegram/channel/DejavuRSS\nhttps://rsshub.app/telegram/channel/ycombinatornews\nhttps://rsshub.app/telegram/channel/SagerNet\nhttps://rsshub.app/telegram/channel/haoshufenxiang\nhttps://rsshub.app/telegram/channel/xhqcankao\nhttps://rsshub.app/telegram/channel/GetoutofChina\nhttps://rsshub.app/telegram/channel/CE_Observe\nhttps://rsshub.app/telegram/channel/thisworldfeed\nhttps://rsshub.app/telegram/channel/Funny_Videos_Clips_Kaotic\nhttps://rsshub.app/telegram/channel/milkice_portal\nhttps://rsshub.app/telegram/channel/Havoc_OS\nhttps://rsshub.app/telegram/channel/crDroidUpdates\nhttps://rsshub.app/telegram/channel/PixelExperience\nhttps://rsshub.app/telegram/channel/appinnfeed\nhttps://rsshub.app/telegram/channel/aboutrss\nhttps://rsshub.app/telegram/channel/TestFlightCN\nhttps://rsshub.app/telegram/channel/iingtw\nhttps://rsshub.app/telegram/channel/amazondrop\nhttps://rsshub.app/telegram/channel/opencfdchannel\nhttps://rsshub.app/telegram/channel/SMDNF\nhttps://rsshub.app/telegram/channel/NewlearnerChannel\nhttps://rsshub.app/telegram/channel/tginfoen\nhttps://rsshub.app/telegram/channel/lightrekt\nhttps://rsshub.app/telegram/channel/jandan_pic\nhttps://rsshub.app/telegram/channel/ednovas2\nhttps://rsshub.app/telegram/channel/gengtuqun\nhttps://rsshub.app/telegram/channel/PDFtushuguan\nhttps://rsshub.app/telegram/channel/tg_InternetSecurity\nhttps://rsshub.app/telegram/channel/landiansub\n--\nps:备份20220427
 #briar X liqsliu: briar://adueeb5yickbijda3q2eiqqqul27aynmxtoz6ruoiasr4iezhskh6
 #xmpp T liqsliu: X mzltest: xmpp:non-anon-test@chat.disroot.org?join\n--\nps:匿名频道测试
@@ -117,7 +110,6 @@
 #book T liqsliu: X Katherine: https://suchat.org:5443/upload/8221638bab44d7c313e8d70da273edcb1b01782a/3ILuFKvS4TS77Lany7hpLRE4NoauN21TFWO453ug/pEiWRY2LRLGaO3ZJS0jw3w.pdf\n--\nps:X Katherine: *星链计划发展现状与对抗思考*
 #default X dxpx: 我测你们的码
 #gpg\n-----BEGIN X liqsliu: PGP PUBLIC KEY BLOCK-----\n\nmDMEY4N6bRYJKwYBBAHaRw8BAQdAXlB1BdaOcjJUZy92sgsPGoVKefLnTyDpqPWG\nwiaLxHS0G2xpcXNsaXUgPGxpcXNsaXVAZ21haWwuY29tPoiQBBMWCAA4BQsJCAcC\nBhUKCQgLAgQWAgMBAh4BAheAFiEEtaJiUfivYUuFeripgRow3Au7pScFAmODjaEC\nGyMACgkQgRow3Au7pScLpAD8CG782Q1sfct+ePRtAiLd8ZovZOEvn4VYHmafg8GH\nRIcA/RsxM4Ykj/2R8/kCJiH/7pKsb0xhE4nDUn57mAUetn4EuDgEY4N6bRIKKwYB\nBAGXVQEFAQEHQLAWX5laXcuGgpEkecyV5M0gbt3kGk+jNUYun/33iIB5AwEIB4h4\nBBgWCAAgFiEEtaJiUfivYUuFeripgRow3Au7pScFAmODjbQCGwwACgkQgRow3Au7\npScUsgEAyPkDpewG7x7EBG84qsEXkUkaq+Z2Z7ry4chJm2UGa/0BAN9cImvUEpek\n1Zr9r5ZBs1bR7qq7mqHytXnLk7jCKG8O\n=543w\n-----END PGP PUBLIC KEY BLOCK-----
-#faq X liqsliu: 没人|哈哈
 #faq X liqsliu: 你好|你好
 #default O hh: telegram
 #faq X liqsliu: help|命令要以英文句号开头
