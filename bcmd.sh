@@ -80,6 +80,7 @@ cmds() {
     if [[ -e "$SH_PATH/STOP" ]]; then
       echo stoped
     else
+      rm "$SH_PATH/STOP"
       echo running
     fi
     ;;
