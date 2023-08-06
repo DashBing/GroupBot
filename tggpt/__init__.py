@@ -55,6 +55,7 @@ else:
 #  LOGGER.setLevel(logging.ERROR)
 
 
+logger=LOGGER
 
 
 import asyncio
@@ -66,9 +67,6 @@ LOOP = asyncio.get_event_loop()
 #
 #  from . import config
 #  CONFIG = config.CONFIG
-
-
-
 
 
 
@@ -106,16 +104,19 @@ def get_my_key(key, path=f"{HOME}/.ssh/private_keys.txt"):
 
 api_id = int(get_my_key("TELEGRAM_API_ID"))
 api_hash = get_my_key("TELEGRAM_API_HASH")
-gpt_id = get_my_key("TELEGRAM_GPT_ID")
+gpt_id = int(get_my_key("TELEGRAM_GPT_ID"))
 
 
 #  MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
 
 #  exit(0)
 
+
+
 from telethon import TelegramClient
 #  client = TelegramClient('anon', api_id, api_hash)
-UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=LOOP)
+#  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=LOOP)
+UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, proxy=("socks5", '172.23.176.1', 6084), loop=LOOP)
 
 del api_id
 del api_hash
@@ -135,3 +136,5 @@ if LOOP.is_closed():
   LOGGER.error("loop closed, this may be a error")
 
 # __ALL__ = ["WORK_DIR", "PARENT_DIR", "CMD", "LOGGER", "debug", "OUT", "ERR", "asyncio", "config", "UB", "LOOP", "MY_NAME", "NB", "BOT_ID", "BOT_NAME", "UB2_ID"]
+
+
