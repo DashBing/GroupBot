@@ -1,19 +1,19 @@
 #!/bin/bash
 
-# log_msg(){
-#   echo
-#   echo
-#   date
-#   echo "#### mt ####"
-#   echo "msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent"
-#   local i=0
-#   for i in "$@"
-#   do
-#     echo -n "|$i|"
-#   done
-#   echo
-#   echo "#### end ####"
-# }
+log_msg(){
+  echo
+  echo
+  date
+  echo "#### mt ####"
+  echo "msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent"
+  local i=0
+  for i in "$@"
+  do
+    echo -n "|$i|"
+  done
+  echo
+  echo "#### end ####"
+}
 #if [[ $3 = xmpp.myxmpp ]]; then
 # if [[ $3 = xmpp.conversations ]]; then
 #   log_msg "$@" >> ~/tera/mt_msg.log
@@ -409,6 +409,11 @@ else
 $LABLE ${NAME}: "
 fi
 
+#if [[ $3 = xmpp.myxmpp ]]; then
+if [[ $1 =~ *pong* ]]; then
+# if [[ $3 = xmpp.conversations ]]; then
+  log_msg "$@" >> ~/tera/mt_msg.log
+fi
 
 # echo -n "$NAME"
 # echo -n $SPLIT
