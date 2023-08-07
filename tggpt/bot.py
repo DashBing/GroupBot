@@ -136,7 +136,8 @@ async def read_res(event):
     await mt_send(queue[qid][1]+"\n\n待补充...")
   else:
     #  queue[qid][1] += "\n\n[结束]"
-    await mt_send(queue[qid][1]+"\n\n[结束]")
+    #  await mt_send(queue[qid][1]+"\n\n[结束]")
+    await mt_send(queue[qid][1])
   if not is_loading:
     queue.pop(qid)
 
@@ -318,13 +319,15 @@ async def mt2tg(msg):
             print("################")
             print(msg)
             print("################")
-            info = "E: {}\n==\n{}\n==\n{}".format(sys.exc_info()[1], traceback.format_exc(), sys.exc_info())
-            logger.error(info)
+            #  info = "E: {}\n==\n{}\n==\n{}".format(sys.exc_info()[1], traceback.format_exc(), sys.exc_info())
+            #  logger.error(info)
+            logger.error("E: failed to decode msg from mt...", exc_info=True, stack_info=True)
             return
 
         text = msgd["text"]
         name = msgd["username"]
         print(f"I: got msg: {name}: {text}")
+        print(f"I: original msg: %s" % msg)
 
         #  if name == "C twitter: ":
         #      return
