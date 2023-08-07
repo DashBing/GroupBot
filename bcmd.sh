@@ -122,6 +122,7 @@ cmds() {
     bash "$SH_PATH/bot.sh" "reset" &>/dev/null
     ;;
   gpt|GPT)
+    exit 1
     :
   #   shift
   #   bash "$SH_PATH/gpt.sh" "$@" || echo "E: $?"
@@ -139,7 +140,12 @@ cmds() {
     [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway
     [[ -e $SH_PATH/.gptmode_for_$gateway ]] && rm $SH_PATH/.gptmode_for_$gateway
     ;;
+  gptr)
+    exit 1
+    :
+    ;;
   gptmode)
+    exit 1
     :
   #   [[ -e $SH_PATH/.gptmode_for_$gateway ]] && rm $SH_PATH/.gptmode_for_$gateway || touch $SH_PATH/.gptmode_for_$gateway
   #   [[ -e $SH_PATH/.gptmode_for_$gateway ]] && echo "chatgpt is here" || echo "chatgpt is out"
@@ -330,7 +336,7 @@ res=$4
   # if [[ "${text:0:6}" == ".note " ]]; then
 #text=$(cmds $text)
 #text=$(cmds $text 2>&1)
-text=$(cmds $text 2>"$SH_PATH/error")
+text=$(cmds $text 2>"$SH_PATH/error") || exit 1
 [[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
 
 [[ -n "$text_e" ]] && text="$text
