@@ -14,9 +14,13 @@ from telethon import events
 MT_API = "127.0.0.1:4246"
 HTTP_RES_MAX_BYTES = 15000000
 
+gpt_chat=None
 
+UA = 'Chrome Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) Apple    WebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36'
 
 logger = logging.getLogger(__name__)
+
+
 
 
 from functools import wraps
@@ -119,6 +123,9 @@ async def read_res(event):
       await mt_send(queue[msg.id][1])
       if not is_loading:
         queue.pop(msg.id)
+
+
+
 
 
 @exceptions_handler
@@ -225,6 +232,7 @@ async def my_event_handler(event):
 
 
 import aiohttp
+from aiohttp.client_exceptions import ClientPayloadError, ClientConnectorError
 
 session = None
 
@@ -244,7 +252,6 @@ async def mt_read():
 
     url = "http://" + MT_API + "/api/stream"
     session = await init_aiohttp_session()
-    from aiohttp.client_exceptions import ClientPayloadError, ClientConnectorError
     logger.info("start read msg from mt api...")
     while True:
         try:
@@ -352,21 +359,23 @@ async def mt2tg(msg):
         #    await queue.put(msgd)
         #  await queue.put([1, msgd])
 
-        try:
-          chat = await UB.get_input_entity(chat_id)
-        except Exception as e:
-          print(e)
+        global gpt_chat
+        if not gpt_chat:
           try:
-            chat = await UB.get_entity(chat_id)
-          except ValueError:
-            print("wtf, wrong id?")
+            gpt_chat = await UB.get_input_entity(chat_id)
+          except Exception as e:
+            print(e)
             try:
-              chat = await UB.get_input_entity('littleb_gptBOT')
-            except:
-              chat = await UB.get_entity('littleb_gptBOT')
-        print(chat.stringify())
+              gpt_chat = await UB.get_entity(chat_id)
+            except ValueError:
+              print("wtf, wrong id?")
+              try:
+                gpt_chat = await UB.get_input_entity('littleb_gptBOT')
+              except:
+                gpt_chat = await UB.get_entity('littleb_gptBOT')
+          print(gpt_chat.stringify())
         #  print(f">{chat.user_id}: {text}")
-        msg = await UB.send_message(chat, text)
+        msg = await UB.send_message(gpt_chat, text)
         #  await queue.put({msg.id: [msgd, msg]})
         #  await queue.put([msg, msgd])
         queue[msg.id]=[msgd, None]
@@ -386,9 +395,6 @@ async def mt2tg(msg):
         await asyncio.sleep(5)
 
 
-
-
-UA = 'Chrome Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) Apple    WebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36'
 
 @exceptions_handler
 async def http(url, method="GET", return_headers=False, **kwargs):
