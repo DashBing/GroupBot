@@ -136,10 +136,10 @@ async def read_res(event):
     #    # won't be used
     #    queue[qid][1] = text
     #  else:
-    queue[qid][1] = text[len(queue[qid]):]
+    queue[qid][1] = text[len(queue[qid][1]):]
   if is_loading:
     #  queue[qid][1] += "\n\n待补充..."
-    await mt_send(queue[qid][1]+"\n\n待补充...")
+    await mt_send(queue[qid][1]+"\n[思考中...]")
   else:
     #  queue[qid][1] += "\n\n[结束]"
     #  await mt_send(queue[qid][1]+"\n\n[结束]")
