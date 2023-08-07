@@ -311,7 +311,7 @@ if [[ "$1" == "just_get_reply" ]]; then
 fi
 
 # echo "arg: $*"
-echo "bcmd arg: $*" >> ~/tera/mt_msg.log
+# echo "bcmd arg: $*" >> ~/tera/mt_msg.log
 
 
 
@@ -323,6 +323,7 @@ res=$4
 
 
 
+# echo "b0 :|$text|" >> ~/tera/mt_msg.log
   # if [[ "${text:0:6}" == ".note " ]]; then
 #text=$(cmds $text)
 #text=$(cmds $text 2>&1)
@@ -341,21 +342,23 @@ E: $text_e"
 
 
 
-
-# echo "b :|$text|" >> ~/tera/mt_msg.log
-  [[ -z "$text" ]] && exit
-  text=$(bash "$SH_PATH/gene_res.sh" "$text" $gateway)
 # echo "b1 :|$text|" >> ~/tera/mt_msg.log
 
+  [[ -z "$text" ]] && exit
+  text=$(bash "$SH_PATH/gene_res.sh" "$text" $gateway)
+
+# echo "b2 :|$text|" >> ~/tera/mt_msg.log
 #  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4243/api/message)
   res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4240/api/message)
 echo "res: $res"
 echo "json: $text"
-# echo "4 :|$text|" >> ~/tera/mt_msg.log
   if [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
-    curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: $(echo "$res" | jq -r ".message") b64: $(echo $text|base64)" $gateway)" http://127.0.0.1:4240/api/message
+echo "res :|$res|" >> ~/tera/mt_msg.log
+date &>> ~/tera/mt_msg.log
+    curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: $(echo "$res" | jq -r ".message") b64: $(echo $text|base64)" $gateway)" http://127.0.0.1:4240/api/message &>> ~/tera/mt_msg.log
   else
-    [[ -z "$(echo "$res" | jq -r ".text")" ]] && curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: empty message" $gateway)" http://127.0.0.1:4240/api/message
+date &>> ~/tera/mt_msg.log
+    [[ -z "$(echo "$res" | jq -r ".text")" ]] && curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: empty message" $gateway)" http://127.0.0.1:4240/api/message &>> ~/tera/mt_msg.log
   fi
 
 

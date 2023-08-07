@@ -1,5 +1,15 @@
 #!/bin/bash
 
+help(){
+  echo "翻译
+默认: 非中文翻译为中文，中文则翻译为英文
+--
+详情: https://github.com/soimort/translate-shell"
+}
+
+
+{ [[ -z "$1" ]] || [[ "$1" == "help" ]]; } && help && exit 0
+
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 # DOMAIN=${DOMAIN:-liuu.tk}
 DOMAIN=$(cat DOMAIN)
@@ -18,14 +28,6 @@ trans "${@}"
 }
 
 
-help(){
-  echo "翻译
-默认: 非中文翻译为中文，中文则翻译为英文
-详情: https://github.com/soimort/translate-shell"
-}
-
-
-[[ -z "$1" || "$1" == "help" ]] && help && exit 0
 
 
 #-identify
@@ -51,5 +53,6 @@ else
   tl="-t zh-CN"
 fi
 
-run_trans -no-auto $tl $opts "${*}" 2>/dev/null
+# run_trans -no-auto $tl $opts "${*}" 2>/dev/null
+run_trans $tl $opts "${*}" 2>/dev/null
 
