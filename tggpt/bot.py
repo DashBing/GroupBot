@@ -324,6 +324,7 @@ async def mt2tg(msg):
 
         text = msgd["text"]
         name = msgd["username"]
+        print(f"I: got msg: {name}: {text}")
 
         #  if name == "C twitter: ":
         #      return
