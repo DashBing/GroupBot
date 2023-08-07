@@ -101,17 +101,19 @@ async def read_res(event):
   else:
     return
   if event.chat_id != gpt_id:
+    print("N: skip: %s != %s" % (event.chat_id, gpt_id))
     return
   if msg.is_reply and msg.reply_to.reply_to_msg_id in queue:
     qid=msg.reply_to.reply_to_msg_id
   else:
+    print("E: fixme: unknown res: %s" % msg.stringify())
     return
-  print("Q: %s" % queue[qid][0]['text'])
+  print("< Q: %s" % queue[qid][0]['text'])
   if LOADING in text.splitlines()[-1]:
-    print("gpt(未结束): %s" % text)
+    print("> gpt(未结束): %s" % text)
     is_loading=True
   else:
-    print("gpt: %s" % text)
+    print("> gpt: %s" % text)
     is_loading=False
   if is_loading:
     #  text = "\n".join(text.splitlines()[:-2])
@@ -515,7 +517,7 @@ async def http(url, method="GET", return_headers=False, **kwargs):
             return html
 
 @exceptions_handler
-async def mt_send(text="null", username="C bot", gateway="test", qt=None):
+async def mt_send(text="null", username="gpt", gateway="test", qt=None):
 
     # send msg to matterbridge
     url = "http://" + MT_API + "/api/message"

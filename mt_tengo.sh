@@ -386,6 +386,9 @@ api.cmd)
 api.cmdres)
   LABLE="0"
   ;;
+api.gpt)
+  LABLE="C"
+  ;;
 api.tg)
   LABLE="G"
   ;;
