@@ -99,6 +99,7 @@ async def read_res(event):
   text = msg.raw_text
   if text:
     if text == LOADING or text == LOADING2:
+      await mt_send("[思考中...]")
       return
     print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
   else:
@@ -137,7 +138,7 @@ async def read_res(event):
     #    queue[qid][1] = text
     #  else:
     #  queue[qid][1] = text[len(queue[qid][1]):]
-    queue[qid].append(text[len("".join(queue[qid][:-1])):])
+    queue[qid].append(text[len("".join(queue[qid][1:-1])):])
   if is_loading:
     #  queue[qid][1] += "\n\n待补充..."
     await mt_send(queue[qid][-1]+"\n[思考中...]")
