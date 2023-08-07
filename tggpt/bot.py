@@ -275,8 +275,8 @@ async def mt_read():
         print("N: mt api init ok")
         #  resp.content.read()
         async for line in resp.content:
+          logger.info("I: got a msg from mt api: %s", len(line))
           await mt2tg(line)
-          logger.info("I: got a msg from mt api")
         # buffer = b""
         # async for data, end_of_http_chunk in resp.content.iter_chunks():
           # buffer += data
