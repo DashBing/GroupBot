@@ -373,7 +373,14 @@ async def mt2tg(msg):
               await mt_send("gpt mode on")
               return
           elif text == ".gpt":
-            text="/chat"+text[4:]
+            await mt_send(".gpt $text")
+            return
+          elif text.startswith(".gpt ")
+            #  text="/chat"+text[4:]
+            text=text[5:]
+            if not text:
+              await mt_send(".gpt $text")
+              return
           elif text == ".gpt reset":
             #  text="/new_chat"
             await mt_send("reset")
