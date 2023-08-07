@@ -373,7 +373,7 @@ async def mt2tg(msg):
               await mt_send("gpt mode on")
               return
           elif text == ".gpt":
-            await mt_send(".gpt $text")
+            await mt_send(".gpt $text\nfrom telegram bot: @littleb_gptBOT")
             return
           elif text.startswith(".gpt "):
             #  text="/chat"+text[4:]
