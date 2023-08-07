@@ -266,35 +266,34 @@ async def init_aiohttp_session():
 
 @exceptions_handler
 async def mt_read():
+  url = "http://" + MT_API + "/api/stream"
+  session = await init_aiohttp_session()
+  logger.info("start read msg from mt api...")
+  while True:
+    try:
+      async with session.get(url, timeout=0) as resp:
+        print("N: mt api init ok")
+        #  resp.content.read()
+        async for line in resp.content:
+          await mt2tg(line)
+          logger.info("I: got a msg from mt api")
+        # buffer = b""
+        # async for data, end_of_http_chunk in resp.content.iter_chunks():
+          # buffer += data
+          # if end_of_http_chunk:
+            # # print(buffer)
+            # await send_mt_msg_to_queue(buffer, queue)
+            # buffer = b""
 
-    url = "http://" + MT_API + "/api/stream"
-    session = await init_aiohttp_session()
-    logger.info("start read msg from mt api...")
-    while True:
-        try:
-            async with session.get(url, timeout=0) as resp:
-              print("N: mt api init ok")
-        #        resp.content.read()
-                async for line in resp.content:
-                    await mt2tg(line)
-                    logger.info("I: got a msg from mt api")
-                # buffer = b""
-                # async for data, end_of_http_chunk in resp.content.iter_chunks():
-                    # buffer += data
-                    # if end_of_http_chunk:
-                        # # print(buffer)
-                        # await send_mt_msg_to_queue(buffer, queue)
-                        # buffer = b""
-
-        except ClientPayloadError:
-            logger.warning("mt closed")
-            print("mt closed, data lost")
-        except ClientConnectorError:
-            logger.warning("mt api is not ok, retry...")
-        except Exception as e:
-            logger.error(e)
-            print(str(e))
-        await asyncio.sleep(5)
+    except ClientPayloadError:
+      logger.warning("mt closed")
+      print("mt closed, data lost")
+    except ClientConnectorError:
+      logger.warning("mt api is not ok, retry...")
+    except Exception as e:
+      logger.error(e)
+      print(str(e))
+    await asyncio.sleep(5)
 
 
 
