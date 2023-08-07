@@ -65,7 +65,9 @@ def _exceptions_handler(e, *args, **kwargs):
 queue = {}
 
 LOADING="思考你发送的内容..."
+LOADING2="Thinking about what you sent..."
 LOADINGS="\n\n"+LOADING
+LOADINGS2="\n\n"+LOADING2
 
 #  @exceptions_handler
 #  @UB.on(events.NewMessage(outgoing=True))
@@ -96,6 +98,8 @@ async def read_res(event):
   msg = event.message
   text = msg.raw_text
   if text:
+    if text == LOADING or text == LOADING2:
+      return
     print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
   else:
     return
@@ -110,7 +114,7 @@ async def read_res(event):
     return
   print("< Q: %s" % queue[qid][0]['text'])
   #  if LOADING in text.splitlines()[-1]:
-  if text.endswith(LOADING):
+  if text.endswith(LOADING) or text.endswith(LOADING2):
     print("> gpt(未结束): %s" % text)
     is_loading=True
   else:
@@ -119,15 +123,17 @@ async def read_res(event):
   if is_loading:
     #  text = "\n".join(text.splitlines()[:-2])
     text = text.rstrip(LOADINGS)
-  if not text:
-    # ignore useless msg
-    return
-    text = LOADING
+    text = text.rstrip(LOADINGS2)
+  #  if not text:
+  #    # ignore useless msg
+  #    return
+  #    text = LOADING
   if queue[qid][1] is None:
     queue[qid][1] = text
   else:
     #  queue[qid] = text
     if queue[qid][1] == LOADING:
+      # won't be used
       queue[qid][1] = text
     else:
       queue[qid][1] = text[len(queue[qid]):]
