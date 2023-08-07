@@ -375,7 +375,9 @@ async def mt2tg(msg):
           elif text == ".gpt":
             text="/chat"+text[4:]
           elif text == ".gpt reset":
-            text="/new_chat"
+            #  text="/new_chat"
+            await mt_send("reset")
+            return
           else:
             return
         else:
