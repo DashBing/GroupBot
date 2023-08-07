@@ -144,11 +144,11 @@ async def read_res(event):
   if is_loading:
     #  queue[qid][1] += "\n\n待补充..."
     #  await mt_send(queue[qid][-1]+"\n[思考中...]")
-    await mt_send(queue[qid][-1])
+    await mt_send(queue[qid][-1], gateway=queue[qid][0]["gateway"])
   else:
     #  queue[qid][1] += "\n\n[结束]"
     #  await mt_send(queue[qid][1]+"\n\n[结束]")
-    await mt_send(queue[qid][-1]+"\n[结束]")
+    await mt_send(queue[qid][-1]+"\n[结束]", gateway=queue[qid][0]["gateway"])
   if not is_loading:
     queue.pop(qid)
 
