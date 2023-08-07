@@ -120,6 +120,8 @@ async def read_res(event):
     #  text = "\n".join(text.splitlines()[:-2])
     text = text.rstrip(LOADINGS)
   if not text:
+    # ignore useless msg
+    return
     text = LOADING
   if queue[qid][1] is None:
     queue[qid][1] = text
@@ -151,7 +153,6 @@ async def my_event_handler(event):
   #  if 'new_chat' in event.raw_text:
   #    print(event.stringify())
   await read_res(event)
-
 
 
 #  @exceptions_handler
@@ -261,6 +262,8 @@ async def init_aiohttp_session():
 
 
 
+
+
 @exceptions_handler
 async def mt_read():
 
@@ -270,11 +273,11 @@ async def mt_read():
     while True:
         try:
             async with session.get(url, timeout=0) as resp:
-                print("mt api ok")
+              print("N: mt api init ok")
         #        resp.content.read()
                 async for line in resp.content:
                     await mt2tg(line)
-                    logger.info("got a msg from mt api")
+                    logger.info("I: got a msg from mt api")
                 # buffer = b""
                 # async for data, end_of_http_chunk in resp.content.iter_chunks():
                     # buffer += data
@@ -389,6 +392,7 @@ async def mt2tg(msg):
                 gpt_chat = await UB.get_entity('littleb_gptBOT')
           print(gpt_chat.stringify())
         #  print(f">{chat.user_id}: {text}")
+        print(f"N: send {text} to gpt")
         msg = await UB.send_message(gpt_chat, text)
         #  await queue.put({msg.id: [msgd, msg]})
         #  await queue.put([msg, msgd])
