@@ -21,6 +21,8 @@ UA = 'Chrome Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) Apple    WebKit/537
 logger = logging.getLogger(__name__)
 
 
+gptmode=[]
+
 
 from functools import wraps
 
@@ -337,6 +339,8 @@ async def mt2tg(msg):
         text = msgd["text"]
         name = msgd["username"]
         print(f"I: got msg: {name}: {text}")
+        if not text:
+          return
 
         #  if name == "C twitter: ":
         #      return
@@ -350,10 +354,39 @@ async def mt2tg(msg):
         #      if msgd["gateway"] == "gateway1":
         #          msgd["gateway"] = "gateway11"
 
-        if msgd["gateway"] == "test":
-          pass
+        #  if msgd["gateway"] == "test":
+        #    pass
+        #  else:
+        #    return
+
+
+
+
+        if text[0:1] == ".":
+          if text == ".gptmode":
+            if msgd["gateway"] in gptmode:
+              gptmode.remove(msgd["gateway"])
+              await mt_send("gpt mode off")
+              return
+            else:
+              gptmode.append(msgd["gateway"])
+              await mt_send("gpt mode on")
+              return
+          elif text == ".gpt":
+            text="/chat"+text[4:]
+          elif text == ".gpt reset":
+            text="/new_chat"
+          else:
+            return
         else:
-          return
+          if msgd["gateway"] in gptmode:
+            pass
+          else:
+            return
+
+
+
+
         chat_id = gpt_id
         #  if msgd["gateway"] in MT_GATEWAY_LIST:
         #      chat_id = MT_GATEWAY_LIST[msgd["gateway"]][0]

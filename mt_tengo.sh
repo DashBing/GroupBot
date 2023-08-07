@@ -641,7 +641,8 @@ fi
 
 if [[ "$3" == "api.gpt" ]]; then
   # if [[ $(echo "$TEXT" | wc -l) -gt 1 ]]; then
-  if [[ "${TEXT%*\[结束\]}" == "${TEXT}" ]] && [[ "${TEXT%*\[思考中...\]}" == "${TEXT}" ]]; then
+  # if [[ "${TEXT%*\[结束\]}" == "${TEXT}" ]] && [[ "${TEXT%*\[思考中...\]}" == "${TEXT}" ]]; then
+  if [[ "${TEXT%*\[思考中...\]}" == "${TEXT}" ]]; then
     NAME=""
   fi
 fi
