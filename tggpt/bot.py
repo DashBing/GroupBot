@@ -352,7 +352,11 @@ async def mt2tg(msg):
         #    await queue.put(msgd)
         #  await queue.put([1, msgd])
 
-        chat = await UB.get_input_entity(chat_id)
+        try:
+          chat = await UB.get_input_entity(chat_id)
+        except Exception as e:
+          print(e)
+          chat = await UB.get_entity(chat_id)
         msg = await UB.send_message(chat, text)
         #  await queue.put({msg.id: [msgd, msg]})
         #  await queue.put([msg, msgd])
