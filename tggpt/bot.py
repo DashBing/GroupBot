@@ -375,7 +375,7 @@ async def mt2tg(msg):
           elif text == ".gpt":
             await mt_send(".gpt $text")
             return
-          elif text.startswith(".gpt ")
+          elif text.startswith(".gpt "):
             #  text="/chat"+text[4:]
             text=text[5:]
             if not text:
