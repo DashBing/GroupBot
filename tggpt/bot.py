@@ -366,24 +366,24 @@ async def mt2tg(msg):
           if text == ".gptmode":
             if msgd["gateway"] in gptmode:
               gptmode.remove(msgd["gateway"])
-              await mt_send("gpt mode off")
+              await mt_send("gpt mode off", gateway==msgd["gateway"])
               return
             else:
               gptmode.append(msgd["gateway"])
-              await mt_send("gpt mode on")
+              await mt_send("gpt mode on", gateway==msgd["gateway"])
               return
           elif text == ".gpt":
-            await mt_send(".gpt $text\nfrom telegram bot: @littleb_gptBOT")
+            await mt_send(".gpt $text\nfrom telegram bot: @littleb_gptBOT", gateway==msgd["gateway"])
             return
           elif text.startswith(".gpt "):
             #  text="/chat"+text[4:]
             text=text[5:]
             if not text:
-              await mt_send(".gpt $text")
+              await mt_send(".gpt $text", gateway==msgd["gateway"])
               return
           elif text == ".gpt reset":
             #  text="/new_chat"
-            await mt_send("reset")
+            await mt_send("reset", gateway==msgd["gateway"])
             return
           else:
             return
