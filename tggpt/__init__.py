@@ -116,7 +116,7 @@ gpt_id = int(get_my_key("TELEGRAM_GPT_ID"))
 from telethon import TelegramClient
 #  client = TelegramClient('anon', api_id, api_hash)
 UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=loop)
-#  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, proxy=("socks5", '172.23.176.1', 6084), loop=LOOP)
+#  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, proxy=("socks5", '172.23.176.1', 6084), loop=loop)
 
 del api_id
 del api_hash
@@ -126,15 +126,15 @@ del api_hash
 #  async def _init():
 
 
-#LOOP.run_until_complete(init())
-if LOOP.is_running():
+#loop.run_until_complete(init())
+if loop.is_running():
   LOGGER.error("loop running...")
 else:
   LOGGER.error("loop stoped...")
 
-if LOOP.is_closed():
+if loop.is_closed():
   LOGGER.error("loop closed, this may be a error")
 
-# __ALL__ = ["WORK_DIR", "PARENT_DIR", "CMD", "LOGGER", "debug", "OUT", "ERR", "asyncio", "config", "UB", "LOOP", "MY_NAME", "NB", "BOT_ID", "BOT_NAME", "UB2_ID"]
+# __ALL__ = ["WORK_DIR", "PARENT_DIR", "CMD", "LOGGER", "debug", "OUT", "ERR", "asyncio", "config", "UB", "loop", "MY_NAME", "NB", "BOT_ID", "BOT_NAME", "UB2_ID"]
 
 
