@@ -121,11 +121,12 @@ cmds() {
     bash "$SH_PATH/bot.sh" "$@" || echo "E: $?"
     bash "$SH_PATH/bot.sh" "reset" &>/dev/null
     ;;
-  # gpt|GPT)
+  gpt|GPT)
+    :
   #   shift
   #   bash "$SH_PATH/gpt.sh" "$@" || echo "E: $?"
   #   bash "$SH_PATH/gpt.sh" "reset" &>/dev/null
-    # ;;
+    ;;
   botmode)
     [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway || touch $SH_PATH/.botmode_for_$gateway
     [[ -e $SH_PATH/.botmode_for_$gateway ]] && echo "bot is here" || echo "bot is out"
@@ -138,12 +139,13 @@ cmds() {
     [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway
     [[ -e $SH_PATH/.gptmode_for_$gateway ]] && rm $SH_PATH/.gptmode_for_$gateway
     ;;
-  # gptmode)
+  gptmode)
+    :
   #   [[ -e $SH_PATH/.gptmode_for_$gateway ]] && rm $SH_PATH/.gptmode_for_$gateway || touch $SH_PATH/.gptmode_for_$gateway
   #   [[ -e $SH_PATH/.gptmode_for_$gateway ]] && echo "chatgpt is here" || echo "chatgpt is out"
   #   [[ -e $SH_PATH/.aimode_for_$gateway ]] && rm $SH_PATH/.aimode_for_$gateway
   #   [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway
-  #   ;;
+    ;;
   dig)
     shift
     [[ -z "$2" ]] && echo "$(dig +short "$@" || echo "E: $?")" || echo "$(dig "$@" || echo "E: $?")"
@@ -295,7 +297,8 @@ cmds() {
     fi
     ;;
   *)
-    echo "E: unknown cmd > $*"
+    # echo "E: unknown cmd > $*"
+    echo '?'
     ;;
   esac
 }
@@ -332,7 +335,7 @@ text=$(cmds $text 2>"$SH_PATH/error")
 
 [[ -n "$text_e" ]] && text="$text
 --
-E: $text_e"
+E: $text_e" || { [[ -z "$text" ]] && exit 0; }
 
 # text=$(echo "$text"|sed 's/\r//g')
 # text=$(echo "$text" | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")

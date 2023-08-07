@@ -375,11 +375,17 @@ async def mt2tg(msg):
           elif text == ".gpt":
             await mt_send(".gpt $text\nfrom telegram bot: @littleb_gptBOT", gateway=msgd["gateway"])
             return
-          elif text.startswith(".gpt "):
+          elif text.startswith(".gpt ") or text.startswith(".gpt\n"):
             #  text="/chat"+text[4:]
             text=text[5:]
             if not text:
               await mt_send(".gpt $text", gateway=msgd["gateway"])
+              return
+          elif text.startswith(".gptr "):
+            #  text="/chat"+text[4:]
+            text="请翻译下面的内容，如果原始语言是中文就翻译成英文，原始语言不是中文的就翻译为中文，直接把翻译结果发给我：\n\n"+text[6:]
+            if not text:
+              await mt_send("gpt translate", gateway=msgd["gateway"])
               return
           elif text == ".gpt reset":
             #  text="/new_chat"
