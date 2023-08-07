@@ -98,34 +98,36 @@ async def read_res(event):
   text = msg.raw_text
   if text:
     print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
+  else:
+    return
   if event.chat_id != gpt_id:
     return
-  if msg.id not in queue:
-    print("E: wrong msg id %s %s queue: %s" % (msg.id, event.id, queue))
+  if msg.is_reply and msg.reply_to.reply_to_msg_id in queue:
+    qid=msg.reply_to.reply_to_msg_id
+  else:
     return
-  if text:
-    if LOADING in text.splitlines()[-1]:
-      print("gpt(未结束): %s" % text)
-      is_loading=True
-    else:
-      print("gpt: %s" % text)
-      is_loading=False
-    if msg.is_reply and msg.reply_to.reply_to_msg_id in queue:
-      if is_loading:
-        #  text = "\n".join(text.splitlines()[:-2])
-        text = text.rstrip(LOADING)
-      if queue[msg.id][1] is None:
-        queue[msg.id][1] = text
-      else:
-        #  queue[msg.id] = text
-        queue[msg.id][1] = text[len(queue[msg.id]):]
-      if is_loading:
-        queue[msg.id][1] += "\n\n待续..."
-      else:
-        queue[msg.id][1] += "\n\n[结束]"
-      await mt_send(queue[msg.id][1])
-      if not is_loading:
-        queue.pop(msg.id)
+  print("Q: %s" % queue[qid][0]['text'])
+  if LOADING in text.splitlines()[-1]:
+    print("gpt(未结束): %s" % text)
+    is_loading=True
+  else:
+    print("gpt: %s" % text)
+    is_loading=False
+  if is_loading:
+    #  text = "\n".join(text.splitlines()[:-2])
+    text = text.rstrip(LOADING)
+  if queue[qid][1] is None:
+    queue[qid][1] = text
+  else:
+    #  queue[qid] = text
+    queue[qid][1] = text[len(queue[qid]):]
+  if is_loading:
+    queue[qid][1] += "\n\n待续..."
+  else:
+    queue[qid][1] += "\n\n[结束]"
+  await mt_send(queue[qid][1])
+  if not is_loading:
+    queue.pop(qid)
 
 
 
