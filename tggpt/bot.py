@@ -103,10 +103,11 @@ async def read_res(event):
   if event.chat_id != gpt_id:
     print("N: skip: %s != %s" % (event.chat_id, gpt_id))
     return
-  if msg.is_reply and msg.reply_to.reply_to_msg_id in queue:
-    qid=msg.reply_to.reply_to_msg_id
+  #  if msg.is_reply and msg.reply_to.reply_to_msg_id in queue:
+  if msg.is_reply and msg.reply_to_msg_id in queue:
+    qid=msg.reply_to_msg_id
   else:
-    print("E: fixme: unknown res: %s" % msg.stringify())
+    print("E: fixme: unknown res: is_reply: %s all: %s" % (msg.is_reply, msg.stringify()))
     return
   print("< Q: %s" % queue[qid][0]['text'])
   if LOADING in text.splitlines()[-1]:
