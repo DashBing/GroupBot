@@ -101,11 +101,11 @@ async def read_res(event):
     if text == LOADING or text == LOADING2:
       await mt_send("[思考中...]")
       return
-    print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
+    #  print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
   else:
     return
   if event.chat_id != gpt_id:
-    print("N: skip: %s != %s" % (event.chat_id, gpt_id))
+    #  print("N: skip: %s != %s" % (event.chat_id, gpt_id))
     return
   #  if msg.is_reply and msg.reply_to.reply_to_msg_id in queue:
   if msg.is_reply and msg.reply_to_msg_id in queue:
@@ -118,13 +118,12 @@ async def read_res(event):
   if text.endswith(LOADING) or text.endswith(LOADING2):
     print("> gpt(未结束): %s" % text)
     is_loading=True
+    text = text.rstrip(LOADINGS)
+    text = text.rstrip(LOADINGS2)
   else:
     print("> gpt: %s" % text)
     is_loading=False
-  if is_loading:
     #  text = "\n".join(text.splitlines()[:-2])
-    text = text.rstrip(LOADINGS)
-    text = text.rstrip(LOADINGS2)
   #  if not text:
   #    # ignore useless msg
   #    return
@@ -138,7 +137,7 @@ async def read_res(event):
     #    queue[qid][1] = text
     #  else:
     #  queue[qid][1] = text[len(queue[qid][1]):]
-    queue[qid].append(text[len("".join(queue[qid][1:-1])):])
+    queue[qid].append(text[len("".join(queue[qid][1:])):])
   if is_loading:
     #  queue[qid][1] += "\n\n待补充..."
     await mt_send(queue[qid][-1]+"\n[思考中...]")
