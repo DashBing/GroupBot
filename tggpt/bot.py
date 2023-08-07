@@ -283,6 +283,7 @@ async def mt_read():
         #  resp.content.read()
         async for line in resp.content:
           logger.info("I: got a msg from mt api: %s", len(line))
+          print(f"I: original msg: %s" % line)
           await mt2tg(line)
         # buffer = b""
         # async for data, end_of_http_chunk in resp.content.iter_chunks():
@@ -311,9 +312,9 @@ async def mt2tg(msg):
             msg = msg.decode()
 #       Data sent: 'GET /api/stream HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n'
 #      Data received: 'HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nDate: Wed, 19 Jan 2022 02:03:29 GMT\r\nTransfer-Encoding: chunked\r\n\r\nd5\r\n{"text":"","channel":"","username":"","userid":"","avatar":"","account":"","event":"api_connected","protocol":"","gateway":"","parent_id":"","timestamp":"2022-01-19T10:03:29.666861315+08:00","id":"","Extra":null}\n\r\n'
-#            if not msg or msg.startswith("HTTP/1.1"):
-#                logger.info("ignore init msg")
-#                return
+            if not msg or msg.startswith("HTTP/1.1"):
+              logger.info("I: ignore init msg")
+              return
 
 #        msg.replace(',"Extra":null}','}',1)
 #        msgd=ast.literal_eval(msg.splitlines()[1])
@@ -333,7 +334,6 @@ async def mt2tg(msg):
         text = msgd["text"]
         name = msgd["username"]
         print(f"I: got msg: {name}: {text}")
-        print(f"I: original msg: %s" % msg)
 
         #  if name == "C twitter: ":
         #      return
