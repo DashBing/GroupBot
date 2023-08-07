@@ -111,10 +111,10 @@ async def read_res(event):
   #  if msg.is_reply and msg.reply_to.reply_to_msg_id in queue:
   if msg.is_reply and msg.reply_to_msg_id in queue:
     qid=msg.reply_to_msg_id
+    while qid > min(queue.keys()):
+      print("waiting...")
+      await asyncio.sleep(2)
     if text == LOADING or text == LOADING2:
-      while qid > min(queue.keys()):
-        print("waiting...")
-        await asyncio.sleep(3)
       await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=queue[qid][0]["gateway"])
       return
   else:
@@ -377,6 +377,10 @@ async def mt2tg(msg):
               gptmode.append(msgd["gateway"])
               await mt_send("gpt mode on", gateway=msgd["gateway"])
               return
+          elif text == ".gpt reset":
+            text= CLEAN
+            await mt_send("reset", gateway=msgd["gateway"])
+            #  return
           elif text == ".gpt":
             await mt_send(".gpt $text\n--\nfrom telegram bot: @littleb_gptBOT", gateway=msgd["gateway"])
             return
@@ -406,10 +410,6 @@ async def mt2tg(msg):
               return
             #  need_clean = True
             text='请翻译下面的内容，你要检测其原始语言是不是中文，如果原始语言是中文就翻译成英文，否则就翻译为中文。直接把翻译结果发给我：\n\n"%s"' % text[6:]
-          elif text == ".gpt reset":
-            text= CLEAN
-            await mt_send("reset", gateway=msgd["gateway"])
-            #  return
           else:
             return
         else:
@@ -473,7 +473,11 @@ async def mt2tg(msg):
         #  print(f">{chat.user_id}: {text}")
         print(f"N: send {text} to gpt")
 
+
         if need_clean is True:
+          while len(queue.keys()) > 0:
+            print("waiting in mt2tg...")
+            await asyncio.sleep(2)
           msg = await UB.send_message(gpt_chat, CLEAN)
         msg = await UB.send_message(gpt_chat, text)
         #  await queue.put({msg.id: [msgd, msg]})

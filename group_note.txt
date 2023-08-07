@@ -125,3 +125,5 @@
 #ffsend X liqsliu: https://github.com/timvisee/send-instances/\n传文件实例\n\n1.https://transfer.acted.org/\n\n(支持上传单个文件最大5GB,上传文件可下载次数最多3000次，上传文件有效期最长14天)\n\n2.https://send.portailpro.net/\n\n(支持上传单个文件最大10GB,上传文件可下载次数最多100次，上传文件有效期最长30天)\n\n3.https://send.datenpost.app/\n\n(支持上传单个文件最大30GB,上传文件可下载次数最多3次，上传文件有效期最长7天)\n\n4.https://files.psu.ru/\n\n(支持上传单个文件最大16GB,上传文件可下载次数最多500次，上传文件有效期最长7天)\n\n5.https://send.cyberjake.xyz/\n\n(支持上传单个文件最大10GB,上传文件可下载次数最多100次，上传文件有效期最长30天)\n\n6.https://send.adminforge.de/\n\n(支持上传单个文件最大8GB,上传文件可下载次数最多1000次，上传文件有效期最长7天)\n\n7.https://send.ephemeral.land/\n\n(支持上传单个文件最大8GB,上传文件可下载次数最多1000次，上传文件有效期最长28天)
 #tox X liqsliu: 客户端 https://toktok.ltd/integrations
 #ffsend X liqsliu: 第三方服务列表 https://github.com/timvisee/send-instances/#instances
+#xmpp X liqsliu: 自用cheogram(自带翻译)
+#xmpp X liqsliu: 自用cheogram(自带翻译)\nhumwj: try this https://ufile.io/tsnikjlm
