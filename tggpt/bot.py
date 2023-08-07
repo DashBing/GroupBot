@@ -97,8 +97,11 @@ async def read_res(event):
   msg = event.message
   text = msg.raw_text
   if text:
-    print("> %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
+    print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
   if event.chat_id != gpt_id:
+    return
+  if msg.id not in queue:
+    print("E: wrong msg id %s %s queue: %s" % (msg.id, event.id, queue))
     return
   if text:
     if LOADING in text.splitlines()[-1]:
