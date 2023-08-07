@@ -112,6 +112,9 @@ async def read_res(event):
   if msg.is_reply and msg.reply_to_msg_id in queue:
     qid=msg.reply_to_msg_id
     if text == LOADING or text == LOADING2:
+      while qid > min(queue.keys()):
+        print("waiting...")
+        await asyncio.sleep(3)
       await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=queue[qid][0]["gateway"])
       return
   else:
