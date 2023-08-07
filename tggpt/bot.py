@@ -356,7 +356,14 @@ async def mt2tg(msg):
           chat = await UB.get_input_entity(chat_id)
         except Exception as e:
           print(e)
-          chat = await UB.get_entity(chat_id)
+          try:
+            chat = await UB.get_entity(chat_id)
+          except ValueError:
+            print("wtf, wrong id?")
+            try:
+              chat = await UB.get_input_entity('littleb_gptBOT')
+            except:
+              chat = await UB.get_entity('littleb_gptBOT')
         msg = await UB.send_message(chat, text)
         #  await queue.put({msg.id: [msgd, msg]})
         #  await queue.put([msg, msgd])
