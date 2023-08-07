@@ -35,7 +35,7 @@ async def run():
 def main():
   try:
     # with UB:
-    LOOP.run_until_complete(run())
+    loop.run_until_complete(run())
   except KeyboardInterrupt as e:
     raise e
   except SystemExit as e:
@@ -43,6 +43,9 @@ def main():
   except Exception as e:
     logger.error("error: stop...", exc_info=True, stack_info=True)
     raise e
+  finally:
+    loop.run_until_complete(loop.shutdown_asyncgens())
+    loop.close()
 
 
 if __name__ == '__main__':

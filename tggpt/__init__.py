@@ -59,7 +59,7 @@ logger=LOGGER
 
 
 import asyncio
-LOOP = asyncio.get_event_loop()
+loop = asyncio.get_event_loop()
 
 
 #  import pyrogram
