@@ -639,6 +639,11 @@ fi
 
 
 
+if [[ "$3" == "api.gpt" ]]; then
+  if [[ $(echo "$TEXT" | wc -l) -gt 1 ]]; then
+    NAME=""
+  fi
+fi
 
 
 echo -n "$NAME"

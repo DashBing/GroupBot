@@ -98,9 +98,7 @@ async def read_res(event):
   msg = event.message
   text = msg.raw_text
   if text:
-    if text == LOADING or text == LOADING2:
-      await mt_send("[思考中...]")
-      return
+    pass
     #  print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
   else:
     return
@@ -110,6 +108,9 @@ async def read_res(event):
   #  if msg.is_reply and msg.reply_to.reply_to_msg_id in queue:
   if msg.is_reply and msg.reply_to_msg_id in queue:
     qid=msg.reply_to_msg_id
+    if text == LOADING or text == LOADING2:
+      await mt_send(f"{queue[qid][0]['username']}: [思考中...]")
+      return
   else:
     print("E: fixme: unknown res: is_reply: %s\nall: %s\n queue: %s" % (msg.is_reply, msg.stringify(), queue))
     return
@@ -140,11 +141,12 @@ async def read_res(event):
     queue[qid].append(text[len("".join(queue[qid][1:])):])
   if is_loading:
     #  queue[qid][1] += "\n\n待补充..."
-    await mt_send(queue[qid][-1]+"\n[思考中...]")
+    #  await mt_send(queue[qid][-1]+"\n[思考中...]")
+    await mt_send(queue[qid][-1])
   else:
     #  queue[qid][1] += "\n\n[结束]"
     #  await mt_send(queue[qid][1]+"\n\n[结束]")
-    await mt_send(queue[qid][-1])
+    await mt_send(queue[qid][-1]+"\n[结束]")
   if not is_loading:
     queue.pop(qid)
 
