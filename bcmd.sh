@@ -43,9 +43,9 @@ cmds() {
     elif [[ -e $SH_PATH/.aimode_for_$gateway ]]; then
       echo -n "$username"
       bash "$SH_PATH/ai.sh" "$@" || echo "E: $?"
-    elif [[ -e $SH_PATH/.gptmode_for_$gateway ]]; then
-      echo -n "$username"
-      bash "$SH_PATH/gpt.sh" "$@" || echo "E: $?"
+    # elif [[ -e $SH_PATH/.gptmode_for_$gateway ]]; then
+    #   echo -n "$username"
+    #   bash "$SH_PATH/gpt.sh" "$@" || echo "E: $?"
     elif bash "$SH_PATH/faq.sh" "$text" ; then
       return 0
     else
@@ -116,10 +116,10 @@ cmds() {
     bash "$SH_PATH/bot.sh" "$@" || echo "E: $?"
     bash "$SH_PATH/bot.sh" "reset" &>/dev/null
     ;;
-  gpt|GPT)
-    shift
-    bash "$SH_PATH/gpt.sh" "$@" || echo "E: $?"
-    bash "$SH_PATH/gpt.sh" "reset" &>/dev/null
+  # gpt|GPT)
+  #   shift
+  #   bash "$SH_PATH/gpt.sh" "$@" || echo "E: $?"
+  #   bash "$SH_PATH/gpt.sh" "reset" &>/dev/null
     ;;
   botmode)
     [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway || touch $SH_PATH/.botmode_for_$gateway
@@ -133,12 +133,12 @@ cmds() {
     [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway
     [[ -e $SH_PATH/.gptmode_for_$gateway ]] && rm $SH_PATH/.gptmode_for_$gateway
     ;;
-  gptmode)
-    [[ -e $SH_PATH/.gptmode_for_$gateway ]] && rm $SH_PATH/.gptmode_for_$gateway || touch $SH_PATH/.gptmode_for_$gateway
-    [[ -e $SH_PATH/.gptmode_for_$gateway ]] && echo "chatgpt is here" || echo "chatgpt is out"
-    [[ -e $SH_PATH/.aimode_for_$gateway ]] && rm $SH_PATH/.aimode_for_$gateway
-    [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway
-    ;;
+  # gptmode)
+  #   [[ -e $SH_PATH/.gptmode_for_$gateway ]] && rm $SH_PATH/.gptmode_for_$gateway || touch $SH_PATH/.gptmode_for_$gateway
+  #   [[ -e $SH_PATH/.gptmode_for_$gateway ]] && echo "chatgpt is here" || echo "chatgpt is out"
+  #   [[ -e $SH_PATH/.aimode_for_$gateway ]] && rm $SH_PATH/.aimode_for_$gateway
+  #   [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway
+  #   ;;
   dig)
     shift
     [[ -z "$2" ]] && echo "$(dig +short "$@" || echo "E: $?")" || echo "$(dig "$@" || echo "E: $?")"
