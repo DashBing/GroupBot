@@ -364,6 +364,8 @@ async def mt2tg(msg):
               chat = await UB.get_input_entity('littleb_gptBOT')
             except:
               chat = await UB.get_entity('littleb_gptBOT')
+        print(chat.stringify())
+        #  print(f">{chat.user_id}: {text}")
         msg = await UB.send_message(chat, text)
         #  await queue.put({msg.id: [msgd, msg]})
         #  await queue.put([msg, msgd])
