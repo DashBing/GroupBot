@@ -137,7 +137,7 @@ async def read_res(event):
     #    queue[qid][1] = text
     #  else:
     #  queue[qid][1] = text[len(queue[qid][1]):]
-    queue[qid].append(text[len(queue[qid][1]):])
+    queue[qid].append(text[len("".join(queue[qid][:-1])):])
   if is_loading:
     #  queue[qid][1] += "\n\n待补充..."
     await mt_send(queue[qid][-1]+"\n[思考中...]")
