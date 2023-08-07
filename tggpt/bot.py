@@ -22,7 +22,6 @@ logger = logging.getLogger(__name__)
 
 
 
-
 from functools import wraps
 
 def exceptions_handler(func):
@@ -65,8 +64,8 @@ def _exceptions_handler(e, *args, **kwargs):
 
 queue = {}
 
-LOADING="\n\n思考你发送的内容..."
-
+LOADING="思考你发送的内容..."
+LOADINGS="\n\n"+LOADING
 
 #  @exceptions_handler
 #  @UB.on(events.NewMessage(outgoing=True))
@@ -107,10 +106,11 @@ async def read_res(event):
   if msg.is_reply and msg.reply_to_msg_id in queue:
     qid=msg.reply_to_msg_id
   else:
-    print("E: fixme: unknown res: is_reply: %s all: %s" % (msg.is_reply, msg.stringify()))
+    print("E: fixme: unknown res: is_reply: %s\nall: %s\n queue: %s" % (msg.is_reply, msg.stringify(), queue))
     return
   print("< Q: %s" % queue[qid][0]['text'])
-  if LOADING in text.splitlines()[-1]:
+  #  if LOADING in text.splitlines()[-1]:
+  if text.endswith(LOADING):
     print("> gpt(未结束): %s" % text)
     is_loading=True
   else:
@@ -118,17 +118,23 @@ async def read_res(event):
     is_loading=False
   if is_loading:
     #  text = "\n".join(text.splitlines()[:-2])
-    text = text.rstrip(LOADING)
+    text = text.rstrip(LOADINGS)
+  if not text:
+    text = LOADING
   if queue[qid][1] is None:
     queue[qid][1] = text
   else:
     #  queue[qid] = text
-    queue[qid][1] = text[len(queue[qid]):]
+    if queue[qid][1] == LOADING:
+      queue[qid][1] = text
+    else:
+      queue[qid][1] = text[len(queue[qid]):]
   if is_loading:
-    queue[qid][1] += "\n\n待续..."
+    #  queue[qid][1] += "\n\n待补充..."
+    await mt_send(queue[qid][1]+"\n\n待补充...")
   else:
-    queue[qid][1] += "\n\n[结束]"
-  await mt_send(queue[qid][1])
+    #  queue[qid][1] += "\n\n[结束]"
+    await mt_send(queue[qid][1]+"\n\n[结束]")
   if not is_loading:
     queue.pop(qid)
 
