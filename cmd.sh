@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# echo cmd start >> ~/tera/mt_msg.log
 #export SH_PATH=$(cd $(dirname ${BASH_SOURCE[0]}); pwd )
 # SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}); pwd )}
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
@@ -87,7 +88,7 @@ for (( ; i < 4; i++)); do
       fi
     fi
     # gateway=cmd
-    # echo nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" > ~/tera/mt_msg.log
+    # echo nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" >> ~/tera/mt_msg.log
     nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" &>/dev/null &
 
   fi

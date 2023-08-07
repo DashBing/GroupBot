@@ -1,6 +1,7 @@
 #!/bin/bash
 #background cmd
 
+# echo "bcmd start" >> ~/tera/mt_msg.log
 set -f
 
 
@@ -32,7 +33,11 @@ cmds() {
   # if [[ "${cmd:0:1}" != "." ]] && [[ "${cmd:0:1}" != "/" ]]; then
   if [[ "${cmd:0:1}" != "." ]]; then
     if echo "$text" | tail -n1 | grep -q -G "^> "; then
+    if echo "$text" | head -n1 | grep -q -G "^> "; then
+      :
+    else
       exit 0
+    fi
     fi
     if [[ -e $SH_PATH/.trmode_for_$gateway ]]; then
       echo -n "$username"
@@ -120,7 +125,7 @@ cmds() {
   #   shift
   #   bash "$SH_PATH/gpt.sh" "$@" || echo "E: $?"
   #   bash "$SH_PATH/gpt.sh" "reset" &>/dev/null
-    ;;
+    # ;;
   botmode)
     [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway || touch $SH_PATH/.botmode_for_$gateway
     [[ -e $SH_PATH/.botmode_for_$gateway ]] && echo "bot is here" || echo "bot is out"
@@ -305,8 +310,8 @@ if [[ "$1" == "just_get_reply" ]]; then
 
 fi
 
-echo "arg: $*"
-# echo "bcmd > arg: $*" >> /tmp/bcmd.log
+# echo "arg: $*"
+echo "bcmd arg: $*" >> ~/tera/mt_msg.log
 
 
 
@@ -337,8 +342,10 @@ E: $text_e"
 
 
 
+# echo "b :|$text|" >> ~/tera/mt_msg.log
   [[ -z "$text" ]] && exit
   text=$(bash "$SH_PATH/gene_res.sh" "$text" $gateway)
+# echo "b1 :|$text|" >> ~/tera/mt_msg.log
 
 #  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4243/api/message)
   res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4240/api/message)
