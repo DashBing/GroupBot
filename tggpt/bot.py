@@ -91,9 +91,11 @@ LOADING="\n\n思考你发送的内容..."
 @exceptions_handler
 async def read_res(event):
   msg = event.message
+  text = msg.raw_text
+  if text:
+    print("> %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
   if event.chat_id != gpt_id:
     return
-  text = msg.raw_text
   if text:
     if LOADING in text.splitlines()[-1]:
       print("gpt(未结束): %s" % text)
@@ -112,36 +114,34 @@ async def read_res(event):
         queue[msg.id][1] = text[len(queue[msg.id]):]
       if is_loading:
         queue[msg.id][1] += "\n\n待续..."
+      else:
+        queue[msg.id][1] += "\n\n[结束]"
       await mt_send(queue[msg.id][1])
       if not is_loading:
         queue.pop(msg.id)
 
 
-
-
-
 @exceptions_handler
 @UB.on(events.NewMessage(incoming=True))
-async def my_event_handler(event):
-  #  if 'hello' in event.raw_text:
-  #    await event.reply('hi!')
-  #  if 'new_chat' in event.raw_text:
-  #    print(event.stringify())
-  await read_res(event)
-
-
-
-
-
-@exceptions_handler
 @UB.on(events.MessageEdited(incoming=True))
 async def my_event_handler(event):
   #  if 'hello' in event.raw_text:
   #    await event.reply('hi!')
   #  if 'new_chat' in event.raw_text:
   #    print(event.stringify())
-
   await read_res(event)
+
+
+
+#  @exceptions_handler
+#  @UB.on(events.MessageEdited(incoming=True))
+#  async def my_event_handler(event):
+#    #  if 'hello' in event.raw_text:
+#    #    await event.reply('hi!')
+#    #  if 'new_chat' in event.raw_text:
+#    #    print(event.stringify())
+#
+#    await read_res(event)
 
 
 
@@ -352,7 +352,8 @@ async def mt2tg(msg):
         #    await queue.put(msgd)
         #  await queue.put([1, msgd])
 
-        msg = await UB.send_message(chat_id, text)
+        chat = await UB.get_input_entity(chat_id)
+        msg = await UB.send_message(chat, text)
         #  await queue.put({msg.id: [msgd, msg]})
         #  await queue.put([msg, msgd])
         queue[msg.id]=[msgd, None]
