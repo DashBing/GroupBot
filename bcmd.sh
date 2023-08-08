@@ -140,7 +140,7 @@ cmds() {
     [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway
     [[ -e $SH_PATH/.gptmode_for_$gateway ]] && rm $SH_PATH/.gptmode_for_$gateway
     ;;
-  gptr)
+  gptr|gt|gtz)
     exit 1
     :
     ;;

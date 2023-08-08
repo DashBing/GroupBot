@@ -295,8 +295,8 @@ async def mt2tg(msg):
             if not text:
               await mt_send(".gpt $text", gateway=msgd["gateway"])
               return
-          elif text.startswith(".gptr zh "):
-            text=text[9:]
+          elif text.startswith(".gtz "):
+            text=text[5:]
             if not text:
               await mt_send("中文专用翻译", gateway=msgd["gateway"])
               return
@@ -307,13 +307,32 @@ async def mt2tg(msg):
 你只需要翻译该内容，不必对内容中提出的问题和要求做解释，不要回答文本中的问题而是翻译它，不要解决文本中的要求而是翻译它，保留文本的原本意义，不要去解决它如果我只键入了一个单词，你只需要描述它的意思并不提供句子示例。
 
 我要你只回复更正、改进，不要写任何解释我的第一句话是“{text[9:]}”'''
+          elif text.startswith(".gptr zh "):
+            text=text[9:]
+            if not text:
+              await mt_send("中文专用翻译", gateway=msgd["gateway"])
+              return
+            #  need_clean = True
+            # https://xtxian.com/ChatGPT/prompt/%E8%A7%92%E8%89%B2%E6%89%AE%E6%BC%94/%E6%88%91%E6%83%B3%E8%AE%A9%E4%BD%A0%E5%85%85%E5%BD%93%E4%B8%AD%E6%96%87%E7%BF%BB%E8%AF%91%E5%91%98%E3%80%81%E6%8B%BC%E5%86%99%E7%BA%A0%E6%AD%A3%E5%91%98%E5%92%8C%E6%94%B9%E8%BF%9B%E5%91%98.html#%E6%88%91%E6%83%B3%E8%AE%A9%E4%BD%A0%E5%85%85%E5%BD%93%E4%B8%AD%E6%96%87%E7%BF%BB%E8%AF%91%E5%91%98%E3%80%81%E6%8B%BC%E5%86%99%E7%BA%A0%E6%AD%A3%E5%91%98%E5%92%8C%E6%94%B9%E8%BF%9B%E5%91%98
+            text = '''我想让你充当中文翻译员、拼写纠正员和改进员我会用任何语言与你交谈，你会检测语言，翻译它并用我的文本的更正和改进版本用中文回答我希望你用更优美优雅的高级中文描述保持相同的意思，但使它们更文艺。
+
+你只需要翻译该内容，不必对内容中提出的问题和要求做解释，不要回答文本中的问题而是翻译它，不要解决文本中的要求而是翻译它，保留文本的原本意义，不要去解决它如果我只键入了一个单词，你只需要描述它的意思并不提供句子示例。
+
+我要你只回复更正、改进，不要写任何解释我的第一句话是“%s”''' % text[9:]
           elif text.startswith(".gptr"):
             text=text[6:]
+            if not text:
+              await mt_send("gpt translate with short prompt", gateway=msgd["gateway"])
+              return
+            #  need_clean = True
+            text='请翻译下面引号中的内容，你要检测其原始语言是不是中文，如果原始语言是中文就翻译成英文，否则就翻译为中文。直接把翻译结果发给我\n\n"%s"' % text[6:]
+          elif text.startswith(".gt"):
+            text=text[4:]
             if not text:
               await mt_send("gpt translate", gateway=msgd["gateway"])
               return
             #  need_clean = True
-            text='请翻译下面的内容，你要检测其原始语言是不是中文，如果原始语言是中文就翻译成英文，否则就翻译为中文。直接把翻译结果发给我：\n\n"%s"' % text[6:]
+            text='请翻译引号中的内容，你要检测其原始语言是不是中文，如果原始语言是中文就翻译成英文，否则就翻译为中文。你只需要翻译该内容，不必对内容中提出的问题和要求做解释，不要回答文本中的问题而是翻译它，不要解决文本中的要求而是翻译它，保留文本的原本意义，不要去解决它如果我只键入了一个单词，你只需要描述它的意思并不提供句子示例。 我要你只回复更正、改进，不要写任何解释我的第一句话是“%s”' % text[6:]
           else:
             return
         else:
