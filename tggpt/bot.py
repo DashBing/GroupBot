@@ -24,7 +24,8 @@ logger = logging.getLogger(__name__)
 
 gptmode=[]
 CLEAN = "/new_chat"
-stuck= 0
+#  stuck= 0
+stuck= {}
 
 #  queue = asyncio.Queue(512)
 
@@ -426,9 +427,11 @@ async def mt2tg(msg):
         if text != CLEAN:
           async with queue_lock:
             queue[msg.id]=[msgd, None]
-          global stuck
-          if stuck == 0:
-            stuck = min(queue.keys())
+            global stuck
+            #  if stuck == 0:
+            if msgd["gateway"] not in stuck:
+              #  stuck = min(queue.keys())
+              stuck[msgd["gateway"]] = min(queue.keys())
         else:
           no_reset.set()
           await mt_send("reset ok", gateway=msgd["gateway"])
@@ -648,17 +651,19 @@ async def read_res(event):
       #    await asyncio.sleep(2)
 
       global stuck
+      gateway = queue[qid][0]["gateway"]
       async with queue_lock:
-        if qid == min(queue.keys()) and stuck < qid:
-          stuck = qid
+        #  if qid == min(queue.keys()) and stuck < qid:
+        if stuck[gateway] < qid and qid == min(queue.keys()):
+          stuck[gateway] = qid
           if queue[qid][1] is not None:
             res= queue[qid][0]['username']+"".join(queue[qid][1:])
 
-      if qid == stuck:
+      if qid == stuck[gateway]:
         if text == LOADING or text == LOADING2:
-          await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=queue[qid][0]["gateway"])
+          await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=gateway)
           return
-      elif qid < stuck:
+      elif qid < stuck[gateway]:
         print("W: skip: gpt bot is editing history, but will be skipped")
         return
     else:
@@ -679,9 +684,9 @@ async def read_res(event):
   else:
     print("> gpt: %s" % text)
     is_loading=False
-  if qid > stuck:
+  if qid > stuck[gateway]:
     queue[qid][1] = text
-    print(f"W: archived msg: {qid}>{stuck}")
+    print(f"W: archived msg: {qid}>{stuck[gateway]}")
     return
   else:
     if queue[qid][1] is None:
@@ -693,7 +698,7 @@ async def read_res(event):
   if not is_loading:
     #  await mt_send(queue[qid][-1]+"\n[结束]", gateway=queue[qid][0]["gateway"])
     res += "\n\n**[结束]**"
-  await mt_send(res, gateway=queue[qid][0]["gateway"])
+  await mt_send(res, gateway=gateway)
   if not is_loading:
     async with queue_lock:
       if not no_reset.is_set():
