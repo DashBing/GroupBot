@@ -621,6 +621,7 @@ async def mt_send(text="null", username="gpt", gateway="test", qt=None):
 @exceptions_handler
 async def read_res(event):
   if not no_reset.is_set():
+    print("W: skiped the msg because of reset is waiting")
     return
   msg = event.message
   #  text = msg.raw_text
@@ -629,6 +630,9 @@ async def read_res(event):
     pass
     #  print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
   else:
+    print("I: skip msg without text")
+    if event.chat_id != gpt_id:
+      print("W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
     return
   if event.chat_id != gpt_id:
     #  print("N: skip: %s != %s" % (event.chat_id, gpt_id))
@@ -677,6 +681,7 @@ async def read_res(event):
     is_loading=False
   if qid > stuck:
     queue[qid][1] = text
+    print(f"W: archived msg: {qid}>{stuck}")
     return
   else:
     if queue[qid][1] is None:
