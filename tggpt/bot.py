@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 
 gptmode=[]
 CLEAN = "/new_chat"
+stuck= 0
 
 
 from functools import wraps
@@ -98,6 +99,9 @@ LOADINGS2="\n\n"+LOADING2
 
 @exceptions_handler
 async def read_res(event):
+  global stuck
+  #  first_msg = False
+  #  name = ""
   msg = event.message
   text = msg.raw_text
   if text:
@@ -111,11 +115,25 @@ async def read_res(event):
   #  if msg.is_reply and msg.reply_to.reply_to_msg_id in queue:
   if msg.is_reply and msg.reply_to_msg_id in queue:
     qid=msg.reply_to_msg_id
-    while qid > min(queue.keys()):
-      print("waiting...")
-      await asyncio.sleep(2)
-    if text == LOADING or text == LOADING2:
-      await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=queue[qid][0]["gateway"])
+    res = ""
+    #  if qid > min(queue.keys()):
+    #  while qid > min(queue.keys()):
+    #    print("waiting...")
+    #    await asyncio.sleep(2)
+
+    if qid == min(queue.keys()) and stuck < qid:
+      stuck = qid
+      if queue[qid][1] is not None:
+        #  first_msg = True
+        res= queue[qid][0]['username']+"".join(queue[qid][1:])
+
+
+    if qid == stuck:
+      if text == LOADING or text == LOADING2:
+        await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=queue[qid][0]["gateway"])
+        return
+    elif qid < stuck:
+      print("why to edit history?")
       return
   else:
     print("E: fixme: unknown res: is_reply: %s\nall: %s\n queue: %s" % (msg.is_reply, msg.stringify(), queue))
@@ -135,24 +153,20 @@ async def read_res(event):
   #    # ignore useless msg
   #    return
   #    text = LOADING
-  if queue[qid][1] is None:
+  if qid > stuck:
     queue[qid][1] = text
+    return
   else:
-    #  queue[qid] = text
-    #  if queue[qid][1] == LOADING:
-    #    # won't be used
-    #    queue[qid][1] = text
-    #  else:
-    #  queue[qid][1] = text[len(queue[qid][1]):]
-    queue[qid].append(text[len("".join(queue[qid][1:])):])
-  if is_loading:
-    #  queue[qid][1] += "\n\n待补充..."
-    #  await mt_send(queue[qid][-1]+"\n[思考中...]")
-    await mt_send(queue[qid][-1], gateway=queue[qid][0]["gateway"])
-  else:
-    #  queue[qid][1] += "\n\n[结束]"
-    #  await mt_send(queue[qid][1]+"\n\n[结束]")
-    await mt_send(queue[qid][-1]+"\n[结束]", gateway=queue[qid][0]["gateway"])
+    if queue[qid][1] is None:
+      queue[qid][1] = text
+    else:
+      queue[qid].append(text[len("".join(queue[qid][1:])):])
+
+  res += queue[qid][-1]
+  if not is_loading:
+    #  await mt_send(queue[qid][-1]+"\n[结束]", gateway=queue[qid][0]["gateway"])
+    res += "\n\n**[结束]**"
+  await mt_send(res, gateway=queue[qid][0]["gateway"])
   if not is_loading:
     queue.pop(qid)
 
@@ -484,6 +498,9 @@ async def mt2tg(msg):
         #  await queue.put([msg, msgd])
         if text != "/new_chat":
           queue[msg.id]=[msgd, None]
+        global stuck
+        if stuck == 0:
+          stuck = min(queue.keys())
         return
 
         text = name + text
