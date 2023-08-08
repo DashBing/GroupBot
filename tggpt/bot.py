@@ -25,6 +25,20 @@ gptmode=[]
 CLEAN = "/new_chat"
 stuck= 0
 
+#  queue = asyncio.Queue(512)
+
+queue = {}
+queue_lock = asyncio.Lock()
+
+no_reset = asyncio.Event()
+no_reset.set()
+
+LOADING="思考你发送的内容..."
+LOADING2="Thinking about what you sent..."
+LOADINGS="\n\n"+LOADING
+LOADINGS2="\n\n"+LOADING2
+
+
 
 from functools import wraps
 
@@ -59,141 +73,6 @@ def _exceptions_handler(e, *args, **kwargs):
     else:
         # logger.error(f"error: {exc=}", exc_info=True, stack_info=True)
         logger.warning("maybe need some fix...%s" % e, exc_info=True, stack_info=True)
-
-
-
-
-
-#  queue = asyncio.Queue(512)
-
-queue = {}
-
-LOADING="思考你发送的内容..."
-LOADING2="Thinking about what you sent..."
-LOADINGS="\n\n"+LOADING
-LOADINGS2="\n\n"+LOADING2
-
-#  @exceptions_handler
-#  @UB.on(events.NewMessage(outgoing=True))
-#  async def my_event_handler(event):
-#    #  if 'hello' in event.raw_text:
-#    #    await event.reply('hi!')
-#    #  if 'new_chat' in event.raw_text:
-#    #    print(event.stringify())
-#    msg = event.message
-#    text = msg.raw_text
-#    if event.chat_id != gpt_id:
-#      if debug:
-#        print("<%s %s" % (event.chat_id, text))
-#      return
-#    if event.chat_id != gpt_id:
-#      if debug:
-#        print(">%s %s" % (event.chat_id, text))
-#      return
-#    if text:
-#      print("me: %s" % text)
-
-
-
-
-
-@exceptions_handler
-async def read_res(event):
-  global stuck
-  #  first_msg = False
-  #  name = ""
-  msg = event.message
-  text = msg.raw_text
-  if text:
-    pass
-    #  print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
-  else:
-    return
-  if event.chat_id != gpt_id:
-    #  print("N: skip: %s != %s" % (event.chat_id, gpt_id))
-    return
-  #  if msg.is_reply and msg.reply_to.reply_to_msg_id in queue:
-  if msg.is_reply and msg.reply_to_msg_id in queue:
-    qid=msg.reply_to_msg_id
-    res = ""
-    #  if qid > min(queue.keys()):
-    #  while qid > min(queue.keys()):
-    #    print("waiting...")
-    #    await asyncio.sleep(2)
-
-    if qid == min(queue.keys()) and stuck < qid:
-      stuck = qid
-      if queue[qid][1] is not None:
-        #  first_msg = True
-        res= queue[qid][0]['username']+"".join(queue[qid][1:])
-
-
-    if qid == stuck:
-      if text == LOADING or text == LOADING2:
-        await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=queue[qid][0]["gateway"])
-        return
-    elif qid < stuck:
-      print("why to edit history?")
-      return
-  else:
-    print("E: fixme: unknown res: is_reply: %s\nall: %s\n queue: %s" % (msg.is_reply, msg.stringify(), queue))
-    return
-  print("< Q: %s" % queue[qid][0]['text'])
-  #  if LOADING in text.splitlines()[-1]:
-  if text.endswith(LOADING) or text.endswith(LOADING2):
-    print("> gpt(未结束): %s" % text)
-    is_loading=True
-    text = text.rstrip(LOADINGS)
-    text = text.rstrip(LOADINGS2)
-  else:
-    print("> gpt: %s" % text)
-    is_loading=False
-    #  text = "\n".join(text.splitlines()[:-2])
-  #  if not text:
-  #    # ignore useless msg
-  #    return
-  #    text = LOADING
-  if qid > stuck:
-    queue[qid][1] = text
-    return
-  else:
-    if queue[qid][1] is None:
-      queue[qid][1] = text
-    else:
-      queue[qid].append(text[len("".join(queue[qid][1:])):])
-
-  res += queue[qid][-1]
-  if not is_loading:
-    #  await mt_send(queue[qid][-1]+"\n[结束]", gateway=queue[qid][0]["gateway"])
-    res += "\n\n**[结束]**"
-  await mt_send(res, gateway=queue[qid][0]["gateway"])
-  if not is_loading:
-    queue.pop(qid)
-
-
-
-
-
-@exceptions_handler
-@UB.on(events.NewMessage(incoming=True))
-@UB.on(events.MessageEdited(incoming=True))
-async def my_event_handler(event):
-  #  if 'hello' in event.raw_text:
-  #    await event.reply('hi!')
-  #  if 'new_chat' in event.raw_text:
-  #    print(event.stringify())
-  await read_res(event)
-
-
-#  @exceptions_handler
-#  @UB.on(events.MessageEdited(incoming=True))
-#  async def my_event_handler(event):
-#    #  if 'hello' in event.raw_text:
-#    #    await event.reply('hi!')
-#    #  if 'new_chat' in event.raw_text:
-#    #    print(event.stringify())
-#
-#    await read_res(event)
 
 
 
@@ -379,6 +258,7 @@ async def mt2tg(msg):
 
 
 
+        global queue
         need_clean = False
 
         if text[0:1] == ".":
@@ -392,9 +272,19 @@ async def mt2tg(msg):
               await mt_send("gpt mode on", gateway=msgd["gateway"])
               return
           elif text == ".gpt reset":
-            text= CLEAN
-            await mt_send("reset", gateway=msgd["gateway"])
-            #  return
+            if no_reset.is_set():
+              no_reset.clear()
+              async with queue_lock:
+                if len(queue.keys()) > 1:
+                  queue ={min(queue.keys()): queue[min((queue.keys()))] }
+              text= CLEAN
+              if len(queue.keys()) > 0:
+                await mt_send("waiting...", gateway=msgd["gateway"])
+            else:
+              await mt_send("waiting reset...", gateway=msgd["gateway"])
+              await no_reset.wait()
+              await mt_send("reset ok", gateway=msgd["gateway"])
+              return
           elif text == ".gpt":
             await mt_send(".gpt $text\n--\nfrom telegram bot: @littleb_gptBOT", gateway=msgd["gateway"])
             return
@@ -476,31 +366,38 @@ async def mt2tg(msg):
           except Exception as e:
             print(e)
             try:
-              gpt_chat = await UB.get_entity(chat_id)
+              gpt_chat = await UB.get_input_entity('littleb_gptBOT')
             except ValueError:
               print("wtf, wrong id?")
               try:
-                gpt_chat = await UB.get_input_entity('littleb_gptBOT')
+                gpt_chat = await UB.get_entity(chat_id)
+                print(gpt_chat.stringify())
               except:
                 gpt_chat = await UB.get_entity('littleb_gptBOT')
-          print(gpt_chat.stringify())
+                print(gpt_chat.stringify())
         #  print(f">{chat.user_id}: {text}")
-        print(f"N: send {text} to gpt")
+        print(f"I: send {text} to gpt")
+        if text != CLEAN:
+          if not no_reset.is_set():
+            await no_reset.wait()
+          elif need_clean is True:
+            msg = await UB.send_message(gpt_chat, CLEAN)
 
-
-        if need_clean is True:
-          while len(queue.keys()) > 0:
-            print("waiting in mt2tg...")
-            await asyncio.sleep(2)
-          msg = await UB.send_message(gpt_chat, CLEAN)
+        #    while len(queue.keys()) > 0:
+        #      print("W: waiting to reset...")
+        #      await asyncio.sleep(1)
         msg = await UB.send_message(gpt_chat, text)
         #  await queue.put({msg.id: [msgd, msg]})
         #  await queue.put([msg, msgd])
-        if text != "/new_chat":
-          queue[msg.id]=[msgd, None]
-        global stuck
-        if stuck == 0:
-          stuck = min(queue.keys())
+        if text != CLEAN:
+          async with queue_lock:
+            queue[msg.id]=[msgd, None]
+          global stuck
+          if stuck == 0:
+            stuck = min(queue.keys())
+        else:
+          no_reset.set()
+          await mt_send("reset ok", gateway=msgd["gateway"])
         return
 
         text = name + text
@@ -658,4 +555,133 @@ async def mt_send(text="null", username="gpt", gateway="test", qt=None):
     logger.info("sent msg to mt, res: {}".format(res))
     return res
 
+
+
+
+
+
+#  @exceptions_handler
+#  @UB.on(events.NewMessage(outgoing=True))
+#  async def my_event_handler(event):
+#    #  if 'hello' in event.raw_text:
+#    #    await event.reply('hi!')
+#    #  if 'new_chat' in event.raw_text:
+#    #    print(event.stringify())
+#    msg = event.message
+#    text = msg.raw_text
+#    if event.chat_id != gpt_id:
+#      if debug:
+#        print("<%s %s" % (event.chat_id, text))
+#      return
+#    if event.chat_id != gpt_id:
+#      if debug:
+#        print(">%s %s" % (event.chat_id, text))
+#      return
+#    if text:
+#      print("me: %s" % text)
+
+
+
+
+
+@exceptions_handler
+async def read_res(event):
+  if not no_reset.is_set():
+    return
+  msg = event.message
+  text = msg.raw_text
+  if text:
+    pass
+    #  print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
+  else:
+    return
+  if event.chat_id != gpt_id:
+    #  print("N: skip: %s != %s" % (event.chat_id, gpt_id))
+    return
+  #  if msg.is_reply and msg.reply_to.reply_to_msg_id in queue:
+  if msg.is_reply:
+    if msg.reply_to_msg_id in queue:
+      qid=msg.reply_to_msg_id
+      res = ""
+      #  if qid > min(queue.keys()):
+      #  while qid > min(queue.keys()):
+      #    print("waiting...")
+      #    await asyncio.sleep(2)
+
+      global stuck
+      async with queue_lock:
+        if qid == min(queue.keys()) and stuck < qid:
+          stuck = qid
+          if queue[qid][1] is not None:
+            res= queue[qid][0]['username']+"".join(queue[qid][1:])
+
+      if qid == stuck:
+        if text == LOADING or text == LOADING2:
+          await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=queue[qid][0]["gateway"])
+          return
+      elif qid < stuck:
+        print("W: skip: gpt bot is editing history, but will be skipped")
+        return
+    else:
+      print("W: skip: got a msg with a unkonwon id: all: %s\n queue: %s" % (msg.stringify(), queue))
+      return
+  else:
+    print("W: skip: got a msg without reply: is_reply: %s\nall: %s" % (msg.is_reply, msg.stringify()))
+    return
+  print("< Q: %s" % queue[qid][0]['text'])
+  if text.endswith(LOADING):
+    print("> gpt(未结束): %s" % text)
+    is_loading=True
+    text = text.rstrip(LOADINGS)
+  elif text.endswith(LOADING2):
+    print("> gpt(未结束): %s" % text)
+    is_loading=True
+    text = text.rstrip(LOADINGS2)
+  else:
+    print("> gpt: %s" % text)
+    is_loading=False
+  if qid > stuck:
+    queue[qid][1] = text
+    return
+  else:
+    if queue[qid][1] is None:
+      queue[qid][1] = text
+    else:
+      queue[qid].append(text[len("".join(queue[qid][1:])):])
+
+  res += queue[qid][-1]
+  if not is_loading:
+    #  await mt_send(queue[qid][-1]+"\n[结束]", gateway=queue[qid][0]["gateway"])
+    res += "\n\n**[结束]**"
+  await mt_send(res, gateway=queue[qid][0]["gateway"])
+  if not is_loading:
+    async with queue_lock:
+      if not no_reset.is_set():
+        return
+      queue.pop(qid)
+
+
+
+
+
+@exceptions_handler
+@UB.on(events.NewMessage(incoming=True))
+@UB.on(events.MessageEdited(incoming=True))
+async def my_event_handler(event):
+  #  if 'hello' in event.raw_text:
+  #    await event.reply('hi!')
+  #  if 'new_chat' in event.raw_text:
+  #    print(event.stringify())
+  await read_res(event)
+
+
+#  @exceptions_handler
+#  @UB.on(events.MessageEdited(incoming=True))
+#  async def my_event_handler(event):
+#    #  if 'hello' in event.raw_text:
+#    #    await event.reply('hi!')
+#    #  if 'new_chat' in event.raw_text:
+#    #    print(event.stringify())
+#
+#    await read_res(event)
 
