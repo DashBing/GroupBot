@@ -706,8 +706,6 @@ async def read_res(event):
 
 
 
-
-
 @exceptions_handler
 @UB.on(events.NewMessage(incoming=True))
 @UB.on(events.MessageEdited(incoming=True))
