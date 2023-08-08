@@ -8,9 +8,10 @@
 .ip6 查询指定域名的ipv6地址
 .ipfs 根据文件链接得到该文件的ipfs链接
 .sf 根据sourceforge文件的网页地址生成文件的直连地址
-.tr 谷歌翻译
-.trans 谷歌翻译(备用)
 .wtf 网络梗查询
 .type 获取链接详情
 .note 公共记事本
 .hhsh|wtf 能不能好好说话
+.gpt|gptmode chatgpt
+.gt|gtz|gptr translate by chatgpt
+.tr|trans|trmode 谷歌翻译
