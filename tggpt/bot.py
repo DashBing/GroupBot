@@ -295,7 +295,7 @@ async def mt2tg(msg):
             text=text[5:]
             if not text:
               #  await mt_send(".gpt $text", gateway=msgd["gateway"])
-              await mt_send(".gpt $text\n--\nfrom telegram bot: @littleb_gptBOT", gateway=msgd["gateway"])
+              await mt_send(".gpt $text\n--\n默认开启了上下文，重置命令“.gpt reset"。所有数据来自telegram机器人: @littleb_gptBOT ，使用userbot与其对接。", gateway=msgd["gateway"])
               return
           elif text == ".se" or text.startswith(".se "):
             #  need_clean = True

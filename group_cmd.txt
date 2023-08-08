@@ -12,6 +12,6 @@
 .type 获取链接详情
 .note 公共记事本
 .hhsh|wtf 能不能好好说话
-.gpt|gptmode chatgpt
+.gpt|gptmode chatgpt(开启了上下文，重置命令：.gpt reset)
 .gt|gtz|gptr translate by chatgpt
 .tr|trans|trmode 谷歌翻译
