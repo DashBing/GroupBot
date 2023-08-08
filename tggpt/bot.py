@@ -635,7 +635,7 @@ async def read_res(event):
   else:
     print("I: skip msg without text")
     if event.chat_id != gpt_id:
-      print("W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
+      print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
     return
   if event.chat_id != gpt_id:
     #  print("N: skip: %s != %s" % (event.chat_id, gpt_id))
