@@ -128,6 +128,18 @@ cmds() {
   #   bash "$SH_PATH/gpt.sh" "$@" || echo "E: $?"
   #   bash "$SH_PATH/gpt.sh" "reset" &>/dev/null
     ;;
+  gptr|gt|gtz|se|img|voice)
+    exit 1
+    :
+    ;;
+  gptmode)
+    exit 1
+    :
+  #   [[ -e $SH_PATH/.gptmode_for_$gateway ]] && rm $SH_PATH/.gptmode_for_$gateway || touch $SH_PATH/.gptmode_for_$gateway
+  #   [[ -e $SH_PATH/.gptmode_for_$gateway ]] && echo "chatgpt is here" || echo "chatgpt is out"
+  #   [[ -e $SH_PATH/.aimode_for_$gateway ]] && rm $SH_PATH/.aimode_for_$gateway
+  #   [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway
+    ;;
   botmode)
     [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway || touch $SH_PATH/.botmode_for_$gateway
     [[ -e $SH_PATH/.botmode_for_$gateway ]] && echo "bot is here" || echo "bot is out"
@@ -139,18 +151,6 @@ cmds() {
     [[ -e $SH_PATH/.aimode_for_$gateway ]] && echo "AI is here" || echo "AI is out"
     [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway
     [[ -e $SH_PATH/.gptmode_for_$gateway ]] && rm $SH_PATH/.gptmode_for_$gateway
-    ;;
-  gptr|gt|gtz)
-    exit 1
-    :
-    ;;
-  gptmode)
-    exit 1
-    :
-  #   [[ -e $SH_PATH/.gptmode_for_$gateway ]] && rm $SH_PATH/.gptmode_for_$gateway || touch $SH_PATH/.gptmode_for_$gateway
-  #   [[ -e $SH_PATH/.gptmode_for_$gateway ]] && echo "chatgpt is here" || echo "chatgpt is out"
-  #   [[ -e $SH_PATH/.aimode_for_$gateway ]] && rm $SH_PATH/.aimode_for_$gateway
-  #   [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway
     ;;
   dig)
     shift

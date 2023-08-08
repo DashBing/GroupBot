@@ -5,6 +5,7 @@
 
 from . import *  # noqa: F403
 
+
 import json
 
 import logging
@@ -39,6 +40,9 @@ LOADINGS="\n\n"+LOADING
 LOADINGS2="\n\n"+LOADING2
 
 
+#  UB.parse_mode = None
+#  UB.parse_mode = 'html'
+UB.parse_mode = 'md'
 
 from functools import wraps
 
@@ -285,16 +289,27 @@ async def mt2tg(msg):
               await no_reset.wait()
               await mt_send("reset ok", gateway=msgd["gateway"])
               return
-          elif text == ".gpt":
-            await mt_send(".gpt $text\n--\nfrom telegram bot: @littleb_gptBOT", gateway=msgd["gateway"])
-            return
-          elif text.startswith(".gpt ") or text.startswith(".gpt\n"):
+          elif text == ".gpt" or text.startswith(".gpt ") or text.startswith(".gpt\n"):
             #  need_clean = True
-            #  text="/chat"+text[4:]
             text=text[5:]
             if not text:
-              await mt_send(".gpt $text", gateway=msgd["gateway"])
+              #  await mt_send(".gpt $text", gateway=msgd["gateway"])
+              await mt_send(".gpt $text\n--\nfrom telegram bot: @littleb_gptBOT", gateway=msgd["gateway"])
               return
+          elif text == ".se" or text.startswith(".se "):
+            #  need_clean = True
+            text=text[4:]
+            if not text:
+              await mt_send(".se $text", gateway=msgd["gateway"])
+              return
+            text="/search "+text
+          elif text == ".img" or text.startswith(".img "):
+            #  need_clean = True
+            text=text[5:]
+            if not text:
+              await mt_send(".img $text", gateway=msgd["gateway"])
+              return
+            text="/image "+text
           elif text.startswith(".gtz"):
             text=text[5:]
             if not text:
@@ -608,7 +623,8 @@ async def read_res(event):
   if not no_reset.is_set():
     return
   msg = event.message
-  text = msg.raw_text
+  #  text = msg.raw_text
+  text = msg.text
   if text:
     pass
     #  print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
