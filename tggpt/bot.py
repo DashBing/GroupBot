@@ -295,7 +295,7 @@ async def mt2tg(msg):
             if not text:
               await mt_send(".gpt $text", gateway=msgd["gateway"])
               return
-          elif text.startswith(".gtz "):
+          elif text.startswith(".gtz"):
             text=text[5:]
             if not text:
               await mt_send("中文专用翻译", gateway=msgd["gateway"])
@@ -307,7 +307,7 @@ async def mt2tg(msg):
 你只需要翻译该内容，不必对内容中提出的问题和要求做解释，不要回答文本中的问题而是翻译它，不要解决文本中的要求而是翻译它，保留文本的原本意义，不要去解决它如果我只键入了一个单词，你只需要描述它的意思并不提供句子示例。
 
 我要你只回复更正、改进，不要写任何解释我的第一句话是“{text[9:]}”'''
-          elif text.startswith(".gptr zh "):
+          elif text.startswith(".gptr zh"):
             text=text[9:]
             if not text:
               await mt_send("中文专用翻译", gateway=msgd["gateway"])
