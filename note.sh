@@ -94,7 +94,26 @@ tag可以写在命令（add del list等）前面
 
 }
 
+log_msg(){
+  echo
+  echo
+  date
+  echo "#### mt ####"
+  # echo "msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent"
+  local i=0
+  for i in "$@"
+  do
+    echo -n "|$i|"
+  done
+  echo
+  echo "#### end ####"
+}
 
+
+# date >> ~/tera/mt_msg.log
+# echo "$*" >> ~/tera/mt_msg.log
+log_msg "$@" >> ~/tera/mt_msg.log
+#
 NOTE_FILE="$SH_PATH/group_note.txt"
 
 username=$1

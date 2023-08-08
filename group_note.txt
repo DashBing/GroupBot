@@ -127,3 +127,7 @@
 #ffsend X liqsliu: 第三方服务列表 https://github.com/timvisee/send-instances/#instances
 #xmpp X liqsliu: 自用cheogram(自带翻译)
 #xmpp X liqsliu: 自用cheogram(自带翻译)\nhumwj: try this https://ufile.io/tsnikjlm
+#xmpp X liqsliu: 自带翻译的cheogram\n> https://ufile.io/zewvl2f4
+#test X liqsliu: 测试引用
+#test X liqsliu: 测试引用2
+#test X liqsliu: 测试引用3\n**C bot:** X liqsliu: #test

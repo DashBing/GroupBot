@@ -279,7 +279,7 @@ cmds() {
     # bash "$SH_PATH/note.sh" "$username" "$@" || echo "E: $?"
     # echo bash "$SH_PATH/note.sh" "$username" "${text:6}" &>>~/tera/mt_msg.log
     # bash "$SH_PATH/note.sh" "$username" "${text:6}" &>>~/tera/mt_msg.log
-    bash "$SH_PATH/note.sh" "$username" "${text:6}" || echo "E: $?"
+    bash "$SH_PATH/note.sh" "$username" "${text:6}$qt_text" || echo "E: $?"
     ;;
   faq)
     bash "$SH_PATH/faq.sh" "$text" "$username" || echo "E: $?"
@@ -329,6 +329,10 @@ gateway=$1
 username=$2
 text=$3
 res=$4
+# username=$(echo "$restmp" | jq -r ".username")
+qt_text=$(echo "$res" | jq -r ".username" | sed '/^> /!d' | sed 's/^> //')
+[[ -n "$qt_text" ]] && qt_text="
+$qt_text"
 
 
 
