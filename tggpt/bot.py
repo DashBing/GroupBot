@@ -1199,7 +1199,7 @@ async def read_res(event):
     gateway = None
     if qid in set(nids.values()):
       for gateway in nids:
-        if qid == set(nids[gateway]):
+        if qid == nids[gateway]:
           break
     else:
       for gateway in queues:
