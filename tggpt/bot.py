@@ -1197,7 +1197,7 @@ async def read_res(event):
   if msg.is_reply:
     qid=msg.reply_to_msg_id
     gateway = None
-    if qid in set(nids.keys()):
+    if qid in set(nids.values()):
       for gateway in nids:
         if qid == set(nids[gateway]):
           break
@@ -1219,14 +1219,6 @@ async def read_res(event):
 
   #  text = msg.raw_text
   text = msg.text
-  if qid == nid:
-    #  if text == LOADING or text == LOADING2:
-    if text in loadings:
-      await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=gateway)
-      return
-  elif qid < nid:
-    print("W: skip: gpt bot is editing history, but will be skipped")
-    return
   if msg.file:
     file = msg.file
     if file.size > FILE_DOWNLOAD_MAX_BYTES:
@@ -1316,10 +1308,18 @@ async def read_res(event):
       if nid not in queue and qid == min(queue.keys()):
         nid = qid
         nids[gateway] = qid
-        if queue[qid][1] is not None:
-          res= queue[qid][0]['username']+"".join(queue[qid][1:])
-        else:
+        if queue[qid][1] is None:
           hide_bot_name = True
+        else:
+          res= queue[qid][0]['username']+"".join(queue[qid][1:])
+      elif qid == nid:
+        #  if text == LOADING or text == LOADING2:
+        if text in loadings:
+          await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=gateway)
+          return
+      elif qid < nid:
+        print("W: skip: gpt bot is editing history, but will be skipped")
+        return
 
     print("< Q: %s" % queue[qid][0]['text'])
     if text.endswith(LOADING):
@@ -1334,9 +1334,16 @@ async def read_res(event):
       print("> gpt: %s" % text)
       is_loading=False
     if qid > nid:
-      queue[qid][1] = text
-      print(f"W: archived msg: {qid}>{nid}")
-      return
+      if is_loading:
+        queue[qid][1] = text
+        print(f"W: archived msg: {qid}>{nid}")
+        return
+      else:
+        s = set(queue.keys())
+        while nid in s:
+          await asyncio.sleep(2)
+        res= queue[qid][0]['username']+"".join(queue[qid][1:])
+        queue[qid][1] = text
     else:
       if queue[qid][1] is None:
         queue[qid][1] = text
