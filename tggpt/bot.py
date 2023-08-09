@@ -982,16 +982,8 @@ async def mt2tg(msg):
         #  await queue.put([msg, msgd])
         if text != CLEAN:
           async with queue_lock:
-            #  queue[msg.id]=[msgd, None]
-            #  global stuck
-            #  if stuck == 0:
-            #  if msgd["gateway"] not in stuck:
-            if msgd["gateway"] not in queues:
-              #  stuck = min(queue.keys())
-              #  stuck[msgd["gateway"]] = min(queue.keys())
-              queues[msgd["gateway"]] = {msg.id: [msgd, None]}
-            #  if not nids:
-            #  if msgd["gateway"] not in nids:
+            queues[msgd["gateway"]] = {msg.id: [msgd, None]}
+            if msgd["gateway"] not in nids:
               nids[msgd["gateway"]] = msg.id
         else:
           no_reset.set()
