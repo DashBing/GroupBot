@@ -1216,11 +1216,11 @@ async def read_res(event):
       logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
       try:
         await UB.download_media(msg, f"{TMP_PATH}/{file.name}")
-      except:
+      except Exception as e:
         logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
         try:
           url = await UB.download_media(msg, bytes)
-        except:
+        except Exception as e:
           logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
           await mt_send(f"E: failed to downlaod, error: {repr(e)}\nfile name: {file.name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
           return
