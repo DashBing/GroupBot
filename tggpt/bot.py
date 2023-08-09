@@ -1214,7 +1214,8 @@ async def read_res(event):
     url = f"tmp link:https://{DOMAIN}/{file_name}"
     try:
       async with async_open(f"{TMP_PATH}/{file_name}", 'wb') as f:
-        async for chunk in UB.iter_download(file):
+        #  async for chunk in UB.iter_download(file):
+        async for chunk in UB.iter_download(msg):
           await f.write(chunk)
           await mt_send(f"下载中：{format_byte(f.tell())}/{format_byte(file.size)}", gateway=gateway)
     except Exception as e:
