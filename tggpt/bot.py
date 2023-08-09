@@ -451,7 +451,8 @@ async def read_file(path='/SH_PATH', *args, **kwargs):
   async with aiofiles.open(path, *args, **kwargs) as file:
       return await file.read()
 
-async def ipfs_add(data, filename=None, url="https://ipfs.infura.io:5001/api/v0/add?cid-version=1", *args, **kwargs):
+#async def ipfs_add(data, filename=None, url="https://ipfs.infura.io:5001/api/v0/add?cid-version=1", *args, **kwargs):
+async def ipfs_add(data, filename=None, url="https://ipfs.pixura.io/api/v0/add", *args, **kwargs):
 #    res = data2url(data, url=url, filename=filename, fieldname="file", *args, **kwargs)
     if isinstance(data, str):
         data = data.encode()
@@ -469,7 +470,8 @@ async def ipfs_add(data, filename=None, url="https://ipfs.infura.io:5001/api/v0/
         print(info)
         return
 #    url = url["Hash"]
-    url = "https://{}.ipfs.infura-ipfs.io/".format(url["Hash"])
+    #  url = "https://{}.ipfs.infura-ipfs.io/".format(url["Hash"])
+    url = "https://https://ipfs.pixura.io/ipfs/{}".format(url["Hash"])
     if filename:
     #    url += "?filename={}".format(parse.urlencode(filename))
         url += "?filename={}".format(parse.quote(filename))
@@ -1201,7 +1203,7 @@ async def read_res(event):
       await mt_send(f"文件过大，取消下载。\nfile name: {file.name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
       return
 
-    url = "tmp link:https://{DOMAIN}/{file.name}"
+    url = f"tmp link:https://{DOMAIN}/{file.name}"
     try:
       async with async_open(f"{TMP_PATH}/{file.name}", 'wb') as f:
         async for chunk in UB.iter_download(file):
@@ -1225,22 +1227,28 @@ async def read_res(event):
         url = "pb: %s" % await pastebin(url, filename=file.name)
       else:
         async with async_open(f"{TMP_PATH}/{file.name}", 'wb') as f:
-          url += f"pb: %s\n{url}" % await pastebin(f, filename=file.name)
+          url = f"pb: %s\n{url}" % await pastebin(f, filename=file.name)
     except Exception as e:
       logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
       print(f"E: {repr(e)}")
-      url = f"E: pb: {repr(e)}"
+      if isinstance(url, bytes):
+        url = f"E: pb: {repr(e)}"
+      else:
+        url = f"{url}\n--\nE: pb: {repr(e)}"
 
     try:
       if isinstance(url, bytes):
         url = "ipfs: %s" % await ipfs_add(url, filename=file.name)
       else:
         async with async_open(f"{TMP_PATH}/{file.name}", 'wb') as f:
-          url += f"ipfs: %s\n{url}" % await ipfs_add(f, filename=file.name)
+          url = f"ipfs: %s\n{url}" % await ipfs_add(f, filename=file.name)
     except Exception as e:
       logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
       print(f"E: {repr(e)}")
-      url = f"E: ipfs: {repr(e)}"
+      if isinstance(url, bytes):
+        url = f"E: ipfs: {repr(e)}"
+      else:
+        url = f"{url}\n--\nE: ipfs: {repr(e)}"
 
 
     await mt_send(f"{text}\n--\n{url}\n--\nfile name: {file.name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
