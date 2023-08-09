@@ -107,7 +107,7 @@ api_hash = get_my_key("TELEGRAM_API_HASH")
 gpt_id = int(get_my_key("TELEGRAM_GPT_ID"))
 
 
-#  MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
+MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
 
 #  exit(0)
 
@@ -126,6 +126,26 @@ del api_hash
 #  async def _init():
 
 
+
+
+
+
+
+async def init():
+  global MY_NAME, MY_ID, UB
+  UB = UB.start()
+  me = await UB.get_me()
+  #  print(me.stringify())
+  MY_ID = me.id
+  MY_NAME = me.username
+  print(f"{MY_NAME}: {MY_ID}")
+
+
+
+
+
+
+
 #loop.run_until_complete(init())
 if loop.is_running():
   LOGGER.error("loop running...")
@@ -136,5 +156,19 @@ if loop.is_closed():
   LOGGER.error("loop closed, this may be a error")
 
 # __ALL__ = ["WORK_DIR", "PARENT_DIR", "CMD", "LOGGER", "debug", "OUT", "ERR", "asyncio", "config", "UB", "loop", "MY_NAME", "NB", "BOT_ID", "BOT_NAME", "UB2_ID"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -6,19 +6,9 @@ from . import *  # noqa: F403
 logger = logging.getLogger(__name__)
 
 
-
-
-
-
-
 async def run():
-  global MY_NAME, MY_ID, UB
-  UB = await UB.start()
-  me = await UB.get_me()
-  #  print(me.stringify())
-  MY_ID = me.id
-  MY_NAME = me.username
-  print(f"{MY_NAME}: {MY_ID}")
+  #  from . import init
+  await init()
 
   from . import bot
   #  from .bot import mt_read
