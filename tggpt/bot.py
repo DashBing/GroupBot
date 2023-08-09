@@ -818,6 +818,9 @@ async def mt2tg(msg):
         global queue
         need_clean = False
 
+        if text == "ping":
+          await mt_send("pong", gateway=msgd["gateway"])
+          return
         if text[0:1] == ".":
           if text == ".gptmode":
             if msgd["gateway"] in gptmode:
@@ -1192,6 +1195,7 @@ async def read_res(event):
       global stuck
       gateway = queue[qid][0]["gateway"]
       is_loading= True
+      hide_bot_name = False
     else:
       print("W: skip: got a msg with a unkonwon id: all: %s\n queue: %s" % (msg.stringify(), queue))
       return
@@ -1287,6 +1291,8 @@ async def read_res(event):
         stuck[gateway] = qid
         if queue[qid][1] is not None:
           res= queue[qid][0]['username']+"".join(queue[qid][1:])
+        else:
+          hide_bot_name = True
 
     if qid == stuck[gateway]:
       if text == LOADING or text == LOADING2:
@@ -1321,7 +1327,10 @@ async def read_res(event):
     if not is_loading:
       #  await mt_send(queue[qid][-1]+"\n[结束]", gateway=queue[qid][0]["gateway"])
       res += "\n\n**[结束]**"
-    await mt_send(res, gateway=gateway)
+    if hide_bot_name:
+      await mt_send(res, gateway=gateway, username="")
+    else:
+      await mt_send(res, gateway=gateway)
   else:
     #  print("I: skip msg without text")
     print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
