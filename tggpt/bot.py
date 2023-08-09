@@ -1220,7 +1220,7 @@ async def read_res(event):
       return
     await queues[gateways[qid]].put( (msg.id, msg, qid) )
 
-    #  return
+    return
 
 
 
