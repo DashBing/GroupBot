@@ -1219,8 +1219,8 @@ async def read_res(event):
       logger.error(f"E: not found gateway for {qid=}, {gateways=}")
       return
     try:
-      #  await queues[gateways[qid]].put( (msg.id, msg) )
-      await queues[gateways[qid]].put( (msg.id, "test") )
+      await queues[gateways[qid]].put( (msg.id, id(msg), qid, msg) )
+      #  await queues[gateways[qid]].put( (msg.id, "test") )
     except Exception as e:
       logger.info(f"E: fixme: {qid=} {gateways=} {queues=}")
       raise e
@@ -1294,10 +1294,11 @@ async def tg2mt_loop(gateway="test"):
   while True:
 
     #  msg_id, msg, qid = await queue.get()
-    msg_id, msg = await queue.get()
+    #  msg_id, msg = await queue.get()
+    _, _, qid, msg = await queue.get()
     print(f"I: got: {msg=}")
     text = msg.text
-    qid=msg.reply_to_msg_id
+    #  qid=msg.reply_to_msg_id
 
     if msg.file:
       file = msg.file
