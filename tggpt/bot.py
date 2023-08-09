@@ -1336,7 +1336,7 @@ async def read_res(event):
       is_loading=False
     if qid > nid:
       queue[qid][1] = text
-      print(f"W: archived msg: {qid}>nid}")
+      print(f"W: archived msg: {qid}>{nid}")
       return
     else:
       if queue[qid][1] is None:
