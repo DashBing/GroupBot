@@ -1205,33 +1205,37 @@ async def read_res(event):
       await mt_send(f"文件过大，取消下载。\nfile name: {file.name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
       return
 
-    logger.info(file.stringify())
-    return
-    url = f"tmp link:https://{DOMAIN}/{file.name}"
+    logger.info(file)
+    if hasattr(file, "name") and file.name:
+      file_name = file.name
+    else:
+      logger.info("file: no name")
+      file_name = "%s.%s" % (int(time.time()), "jpg")
+    url = f"tmp link:https://{DOMAIN}/{file_name}"
     try:
-      async with async_open(f"{TMP_PATH}/{file.name}", 'wb') as f:
+      async with async_open(f"{TMP_PATH}/{file_name}", 'wb') as f:
         async for chunk in UB.iter_download(file):
           await f.write(chunk)
           await mt_send(f"下载中：{format_byte(f.tell())}/{format_byte(file.size)}", gateway=gateway)
     except Exception as e:
       logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
       try:
-        await UB.download_media(msg, f"{TMP_PATH}/{file.name}")
+        await UB.download_media(msg, f"{TMP_PATH}/{file_name}")
       except Exception as e:
         logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
         try:
           url = await UB.download_media(msg, bytes)
         except Exception as e:
           logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
-          await mt_send(f"E: failed to downlaod, error: {repr(e)}\nfile name: {file.name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
+          await mt_send(f"E: failed to downlaod, error: {repr(e)}\nfile_name: {file_name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
           return
 
     try:
       if isinstance(url, bytes):
-        url = "pb: %s" % await pastebin(url, filename=file.name)
+        url = "pb: %s" % await pastebin(url, filename=file_name)
       else:
-        async with async_open(f"{TMP_PATH}/{file.name}", 'wb') as f:
-          url = f"pb: %s\n{url}" % await pastebin(f, filename=file.name)
+        async with async_open(f"{TMP_PATH}/{file_name}", 'wb') as f:
+          url = f"pb: %s\n{url}" % await pastebin(f, filename=file_name)
     except Exception as e:
       logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
       print(f"E: {repr(e)}")
@@ -1242,10 +1246,10 @@ async def read_res(event):
 
     try:
       if isinstance(url, bytes):
-        url = "ipfs: %s" % await ipfs_add(url, filename=file.name)
+        url = "ipfs: %s" % await ipfs_add(url, filename=file_name)
       else:
-        async with async_open(f"{TMP_PATH}/{file.name}", 'wb') as f:
-          url = f"ipfs: %s\n{url}" % await ipfs_add(f, filename=file.name)
+        async with async_open(f"{TMP_PATH}/{file_name}", 'wb') as f:
+          url = f"ipfs: %s\n{url}" % await ipfs_add(f, filename=file_name)
     except Exception as e:
       logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
       print(f"E: {repr(e)}")
@@ -1255,7 +1259,7 @@ async def read_res(event):
         url = f"{url}\n--\nE: ipfs: {repr(e)}"
 
 
-    await mt_send(f"{text}\n--\n{url}\n--\nfile name: {file.name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
+    await mt_send(f"{text}\n--\n{url}\n--\nfile_name: {file_name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
     is_loading= False
 
   elif text == "处理图片请求并获得响应可能需要最多5分钟，请耐心等待。" or text == "It may take up to 5 minutes to process image request and give a response, please wait patiently.":
