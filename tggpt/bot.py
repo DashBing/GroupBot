@@ -1197,23 +1197,23 @@ async def read_res(event):
   msg = event.message
   if msg.is_reply:
     qid=msg.reply_to_msg_id
-    if qid not in nids.keys():
-      gateway = None
+    gateway = None
+    if qid in nids.keys():
+      for gateway in nids:
+        if qid == nids[gateway]:
+          break
+    else:
       for gateway in queues:
         if qid in queues[gateway]:
           break
         gateway = None
-      if gateway is None:
-        print("W: skip: got a msg with a unkonwon id: all: %s" % (msg.stringify()))
-        return
-
-      nid = nids[gateway]
-      queue = queues[gateway]
-      is_loading= True
-      hide_bot_name = False
-    else:
+    if gateway is None:
       print("W: skip: got a msg with a unkonwon id: all: %s\n queue: %s" % (msg.stringify(), queues))
       return
+    nid = nids[gateway]
+    queue = queues[gateway]
+    is_loading= True
+    hide_bot_name = False
   else:
     print("W: skip: got a msg without reply: is_reply: %s\nall: %s" % (msg.is_reply, msg.stringify()))
     return
