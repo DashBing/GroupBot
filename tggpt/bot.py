@@ -1338,6 +1338,12 @@ async def my_event_handler(event):
 #
 #    await read_res(event)
 
+async def __init():
+  global SH_PATH, DOMAIN
+  SH_PATH = (await read_file()).rstrip('\n')
+  DOMAIN = (await read_file("DOMAIN")).rstrip('\n')
+  print(f"SH_PATH: {SH_PATH}")
+  print(f"DOMAIN: {DOMAIN}")
 
 
 if __name__ == '__main__':
@@ -1352,13 +1358,12 @@ elif __package__ == "":
   print('{} 运行, empty package'.format(__file__))
   #  from .html_to_telegraph_format import convert_html_to_telegraph_format
   # from ..telegram import put
+  SH_PATH = asyncio.run(read_file()).rstrip('\n')
+  DOMAIN = asyncio.run(read_file("DOMAIN")).rstrip('\n')
 else:
   print('{} 运行, package: {}'.format(__file__, __package__))
 # /tmp/run/user/1000/bot
-  SH_PATH = asyncio.run(read_file()).rstrip('\n')
-  DOMAIN = asyncio.run(read_file("DOMAIN")).rstrip('\n')
-  print(f"SH_PATH: {SH_PATH}")
-  print(f"DOMAIN: {DOMAIN}")
+  asyncio.create_task(__init())
 
 
 
