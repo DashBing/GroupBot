@@ -1218,7 +1218,11 @@ async def read_res(event):
     if qid not in gateways:
       logger.error(f"E: not found gateway for {qid=}, {gateways=}")
       return
-    await queues[gateways[qid]].put( (msg.id, msg) )
+    try:
+      await queues[gateways[qid]].put( (msg.id, msg) )
+    except Exception as e:
+      logger.info("E: fixme: {qid=} {gateways=} {queues=}")
+      raise e
     return
     await queues[gateways[qid]].put( (msg.id, msg, qid) )
     return
