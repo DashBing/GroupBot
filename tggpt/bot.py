@@ -445,7 +445,7 @@ def read_file_1line(path='/SH_PATH'):
     return None
 
 
-async def read_file(path='/SH_PATH', *args, **kwargs):
+async def read_file(path='SH_PATH', *args, **kwargs):
   if path[0:1] != '/':
     path=PARENT_DIR.as_posix()+ "/" + path
   async with aiofiles.open(path, *args, **kwargs) as file:
