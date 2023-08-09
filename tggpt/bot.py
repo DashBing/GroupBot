@@ -870,7 +870,7 @@ async def mt2tg(msg):
             text=text[5:]
             if not text:
               #  await mt_send(".gpt $text", gateway=msgd["gateway"])
-              await mt_send(".gpt $text\n--\n默认开启了上下文，重置命令“.gpt reset“。所有数据来自telegram机器人: @littleb_gptBOT ，使用userbot与其对接。", gateway=msgd["gateway"])
+              await mt_send(".gpt $text\n--\n默认开启了上下文，重置上下文命令“.gpt reset“，如果前面的任务无法结束导致后面的任务卡住也可以使用此命令清理历史任务，多次发送相同的任务请求也能触发bot自动清理历史任务。\n所有数据来自telegram机器人: @littleb_gptBOT ，使用userbot与其对接，因此所有人共享一个上下文，这个问题暂时没办法解决。", gateway=msgd["gateway"])
               return
           elif text == ".se" or text.startswith(".se "):
             #  need_clean = True
@@ -1411,6 +1411,14 @@ async def tg2mt_loop(gateway="test"):
       #  print("> gpt: %s" % text)
 
 
+
+    if qid > nid:
+      if len(mtmsgs) > 1 and mtmsgs[qid][0]["text"] == mtmsgs[max(mtmsgs.keys().remove(qid))][0]["text"]:
+        for q in mtmsgs:
+          if q != qid:
+            mtmsgs.remove(q)
+        await mt_send("已清理历史任务，继续当前任务中..", gateway=gateway)
+        nid = qid
 
     if qid > nid:
       mtmsgs[qid][1] = text
