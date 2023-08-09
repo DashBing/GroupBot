@@ -1202,12 +1202,9 @@ async def mt_send(text="null", username="gpt", gateway="test", qt=None):
 async def download_media(msg, in_memory=False):
   pass
 
-
-
-@UB.on(events.NewMessage(incoming=True))
-@UB.on(events.MessageEdited(incoming=True))
+@UB.on(events.NewMessage(outgoing=True))
 @exceptions_handler
-async def read_res(event):
+async def just_for_me(event):
   if event.chat_id == MY_ID:
     msg = event.message
     text = msg.text
@@ -1238,6 +1235,15 @@ async def read_res(event):
           await UB.send_message('me', "peer id: %s" % await UB.get_peer_id(e))
         else:
           await UB.send_message('me', "not fount input entity")
+
+
+
+
+
+@UB.on(events.NewMessage(incoming=True))
+@UB.on(events.MessageEdited(incoming=True))
+@exceptions_handler
+async def read_res(event):
 
   if event.chat_id != gpt_id:
     #  print("N: skip: %s != %s" % (event.chat_id, gpt_id))
