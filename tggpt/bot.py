@@ -773,9 +773,9 @@ async def mt_read():
     except ClientConnectorError:
       logger.warning("mt api is not ok, retry...")
     except Exception as e:
-      logger.error(e)
-      print(str(e))
-    await asyncio.sleep(5)
+      logger.error(f"{e=}")
+      print(f"{e=}")
+    await asyncio.sleep(8)
 
 
 
