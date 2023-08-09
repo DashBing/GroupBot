@@ -1255,7 +1255,7 @@ async def read_res(event):
     is_loading= False
 
   elif text == "处理图片请求并获得响应可能需要最多5分钟，请耐心等待。" or text == "It may take up to 5 minutes to process image request and give a response, please wait patiently.":
-    await mt_send({queue[qid][0]['username']}+text, gateway=gateway)
+    await mt_send(queue[qid][0]['username']+text, gateway=gateway)
     return
   elif text:
     pass
