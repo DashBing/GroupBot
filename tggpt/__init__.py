@@ -133,7 +133,7 @@ del api_hash
 
 async def init():
   global MY_NAME, MY_ID, UB
-  UB = UB.start()
+  UB.start()
   me = await UB.get_me()
   #  print(me.stringify())
   MY_ID = me.id
