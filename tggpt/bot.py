@@ -1426,12 +1426,13 @@ async def tg2mt_loop(gateway="test"):
         if not no_reset.is_set():
           continue
         mtmsgs.pop(qid)
+        print(f"remove {qid=}")
         while True:
           if len(mtmsgs) == 0:
             nid = 0
             break
           nid = min(mtmsgs.keys())
-          print(f"update nid to {nid} {mtmsgs.keys()=}")
+          print(f"update nid to {nid} {mtmsgs.keys()=} {mtmsgs=}")
           if mtmsgs[nid][1] is None:
             break
           if mtmsgs[nid][-1] is None:
@@ -1440,6 +1441,7 @@ async def tg2mt_loop(gateway="test"):
           else:
             await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
             mtmsgs.pop(nid)
+            print(f"remove {qid=}")
     else:
       mtmsgs[qid][1] = text
       await mt_send(res, gateway=gateway)
