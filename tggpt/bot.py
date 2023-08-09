@@ -849,12 +849,17 @@ async def mt2tg(msg):
           elif text == ".gpt reset":
             if no_reset.is_set():
               no_reset.clear()
-              async with queue_lock:
-                if len(queue.keys()) > 1:
-                  queue ={min(queue.keys()): queue[min((queue.keys()))] }
+              await mt_send("waiting...", gateway=msgd["gateway"])
+              for g in mtmsgsg:
+                await queues[g].put((0,0,0,0))
+              no_reset.set()
+              await mt_send("reset ok", gateway=msgd["gateway"])
+              #  async with queue_lock:
+                #  if len(queue.keys()) > 1:
+                  #  queue ={min(queue.keys()): queue[min((queue.keys()))] }
               text= CLEAN
-              if len(queue.keys()) > 0:
-                await mt_send("waiting...", gateway=msgd["gateway"])
+              #  if len(queue.keys()) > 0:
+              return
             else:
               await mt_send("waiting reset...", gateway=msgd["gateway"])
               await no_reset.wait()
@@ -1008,8 +1013,9 @@ async def mt2tg(msg):
               asyncio.create_task(tg2mt_loop(msgd["gateway"]))
             mtmsgsg[msgd["gateway"]][msg.id] = [msgd, None]
         else:
-          no_reset.set()
-          await mt_send("reset ok", gateway=msgd["gateway"])
+          pass
+          #  no_reset.set()
+          #  await mt_send("reset ok", gateway=msgd["gateway"])
         return
 
         text = name + text
@@ -1279,8 +1285,8 @@ async def tg2mt_loop(gateway="test"):
     queues[gateway] = queue
   else:
     queue = queues[gateway]
-  if gateway not in nids:
-    nids[gateway] = 0
+  #  if gateway not in nids:
+  #    nids[gateway] = 0
   #  nid = nids[gateway]
   nid = 0
   mtmsgs = mtmsgsg[gateway]
@@ -1290,6 +1296,11 @@ async def tg2mt_loop(gateway="test"):
     #  msg_id, msg, qid = await queue.get()
     #  msg_id, msg = await queue.get()
     _, _, qid, msg = await queue.get()
+    if qid == 0:
+      mtmsgs.clear()
+      await asyncio.sleep(2)
+      nid = 0
+      continue
     #  print(f"I: got: {msg=}")
     text = msg.text
     #  qid=msg.reply_to_msg_id
@@ -1424,6 +1435,8 @@ async def tg2mt_loop(gateway="test"):
       print(f"I: end {msg.id}")
       async with queue_lock:
         #  if not no_reset.is_set():
+          #  no_reset.set()
+          #  await mt_send("reset ok", gateway=msgd["gateway"])
         #    continue
         mtmsgs.pop(nid)
         print(f"remove {nid=}")
