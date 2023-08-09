@@ -1212,7 +1212,8 @@ async def read_res(event):
       file_name = file.name
     else:
       logger.info("file: no name")
-      file_name = "%s.%s" % (int(time.time()), "jpg")
+      #  file_name = "%s.%s" % (int(time.time()), "jpg")
+      file_name = "%s%s" % (int(time.time()), mimetypes.guess_extension(file.mime_type))
     url = f"tmp link: https://{DOMAIN}/{file_name}"
     path = f"{TMP_PATH}/{file_name}"
     try:
