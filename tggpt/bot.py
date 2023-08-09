@@ -1268,14 +1268,6 @@ async def read_res(event):
       logger.info(f"I: need update nid, now {nid=} {qid=} {nids=} {queue=}")
       nids[gateway] = qid
       #  nid = qid
-  if qid == nid:
-    #  if text == LOADING or text == LOADING2:
-    if text in loadings:
-      await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=gateway)
-      return
-  elif qid < nid:
-    print("W: skip: gpt bot is editing history, but will be skipped")
-    return
 
 
 
@@ -1303,6 +1295,11 @@ async def tg2mt_loop(gateway="test"):
     if nid == 0:
       nid = qid
 
+    if qid == nid:
+      #  if text == LOADING or text == LOADING2:
+      if text in loadings:
+        await mt_send(f"{mtmsgs[qid][0]['username']}[思考中...]", gateway=gateway)
+        continue
 
     if msg.file:
       file = msg.file
@@ -1403,7 +1400,9 @@ async def tg2mt_loop(gateway="test"):
 
     if qid > nid:
       mtmsgs[qid][1] = text
-      print(f"W: archived msg")
+      print(f"W: archived msg {msg.id}")
+      if ending:
+        mtmsgs[qid].pop(-1)
       continue
 
     if mtmsgs[qid][1] is None:
@@ -1415,27 +1414,28 @@ async def tg2mt_loop(gateway="test"):
       #  res += "\n\n**[结束]**"
       res += ending
       await mt_send(res, gateway=gateway)
+      print(f"I: end {msg.id}")
       async with queue_lock:
         if not no_reset.is_set():
           continue
         mtmsgs.pop(qid)
         while True:
           if len(mtmsgs) == 0:
+            nid = 0
             break
           nid = min(mtmsgs.keys())
           if mtmsgs[nid][1] is None:
             break
           if mtmsgs[nid][-1] is None:
-            res = "".join(mtmsgs[nid][1:-1])
-            await mt_send(res, gateway=gateway)
+            await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
             break
           else:
-            res = "".join(mtmsgs[nid][1:])
-            await mt_send(res, gateway=gateway)
+            await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
             mtmsgs.pop(nid)
     else:
       mtmsgs[qid][1] = text
       await mt_send(res, gateway=gateway)
+      print(f"I: append {msg.id}")
 
 
 
