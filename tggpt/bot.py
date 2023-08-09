@@ -1413,7 +1413,7 @@ async def tg2mt_loop(gateway="test"):
 
 
     if qid > nid:
-      if len(mtmsgs) > 1 and mtmsgs[qid][0]["text"] == mtmsgs[max(mtmsgs.keys().remove(qid))][0]["text"]:
+      if len(mtmsgs) > 1 and mtmsgs[qid][0]["text"] == mtmsgs[max(list(mtmsgs.keys()).remove(qid))][0]["text"]:
         for q in mtmsgs:
           if q != qid:
             mtmsgs.remove(q)
