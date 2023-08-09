@@ -1194,12 +1194,9 @@ async def read_res(event):
 
   #  text = msg.raw_text
   text = msg.text
-  if text:
-    if text == "处理图片请求并获得响应可能需要最多5分钟，请耐心等待。":
-      await mt_send(text, gateway=gateway)
-      return
-    pass
-    #  print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
+  if text == "处理图片请求并获得响应可能需要最多5分钟，请耐心等待。":
+    await mt_send(text, gateway=gateway)
+    return
   elif msg.file:
     file = msg.file
     if file.size > FILE_DOWNLOAD_MAX_BYTES:
@@ -1248,10 +1245,13 @@ async def read_res(event):
       url = f"E: ipfs: {repr(e)}"
 
 
-    await mt_send(f"{url}\n--\nfile name: {file.name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
+    await mt_send(f"{text}\n--\n{url}\n--\nfile name: {file.name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
 
     return
 
+  elif text:
+    pass
+    #  print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
   else:
     #  print("I: skip msg without text")
     print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
