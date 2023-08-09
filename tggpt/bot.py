@@ -749,8 +749,8 @@ async def mt_read():
         print("N: mt api init ok")
         #  resp.content.read()
         async for line in resp.content:
-          logger.info("I: got a msg from mt api: %s", len(line))
-          print(f"I: original msg: %s" % line)
+          #  logger.info("I: got a msg from mt api: %s", len(line))
+          #  print(f"I: original msg: %s" % line)
           await mt2tg(line)
         # buffer = b""
         # async for data, end_of_http_chunk in resp.content.iter_chunks():
@@ -800,7 +800,7 @@ async def mt2tg(msg):
 
         text = msgd["text"]
         name = msgd["username"]
-        print(f"I: got msg: {name}: {text}")
+        #  print(f"I: got msg: {name}: {text}")
         if not text:
           return
 
@@ -1149,7 +1149,7 @@ async def mt_send(text="null", username="gpt", gateway="test", qt=None):
         "gateway": "{}".format(gateway)
     }
     res = await http(url, method="POST", json=data)
-    logger.info("sent msg to mt, res: {}".format(res))
+    #  logger.info("sent msg to mt, res: {}".format(res))
     return res
 
 
