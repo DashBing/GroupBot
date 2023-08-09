@@ -1235,24 +1235,50 @@ async def read_res(event):
     await queues[gateways[qid]].put( (msg.id, msg, qid) )
     return
 
-
-
-    gateway = None
-    if qid in set(nids.values()):
-      for gateway in nids:
-        if qid == nids[gateway]:
-          break
-    else:
-      for gateway in queues:
-        if qid in set(queues[gateway]):
-          break
-        gateway = None
-    if gateway is None:
-      print("W: skip: got a msg with a unkonwon id: all: %s\n queue: %s" % (msg.stringify(), queues))
+  elif event.chat_id == MY_ID:
+    msg = event.message
+    text = msg.text
+    if not text:
       return
-    nid = nids[gateway]
-    queue = queues[gateway]
-    is_loading= True
+    if text.startswith("id "):
+      url = text.split(' ')[1]
+      if url.startswith("https://t.me/"):
+        username = url.split('/')[3]
+      elif url.startswith("@"):
+        username = url[1:]
+      else:
+        await UB.send_message('me', "error url")
+        return
+
+      e = await UB.get_entity(username)
+      if e:
+        await UB.send_message('me', f"{e.stringify()}")
+      else:
+        await UB.send_message('me', "not fount entity")
+        e = await UB.get_input_entity(username)
+        if e:
+          await UB.send_message('me', f"{e.stringify()}")
+        else:
+          await UB.send_message('me', "not fount input entity")
+
+
+
+    #  gateway = None
+    #  if qid in set(nids.values()):
+    #    for gateway in nids:
+    #      if qid == nids[gateway]:
+    #        break
+    #  else:
+    #    for gateway in queues:
+    #      if qid in set(queues[gateway]):
+    #        break
+    #      gateway = None
+    #  if gateway is None:
+    #    print("W: skip: got a msg with a unkonwon id: all: %s\n queue: %s" % (msg.stringify(), queues))
+    #    return
+    #  nid = nids[gateway]
+    #  queue = queues[gateway]
+    #  is_loading= True
   else:
     print("W: skip: got a msg without reply: is_reply: %s\nall: %s" % (msg.is_reply, msg.stringify()))
     return
@@ -1386,9 +1412,13 @@ async def tg2mt_loop(gateway="test"):
       res = f"{text}\n--\n{url}\n--\nfile_name: {file_name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}"
       if qid > nid:
         mtmsgs[qid][-1] = res
+        mtmsgs[qid].append(None)
+        logger.warning(f"W: archived img: {res=}")
         continue
       else:
         await mt_send(res, gateway=gateway)
+        mtmsgs.pop(nid)
+        continue
 
 
     elif not text:
