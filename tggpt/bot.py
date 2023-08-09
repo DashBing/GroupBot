@@ -1254,9 +1254,8 @@ async def read_res(event):
     await mt_send(f"{text}\n--\n{url}\n--\nfile name: {file.name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
     is_loading= False
 
-
   elif text == "处理图片请求并获得响应可能需要最多5分钟，请耐心等待。" or text == "It may take up to 5 minutes to process image request and give a response, please wait patiently.":
-    await mt_send(text, gateway=gateway)
+    await mt_send({queue[qid][0]['username']}+text, gateway=gateway)
     return
   elif text:
     pass
@@ -1349,7 +1348,7 @@ elif 0:
   with open("test.jpg", "rb") as file:
     data = file.read()
     asyncio.run(ipfs_add(data, filename="test.jpg"))
-elif __package__ != "":
+elif __package__ == "":
   print('{} 运行, empty package'.format(__file__))
   #  from .html_to_telegraph_format import convert_html_to_telegraph_format
   # from ..telegram import put
