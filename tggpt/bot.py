@@ -1218,8 +1218,9 @@ async def read_res(event):
     if qid not in gateways:
       logger.error(f"E: not found gateway for {qid=}, {gateways=}")
       return
+    await queues[gateways[qid]].put( (msg.id, msg) )
+    return
     await queues[gateways[qid]].put( (msg.id, msg, qid) )
-
     return
 
 
@@ -1287,7 +1288,8 @@ async def tg2mt_loop(gateway="test"):
   mtmsgs = mtmsgsg[gateway]
   while True:
 
-    msg_id, msg, qid = await queue.get()
+    #  msg_id, msg, qid = await queue.get()
+    msg_id, msg = await queue.get()
     text = msg.text
 
     if msg.file:
