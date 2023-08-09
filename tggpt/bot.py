@@ -1293,26 +1293,11 @@ async def tg2mt_loop(gateway="test"):
   mtmsgs = mtmsgsg[gateway]
   while True:
 
-    async with queue_lock:
-      while True:
-        if len(mtmsgs) == 0:
-          break
-        nid = min(mtmsgs.keys())
-        if mtmsgs[nid][1] is None:
-          break
-        if mtmsgs[nid][-1] is None:
-          res = "".join(mtmsgs[nid][1:-1])
-          await mt_send(res, gateway=gateway)
-          break
-        else:
-          res = "".join(mtmsgs[nid][1:])
-          await mt_send(res, gateway=gateway)
-          mtmsgs.pop(nid)
 
     #  msg_id, msg, qid = await queue.get()
     #  msg_id, msg = await queue.get()
     _, _, qid, msg = await queue.get()
-    print(f"I: got: {msg=}")
+    #  print(f"I: got: {msg=}")
     text = msg.text
     #  qid=msg.reply_to_msg_id
     if nid == 0:
@@ -1400,6 +1385,9 @@ async def tg2mt_loop(gateway="test"):
       return
 
 
+
+
+    ending= None
     #  print("< Q: %s" % queue[qid][0]['text'])
     if text.endswith(LOADING):
       #  print("> gpt(未结束): %s" % text)
@@ -1408,50 +1396,46 @@ async def tg2mt_loop(gateway="test"):
       #  print("> gpt(未结束): %s" % text)
       text = text.rstrip(LOADINGS2)
     else:
-      mtmsgs[qid].pop(-1)
+      ending = "\n\n**[结束]**"
       #  print("> gpt: %s" % text)
-    if qid > nid:
-      mtmsgs[qid].insert(-1, text)
-      print(f"W: archived msg")
-      return
-      #  else:
-      #    while nids[gateway] in set(queue.keys()):
-      #      await asyncio.sleep(2)
-      #    res= queue[qid][0]['username']+"".join(queue[qid][1:])
-      #    queue[qid][1] = text
-    else:
-      if mtmsgs[qid][1] is None:
-        #  queue[qid][1] = text
-        mtmsgs[qid].insert(-1, text)
-      else:
-        #  queue[qid].append(text[len("".join(queue[qid][1:])):])
-        mtmsgs[qid].insert(-1, text[len("".join(mtmsgs[qid][1:-1])):])
 
-    #  if qid != nid:
-      #  res= queue[qid][0]['username']+"".join(queue[qid][1:])
-    #  else:
-    res = mtmsgs[qid][-1]
-    #  if not is_loading:
-    if mtmsgs[qid][-1] is not None:
-      #  await mt_send(queue[qid][-1]+"\n[结束]", gateway=queue[qid][0]["gateway"])
-      res += "\n\n**[结束]**"
+
+
+    if qid > nid:
+      mtmsgs[qid][1] = text
+      print(f"W: archived msg")
+      continue
+
+    if mtmsgs[qid][1] is None:
+      res = text
+    else:
+      res = text[len(mtmsgs[qid][1]):]
+
+    if ending:
+      #  res += "\n\n**[结束]**"
+      res += ending
       await mt_send(res, gateway=gateway)
       async with queue_lock:
         if not no_reset.is_set():
           continue
         mtmsgs.pop(qid)
-                        
+        while True:
+          if len(mtmsgs) == 0:
+            break
+          nid = min(mtmsgs.keys())
+          if mtmsgs[nid][1] is None:
+            break
+          if mtmsgs[nid][-1] is None:
+            res = "".join(mtmsgs[nid][1:-1])
+            await mt_send(res, gateway=gateway)
+            break
+          else:
+            res = "".join(mtmsgs[nid][1:])
+            await mt_send(res, gateway=gateway)
+            mtmsgs.pop(nid)
     else:
+      mtmsgs[qid][1] = text
       await mt_send(res, gateway=gateway)
-    #  if qid != nid:
-    #    await mt_send(res, gateway=gateway, username="")
-    #  else:
-    #  if msg.is_reply and msg.reply_to.reply_to_msg_id in queue:
-
-
-
-
-
 
 
 
