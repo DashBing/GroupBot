@@ -1212,7 +1212,6 @@ async def read_res(event):
     nid = nids[gateway]
     queue = queues[gateway]
     is_loading= True
-    hide_bot_name = False
   else:
     print("W: skip: got a msg without reply: is_reply: %s\nall: %s" % (msg.is_reply, msg.stringify()))
     return
@@ -1290,78 +1289,71 @@ async def read_res(event):
     await mt_send(f"{text}\n--\n{url}\n--\nfile_name: {file_name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
     is_loading= False
 
-  #  elif text == "处理图片请求并获得响应可能需要最多5分钟，请耐心等待。" or text == "It may take up to 5 minutes to process image request and give a response, please wait patiently.":
-  #    if qid == min(queue.keys()):
-  #      await mt_send(queue[qid][0]['username']+text, gateway=gateway)
-  #    return
-  elif text:
-    #  print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
-    res = ""
-    #  if qid > min(queue.keys()):
-    #  while qid > min(queue.keys()):
-    #    print("waiting...")
-    #    await asyncio.sleep(2)
-
-    async with queue_lock:
-      #  if qid == min(queue.keys()) and stuck < qid:
-      #  if stuck[gateway] < qid and qid == min(queue.keys()):
-      if nid not in queue and qid == min(queue.keys()):
-        nid = qid
-        nids[gateway] = qid
-        if queue[qid][1] is None:
-          hide_bot_name = True
-        else:
-          res= queue[qid][0]['username']+"".join(queue[qid][1:])
-    if qid == nid:
-      #  if text == LOADING or text == LOADING2:
-      if text in loadings:
-        await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=gateway)
-        return
-    elif qid < nid:
-      print("W: skip: gpt bot is editing history, but will be skipped")
-      return
-
-    print("< Q: %s" % queue[qid][0]['text'])
-    if text.endswith(LOADING):
-      print("> gpt(未结束): %s" % text)
-      is_loading=True
-      text = text.rstrip(LOADINGS)
-    elif text.endswith(LOADING2):
-      print("> gpt(未结束): %s" % text)
-      is_loading=True
-      text = text.rstrip(LOADINGS2)
-    else:
-      print("> gpt: %s" % text)
-      is_loading=False
-    if qid > nid:
-      if is_loading:
-        queue[qid][1] = text
-        print(f"W: archived msg: {qid}>{nid}")
-        return
-      else:
-        s = set(queue.keys())
-        while nid in s:
-          await asyncio.sleep(2)
-        res= queue[qid][0]['username']+"".join(queue[qid][1:])
-        queue[qid][1] = text
-    else:
-      if queue[qid][1] is None:
-        queue[qid][1] = text
-      else:
-        queue[qid].append(text[len("".join(queue[qid][1:])):])
-
-    res += queue[qid][-1]
-    if not is_loading:
-      #  await mt_send(queue[qid][-1]+"\n[结束]", gateway=queue[qid][0]["gateway"])
-      res += "\n\n**[结束]**"
-    if hide_bot_name:
-      await mt_send(res, gateway=gateway, username="")
-    else:
-      await mt_send(res, gateway=gateway)
-  else:
-    #  print("I: skip msg without text")
+  elif not text:
     print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
     return
+  #  print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
+  #  res = ""
+  #  if qid > min(queue.keys()):
+  #  while qid > min(queue.keys()):
+  #    print("waiting...")
+  #    await asyncio.sleep(2)
+
+  async with queue_lock:
+    #  if qid == min(queue.keys()) and stuck < qid:
+    #  if stuck[gateway] < qid and qid == min(queue.keys()):
+    if nid not in queue and qid == min(queue.keys()):
+      logger.info(f"I: need update nid, now {nid=} {qid=} {nids=} {queue=}")
+      nids[gateway] = qid
+      #  nid = qid
+  if qid == nid:
+    #  if text == LOADING or text == LOADING2:
+    if text in loadings:
+      await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=gateway)
+      return
+  elif qid < nid:
+    print("W: skip: gpt bot is editing history, but will be skipped")
+    return
+
+  print("< Q: %s" % queue[qid][0]['text'])
+  if text.endswith(LOADING):
+    #  print("> gpt(未结束): %s" % text)
+    is_loading=True
+    text = text.rstrip(LOADINGS)
+  elif text.endswith(LOADING2):
+    #  print("> gpt(未结束): %s" % text)
+    is_loading=True
+    text = text.rstrip(LOADINGS2)
+  else:
+    #  print("> gpt: %s" % text)
+    is_loading=False
+  if qid > nids[gateway]:
+    if is_loading:
+      queue[qid][1] = text
+      print(f"W: archived msg: {qid}>{nid}")
+      return
+    else:
+      while nids[gateway] in set(queue.keys()):
+        await asyncio.sleep(2)
+      res= queue[qid][0]['username']+"".join(queue[qid][1:])
+      queue[qid][1] = text
+  else:
+    if queue[qid][1] is None:
+      queue[qid][1] = text
+    else:
+      queue[qid].append(text[len("".join(queue[qid][1:])):])
+
+  if qid != nid:
+    res= queue[qid][0]['username']+"".join(queue[qid][1:])
+  else:
+    res = queue[qid][-1]
+  if not is_loading:
+    #  await mt_send(queue[qid][-1]+"\n[结束]", gateway=queue[qid][0]["gateway"])
+    res += "\n\n**[结束]**"
+  if qid != nid:
+    await mt_send(res, gateway=gateway, username="")
+  else:
+    await mt_send(res, gateway=gateway)
   #  if msg.is_reply and msg.reply_to.reply_to_msg_id in queue:
   if not is_loading:
     async with queue_lock:
