@@ -1211,7 +1211,7 @@ async def read_res(event):
     if hasattr(file, "name") and file.name:
       file_name = file.name
     else:
-      logger.info("file: no name")
+      logger.warning(f"W: file: no name: {file=}")
       #  file_name = "%s.%s" % (int(time.time()), "jpg")
       file_name = "%s%s" % (int(time.time()), mimetypes.guess_extension(file.mime_type))
     url = f"tmp link: https://{DOMAIN}/{file_name}"
@@ -1232,7 +1232,7 @@ async def read_res(event):
           url = await UB.download_media(msg, bytes)
         except Exception as e:
           logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
-          await mt_send(f"E: failed to downlaod, error: {repr(e)}\nfile_name: {file_name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
+          await mt_send(f"E: failed to downlaod, error: {repr(e)}\nfile_name: {file_name}\nsize: {format_byte(file.size)}\ntype: {file.mime_type}", gateway=gateway)
           return
 
     try:
