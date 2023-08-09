@@ -1431,7 +1431,7 @@ async def tg2mt_loop(gateway="test"):
             nid = 0
             break
           nid = min(mtmsgs.keys())
-          print(f"update nid to {nid}")
+          print(f"update nid to {nid} {mtmsgs.keys()=}")
           if mtmsgs[nid][1] is None:
             break
           if mtmsgs[nid][-1] is None:
