@@ -1224,6 +1224,9 @@ async def read_res(event):
     if text in loadings:
       await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=gateway)
       return
+  elif qid < nid:
+    print("W: skip: gpt bot is editing history, but will be skipped")
+    return
   if msg.file:
     file = msg.file
     if file.size > FILE_DOWNLOAD_MAX_BYTES:
@@ -1318,9 +1321,6 @@ async def read_res(event):
         else:
           hide_bot_name = True
 
-    elif qid < nid:
-      print("W: skip: gpt bot is editing history, but will be skipped")
-      return
     print("< Q: %s" % queue[qid][0]['text'])
     if text.endswith(LOADING):
       print("> gpt(未结束): %s" % text)
