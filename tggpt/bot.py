@@ -1291,6 +1291,7 @@ async def tg2mt_loop(gateway="test"):
     #  msg_id, msg, qid = await queue.get()
     msg_id, msg = await queue.get()
     text = msg.text
+    qid=msg.reply_to_msg_id
 
     if msg.file:
       file = msg.file
