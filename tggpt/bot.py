@@ -1403,19 +1403,19 @@ async def tg2mt_loop(gateway="test"):
 
     if qid > nid:
       mtmsgs[qid][1] = text
-      print(f"W: archived msg {msg.id}")
+      print(f"W: archived msg {msg.id=} {mtmsgs=}")
       if ending:
         mtmsgs[qid].append(None)
       continue
 
-    try:
-      if mtmsgs[qid][1] is None:
-        res = text
-      else:
-        res = text[len(mtmsgs[qid][1]):]
-    except Exception as e:
-      logger.info(f"I: {e=} now: {qid=} {mtmsgs=}, {nid=}")
-      continue
+    #  try:
+    if mtmsgs[qid][1] is None:
+      res = text
+    else:
+      res = text[len(mtmsgs[qid][1]):]
+    #  except Exception as e:
+    #    logger.info(f"I: {e=} now: {qid=} {mtmsgs=}, {nid=}")
+    #    #  continue
 
     if ending:
       #  res += "\n\n**[结束]**"
@@ -1423,10 +1423,10 @@ async def tg2mt_loop(gateway="test"):
       await mt_send(res, gateway=gateway)
       print(f"I: end {msg.id}")
       async with queue_lock:
-        if not no_reset.is_set():
-          continue
-        mtmsgs.pop(qid)
-        print(f"remove {qid=}")
+        #  if not no_reset.is_set():
+        #    continue
+        mtmsgs.pop(nid)
+        print(f"remove {nid=}")
         while True:
           if len(mtmsgs) == 0:
             nid = 0
