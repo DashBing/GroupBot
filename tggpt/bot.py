@@ -461,9 +461,11 @@ async def ipfs_add(data, filename=None, url="https://ipfs.pixura.io/api/v0/add",
     data = {"file": data}
     res = await http(url=url, method="POST", data=data, **kwargs)
     if not res:
-        logger.error("fail to ipfs")
-        return
+      logger.error("E: fail to ipfs")
+      return
+
     url = res.strip()
+    logger.info(res)
 #    url = json.loads(url)
     try:
         url = load_str(url)
@@ -1236,7 +1238,8 @@ async def read_res(event):
       if isinstance(url, bytes):
         url = "pb: %s" % await pastebin(url, filename=file_name)
       else:
-        async with async_open(path, 'rb') as f:
+        #  async with async_open(path, 'rb') as f:
+        with open(path, 'rb') as f:
           url = f"pb: %s\n{url}" % await pastebin(f, filename=file_name)
     except Exception as e:
       logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
@@ -1250,7 +1253,8 @@ async def read_res(event):
       if isinstance(url, bytes):
         url = "ipfs: %s" % await ipfs_add(url, filename=file_name)
       else:
-        async with async_open(path, 'rb') as f:
+        #  async with async_open(path, 'rb') as f:
+        with open(path, 'rb') as f:
           url = f"ipfs: %s\n{url}" % await ipfs_add(f, filename=file_name)
     except Exception as e:
       logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
