@@ -1405,7 +1405,7 @@ async def tg2mt_loop(gateway="test"):
       mtmsgs[qid][1] = text
       print(f"W: archived msg {msg.id}")
       if ending:
-        mtmsgs[qid].pop(-1)
+        mtmsgs[qid].append(None)
       continue
 
     try:
@@ -1437,11 +1437,11 @@ async def tg2mt_loop(gateway="test"):
             break
           if mtmsgs[nid][-1] is None:
             await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
-            break
+            print(f"will to remove {nid=} {mtmsgs=}")
+            mtmsgs.pop(nid)
           else:
             await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
-            mtmsgs.pop(nid)
-            print(f"remove {qid=}")
+            break
     else:
       mtmsgs[qid][1] = text
       await mt_send(res, gateway=gateway)
