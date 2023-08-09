@@ -1195,6 +1195,9 @@ async def read_res(event):
   #  text = msg.raw_text
   text = msg.text
   if text:
+    if text == "处理图片请求并获得响应可能需要最多5分钟，请耐心等待。":
+      await mt_send(text, gateway=gateway)
+      return
     pass
     #  print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
   elif msg.file:
@@ -1212,11 +1215,11 @@ async def read_res(event):
     except Exception as e:
       logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
       try:
-        UB.client.download_media(msg, f"{TMP_PATH}/{file.name}")
+        await UB.download_media(msg, f"{TMP_PATH}/{file.name}")
       except:
         logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
         try:
-          url = UB.client.download_media(msg, bytes)
+          url = await UB.download_media(msg, bytes)
         except:
           logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
           await mt_send(f"E: failed to downlaod, error: {repr(e)}\nfile name: {file.name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
