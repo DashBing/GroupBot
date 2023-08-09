@@ -1208,6 +1208,37 @@ async def download_media(msg, in_memory=False):
 @UB.on(events.MessageEdited(incoming=True))
 @exceptions_handler
 async def read_res(event):
+  if event.chat_id == MY_ID:
+    msg = event.message
+    text = msg.text
+    if not text:
+      return
+    if text == 'id':
+      await UB.send_message('me', "id @name https://t.me/name")
+      return
+    if text.startswith("id "):
+      url = text.split(' ')[1]
+      if url.startswith("https://t.me/"):
+        username = url.split('/')[3]
+      elif url.startswith("@"):
+        username = url[1:]
+      else:
+        await UB.send_message('me', "error url")
+        return
+
+      e = await UB.get_entity(username)
+      if e:
+        await UB.send_message('me', f"{e.stringify()}")
+        await UB.send_message('me', "peer id: %s" % await UB.get_peer_id(e))
+      else:
+        await UB.send_message('me', "not fount entity")
+        e = await UB.get_input_entity(username)
+        if e:
+          await UB.send_message('me', f"{e.stringify()}")
+          await UB.send_message('me', "peer id: %s" % await UB.get_peer_id(e))
+        else:
+          await UB.send_message('me', "not fount input entity")
+
   if event.chat_id != gpt_id:
     #  print("N: skip: %s != %s" % (event.chat_id, gpt_id))
     return
@@ -1234,32 +1265,6 @@ async def read_res(event):
     return
     await queues[gateways[qid]].put( (msg.id, msg, qid) )
     return
-
-  elif event.chat_id == MY_ID:
-    msg = event.message
-    text = msg.text
-    if not text:
-      return
-    if text.startswith("id "):
-      url = text.split(' ')[1]
-      if url.startswith("https://t.me/"):
-        username = url.split('/')[3]
-      elif url.startswith("@"):
-        username = url[1:]
-      else:
-        await UB.send_message('me', "error url")
-        return
-
-      e = await UB.get_entity(username)
-      if e:
-        await UB.send_message('me', f"{e.stringify()}")
-      else:
-        await UB.send_message('me', "not fount entity")
-        e = await UB.get_input_entity(username)
-        if e:
-          await UB.send_message('me', f"{e.stringify()}")
-        else:
-          await UB.send_message('me', "not fount input entity")
 
 
 
