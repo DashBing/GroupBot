@@ -111,6 +111,8 @@ def _exceptions_handler(e, *args, **kwargs):
         raise e
     elif type(e) == RuntimeError:
         raise e
+    elif type(e) == AttributeError:
+        logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
     else:
         # logger.error(f"error: {exc=}", exc_info=True, stack_info=True)
         logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
@@ -1171,9 +1173,9 @@ async def download_media(msg, in_memory=False):
 
 
 
-@exceptions_handler
 @UB.on(events.NewMessage(incoming=True))
 @UB.on(events.MessageEdited(incoming=True))
+@exceptions_handler
 async def read_res(event):
   if event.chat_id != gpt_id:
     #  print("N: skip: %s != %s" % (event.chat_id, gpt_id))
