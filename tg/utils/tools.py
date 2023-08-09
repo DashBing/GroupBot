@@ -25,7 +25,6 @@ import urllib.request
 import urllib.error
 
 import binascii
-
 import traceback
 
 import zlib
@@ -552,6 +551,7 @@ chr_list.append("\u206e")
 chr_list.append("\u206f")
 
 num_jz = len(chr_list)
+
 
 def __ennum():
     # convert num to zero width spaces

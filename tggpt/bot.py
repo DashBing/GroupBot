@@ -5,15 +5,51 @@
 
 from . import *  # noqa: F403
 
+import logging
 
 import json
+import base64
 
-import logging
+
+import re
+import base64
+import zstandard
+import ast
+import socket
+import sys
+import io
+
+import urllib
+import urllib.request
+import urllib.error
+from urllib import request
+from urllib import parse
+
+import io
+import mimetypes
+import uuid
+
+import binascii
+import traceback
+
+import zlib
+import gzip
+import brotli
+import time
+
+import threading
+from subprocess import Popen, PIPE
 
 from telethon import events
 
+import aiofiles
+from aiofile import async_open
+
+
 MT_API = "127.0.0.1:4246"
 HTTP_RES_MAX_BYTES = 15000000
+FILE_DOWNLOAD_MAX_BYTES = 64000000
+TMP_PATH=HOME+"/tera/tmp"
 
 gpt_chat=None
 
@@ -77,8 +113,518 @@ def _exceptions_handler(e, *args, **kwargs):
         raise e
     else:
         # logger.error(f"error: {exc=}", exc_info=True, stack_info=True)
-        logger.warning("maybe need some fix...%s" % e, exc_info=True, stack_info=True)
+        logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
 
+
+def http_exceptions_handler(func):
+
+    @wraps(func)
+    async def wrapper(*args, **kwargs):
+        try:
+            return await func(*args, **kwargs)
+        except KeyboardInterrupt:
+            raise
+        except urllib.error.HTTPError as error:
+            logging.error('Data not retrieved because %s\nURL: %s %s', error, args, kwargs)
+            info = "E: {}".format(sys.exc_info())
+            logger.error(info)
+        except urllib.error.URLError as error:
+            if isinstance(error.reason, socket.timeout):
+#                logging.error('socket timed out - URL %s', url)
+                logging.error('socket timed out')
+                info = "E: {}".format(sys.exc_info())
+    #            await NB.send_message(MY_ID, info)
+                logger.error(info)
+            else:
+                logging.error('some other error happened')
+                info = "E: {}".format(sys.exc_info())
+                logger.error(info)
+        #  except urllib.error.URLError:
+        #      logger.warning("can not send")
+        #      info = "E: {}".format(sys.exc_info())
+        #      logger.error(info)
+        except socket.timeout:
+            info = "E: {}".format(sys.exc_info())
+            logger.error(info)
+        except UnicodeDecodeError as e:
+            info = "E: {}".format(sys.exc_info())
+            logger.error(info)
+        except Exception as e:
+            info = "E: {}".format(sys.exc_info())
+            info = f"http exception: {e=}"
+            logger.error(info, exc_info=True)
+            @exceptions_handler
+            async def _():
+                raise e
+            return await _()
+
+    return wrapper
+
+# https://www.utf8-chartable.de/unicode-utf8-table.pl
+chr_list = ["\u200b"]
+
+chr_list.append("\u180e")
+chr_list.append("\ufeff")
+
+# chr_list.append("\u200b") # added
+chr_list.append("\u200c")
+# chr_list.append("\u200d") # need test
+# chr_list.append("\u200e") # fuck telegram
+#chr_list.append("\u200f") # not good
+
+chr_list.append("\u2060")
+chr_list.append("\u2061")
+chr_list.append("\u2062")
+chr_list.append("\u2063")
+chr_list.append("\u2064")
+#    chr_list.append("\u2065")
+chr_list.append("\u2066")
+#chr_list.append("\u2067") # not good
+chr_list.append("\u2068")
+chr_list.append("\u2069")
+
+#chr_list.append("\u206a") # not good
+
+chr_list.append("\u206b")
+
+chr_list.append("\u206c")
+chr_list.append("\u206d")
+chr_list.append("\u206e")
+chr_list.append("\u206f")
+
+num_jz = len(chr_list)
+
+
+
+def ennum(k):
+    # convert num to zero width spaces
+
+    if type(k) != int:
+        return None
+    s = chr_list[k%num_jz]
+    k = k//num_jz
+    if k > 0:
+        s = ennum(k)+s
+    return s
+
+def denum(s):
+    # convert zero width spaces to num
+    if not s:
+        return None
+    s = s.replace('"', '')
+    try:
+        kk = chr_list.index(s[-1])
+        if len(s) > 1:
+            k = denum(s[:-1])*num_jz+kk
+        else:
+            k = kk
+    except IndexError:
+        return None
+    except ValueError:
+        return None
+    return k
+
+
+def denum_auto(ss):
+    s = ""
+    n = False
+    for i in ss:
+        if i in chr_list:
+            if n:
+                s = i
+                n = False
+            else:
+                s += i
+        else:
+            if s:
+                n = True
+    if n == "":
+        return None
+    return denum(s)
+
+def enstr(s):
+    # return ennum(int(s.encode().hex(),16))
+    return ennum(byte2num(s.encode()))
+
+
+def destr(s):
+    if not s:
+        return None
+    try:
+        s = s.replace('"', '')
+    except AttributeError:
+        pass
+
+    try:
+        # return bytes().fromhex(hex(denum(s))[2:]).decode()
+        # return bytes.fromhex(hex(denum(s))[2:]).decode()
+        #  return num2byte(denum(s)).decode()
+        return num2byte(denum_auto(s)).decode()
+    except TypeError:
+        # (<class 'TypeError'>, TypeError("'NoneType' object cannot be interpreted as an integer"), <traceback object at 0xb5793bc8>)
+        return None
+    except AttributeError:
+        # 'NoneType' object has no attribute 'decode'
+        return None
+    except UnicodeDecodeError as e:
+        raise
+        info = f"error: {e=}"
+
+
+
+def num2byte(num):
+    return bytes.fromhex(hex(num)[2:])
+
+def byte2num(b):
+    return int(b.hex(), 16)
+
+
+# def int_to_bytes(x: int) -> bytes:
+def num2byte(x):
+    if type(x) == int:
+        return x.to_bytes((x.bit_length() + 7) // 8, 'big')
+    else:
+        logger.warning("type error")
+    
+# def int_from_bytes(xbytes: bytes) -> int:
+def byte2num(b):
+    if isinstance(b, bytes):
+        return int.from_bytes(b, 'big')
+    else:
+        logger.warning("type error")
+
+def load_str(msg, no_ast=False):
+    """str to dict"""
+    msg = msg.strip()
+    if no_ast:
+        import json
+        return json.loads(msg)
+    try:
+        return ast.literal_eval(msg)
+    except ValueError:
+        logger.warning(msg)
+        import json
+        return json.loads(msg)
+
+
+# https://stackoverflow.com/a/9807138
+def decode_base64(data, altchars=b'+/'):
+    """Decode base64, padding being optional.
+
+  :param data: Base64 data as an ASCII byte string
+  :returns: The decoded byte string.
+
+  """
+    #  if type(data) == str:
+    if isinstance(data, str):
+        data = data.encode()
+    #  if type(data) != bytes:
+    if not isinstance(data, bytes):
+        logger.error(f"wtf: {data=}")
+        logger.error(f"wtf: {type(data)}")
+        return
+    data = bytes(data)
+    data = re.sub(rb'[^a-zA-Z0-9%s]+' % altchars, b'', data)  # normalize
+    missing_padding = len(data) % 4
+    if missing_padding:
+        data += b'=' * (4 - missing_padding)
+    try:
+        return base64.b64decode(data, altchars)
+    except binascii.Error as e:
+        logger.error(e)
+
+
+def encode_base64(data, altchars=b'+/'):
+    if isinstance(data, str):
+        data = data.encode()
+    return base64.b64encode(data, altchars=altchars).decode().rstrip("=")
+
+
+def compress(data, m="zst"):
+    if isinstance(data, str):
+        data = data.encode()
+    if m == "zst":
+        return zstandard.compress(data, level=22)
+    if m == "br":
+        return brotli.compress(data)
+    if m == "gzip":
+        return gzip.compress(data)
+    if m == "deflate":
+        return zlib.compress(data)
+
+
+#  return zlib.compress(data,level=9)
+
+
+def decompress(data):
+    if isinstance(data, str):
+        data = data.encode()
+    return zstandard.decompress(data)
+
+
+from aiohttp import FormData
+from aiohttp.client_exceptions import ClientPayloadError
+from io import BufferedReader, TextIOWrapper, BytesIO
+
+pb_list = {
+        "anon": ["https://api.anonfiles.com/upload", "file"],
+        "0x0": ["https://0x0.st/", "file"],
+        "fars": ["https://fars.ee/?u=1", "c"]
+        }
+#async def pastebin(data="test", filename=None, url="https://fars.ee/?u=1", fieldname="c", extra={}, **kwargs):
+@http_exceptions_handler
+async def pastebin(data="test", filename=None, url=pb_list["fars"][0], fieldname="c", extra={}, ce=None, use=None, **kwargs):
+    if not data:
+        return
+    if use:
+        if use not in pb_list:
+            use = "fars"
+        url = pb_list[use][0]
+        fieldname = pb_list[use][1]
+    if not ce:
+        if url == pb_list["fars"][0]:
+            ce = "br"
+
+    headers = {}
+    #  if type(data) == str:
+    if isinstance(data, str):
+#    data = {"content": data}
+#        data = zlib.compress(data)
+#        headers = {'Content-Encoding': 'deflate'}
+#        data = gzip.compress(data.encode())
+#        headers = {'Content-Encoding': 'gzip'}
+        if ce:
+            data = compress(data.encode(), ce)
+            headers = {'Content-Encoding': ce}
+        data = {fieldname: data}
+        data.update(extra)
+    elif isinstance(data, bytes) or type(data) == BufferedReader or type(data) == TextIOWrapper or type(data) == BytesIO:
+        if filename:
+            data = file_for_post(data, filename=filename, fieldname=fieldname, **extra)
+        else:
+            data = {fieldname: data}
+            data.update(extra)
+    elif isinstance(data, dict):
+        pass
+#    elif type(data) == aiohttp.formdata.FormData:
+    elif type(data) == FormData:
+        pass
+    else:
+        return
+
+    res = await http(url=url, method="POST", data=data, headers=headers,  **kwargs)
+#        res = res + "." + filename.split(".")[-1]
+    return res.strip()
+
+def raise_error(error: str):
+    error = "-" * 24 + f"\nerror:\n" + "-" * 24 + f"\n{error}" + "-" * 24
+    #            logger.exception(info)
+    logger.critical("\n" + error)
+    raise SystemExit(error)
+
+#  def get_sh_path(path='SH_PATH'):
+def read_file_1line(path='/SH_PATH'):
+  # f = open(os.getcwd() + "/SH_PATH")
+  # p = Path(__package__).absolute()
+  # p = p.parent
+  # f = p / "SH_PATH"
+  #  p = "/".join(__file__.split("/")[:-2])
+  #  p = "/".join(__file__.split("/")[:-3])
+  #  #  f = p + "/SH_PATH"
+  #  f = p + "/" + path
+  if path[0:1] != '/':
+    path=PARENT_DIR.as_posix()+ "/" + path
+
+  with open(path) as f:
+      line = f.readline()
+      line = line.rstrip('\n')
+  if line:
+      return line
+  else:
+    raise_error("E: can't find file: SH_PATH")
+    return None
+
+
+async def read_file(path='/SH_PATH', *args, **kwargs):
+  if path[0:1] != '/':
+    path=PARENT_DIR.as_posix()+ "/" + path
+  async with aiofiles.open(path, *args, **kwargs) as file:
+      return await file.read()
+
+async def ipfs_add(data, filename=None, url="https://ipfs.infura.io:5001/api/v0/add?cid-version=1", *args, **kwargs):
+#    res = data2url(data, url=url, filename=filename, fieldname="file", *args, **kwargs)
+    if isinstance(data, str):
+        data = data.encode()
+    data = {"file": data}
+    res = await http(url=url, method="POST", data=data, **kwargs)
+    if not res:
+        logger.error("fail to ipfs")
+        return
+    url = res.strip()
+#    url = json.loads(url)
+    try:
+        url = load_str(url)
+    except SyntaxError as e:
+        info = f"{e=}\n\n{url}"
+        print(info)
+        return
+#    url = url["Hash"]
+    url = "https://{}.ipfs.infura-ipfs.io/".format(url["Hash"])
+    if filename:
+    #    url += "?filename={}".format(parse.urlencode(filename))
+        url += "?filename={}".format(parse.quote(filename))
+#    await session.close()
+    return url
+
+def file_for_post(data, filename=None, fieldname="c", mimetype=None, **kwargs):
+#    file = aiohttp.FormData()
+    file = FormData(kwargs)
+    if filename and not mimetype:
+        mimetype = mimetypes.guess_type(filename)[0]
+        if not mimetype:
+            mimetype = 'application/octet-stream'
+#    for i in kwargs:
+#        file.add_fields((i, kwargs[i]))
+    file.add_field(fieldname, data, filename=filename, content_type=mimetype)
+    return file
+
+
+async def pb_0x0(data, filename=None, *args, **kwargs):
+    url = "https://0x0.st/"
+    if isinstance(data, str):
+        data = data.encode()
+        if not filename:
+            filename = "0.txt"
+    return await pastebin(data, url=url, filename=filename, fieldname="file", *args, **kwargs)
+
+
+async def itzmx(data, filename=None, *args, **kwargs):
+    # https://send.itzmx.com/?info
+    # 7z, exe, gif, jpg, png, rar, torrent, zip
+    allowed = ("7z", "exe", "gif", "jpg", "png","rar","torrent","zip")
+    url = "https://send.itzmx.com/api.php?d=upload-tool"
+    if isinstance(data, str):
+        data = data.encode()
+        #  if not filename:
+        #      filename = "0.txt"
+        #  data = compress(data, "zst")
+        #  if not filename:
+        #      filename = "bin_zst.zip"
+        if not filename:
+            filename = "txt_not_zip.zip"
+    extra = {}
+    if not filename and filename.split(".")[-1] not in allowed:
+        #  extra = { "randomname": "on" }
+        filename += "_not_zip.zip"
+    fieldname = "file"
+    res = await pastebin(data, url=url, filename=filename, fieldname=fieldname, extra=extra, *args, **kwargs)
+    return res
+
+async def transfer1(data, filename=None, *args, **kwargs):
+    url = "https://transfer.sh"
+    if isinstance(data, str):
+        data = data.encode()
+        if not filename:
+            filename = "0.txt"
+    if filename:
+        url = "https://transfer.sh/"+filename
+    headers = {}
+    headers['Max-Days'] = str(64)
+    headers['Max-Downloads'] = str(64)
+    res = await http(url=url, method="PUT", data=data, headers=headers,  **kwargs)
+    return res
+
+async def transfer(data, filename=None, *args, **kwargs):
+    url = "https://transfer.sh"
+    if isinstance(data, str):
+        data = data.encode()
+        if not filename:
+            filename = "0.txt"
+    if not filename:
+        filename = "file"
+    return await pastebin(data, url=url, fieldname=filename, *args, **kwargs)
+
+async def file_io(data, filename=None, *args, **kwargs):
+    url = "https://file.io"
+    if isinstance(data, str):
+        data = data.encode()
+        if not filename:
+            filename = "0.txt"
+    res = await pastebin(data, url=url, filename=filename, fieldname="file", *args, **kwargs)
+#    return load_str(res)["link"]
+    try:
+        d = load_str(res, no_ast=True)
+    except SyntaxError as e:
+        info = f"{e=}\n\n{url}"
+        print(info)
+        return
+    return d["link"]
+
+
+async def catbox(data, filename=None, tmp=False, *args, **kwargs):
+    # https://catbox.moe/tools.php
+    # https://litterbox.catbox.moe/tools.php
+    if tmp:
+        url = "https://litterbox.catbox.moe/resources/internals/api.php"
+    else:
+        url = "https://catbox.moe/user/api.php"
+    reqtype = "fileupload"
+    fieldname = "fileToUpload"
+    if isinstance(data, str):
+        if not tmp and url_only_re.match(data):
+            # litterbox disallow upload via url
+            reqtype = "urlupload"
+            fieldname = "url"
+        else:
+            data = data.encode()
+            if not filename:
+                filename = "0.txt"
+    extra = {
+#            "userhash": "",
+            "reqtype": reqtype
+            }
+    if tmp:
+        extra["time"] = "72h"
+    res = await pastebin(data, url=url, filename=filename, fieldname=fieldname, extra=extra, *args, **kwargs)
+    if res:
+        if "https://files.catbox.moe/" in res:
+            res = res.replace("https://files.catbox.moe/", "https://de.catbox.moe/")
+        return res
+
+def tmp_save(data, ex=""):
+    #  from ..config import SH_PATH
+    name = "{}/{}{}".format(SH_PATH, time.time(), ex)
+    if not isinstance(data, bytes):
+        logger.error("need bytes")
+        return
+    data = bytes(data)
+    with open(name, "wb") as file:
+        file.write(data)
+    return name
+
+
+def format_byte(num):
+    if not isinstance(num, (int, float)):
+        num = int(num)
+    if num < 0:
+        s = "-"
+        num = -1*num
+    else:
+        s = ""
+    if num < 1000:
+        u = "B"
+        num = f"{num:.3g}"
+    #  elif num < 1024*1024:
+    elif num < 1024*1000:
+        u = "KB"
+        num = f"{num/1024:.3g}"
+    elif num < 1024**2*1000:
+        u = "MB"
+        num = f"{num/1024/1024:.3g}"
+    else:
+        u = "GB"
+        num = f"{num/1024/1024/1024:.3g}"
+    return s+num+u
 
 
 #  @exceptions_handler
@@ -295,7 +841,7 @@ async def mt2tg(msg):
             text=text[5:]
             if not text:
               #  await mt_send(".gpt $text", gateway=msgd["gateway"])
-              await mt_send(".gpt $text\n--\n默认开启了上下文，重置命令“.gpt reset"。所有数据来自telegram机器人: @littleb_gptBOT ，使用userbot与其对接。", gateway=msgd["gateway"])
+              await mt_send(".gpt $text\n--\n默认开启了上下文，重置命令“.gpt reset“。所有数据来自telegram机器人: @littleb_gptBOT ，使用userbot与其对接。", gateway=msgd["gateway"])
               return
           elif text == ".se" or text.startswith(".se "):
             #  need_clean = True
@@ -618,10 +1164,14 @@ async def mt_send(text="null", username="gpt", gateway="test", qt=None):
 #      print("me: %s" % text)
 
 
+async def download_media(msg, in_memory=False):
+  pass
 
 
 
 @exceptions_handler
+@UB.on(events.NewMessage(incoming=True))
+@UB.on(events.MessageEdited(incoming=True))
 async def read_res(event):
   if event.chat_id != gpt_id:
     #  print("N: skip: %s != %s" % (event.chat_id, gpt_id))
@@ -630,46 +1180,99 @@ async def read_res(event):
   #    print("W: skiped the msg because of reset is waiting")
   #    return
   msg = event.message
-  #  text = msg.raw_text
-  text = msg.text
-  if text:
-    pass
-    #  print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
-  else:
-    #  print("I: skip msg without text")
-    print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
-    return
-  #  if msg.is_reply and msg.reply_to.reply_to_msg_id in queue:
   if msg.is_reply:
     if msg.reply_to_msg_id in queue:
       qid=msg.reply_to_msg_id
-      res = ""
-      #  if qid > min(queue.keys()):
-      #  while qid > min(queue.keys()):
-      #    print("waiting...")
-      #    await asyncio.sleep(2)
-
       global stuck
       gateway = queue[qid][0]["gateway"]
-      async with queue_lock:
-        #  if qid == min(queue.keys()) and stuck < qid:
-        if stuck[gateway] < qid and qid == min(queue.keys()):
-          stuck[gateway] = qid
-          if queue[qid][1] is not None:
-            res= queue[qid][0]['username']+"".join(queue[qid][1:])
-
-      if qid == stuck[gateway]:
-        if text == LOADING or text == LOADING2:
-          await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=gateway)
-          return
-      elif qid < stuck[gateway]:
-        print("W: skip: gpt bot is editing history, but will be skipped")
-        return
     else:
       print("W: skip: got a msg with a unkonwon id: all: %s\n queue: %s" % (msg.stringify(), queue))
       return
   else:
     print("W: skip: got a msg without reply: is_reply: %s\nall: %s" % (msg.is_reply, msg.stringify()))
+    return
+
+  #  text = msg.raw_text
+  text = msg.text
+  if text:
+    pass
+    #  print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
+  elif msg.file:
+    file = msg.file
+    if file.size > FILE_DOWNLOAD_MAX_BYTES:
+      await mt_send(f"文件过大，取消下载。\nfile name: {file.name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
+      return
+
+    url = "tmp link:https://{DOMAIN}/{file.name}"
+    try:
+      async with async_open(f"{TMP_PATH}/{file.name}", 'wb') as f:
+        async for chunk in UB.iter_download(file):
+          await f.write(chunk)
+          await mt_send(f"下载中：{format_byte(f.tell())}/{format_byte(file.size)}", gateway=gateway)
+    except Exception as e:
+      logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
+      try:
+        UB.client.download_media(msg, f"{TMP_PATH}/{file.name}")
+      except:
+        logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
+        try:
+          url = UB.client.download_media(msg, bytes)
+        except:
+          logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
+          await mt_send(f"E: failed to downlaod, error: {repr(e)}\nfile name: {file.name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
+          return
+
+    try:
+      if isinstance(url, bytes):
+        url = "pb: %s" % await pastebin(url, filename=file.name)
+      else:
+        async with async_open(f"{TMP_PATH}/{file.name}", 'wb') as f:
+          url += f"pb: %s\n{url}" % await pastebin(f, filename=file.name)
+    except Exception as e:
+      logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
+      print(f"E: {repr(e)}")
+      url = f"E: pb: {repr(e)}"
+
+    try:
+      if isinstance(url, bytes):
+        url = "ipfs: %s" % await ipfs_add(url, filename=file.name)
+      else:
+        async with async_open(f"{TMP_PATH}/{file.name}", 'wb') as f:
+          url += f"ipfs: %s\n{url}" % await ipfs_add(f, filename=file.name)
+    except Exception as e:
+      logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
+      print(f"E: {repr(e)}")
+      url = f"E: ipfs: {repr(e)}"
+
+
+    await mt_send(f"{url}\n--\nfile name: {file.name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
+
+    return
+
+  else:
+    #  print("I: skip msg without text")
+    print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
+    return
+  #  if msg.is_reply and msg.reply_to.reply_to_msg_id in queue:
+  res = ""
+  #  if qid > min(queue.keys()):
+  #  while qid > min(queue.keys()):
+  #    print("waiting...")
+  #    await asyncio.sleep(2)
+
+  async with queue_lock:
+    #  if qid == min(queue.keys()) and stuck < qid:
+    if stuck[gateway] < qid and qid == min(queue.keys()):
+      stuck[gateway] = qid
+      if queue[qid][1] is not None:
+        res= queue[qid][0]['username']+"".join(queue[qid][1:])
+
+  if qid == stuck[gateway]:
+    if text == LOADING or text == LOADING2:
+      await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=gateway)
+      return
+  elif qid < stuck[gateway]:
+    print("W: skip: gpt bot is editing history, but will be skipped")
     return
   print("< Q: %s" % queue[qid][0]['text'])
   if text.endswith(LOADING):
@@ -706,9 +1309,6 @@ async def read_res(event):
 
 
 
-@exceptions_handler
-@UB.on(events.NewMessage(incoming=True))
-@UB.on(events.MessageEdited(incoming=True))
 async def my_event_handler(event):
   #  if 'hello' in event.raw_text:
   #    await event.reply('hi!')
@@ -726,4 +1326,28 @@ async def my_event_handler(event):
 #    #    print(event.stringify())
 #
 #    await read_res(event)
+
+
+
+if __name__ == '__main__':
+  print('{} 作为主程序运行'.format(__file__))
+#  print(data2url("test"))
+  #  asyncio.run(test())
+elif 0:
+  with open("test.jpg", "rb") as file:
+    data = file.read()
+    asyncio.run(ipfs_add(data, filename="test.jpg"))
+elif __package__ != "":
+  print('{} 运行, empty package'.format(__file__))
+  #  from .html_to_telegraph_format import convert_html_to_telegraph_format
+  # from ..telegram import put
+else:
+  print('{} 运行, package: {}'.format(__file__, __package__))
+# /tmp/run/user/1000/bot
+  SH_PATH = asyncio.run(read_file()).rstrip('\n')
+  DOMAIN = asyncio.run(read_file("DOMAIN")).rstrip('\n')
+  print(f"SH_PATH: {SH_PATH}")
+  print(f"DOMAIN: {DOMAIN}")
+
+
 

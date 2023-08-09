@@ -15,14 +15,15 @@ async def run():
   global MY_NAME, MY_ID, UB
   UB = await UB.start()
   me = await UB.get_me()
-  print(me.stringify())
+  #  print(me.stringify())
   MY_ID = me.id
-  print(me.id)
   MY_NAME = me.username
+  print(f"{MY_NAME}: {MY_ID}")
 
-  from .bot import mt_read
+  from . import bot
+  #  from .bot import mt_read
   #  asyncio.create_task(mt_read(MSG_QUEUE), name="mt_read")
-  asyncio.create_task(mt_read(), name="mt_read")
+  asyncio.create_task(bot.mt_read(), name="mt_read")
 
 
   logger.warning("init ok, loop...")
