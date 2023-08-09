@@ -475,7 +475,7 @@ async def ipfs_add(data, filename=None, url="https://ipfs.pixura.io/api/v0/add",
         return
 #    url = url["Hash"]
     #  url = "https://{}.ipfs.infura-ipfs.io/".format(url["Hash"])
-    url = "https://https://ipfs.pixura.io/ipfs/{}".format(url["Hash"])
+    url = "https://ipfs.pixura.io/ipfs/{}".format(url["Hash"])
     if filename:
     #    url += "?filename={}".format(parse.urlencode(filename))
         url += "?filename={}".format(parse.quote(filename))
@@ -1245,9 +1245,9 @@ async def read_res(event):
       logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
       print(f"E: {repr(e)}")
       if isinstance(url, bytes):
-        url = f"E: pb: {repr(e)}"
+        url = f"pb: E: {repr(e)}"
       else:
-        url = f"{url}\n--\nE: pb: {repr(e)}"
+        url = f"{url}\n--\npb: E: {repr(e)}"
 
     try:
       if isinstance(url, bytes):
@@ -1260,9 +1260,9 @@ async def read_res(event):
       logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
       print(f"E: {repr(e)}")
       if isinstance(url, bytes):
-        url = f"E: ipfs: {repr(e)}"
+        url = f"ipfs: E: {repr(e)}"
       else:
-        url = f"{url}\n--\nE: ipfs: {repr(e)}"
+        url = f"{url}\n--\nipfs: E: {repr(e)}"
 
 
     await mt_send(f"{text}\n--\n{url}\n--\nfile_name: {file_name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
