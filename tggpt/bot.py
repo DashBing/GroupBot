@@ -76,7 +76,14 @@ LOADING="思考你发送的内容..."
 LOADING2="Thinking about what you sent..."
 LOADINGS="\n\n"+LOADING
 LOADINGS2="\n\n"+LOADING2
+  #  elif text == "处理图片请求并获得响应可能需要最多5分钟，请耐心等待。" or text == "It may take up to 5 minutes to process image request and give a response, please wait patiently.":
 
+loadings = (
+    LOADING,
+    LOADING2,
+"处理图片请求并获得响应可能需要最多5分钟，请耐心等待。",
+"It may take up to 5 minutes to process image request and give a response, please wait patiently."
+)
 
 #  UB.parse_mode = None
 #  UB.parse_mode = 'html'
@@ -1190,13 +1197,13 @@ async def read_res(event):
   if msg.is_reply:
     qid=msg.reply_to_msg_id
     gateway = None
-    if qid in nids.keys():
+    if qid in set(nids.keys()):
       for gateway in nids:
-        if qid == nids[gateway]:
+        if qid == set(nids[gateway]):
           break
     else:
       for gateway in queues:
-        if qid in queues[gateway]:
+        if qid in set(queues[gateway]):
           break
         gateway = None
     if gateway is None:
@@ -1212,6 +1219,11 @@ async def read_res(event):
 
   #  text = msg.raw_text
   text = msg.text
+  if qid == nid:
+    #  if text == LOADING or text == LOADING2:
+    if text in loadings:
+      await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=gateway)
+      return
   if msg.file:
     file = msg.file
     if file.size > FILE_DOWNLOAD_MAX_BYTES:
@@ -1283,12 +1295,11 @@ async def read_res(event):
     await mt_send(f"{text}\n--\n{url}\n--\nfile_name: {file_name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
     is_loading= False
 
-  elif text == "处理图片请求并获得响应可能需要最多5分钟，请耐心等待。" or text == "It may take up to 5 minutes to process image request and give a response, please wait patiently.":
-    if qid == min(queue.keys()):
-      await mt_send(queue[qid][0]['username']+text, gateway=gateway)
-    return
+  #  elif text == "处理图片请求并获得响应可能需要最多5分钟，请耐心等待。" or text == "It may take up to 5 minutes to process image request and give a response, please wait patiently.":
+  #    if qid == min(queue.keys()):
+  #      await mt_send(queue[qid][0]['username']+text, gateway=gateway)
+  #    return
   elif text:
-    pass
     #  print("I: > %s %s: %s" % (msg.chat_id, msg.sender_id, text[:9]))
     res = ""
     #  if qid > min(queue.keys()):
@@ -1307,10 +1318,6 @@ async def read_res(event):
         else:
           hide_bot_name = True
 
-    if qid == nid:
-      if text == LOADING or text == LOADING2:
-        await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=gateway)
-        return
     elif qid < nid:
       print("W: skip: gpt bot is editing history, but will be skipped")
       return
