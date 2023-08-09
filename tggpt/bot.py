@@ -1293,12 +1293,31 @@ async def tg2mt_loop(gateway="test"):
   mtmsgs = mtmsgsg[gateway]
   while True:
 
+    async with queue_lock:
+      while True:
+        if len(mtmsgs) == 0:
+          break
+        nid = min(mtmsgs.keys())
+        if mtmsgs[nid][1] is None:
+          break
+        if mtmsgs[nid][-1] is None:
+          res = "".join(mtmsgs[nid][1:-1])
+          await mt_send(res, gateway=gateway)
+          break
+        else:
+          res = "".join(mtmsgs[nid][1:])
+          await mt_send(res, gateway=gateway)
+          mtmsgs.pop(nid)
+
     #  msg_id, msg, qid = await queue.get()
     #  msg_id, msg = await queue.get()
     _, _, qid, msg = await queue.get()
     print(f"I: got: {msg=}")
     text = msg.text
     #  qid=msg.reply_to_msg_id
+    if nid == 0:
+      nid = qid
+
 
     if msg.file:
       file = msg.file
@@ -1419,22 +1438,8 @@ async def tg2mt_loop(gateway="test"):
       await mt_send(res, gateway=gateway)
       async with queue_lock:
         if not no_reset.is_set():
-          return
+          continue
         mtmsgs.pop(qid)
-        while True:
-          if len(mtmsgs) == 0:
-            break
-          nid = min(mtmsgs.keys())
-          if mtmsgs[nid][1] is None:
-            break
-          if mtmsgs[nid][-1] is None:
-            res = "".join(mtmsgs[qid][1:-1])
-            await mt_send(res, gateway=gateway)
-            break
-          else:
-            res = "".join(mtmsgs[qid][1:])
-            await mt_send(res, gateway=gateway)
-            mtmsgs.pop(nid)
                         
     else:
       await mt_send(res, gateway=gateway)
