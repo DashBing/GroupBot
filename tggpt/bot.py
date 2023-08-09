@@ -1203,6 +1203,8 @@ async def read_res(event):
       await mt_send(f"文件过大，取消下载。\nfile name: {file.name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
       return
 
+    logger.info(file.stringify())
+    return
     url = f"tmp link:https://{DOMAIN}/{file.name}"
     try:
       async with async_open(f"{TMP_PATH}/{file.name}", 'wb') as f:
