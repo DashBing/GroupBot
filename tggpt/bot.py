@@ -1312,14 +1312,14 @@ async def read_res(event):
           hide_bot_name = True
         else:
           res= queue[qid][0]['username']+"".join(queue[qid][1:])
-      elif qid == nid:
-        #  if text == LOADING or text == LOADING2:
-        if text in loadings:
-          await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=gateway)
-          return
-      elif qid < nid:
-        print("W: skip: gpt bot is editing history, but will be skipped")
+    if qid == nid:
+      #  if text == LOADING or text == LOADING2:
+      if text in loadings:
+        await mt_send(f"{queue[qid][0]['username']}[思考中...]", gateway=gateway)
         return
+    elif qid < nid:
+      print("W: skip: gpt bot is editing history, but will be skipped")
+      return
 
     print("< Q: %s" % queue[qid][0]['text'])
     if text.endswith(LOADING):
