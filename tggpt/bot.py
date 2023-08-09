@@ -1211,9 +1211,10 @@ async def read_res(event):
     else:
       logger.info("file: no name")
       file_name = "%s.%s" % (int(time.time()), "jpg")
-    url = f"tmp link:https://{DOMAIN}/{file_name}"
+    url = f"tmp link: https://{DOMAIN}/{file_name}"
+    path = f"{TMP_PATH}/{file_name}"
     try:
-      async with async_open(f"{TMP_PATH}/{file_name}", 'wb') as f:
+      async with async_open(path, 'wb') as f:
         #  async for chunk in UB.iter_download(file):
         async for chunk in UB.iter_download(msg):
           await f.write(chunk)
@@ -1221,9 +1222,9 @@ async def read_res(event):
     except Exception as e:
       logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
       try:
-        await UB.download_media(msg, f"{TMP_PATH}/{file_name}")
+        await UB.download_media(msg, path)
       except Exception as e:
-        logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
+        logger.warning(f"E: start to download to mem: {repr(e)}", exc_info=True, stack_info=True)
         try:
           url = await UB.download_media(msg, bytes)
         except Exception as e:
@@ -1235,7 +1236,7 @@ async def read_res(event):
       if isinstance(url, bytes):
         url = "pb: %s" % await pastebin(url, filename=file_name)
       else:
-        async with async_open(f"{TMP_PATH}/{file_name}", 'wb') as f:
+        async with async_open(path, 'rb') as f:
           url = f"pb: %s\n{url}" % await pastebin(f, filename=file_name)
     except Exception as e:
       logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
@@ -1249,7 +1250,7 @@ async def read_res(event):
       if isinstance(url, bytes):
         url = "ipfs: %s" % await ipfs_add(url, filename=file_name)
       else:
-        async with async_open(f"{TMP_PATH}/{file_name}", 'wb') as f:
+        async with async_open(path, 'rb') as f:
           url = f"ipfs: %s\n{url}" % await ipfs_add(f, filename=file_name)
     except Exception as e:
       logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
