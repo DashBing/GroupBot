@@ -1214,6 +1214,7 @@ async def read_res(event):
   msg = event.message
 
   if msg.is_reply:
+    print(f"msg id: {msg.id=} {event.id=}")
     qid=msg.reply_to_msg_id
     if qid not in gateways:
       logger.error(f"E: not found gateway for {qid=}, {gateways=}")
