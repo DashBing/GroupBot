@@ -1004,8 +1004,8 @@ async def mt2tg(msg):
             #  if msgd["gateway"] not in mtmsgs:
             if msgd["gateway"] not in queues:
               queues[msgd["gateway"]] = asyncio.PriorityQueue(maxsize=512)
-              asyncio.create_task(tg2mt_loop(msgd["gateway"]))
               mtmsgsg[msgd["gateway"]] = {}
+              asyncio.create_task(tg2mt_loop(msgd["gateway"]))
             mtmsgsg[msgd["gateway"]][msg.id] = [msgd, None]
         else:
           no_reset.set()
@@ -1405,10 +1405,14 @@ async def tg2mt_loop(gateway="test"):
         mtmsgs[qid].pop(-1)
       continue
 
-    if mtmsgs[qid][1] is None:
-      res = text
-    else:
-      res = text[len(mtmsgs[qid][1]):]
+    try:
+      if mtmsgs[qid][1] is None:
+        res = text
+      else:
+        res = text[len(mtmsgs[qid][1]):]
+    except Exception as e:
+      logger.info(f"I: {e=} now: {qid=} {mtmsgs=}, {nid=}")
+      continue
 
     if ending:
       #  res += "\n\n**[结束]**"
