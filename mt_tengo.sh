@@ -26,7 +26,12 @@
 
 
 
+NAME="$2"
+SPLIT="_SPLIT_FOR_MT_"
+TEXT="$1"
 if [[ -z "$2" ]]; then
+  echo -n $SPLIT
+  echo -n "$TEXT"
   exit 0
 elif [[ "$2" == "blockthismessage" ]]; then
     # echo -n "bot"
@@ -36,7 +41,6 @@ fi
 
 
 
-NAME="$2"
 
 [[ $( echo "${NAME}" | wc -l ) -ge 3 ]] && echo -n "$2" && exit 0
 [[ "${NAME:0:1}" == ">" ]] && echo -n "$2" && exit 0
@@ -45,8 +49,6 @@ NAME="$2"
 [[ "${NAME:3:1}" == " " ]] && [[ "${NAME: -4}" == ":** " ]] && echo -n "$2" && exit 0
 
 
-SPLIT="_SPLIT_FOR_MT_"
-TEXT="$1"
 
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
