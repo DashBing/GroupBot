@@ -851,7 +851,8 @@ async def mt2tg(msg):
               no_reset.clear()
               await mt_send("waiting...", gateway=msgd["gateway"])
               for g in mtmsgsg:
-                await queues[g].put((0,0,0,0))
+                await queues[g].put((0,0,0))
+              gateways.clear()
               no_reset.set()
               await mt_send("reset ok", gateway=msgd["gateway"])
               #  async with queue_lock:
@@ -1245,6 +1246,8 @@ async def just_for_me(event):
 @exceptions_handler
 async def read_res(event):
 
+  if not no_reset.is_set():
+    return
   if event.chat_id != gpt_id:
     #  print("N: skip: %s != %s" % (event.chat_id, gpt_id))
     return
@@ -1257,17 +1260,18 @@ async def read_res(event):
   msg = event.message
 
   if msg.is_reply:
-    print(f"msg id: {msg.id=} {event.id=}")
     qid=msg.reply_to_msg_id
+    print(f"msg id: {msg.id=} {event.id=} {qid=} {id(msg)=}")
     if qid not in gateways:
-      logger.error(f"E: not found gateway for {qid=}, {gateways=}")
+      logger.error(f"E: not found gateway for {qid=}, {gateways=} {msg.text=}")
       return
     try:
-      await queues[gateways[qid]].put( (msg.id, id(msg), qid, msg) )
+      #  await queues[gateways[qid]].put( (id(msg), qid, msg) )
+      await queues[gateways[qid]].put( (msg.date, qid, msg) )
       #  await queues[gateways[qid]].put( (msg.id, "test") )
     except Exception as e:
-      logger.info(f"E: fixme: {qid=} {gateways=} {queues=}")
-      raise e
+      logger.info(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
+      #  raise e
     return
     await queues[gateways[qid]].put( (msg.id, msg, qid) )
     return
@@ -1291,7 +1295,7 @@ async def read_res(event):
     #  queue = queues[gateway]
     #  is_loading= True
   else:
-    print("W: skip: got a msg without reply: is_reply: %s\nall: %s" % (msg.is_reply, msg.stringify()))
+    print("W: skip: got a msg without reply: is_reply: %s\nmsg: %s" % (msg.is_reply, msg.stringify()))
     return
 
 
@@ -1330,12 +1334,15 @@ async def tg2mt_loop(gateway="test"):
   while True:
 
 
+    print("I: queue {gateway} wait...")
     #  msg_id, msg, qid = await queue.get()
     #  msg_id, msg = await queue.get()
-    _, _, qid, msg = await queue.get()
-    if qid == 0:
+    date, qid, msg = await queue.get()
+    if date == 0:
       mtmsgs.clear()
-      await asyncio.sleep(2)
+      logger.warning(f"W: cleared mtmsgs")
+      #  await asyncio.sleep(2)
+      await no_reset.wait()
       nid = 0
       continue
     #  print(f"I: got: {msg=}")
@@ -1497,6 +1504,8 @@ async def tg2mt_loop(gateway="test"):
         while True:
           if len(mtmsgs) == 0:
             nid = 0
+            gateways.clear()
+            print("I: now mtmsgs is empty")
             break
           nid = min(mtmsgs.keys())
           print(f"update nid to {nid} {mtmsgs.keys()=} {mtmsgs=}")
