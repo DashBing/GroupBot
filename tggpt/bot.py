@@ -990,6 +990,7 @@ async def mt2tg(msg):
         print(f"I: send {text} to gpt")
         if text != CLEAN:
           if not no_reset.is_set():
+            logger.warning("W: wait for no_reset...")
             await no_reset.wait()
           elif need_clean is True:
             msg = await UB.send_message(gpt_chat, CLEAN)
@@ -1340,6 +1341,7 @@ async def tg2mt_loop(gateway="test"):
     date, qid, msg = await queue.get()
     if date == 0:
       mtmsgs.clear()
+      gateways.clear()
       logger.warning(f"W: cleared mtmsgs")
       #  await asyncio.sleep(2)
       await no_reset.wait()
@@ -1501,11 +1503,12 @@ async def tg2mt_loop(gateway="test"):
           #  await mt_send("reset ok", gateway=msgd["gateway"])
         #    continue
         mtmsgs.pop(nid)
+        gateways.pop(nid)
         print(f"remove {nid=}")
         while True:
           if len(mtmsgs) == 0:
             nid = 0
-            gateways.clear()
+            #  gateways.clear()
             print("I: now mtmsgs is empty")
             break
           nid = min(mtmsgs.keys())
@@ -1516,6 +1519,7 @@ async def tg2mt_loop(gateway="test"):
             await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
             print(f"will to remove {nid=} {mtmsgs=}")
             mtmsgs.pop(nid)
+            gateways.pop(nid)
           else:
             await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
             break
