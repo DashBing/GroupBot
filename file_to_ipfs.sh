@@ -121,6 +121,11 @@ upload_to_ipfs_gateway(){
   # local FILE_PATH=$2
 
 
+  for ((i=0;i<9;i++)); do
+    [[ -e $IPFS_PATH/repo.lock ]] || break
+    echo "waiting for release..." 1>&2
+    sleep 3
+  done
   # not get cid for speed up vps
   if [[ "$(get_gateways $GATEWAY_URL cid_version)" == 1 ]]; then
     local cid_version="?cid-version=1"
@@ -129,6 +134,7 @@ upload_to_ipfs_gateway(){
     local cid_version=
     local HASH_CID=$(ipfs add -n -Q "$FILE_PATH")
   fi
+
   local token=$(get_gateways $GATEWAY_URL token)
 
   local try_time=0
