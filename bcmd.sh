@@ -47,7 +47,8 @@ cmds() {
       bash "$SH_PATH/bot.sh" "$@" || echo "E: $?"
     elif [[ -e $SH_PATH/.aimode_for_$gateway ]]; then
       echo -n "$username"
-      bash "$SH_PATH/ai.sh" "$@" || echo "E: $?"
+      # bash "$SH_PATH/ai.sh" "$@" || echo "E: $?"
+      bash "$SH_PATH/bd.sh" "$@" || echo "E: $?"
     # elif [[ -e $SH_PATH/.gptmode_for_$gateway ]]; then
     #   echo -n "$username"
     #   bash "$SH_PATH/gpt.sh" "$@" || echo "E: $?"
@@ -111,10 +112,11 @@ cmds() {
     # shift
     bash "$SH_PATH/qy.sh" "$@" || echo "E: $?"
     ;;
-  ai|AI)
+  ai|AI|bd|BD)
     shift
-    bash "$SH_PATH/ai.sh" "$@" || echo "E: $?"
-    bash "$SH_PATH/ai.sh" "reset" &>/dev/null
+    # bash "$SH_PATH/ai.sh" "$@" || echo "E: $?"
+    # bash "$SH_PATH/ai.sh" "reset" &>/dev/null
+    bash "$SH_PATH/bd.sh" "$@" || echo "E: $?"
     ;;
   bot|BOT)
     shift
@@ -146,7 +148,7 @@ cmds() {
     [[ -e $SH_PATH/.aimode_for_$gateway ]] && rm $SH_PATH/.aimode_for_$gateway
     [[ -e $SH_PATH/.gptmode_for_$gateway ]] && rm $SH_PATH/.gptmode_for_$gateway
     ;;
-  aimode)
+  aimode|bdmode)
     [[ -e $SH_PATH/.aimode_for_$gateway ]] && rm $SH_PATH/.aimode_for_$gateway || touch $SH_PATH/.aimode_for_$gateway
     [[ -e $SH_PATH/.aimode_for_$gateway ]] && echo "AI is here" || echo "AI is out"
     [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway
