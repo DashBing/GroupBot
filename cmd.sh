@@ -64,6 +64,7 @@ for (( ; i < 4; i++)); do
     # [[ "$username" == "C twitter: " ]] && continue
     # [[ $(echo "$text" | wc -l) -ne 1 ]] && continue
     username=$(echo "$username" | tail -n1 )
+    account=$(echo "$restmp" | jq -r ".account")
 
     # if [[ "$gateway" != "gateway2" && $(echo "$text" | wc -l) -eq 1 ]]; then
     if [[ $(echo "$text" | wc -l) -eq 1 ]]; then
@@ -72,6 +73,8 @@ for (( ; i < 4; i++)); do
       # fi
       if [[ "$text" == "ping" ]]; then
         text=".ping"
+      elif [[ -z "${username}" ]]; then
+        continue
       elif [[ "$text" == "help" ]]; then
         # text=".help"
         nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" ".help" "$restmp" &>/dev/null &
@@ -86,6 +89,8 @@ for (( ; i < 4; i++)); do
       elif [[ $(echo "$text" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/?[\S]*$") -eq 1 ]]; then
         text=".type $text autocheck"
       fi
+    else
+      [[ -z "${username}" ]] && continue
     fi
     # gateway=cmd
     # echo nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" >> ~/tera/mt_msg.log
