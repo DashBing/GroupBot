@@ -1334,7 +1334,7 @@ async def tg2mt_loop(gateway="test"):
   while True:
 
 
-    print("I: queue {gateway} wait...")
+    print(f"I: {gateway} waiting...")
     #  msg_id, msg, qid = await queue.get()
     #  msg_id, msg = await queue.get()
     date, qid, msg = await queue.get()
@@ -1351,12 +1351,13 @@ async def tg2mt_loop(gateway="test"):
     if nid == 0:
       nid = qid
       print(f"init nid to {nid}")
+    else:
+      print(f"now nid to {nid}")
 
-    print(f"now nid to {nid}")
     if qid == nid:
       #  if text == LOADING or text == LOADING2:
       if text in loadings:
-        await mt_send(f"{mtmsgs[qid][0]['username']}[思考中...]", gateway=gateway)
+        await mt_send(f"{mtmsgs[qid][0]['username']}[生成图片中，最多耗时5分钟...]", gateway=gateway)
         continue
 
     if msg.file:
