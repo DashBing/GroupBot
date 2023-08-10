@@ -17,6 +17,19 @@ is_me(){
 }
 
 
+changeai(){
+    [[ -e $SH_PATH/.mode_for_${1}_${2} ]] && local m=1
+    rm $SH_PATH/.mode_for_*
+    if [[ -n "$m" ]]; then
+      echo "${1} is out"
+    else
+      touch $SH_PATH/.mode_for_${1}_${2}
+      echo "${1} is here"
+    fi
+    echo $1 > $SH_PATH/.mode_cur
+}
+
+
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
 cmds() {
@@ -39,17 +52,19 @@ cmds() {
       exit 0
     fi
     fi
-    if [[ -e $SH_PATH/.trmode_for_$gateway ]]; then
+    if [[ -e $SH_PATH/.mode_for_tr_$gateway ]]; then
       echo -n "$username"
       bash "$SH_PATH/tr.sh" "$*" || echo "E: $?"
-    elif [[ -e $SH_PATH/.botmode_for_$gateway ]]; then
+    elif [[ -e $SH_PATH/.mode_for_ai_$gateway ]]; then
       echo -n "$username"
-      bash "$SH_PATH/bot.sh" "$@" || echo "E: $?"
-    elif [[ -e $SH_PATH/.aimode_for_$gateway ]]; then
+      bash "$SH_PATH/ai.sh" "$@" || echo "E: $?"
+    elif [[ -e $SH_PATH/.mode_for_bd_$gateway ]]; then
       echo -n "$username"
-      # bash "$SH_PATH/ai.sh" "$@" || echo "E: $?"
       bash "$SH_PATH/bd.sh" "$@" || echo "E: $?"
-    # elif [[ -e $SH_PATH/.gptmode_for_$gateway ]]; then
+    # elif [[ -e $SH_PATH/.mode_for_bot_$gateway ]]; then
+    #   echo -n "$username"
+    #   bash "$SH_PATH/bot.sh" "$@" || echo "E: $?"
+    # elif [[ -e $SH_PATH/.mode_for_gpt_$gateway ]]; then
     #   echo -n "$username"
     #   bash "$SH_PATH/gpt.sh" "$@" || echo "E: $?"
     elif bash "$SH_PATH/faq.sh" "$text" ; then
@@ -135,24 +150,17 @@ cmds() {
     :
     ;;
   gptmode)
-    exit 1
-    :
-  #   [[ -e $SH_PATH/.gptmode_for_$gateway ]] && rm $SH_PATH/.gptmode_for_$gateway || touch $SH_PATH/.gptmode_for_$gateway
-  #   [[ -e $SH_PATH/.gptmode_for_$gateway ]] && echo "chatgpt is here" || echo "chatgpt is out"
-  #   [[ -e $SH_PATH/.aimode_for_$gateway ]] && rm $SH_PATH/.aimode_for_$gateway
-  #   [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway
+    changeai gpt gateway
     ;;
   botmode)
-    [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway || touch $SH_PATH/.botmode_for_$gateway
-    [[ -e $SH_PATH/.botmode_for_$gateway ]] && echo "bot is here" || echo "bot is out"
-    [[ -e $SH_PATH/.aimode_for_$gateway ]] && rm $SH_PATH/.aimode_for_$gateway
-    [[ -e $SH_PATH/.gptmode_for_$gateway ]] && rm $SH_PATH/.gptmode_for_$gateway
+    exit 1
+    changeai bot gateway
     ;;
-  aimode|bdmode)
-    [[ -e $SH_PATH/.aimode_for_$gateway ]] && rm $SH_PATH/.aimode_for_$gateway || touch $SH_PATH/.aimode_for_$gateway
-    [[ -e $SH_PATH/.aimode_for_$gateway ]] && echo "AI is here" || echo "AI is out"
-    [[ -e $SH_PATH/.botmode_for_$gateway ]] && rm $SH_PATH/.botmode_for_$gateway
-    [[ -e $SH_PATH/.gptmode_for_$gateway ]] && rm $SH_PATH/.gptmode_for_$gateway
+  aimode)
+    changeai ai gateway
+    ;;
+  bdmode)
+    changeai bd gateway
     ;;
   dig)
     shift
@@ -254,8 +262,8 @@ cmds() {
     bash "$SH_PATH/tr.sh" "$*"
     ;;
   trmode)
-    [[ -e $SH_PATH/.trmode_for_$gateway ]] && rm $SH_PATH/.trmode_for_$gateway || touch $SH_PATH/.trmode_for_$gateway
-    [[ -e $SH_PATH/.trmode_for_$gateway ]] && echo "trmode on" || echo "trmode off"
+    [[ -e $SH_PATH/.mode_for_tr_$gateway ]] && rm $SH_PATH/.mode_for_tr_$gateway || touch $SH_PATH/.mode_for_tr_$gateway
+    [[ -e $SH_PATH/.mode_for_tr_$gateway ]] && echo "trmode on" || echo "trmode off"
     ;;
   trans)
     shift
