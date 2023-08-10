@@ -852,15 +852,7 @@ async def mt2tg(msg):
               await mt_send("waiting...", gateway=msgd["gateway"])
               for g in mtmsgsg:
                 await queues[g].put((0,0,0))
-              gateways.clear()
-              no_reset.set()
-              await mt_send("reset ok", gateway=msgd["gateway"])
-              #  async with queue_lock:
-                #  if len(queue.keys()) > 1:
-                  #  queue ={min(queue.keys()): queue[min((queue.keys()))] }
               text= CLEAN
-              #  if len(queue.keys()) > 0:
-              return
             else:
               await mt_send("waiting reset...", gateway=msgd["gateway"])
               await no_reset.wait()
@@ -1015,9 +1007,9 @@ async def mt2tg(msg):
               asyncio.create_task(tg2mt_loop(msgd["gateway"]))
             mtmsgsg[msgd["gateway"]][msg.id] = [msgd, None]
         else:
-          pass
-          #  no_reset.set()
-          #  await mt_send("reset ok", gateway=msgd["gateway"])
+          gateways.clear()
+          no_reset.set()
+          await mt_send("reset ok", gateway=msgd["gateway"])
         return
 
         text = name + text
