@@ -1365,7 +1365,7 @@ async def tg2mt_loop(gateway="test"):
     if msg.file:
       file = msg.file
       if file.size > FILE_DOWNLOAD_MAX_BYTES:
-        await mt_send(f"文件过大，取消下载。\nfile name: {file.name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}", gateway=gateway)
+        await mt_send(f"文件过大，取消下载。\nfile name: {file.name}\nsize: {format_byte(file.size)}\ntype: {file.mime_type}", gateway=gateway)
         return
 
       logger.info(file)
