@@ -1353,8 +1353,11 @@ async def tg2mt_loop(gateway="test"):
     if nid == 0:
       nid = qid
       print(f"init nid to {nid}")
+    elif nid < min(mtmsgs.keys()):
+      nid = min(mtmsgs.keys())
+      print(f"update {nid=}")
     else:
-      print(f"now nid to {nid}")
+      print(f"no change {nid=}")
 
     if qid == nid:
       #  if text == LOADING or text == LOADING2:
