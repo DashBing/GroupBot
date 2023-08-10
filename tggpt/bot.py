@@ -1575,8 +1575,10 @@ async def __init():
   await mt_send("gpt start")
   await asyncio.sleep(2)
   await mt_send("ping")
-  await asyncio.sleep(5)
+  await asyncio.sleep(3)
   await mt_send("ping", username="")
+  await asyncio.sleep(1)
+  await mt_send(".gpt", username="")
 
 
 if __name__ == '__main__':
