@@ -1272,7 +1272,7 @@ async def read_res(event):
     try:
       #  await queues[gateways[qid]].put( (id(msg), qid, msg) )
       #  await queues[gateways[qid]].put( (msg.date, qid, msg) )
-      await queues[gateways[qid]].put( (id(event), qid, msg) )
+      await queues[gateways[qid]].put( (id(msg), qid, msg) )
       #  await queues[gateways[qid]].put( (msg.id, "test") )
     except Exception as e:
       logger.info(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
@@ -1349,9 +1349,11 @@ async def tg2mt_loop(gateway="test"):
       gateways.clear()
       logger.warning(f"W: cleared mtmsgs")
       #  await asyncio.sleep(2)
-      await no_reset.wait()
+      #  await no_reset.wait()
       nid = 0
       #  last = None
+      continue
+    if not no_reset.is_set():
       continue
     #  print(f"I: got: {msg=}")
     text = msg.text
