@@ -9,6 +9,7 @@ if [[ -z "$1" ]]; then
   echo ".bd \$str"
   echo "--"
   echo "link: https://github.com/EvanZhouDev/bard-ai"
+  echo "link: https://bard.google.com/"
 # elif [[ "$2" == "on" ]]; then
 #   :
 else
