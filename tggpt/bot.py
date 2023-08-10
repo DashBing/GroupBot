@@ -1365,11 +1365,27 @@ async def tg2mt_loop(gateway="test"):
     else:
       print(f"no change {nid=}")
 
+    if qid > nid:
+      #  if len(mtmsgs) > 1 and mtmsgs[qid][0]["text"] == mtmsgs[max(list(mtmsgs.keys()).remove(qid))][0]["text"]:
+      #  if len(mtmsgs) > 1 and mtmsgs[qid][0]["text"] == mtmsgs[list(mtmsgs.keys()).sort()[-2]][0]["text"]:
+      if len(mtmsgs) > 1:
+        for i in mtmsgs:
+          if mtmsgs[i][0]["text"] == mtmsgs[qid][0]["text"]:
+            for q in mtmsgs.copy():
+              if q != qid:
+                mtmsgs.pop(q)
+            await mt_send("已清理历史任务，继续当前任务中..", gateway=gateway)
+            nid = qid
+            #  last = None
+            break
+
     if qid == nid:
       #  if text == LOADING or text == LOADING2:
       if text in loadings:
         await mt_send(f"{mtmsgs[qid][0]['username']}[思考中...]", gateway=gateway)
         continue
+
+
 
     if msg.file:
       file = msg.file
@@ -1458,8 +1474,6 @@ async def tg2mt_loop(gateway="test"):
       return
 
 
-
-
     ending= None
     #  print("< Q: %s" % queue[qid][0]['text'])
     if text.endswith(LOADING):
@@ -1483,19 +1497,6 @@ async def tg2mt_loop(gateway="test"):
         text.rstrip(urls[-1][0])
 
 
-    if qid > nid:
-      #  if len(mtmsgs) > 1 and mtmsgs[qid][0]["text"] == mtmsgs[max(list(mtmsgs.keys()).remove(qid))][0]["text"]:
-      #  if len(mtmsgs) > 1 and mtmsgs[qid][0]["text"] == mtmsgs[list(mtmsgs.keys()).sort()[-2]][0]["text"]:
-      if len(mtmsgs) > 1:
-        for i in mtmsgs:
-          if mtmsgs[i][0]["text"] == mtmsgs[qid][0]["text"]:
-            for q in mtmsgs.copy():
-              if q != qid:
-                mtmsgs.pop(q)
-            await mt_send("已清理历史任务，继续当前任务中..", gateway=gateway)
-            nid = qid
-            #  last = None
-            break
 
     if qid > nid:
       mtmsgs[qid][1] = text
