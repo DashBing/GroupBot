@@ -1359,7 +1359,7 @@ async def tg2mt_loop(gateway="test"):
     if qid == nid:
       #  if text == LOADING or text == LOADING2:
       if text in loadings:
-        await mt_send(f"{mtmsgs[qid][0]['username']}[生成图片中，最多耗时5分钟...]", gateway=gateway)
+        await mt_send(f"{mtmsgs[qid][0]['username']}[思考中...]", gateway=gateway)
         continue
 
     if msg.file:
@@ -1579,6 +1579,10 @@ async def __init():
   DOMAIN = (await read_file("DOMAIN")).rstrip('\n')
   print(f"SH_PATH: {SH_PATH}")
   print(f"DOMAIN: {DOMAIN}")
+  await mt_send("gpt start")
+  await mt_send("ping")
+  await asyncio.sleep(5)
+  await mt_send("ping", username="")
 
 
 if __name__ == '__main__':
