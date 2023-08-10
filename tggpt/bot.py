@@ -1323,6 +1323,7 @@ async def tg2mt_loop(gateway="test"):
   #    nids[gateway] = 0
   #  nid = nids[gateway]
   nid = 0
+  line = None
   mtmsgs = mtmsgsg[gateway]
   while True:
 
@@ -1338,6 +1339,7 @@ async def tg2mt_loop(gateway="test"):
       #  await asyncio.sleep(2)
       await no_reset.wait()
       nid = 0
+      line = None
       continue
     #  print(f"I: got: {msg=}")
     text = msg.text
@@ -1347,6 +1349,7 @@ async def tg2mt_loop(gateway="test"):
       print(f"init nid to {nid}")
     elif nid < min(mtmsgs.keys()):
       nid = min(mtmsgs.keys())
+      line = None
       print(f"update {nid=}")
     else:
       print(f"no change {nid=}")
@@ -1434,6 +1437,8 @@ async def tg2mt_loop(gateway="test"):
       else:
         await mt_send(res, gateway=gateway)
         mtmsgs.pop(nid)
+        gateways.pop(nid)
+        line = None
         continue
 
 
@@ -1458,6 +1463,12 @@ async def tg2mt_loop(gateway="test"):
 
 
 
+    if not ending:
+      if len(text.splitlines()) > 1:
+        line = len(text.splitlines())-2
+        text = text.rstrip("\n"+text.splitlines()[-1])
+
+
     if qid > nid:
       #  if len(mtmsgs) > 1 and mtmsgs[qid][0]["text"] == mtmsgs[max(list(mtmsgs.keys()).remove(qid))][0]["text"]:
       #  if len(mtmsgs) > 1 and mtmsgs[qid][0]["text"] == mtmsgs[list(mtmsgs.keys()).sort()[-2]][0]["text"]:
@@ -1469,6 +1480,7 @@ async def tg2mt_loop(gateway="test"):
                 mtmsgs.pop(q)
             await mt_send("已清理历史任务，继续当前任务中..", gateway=gateway)
             nid = qid
+            line = None
             break
 
     if qid > nid:
@@ -1500,6 +1512,7 @@ async def tg2mt_loop(gateway="test"):
             continue
           mtmsgs.pop(nid)
           gateways.pop(nid)
+          line = None
           print(f"removed {nid=}")
           if len(mtmsgs) == 0:
             nid = 0
@@ -1517,13 +1530,10 @@ async def tg2mt_loop(gateway="test"):
             await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
             break
     else:
+
       mtmsgs[qid][1] = text
       await mt_send(res, gateway=gateway, username="")
       print(f"I: append {msg.id}")
-
-
-
-
 
 
 
