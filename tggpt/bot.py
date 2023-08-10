@@ -1580,6 +1580,7 @@ async def __init():
   print(f"SH_PATH: {SH_PATH}")
   print(f"DOMAIN: {DOMAIN}")
   await mt_send("gpt start")
+  await asyncio.sleep(2)
   await mt_send("ping")
   await asyncio.sleep(5)
   await mt_send("ping", username="")
