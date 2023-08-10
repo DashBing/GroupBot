@@ -1323,7 +1323,7 @@ async def tg2mt_loop(gateway="test"):
   #    nids[gateway] = 0
   #  nid = nids[gateway]
   nid = 0
-  line = None
+  #  line = None
   mtmsgs = mtmsgsg[gateway]
   while True:
 
@@ -1339,7 +1339,7 @@ async def tg2mt_loop(gateway="test"):
       #  await asyncio.sleep(2)
       await no_reset.wait()
       nid = 0
-      line = None
+      #  line = None
       continue
     #  print(f"I: got: {msg=}")
     text = msg.text
@@ -1349,7 +1349,7 @@ async def tg2mt_loop(gateway="test"):
       print(f"init nid to {nid}")
     elif nid < min(mtmsgs.keys()):
       nid = min(mtmsgs.keys())
-      line = None
+      #  line = None
       print(f"update {nid=}")
     else:
       print(f"no change {nid=}")
@@ -1438,7 +1438,7 @@ async def tg2mt_loop(gateway="test"):
         await mt_send(res, gateway=gateway)
         mtmsgs.pop(nid)
         gateways.pop(nid)
-        line = None
+        #  line = None
         continue
 
 
@@ -1465,7 +1465,7 @@ async def tg2mt_loop(gateway="test"):
 
     if not ending:
       if len(text.splitlines()) > 1:
-        line = len(text.splitlines())-2
+        #  line = len(text.splitlines())-2
         text = text.rstrip("\n"+text.splitlines()[-1])
 
 
@@ -1480,7 +1480,7 @@ async def tg2mt_loop(gateway="test"):
                 mtmsgs.pop(q)
             await mt_send("已清理历史任务，继续当前任务中..", gateway=gateway)
             nid = qid
-            line = None
+            #  line = None
             break
 
     if qid > nid:
@@ -1512,7 +1512,7 @@ async def tg2mt_loop(gateway="test"):
             continue
           mtmsgs.pop(nid)
           gateways.pop(nid)
-          line = None
+          #  line = None
           print(f"removed {nid=}")
           if len(mtmsgs) == 0:
             nid = 0
