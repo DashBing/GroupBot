@@ -1271,7 +1271,8 @@ async def read_res(event):
       return
     try:
       #  await queues[gateways[qid]].put( (id(msg), qid, msg) )
-      await queues[gateways[qid]].put( (msg.date, qid, msg) )
+      #  await queues[gateways[qid]].put( (msg.date, qid, msg) )
+      await queues[gateways[qid]].put( (id(event), qid, msg) )
       #  await queues[gateways[qid]].put( (msg.id, "test") )
     except Exception as e:
       logger.info(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
