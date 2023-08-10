@@ -1495,17 +1495,17 @@ async def tg2mt_loop(gateway="test"):
     if ending:
       #  res += "\n\n**[结束]**"
       res += ending
-      await mt_send(res, gateway=gateway)
+      await mt_send(res, gateway=gateway, username="")
       print(f"I: end {msg.id}")
       async with queue_lock:
-        #  if not no_reset.is_set():
           #  no_reset.set()
           #  await mt_send("reset ok", gateway=msgd["gateway"])
-        #    continue
-        mtmsgs.pop(nid)
-        gateways.pop(nid)
-        print(f"remove {nid=}")
         while True:
+          if not no_reset.is_set():
+            continue
+          mtmsgs.pop(nid)
+          gateways.pop(nid)
+          print(f"removed {nid=}")
           if len(mtmsgs) == 0:
             nid = 0
             #  gateways.clear()
@@ -1517,15 +1517,13 @@ async def tg2mt_loop(gateway="test"):
             break
           if mtmsgs[nid][-1] is None:
             await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
-            print(f"will to remove {nid=} {mtmsgs=}")
-            mtmsgs.pop(nid)
-            gateways.pop(nid)
+            print(f"will to remove {nid=} {mtmsgs=} {gateways=}")
           else:
             await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
             break
     else:
       mtmsgs[qid][1] = text
-      await mt_send(res, gateway=gateway)
+      await mt_send(res, gateway=gateway, username="")
       print(f"I: append {msg.id}")
 
 
