@@ -54,6 +54,8 @@ TMP_PATH=HOME+"/tera/tmp"
 gpt_chat=None
 
 UA = 'Chrome Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) Apple    WebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36'
+urlre=re.compile(r'((^|https?://|\s+)((([\dA-Za-z0-9.]+-?)+\.)+[A-Za-z]+|(\d+\.){3}\d+|(\[[\da-f]*:){7}[\da-f]*\])(:\d+)?(/[^/\s]+)*/?)')
+
 
 logger = logging.getLogger(__name__)
 
@@ -1339,7 +1341,7 @@ async def tg2mt_loop(gateway="test"):
       #  await asyncio.sleep(2)
       await no_reset.wait()
       nid = 0
-      #  line = None
+      #  last = None
       continue
     #  print(f"I: got: {msg=}")
     text = msg.text
@@ -1349,7 +1351,7 @@ async def tg2mt_loop(gateway="test"):
       print(f"init nid to {nid}")
     elif nid < min(mtmsgs.keys()):
       nid = min(mtmsgs.keys())
-      #  line = None
+      #  last = None
       print(f"update {nid=}")
     else:
       print(f"no change {nid=}")
@@ -1438,7 +1440,7 @@ async def tg2mt_loop(gateway="test"):
         await mt_send(res, gateway=gateway)
         mtmsgs.pop(nid)
         gateways.pop(nid)
-        #  line = None
+        #  last = None
         continue
 
 
@@ -1464,9 +1466,12 @@ async def tg2mt_loop(gateway="test"):
 
 
     if not ending:
-      if len(text.splitlines()) > 1:
-        #  line = len(text.splitlines())-2
-        text = text.rstrip("\n"+text.splitlines()[-1])
+      #  if len(text.splitlines()) > 1:
+        #  last = len(text.splitlines())-2
+        #  text = text.rstrip("\n"+text.splitlines()[-1])
+      urls = urlre.findall(text)
+      if urls and text.endswith(urls[-1][0]):
+        text.rstrip(urls[-1][0])
 
 
     if qid > nid:
@@ -1480,7 +1485,7 @@ async def tg2mt_loop(gateway="test"):
                 mtmsgs.pop(q)
             await mt_send("已清理历史任务，继续当前任务中..", gateway=gateway)
             nid = qid
-            #  line = None
+            #  last = None
             break
 
     if qid > nid:
@@ -1512,7 +1517,7 @@ async def tg2mt_loop(gateway="test"):
             continue
           mtmsgs.pop(nid)
           gateways.pop(nid)
-          #  line = None
+          #  last = None
           print(f"removed {nid=}")
           if len(mtmsgs) == 0:
             nid = 0
