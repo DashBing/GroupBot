@@ -108,7 +108,7 @@ def exceptions_handler(func):
             try:
                 return await func(*args, **kwargs)
             except Exception as e:
-                _exceptions_handler(e)
+                return _exceptions_handler(e)
 
     else:
         @wraps(func)
@@ -116,7 +116,7 @@ def exceptions_handler(func):
             try:
                 return func(*args, **kwargs)
             except Exception as e:
-                _exceptions_handler(e)
+               return  _exceptions_handler(e)
     return wrapper
 
 
@@ -130,9 +130,11 @@ def _exceptions_handler(e, *args, **kwargs):
         raise e
     elif type(e) == AttributeError:
         logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
+        return f"{e=}"
     else:
         # logger.error(f"error: {exc=}", exc_info=True, stack_info=True)
         logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
+        return f"{e=}"
 
 
 def http_exceptions_handler(func):
@@ -147,6 +149,7 @@ def http_exceptions_handler(func):
             logging.error('Data not retrieved because %s\nURL: %s %s', error, args, kwargs)
             info = "E: {}".format(sys.exc_info())
             logger.error(info)
+            return info
         except urllib.error.URLError as error:
             if isinstance(error.reason, socket.timeout):
 #                logging.error('socket timed out - URL %s', url)
@@ -162,12 +165,15 @@ def http_exceptions_handler(func):
         #      logger.warning("can not send")
         #      info = "E: {}".format(sys.exc_info())
         #      logger.error(info)
+            return info
         except socket.timeout:
             info = "E: {}".format(sys.exc_info())
             logger.error(info)
+            return info
         except UnicodeDecodeError as e:
             info = "E: {}".format(sys.exc_info())
             logger.error(info)
+            return info
         except Exception as e:
             info = "E: {}".format(sys.exc_info())
             info = f"http exception: {e=}"
@@ -391,7 +397,8 @@ pb_list = {
         "fars": ["https://fars.ee/?u=1", "c"]
         }
 #async def pastebin(data="test", filename=None, url="https://fars.ee/?u=1", fieldname="c", extra={}, **kwargs):
-@http_exceptions_handler
+#  @http_exceptions_handler
+@exceptions_handler
 async def pastebin(data="test", filename=None, url=pb_list["fars"][0], fieldname="c", extra={}, ce=None, use=None, **kwargs):
     if not data:
         return
@@ -1029,7 +1036,7 @@ async def mt2tg(msg):
 
 
 
-@exceptions_handler
+@http_exceptions_handler
 async def http(url, method="GET", return_headers=False, **kwargs):
     await init_aiohttp_session()
 
@@ -1048,12 +1055,13 @@ async def http(url, method="GET", return_headers=False, **kwargs):
     try:
         res = await session.request(url=url, method=method, **kwargs)
     except asyncio.TimeoutError as e:
-        raise
+        #  raise
+        res = f"{e=}"
     async with res:
         # print("All:", res)
 #        res.raise_for_status()
         if res.status == 304:
-            logger.warning(f"http status: {res.status} {res.reason}\nurl: {res.url}")
+            logger.warning(f"W: http status: {res.status} {res.reason} {res.url=}")
             logger.warning("ignore: {}".format(await res.text()))
             if return_headers:
                 return None, res.headers
@@ -1062,7 +1070,8 @@ async def http(url, method="GET", return_headers=False, **kwargs):
         if res.status != 200:
 #            logger.error(res)
 #            put(str(res))
-            html = f"error http status: {res.status} {res.reason}\nurl: {res.url}\nheaders: {res.headers}"
+            #  html = f"E: error http status: {res.status} {res.reason} url: {res.url} headers: {res.headers}"
+            html = f"E: error http status: {res.status} {res.reason} url: {res.url}"
             if return_headers:
                 return html, res.headers
             else:
