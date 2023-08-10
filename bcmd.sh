@@ -150,17 +150,17 @@ cmds() {
     :
     ;;
   gptmode)
-    changeai gpt gateway
+    changeai gpt $gateway
     ;;
   botmode)
     exit 1
-    changeai bot gateway
+    changeai bot $gateway
     ;;
   aimode)
-    changeai ai gateway
+    changeai ai $gateway
     ;;
   bdmode)
-    changeai bd gateway
+    changeai bd $gateway
     ;;
   dig)
     shift
