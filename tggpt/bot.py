@@ -1471,7 +1471,7 @@ async def tg2mt_loop(gateway="test"):
           if mtmsgs[i][0]["text"] == mtmsgs[qid][0]["text"]:
             for q in mtmsgs.copy():
               if q != qid:
-                mtmsgs.remove(q)
+                mtmsgs.pop(q)
             await mt_send("已清理历史任务，继续当前任务中..", gateway=gateway)
             nid = qid
             break
