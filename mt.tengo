@@ -13,6 +13,7 @@ msgText = text.split(msgUsername, "_SPLIT_FOR_MT_")
 msgUsername = msgText[0]
 msgText = msgText[1]
 
+if inGateway == "test" {
 fmt := import("fmt")
 
 fmt.println("############")
@@ -31,6 +32,7 @@ fmt.println(outAccount)
 /* fmt.println(outGateway) */
 /* fmt.println(outEvent) */
 fmt.println("####")
+}
 }
 
 /* fmt.println(msgText) */
