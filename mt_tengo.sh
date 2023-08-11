@@ -343,13 +343,13 @@ telegram.*)
     TEXT=$(echo "$TEXT" | sed '/^> reply_from_telegram$/,$d';)
   fi
   ;;
-zulip.myzulip)
+zulip.*)
   LABLE="Z"
   # if [[ $(echo "$TEXT" | grep -c -P "^\[.*\]\(/user_uploads/.*\)$" ) -eq 1 ]]; then
   #   TEXT="${TEXT%](/user_uploads/*}](https://wtfipfs.zulipchat.com/user_uploads/${TEXT##*](/user_uploads/}"
   # fi
   ;;
-discord.mydiscord)
+discord.*)
   LABLE="D"
       # block_msg
   # if [[ "$5" == "wtfipfs" ]]; then
@@ -371,11 +371,11 @@ discord.mydiscord)
   fi
 
   ;;
-irc.myirc)
-  LABLE="I"
-  ;;
 irc.irc2p)
   LABLE="2"
+  ;;
+irc.*)
+  LABLE="I"
   ;;
 api.tox)
   LABLE="T"
