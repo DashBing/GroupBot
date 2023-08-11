@@ -287,6 +287,7 @@ cmds() {
     shift
     # bash "$SH_PATH/muxiaoguo.sh" Tn_google "$@"
     # trans -brief "${@}"
+    echo bash "$SH_PATH/trans.sh" "$@" &>>~/tera/mt_msg.log
     bash "$SH_PATH/trans.sh" "$@"
     ;;
   # pong | xd)
