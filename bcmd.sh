@@ -394,7 +394,7 @@ $qt_text"
 text=$(cmds $text 2>>"$SH_PATH/error") || {
   e=$?
   [[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
-  push_err("failed to run cmd :|$text|$text_e|$e")
+  push_err "failed to run cmd :|$text|$text_e|$e"
   exit 1
 }
 [[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
@@ -420,7 +420,7 @@ echo "b2 :|$text|" >> ~/tera/mt_msg.log
 #  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4243/api/message)
 
 
-res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4240/api/message) || push_err("failed to send res :|$res|")
+res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4240/api/message) || push_err "failed to send res :|$res|"
 # echo "res: $res"
 # echo "json: $text"
 # echo "res :|$res|" >> ~/tera/mt_msg.log
