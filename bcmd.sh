@@ -53,11 +53,11 @@ cmds() {
   # if [[ "${cmd:0:1}" != "." ]] && [[ "${cmd:0:1}" != "/" ]]; then
   if [[ "${cmd:0:1}" != "." ]]; then
     if echo "$text" | tail -n1 | grep -q -G "^> "; then
-    if echo "$text" | head -n1 | grep -q -G "^> "; then
-      :
-    else
-      exit 0
-    fi
+      if echo "$text" | head -n1 | grep -q -G "^> "; then
+        :
+      else
+        exit 0
+      fi
     fi
     if [[ -e $SH_PATH/.mode_for_tr_$gateway ]]; then
       echo -n "$username"
@@ -83,7 +83,7 @@ cmds() {
   fi
   echo -n "$username"
   case ${cmd:1} in
-  help | h)
+  help|h)
     if [[ -z "$2" ]]; then
       [[ -e "$SH_PATH/group_help.txt" ]] && cat "$SH_PATH/group_help.txt" || echo "E: no group_help.txt"
     elif [[ "$2" == "cmd" ]]; then
@@ -140,12 +140,10 @@ cmds() {
     ;;
   bd|BD)
     shift
-    # bash "$SH_PATH/ai.sh" "reset" &>/dev/null
     bash "$SH_PATH/bd.sh" "$@" || echo "E: $?"
     ;;
   bdi)
     shift
-    # bash "$SH_PATH/ai.sh" "reset" &>/dev/null
     bash "$SH_PATH/bdi.sh" "$@" || echo "E: $?"
     ;;
   bot|BOT)
@@ -155,16 +153,12 @@ cmds() {
     ;;
   gpt|GPT)
     return 0
-    exit 1
-    :
   #   shift
   #   bash "$SH_PATH/gpt.sh" "$@" || echo "E: $?"
   #   bash "$SH_PATH/gpt.sh" "reset" &>/dev/null
     ;;
   gptr|gt|gtz|se|img|voice)
     return 0
-    exit 1
-    :
     ;;
   gptmode)
     return 0
@@ -280,7 +274,7 @@ cmds() {
     shift
     # bash "$SH_PATH/muxiaoguo.sh" Tn_google "$@"
     # trans -brief "${@}"
-    bash "$SH_PATH/tr.sh" "$*"
+    bash "$SH_PATH/tr.sh" "$*" || echo "E: $?"
     ;;
   trmode)
     [[ -e $SH_PATH/.mode_for_tr_$gateway ]] && rm $SH_PATH/.mode_for_tr_$gateway || touch $SH_PATH/.mode_for_tr_$gateway
@@ -290,7 +284,7 @@ cmds() {
     shift
     # bash "$SH_PATH/muxiaoguo.sh" Tn_google "$@"
     # trans -brief "${@}"
-    echo bash "$SH_PATH/trans.sh" "$@" &>>~/tera/mt_msg.log
+    # echo bash "$SH_PATH/trans.sh" "$@" &>>~/tera/mt_msg.log
     bash "$SH_PATH/trans.sh" "$@" || echo "E: $?"
     ;;
   # pong | xd)
@@ -355,27 +349,47 @@ fi
 # echo "bcmd arg: $*" >> ~/tera/mt_msg.log
 
 
+send(){
+  curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "$1" $gateway)" http://127.0.0.1:4240/api/message
+}
+
+
+_push_err(){
+  local res=$1
+  if [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
+    date &>> ~/tera/mt_msg.log
+    echo "res :|$res|" >> ~/tera/mt_msg.log
+    msg=$(echo "$res" | jq ".message")
+    res=$(send "E: mt api: $msg res: $res") 
+    if [[ "$(send "E: mt api: $msg res: $res" | jq ".message")" != "null" ]]; then
+      if [[ "$(send "E: mt api: $msg res_b64: $(echo "$res"|base64)" | jq ".message")" != "null" ]]; then
+        if [[ "$(send "E: can't send res to mt api: $msg" | jq ".message")" != "null" ]]; then
+          echo "E: can't send text to mt api" >> ~/tera/mt_msg.log
+        fi
+      fi
+    fi
+  fi
+}
+
 
 push_err(){
   local res=$1
 
-  if [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
-date &>> ~/tera/mt_msg.log
-echo "res :|$res|" >> ~/tera/mt_msg.log
-    curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: $(echo "$res" | jq -r ".message") b64: $(echo $text|base64)" $gateway)" http://127.0.0.1:4240/api/message &>> ~/tera/mt_msg.log
-  elif ! echo "$res" | jq ".message"; then
-date &>> ~/tera/mt_msg.log
-echo "res :|$res|" >> ~/tera/mt_msg.log
-    curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: $res b64: $(echo $text|base64)" $gateway)" http://127.0.0.1:4240/api/message &>> ~/tera/mt_msg.log
+  if ! echo "$res" | jq ".message"; then
+    res=$(send "$res ") || {
+      _push_err "failed to send: $res"
+      exit 1
+    }
+    _push_err "$res"
+  elif [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
+    _push_err "$res"
   else
-date &>> ~/tera/mt_msg.log
-echo "res :|$res|" >> ~/tera/mt_msg.log
-    [[ -z "$(echo "$res" | jq -r ".text")" ]] && curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: empty message" $gateway)" http://127.0.0.1:4240/api/message &>> ~/tera/mt_msg.log
+    if [[ -z "$(echo "$res" | jq -r ".text")" ]]; then
+      send "E: empty message"
+    fi
   fi
 
-
 }
-
 
 
 [[ -z "$3" ]] && exit 1
@@ -394,10 +408,10 @@ $qt_text"
   # if [[ "${text:0:6}" == ".note " ]]; then
 #text=$(cmds $text)
 #text=$(cmds $text 2>&1)
-text=$(cmds $text 2>>"$SH_PATH/error") || {
+text=$(cmds $text 2>"$SH_PATH/error") || {
   e=$?
-  [[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
-  push_err "failed to run cmd :|$text|$e|$text_e"
+  [[ -f "$SH_PATH/error" ]] && r=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
+  push_err "E: failed to run cmd: $e|$text|$res|$r"
   exit 1
 }
 [[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
@@ -417,22 +431,25 @@ E: $text_e" || {
 
 
 
-echo "b1 :|$text|" >> ~/tera/mt_msg.log
+# echo "b1 :|$text|" >> ~/tera/mt_msg.log
 
   [[ -z "$text" ]] && exit
   text=$(bash "$SH_PATH/gene_res.sh" "$text" $gateway)
 
-echo "b2 :|$text|" >> ~/tera/mt_msg.log
+# echo "b2 :|$text|" >> ~/tera/mt_msg.log
 #  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4243/api/message)
 
 
-res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4240/api/message 2>&1) || {
-  push_err "failed to send res :|$res|$?|"
-  exit 0
+res=$(send "$text" 2>"$SH_PATH/error") || {
+  e=$?
+  [[ -f "$SH_PATH/error" ]] && r=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
+  push_err "E: failed to send: $?|$text|$r"
+  if [[ -n "$res" ]]; then
+    push_err "$res"
+  fi
+  exit
 }
 # echo "res: $res"
 # echo "json: $text"
 # echo "res :|$res|" >> ~/tera/mt_msg.log
 push_err "$res"
-
-true
