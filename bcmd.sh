@@ -353,7 +353,8 @@ fi
 
 
 
-push_err(res){
+push_err(){
+  local res=$1
 
   if [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
 date &>> ~/tera/mt_msg.log
