@@ -19,6 +19,13 @@ shift
 bdi "$*"
 else
 # bdi "what is it?
-bdi "$(bash "$SH_PATH/trans.sh" -brief :en "$(echo "$*" | sed -r 's|^\s*\S+\s*||g')")
+url=$(echo "$*"|grep -o -P '^\s*\S+\s*'|grep -o -P '\S+')
+if [[ -z "$url" ]]; then
+  echo "url? $url"
+else
+text=$(echo "$*" | sed -r 's|^\s*\S+\s*||g')
+bdi "$url
+$(bash "$SH_PATH/trans.sh" -brief :en "$text")
 Please answer in Chinese."
+fi
 fi
