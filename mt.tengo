@@ -2,7 +2,8 @@ os := import("os")
 
 
 
-if inGateway == "test" {
+/* if inGateway == "test" { */
+if inProtocol == "discord" {
 fmt := import("fmt")
 fmt.println("############")
 fmt.println("## START")
@@ -24,7 +25,8 @@ msgText = text.split(msgUsername, "_SPLIT_FOR_MT_")
 msgUsername = msgText[0]
 msgText = msgText[1]
 
-if inGateway == "test" {
+/* if inGateway == "test" { */
+if inProtocol == "discord" {
 fmt := import("fmt")
 fmt.println("############")
 fmt.println(msgText)
