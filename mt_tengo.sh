@@ -357,7 +357,8 @@ discord.mydiscord)
   if echo "${NAME}" | grep -q -P ".+#[0-9]{1,4}$"; then
     NAME=${NAME%#*}
   else
-    block_msg
+    :
+    # block_msg
   fi
   if [[ "$2" == "Telegram Bridge" ]]; then
       echo -n "blockthismessage"
