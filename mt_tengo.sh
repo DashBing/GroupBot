@@ -109,6 +109,7 @@ xmpp.*)
   if echo "$TEXT" | head -n1 | grep -q -P "^>" && [[ $(echo "$TEXT" | sed '/^[^>]/,$!d' | grep -c -P "^>") -eq 0 && $(echo "$TEXT" | sed -n '/^>/!p' | sed -n '/^$/!p' | wc -l) -ge 1 ]]; then
     QT=$( echo "$TEXT" | sed -n '/^> /p')
     H=$(echo "$QT"|head -n1)
+
     if [[ "$H" =~ ^\>\ .+:$ ]] && echo "$QT"|sed -n '2p'|grep -q -P '^> [0-9]{4}-[0-9]{2}-[0-9]{2}  [0-9]{2}:[0-9]{2}'; then
       QT=$( echo "$QT" | sed '2d')
     fi
@@ -131,6 +132,7 @@ xmpp.*)
     else
       :
     fi
+
     TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
   fi
   # if [[ "$2" == "wtfipfs" ]] || [[ "$2" == " " ]]; then
