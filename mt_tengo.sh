@@ -568,7 +568,7 @@ $NAME"
 # $TEXT"
 #     fi
     NAME=$(echo "$NAME" | tail -n1)
-    NAME="${NAME:0:-2}"
+    # NAME="${NAME:0:-2}"
     if [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
       NAME="fixme"
     fi
