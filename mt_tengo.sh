@@ -33,7 +33,7 @@ if [[ -z "$2" ]]; then
   case $8 in
     discord.*)
       if [[ "${3}" == "api.gpt" ]] ; then
-        echo -n "C gpt"
+        echo -n "C gpt: "
         :
       fi
       ;;
@@ -571,14 +571,16 @@ $NAME"
       TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
     fi
 
-#     if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
+    if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
 #       TEXT="$(echo "$NAME" | sed '$d')
 # $TEXT"
-#     fi
+      TEXT="$TEXT
+$(echo "$NAME" | sed '$d')"
+    fi
     NAME=$(echo "$NAME" | tail -n1)
     # NAME="${NAME:0:-2}"
     if [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
-      NAME="fixme"
+      NAME="error"
     fi
     ;;
   api.tox)
