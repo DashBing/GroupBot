@@ -426,8 +426,13 @@ echo "b2 :|$text|" >> ~/tera/mt_msg.log
 #  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4243/api/message)
 
 
-res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4240/api/message) || push_err "failed to send res :|$res|"
+res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4240/api/message 2>&1) || {
+  push_err "failed to send res :|$res|$?|"
+  exit 0
+}
 # echo "res: $res"
 # echo "json: $text"
 # echo "res :|$res|" >> ~/tera/mt_msg.log
-push_err(res)
+push_err "$res"
+
+true
