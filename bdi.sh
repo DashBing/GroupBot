@@ -18,7 +18,7 @@ elif [[ "$1" = "-notr" ]]; then
 shift
 bdi "$*"
 else
-# bdi "$(bash "$SH_PATH/trans.sh" -brief :en "$*")
-bdi "what is it?
+# bdi "what is it?
+bdi "$(bash "$SH_PATH/trans.sh" -brief :en "$(echo "$*" | sed -r 's|^\s*\S+\s*||g')")
 Please answer in Chinese."
 fi
