@@ -648,6 +648,7 @@ $TEXT"
 #     fi
 
     TEXT=$(bash "$SH_PATH/text2markdown.sh" "$TEXT")
+    QT=""
     [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(bash "$SH_PATH/text2markdown.sh" "$(echo "$NAME" | sed '/^$/,$d')" && echo)
     NAME=$(bash "$SH_PATH/text2markdown.sh" "$(echo "$NAME" | tail -n1)")
     # echo -n "*$(echo "$NAME" | cut -d' ' -f 2- | sed '$s|: $||')*: "
