@@ -6,9 +6,8 @@ echo
 }
 
 if [[ -z "$1" ]]; then
-  echo ".ai \$str"
-  echo ".bd \$str #有上下文"
-  echo ".bdi [-notr] \$image_url\n\$str"
+  echo "google bard"
+  echo ".bdi [-notr] \$image_url[ \$str]"
   echo "--"
   echo "link: https://github.com/EvanZhouDev/bard-ai"
   echo "link: https://bard.google.com/"
@@ -19,13 +18,17 @@ shift
 bdi "$*"
 else
 # bdi "what is it?
-url=$(echo "$*"|grep -o -P '^\s*\S+\s*'|grep -o -P '\S+')
-if [[ -z "$url" ]]; then
-  echo "url? $url"
-else
-text=$(echo "$*" | sed -r 's|^\s*\S+\s*||g')
-bdi "$url
-$(bash "$SH_PATH/trans.sh" -brief :en "$text")
-Please answer in Chinese."
-fi
+  url=$(echo "$*"|grep -o -P '^\s*\S+\s*'|grep -o -P '\S+')
+  if [[ -z "$url" ]]; then
+    echo "image url? $url"
+  else
+    text=$(echo "$*" | sed -r 's|^\s*\S+\s*||g')
+    if [[ -z "$text" ]]; then
+      text="What is shown in this photo? "
+    else
+      text=$(bash "$SH_PATH/trans.sh" -brief :en "$text")
+    fi
+
+    bdi "$url $text Please answer in Chinese."
+  fi
 fi

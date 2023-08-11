@@ -5,8 +5,8 @@ echo
 }
 
 if [[ -z "$1" ]]; then
+  echo "google bard"
   echo ".ai \$str"
-  echo ".bd \$str #有上下文"
   echo "--"
   echo "link: https://github.com/EvanZhouDev/bard-ai"
   echo "link: https://bard.google.com/"
