@@ -30,6 +30,14 @@ NAME="$2"
 SPLIT="_SPLIT_FOR_MT_"
 TEXT="$1"
 if [[ -z "$2" ]]; then
+  case $8 in
+    discord.*)
+      if [[ "${3}" == "api.gpt" ]] ; then
+        echo -n "C gpt"
+        :
+      fi
+      ;;
+  esac
   echo -n $SPLIT
   echo -n "$TEXT"
   exit 0
