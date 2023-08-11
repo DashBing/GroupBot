@@ -48,6 +48,8 @@ for i in "$@";do
     opts=""
   elif [[ "$i" == "-d" ]]; then
     opts=""
+  elif [[ "$i" == "-brief" ]]; then
+    opts=""
   elif [[ "$i" == "-id" ]]; then
     # opts="-j"
     is_id=1
