@@ -354,11 +354,10 @@ discord.mydiscord)
       # block_msg
   # if [[ "$5" == "wtfipfs" ]]; then
     # if [[ "${NAME##*#}" == "0000" ]]; then
-  if echo "${NAME}" | grep -q -P ".+#[0-9]{4}$"; then
+  if echo "${NAME}" | grep -q -P ".+#[0-9]{1,4}$"; then
     NAME=${NAME%#*}
   else
-    :
-    # block_msg
+    block_msg
   fi
   if [[ "$2" == "Telegram Bridge" ]]; then
       echo -n "blockthismessage"
