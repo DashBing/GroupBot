@@ -1,4 +1,5 @@
 #!/bin/bash
+SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 bdi(){
 curl -m 300 -s -XPOST -d "$*" 127.0.0.1:6002 || exit $?
 echo
