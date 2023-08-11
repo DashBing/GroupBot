@@ -404,7 +404,10 @@ text=$(cmds $text 2>>"$SH_PATH/error") || {
 
 [[ -n "$text_e" ]] && text="$text
 --
-E: $text_e" || { [[ -z "$text" ]] && exit 0; }
+E: $text_e" || {
+  [[ -z "$text" ]] && exit 0
+  [[ "$text" = "$username" ]] && exit 0
+}
 
 # text=$(echo "$text"|sed 's/\r//g')
 # text=$(echo "$text" | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
