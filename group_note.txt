@@ -132,3 +132,5 @@
 #test X liqsliu: 测试引用2
 #test X liqsliu: 测试引用3\n**C bot:** X liqsliu: #test
 #faq X sun: bye|bye~
+#xmpp X liqsliu: web客户端 https://m.conversejs.org/fullscreen.html
+#xmpp X liqsliu: https://awesomehub.js.org/list/selfhosted/xmpp%2Fxmpp-web-clients
