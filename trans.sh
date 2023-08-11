@@ -21,7 +21,7 @@ trans "${@}"
 help(){
   echo "翻译
 默认: 非中文翻译为中文，中文则翻译为英文
-用法: .trans [-s zh] [-t en] [zh:en] \$text
+用法: .trans [-brief] [-s zh] [-t en] [zh:en] \$text
 自定义参数： .trans -j ...
 帮助： .trans -h
 翻译引擎: 列出(-S)，指定(-e)
