@@ -443,8 +443,10 @@ unset QT
 
 
 if [[ -n "$4" ]] ; then
-  case $9 in
-  xmpp)
+  # case $9 in
+  case $8 in
+  # xmpp)
+  xmpp.*)
   # if [[ "$9" == "xmpp" ]] ; then
     if [[ "$NAME" == "C twitter: " ]]; then
       TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' )
@@ -475,7 +477,7 @@ ${NAME}"
       fi
     fi
     ;;
-  irc)
+  irc.*)
   # elif [[ "$9" == "irc" ]] ; then
     NAME=$(echo "$NAME" | tail -n1)
 #    echo -n "$(echo "$NAME" | tail -n1)"
@@ -485,7 +487,7 @@ ${NAME}"
       TEXT="$TEXT RE: $QT"
     fi
     ;;
-  matrix)
+  matrix.*)
   # elif [[ "$9" == "matrix" ]] ; then
     if [[ "${5}" == "-1001193563578" ]] ; then
       if [[ "${10}" == "#ipfs:mozilla.org" ]] ; then
@@ -522,7 +524,7 @@ $NAME"
       unset NAME
     fi
     ;;
-  discord)
+  discord.*)
   # elif [[ "$9" == "discord" ]] ; then
     if [[ "${10}" == "wtfipfs" ]] ; then
       if [[ "${5}" == "#wtfipfs:matrix.org" ]] ; then
@@ -556,14 +558,24 @@ $NAME"
       TEXT="$(echo "$NAME" | sed '$d')
 $TEXT"
     fi
-
     NAME=$(echo "$NAME" | tail -n1)
     NAME="${NAME:0:-2}"
     if [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
       NAME="fixme"
     fi
     ;;
-  telegram)
+  api.tox)
+    :
+    ;;
+  # api.gpt)
+  api.*)
+    if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
+      TEXT="$(echo "$NAME" | sed '$d')
+$TEXT"
+    fi
+    NAME=$(echo "$NAME" | tail -n1)
+    ;;
+  telegram.*)
   # elif [[ "$9" == "telegram" ]] ; then
     if [[ "${10}" == "-1001193563578" ]] ; then
       block_msg
@@ -625,7 +637,7 @@ $M *$NAME*: "
 
 
     ;;
-  zulip)
+  zulip.*)
   # elif [[ "$9" == "zulip" ]] ; then
     if [[ "$NAME" == "C twitter: " ]]; then
       TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' )
