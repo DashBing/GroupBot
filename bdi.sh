@@ -1,6 +1,6 @@
 #!/bin/bash
 ai(){
-curl -m 300 -s -XPOST -d "$*" 127.0.0.1:6000 || exit $?
+curl -m 300 -s -XPOST -d "$*" 127.0.0.1:6002 || exit $?
 echo
 }
 
