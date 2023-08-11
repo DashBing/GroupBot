@@ -19,7 +19,14 @@ is_me(){
 
 changeai(){
     [[ -e $SH_PATH/.mode_for_${1}_${2} ]] && local m=1
-    rm $SH_PATH/.mode_for_*
+    # (cd $SH_PATH && rm .mode_* )
+    (cd $SH_PATH && {
+      for f in `ls -a|grep '^\.mode_'`;do
+        # echo $f
+        rm $f
+      done
+    }
+    )
     if [[ -n "$m" ]]; then
       echo "${1} is out"
     else
