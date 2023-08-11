@@ -95,5 +95,5 @@ fi
 run_trans $tl $opts "${@}"
 
 #[[ "$is_play" -eq 1 ]] && bash "$SH_PATH/"file_to_ipfs.sh "$file_path"
-[[ "$is_play" -eq 1 ]] && echo "https://$DOMAIN/${file_path##*/}"
+[[ "$is_play" -eq 1 ]] && echo "https://$DOMAIN/${file_path##*/}" || true
 
