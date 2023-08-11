@@ -154,6 +154,7 @@ cmds() {
     bash "$SH_PATH/bot.sh" "reset" &>/dev/null
     ;;
   gpt|GPT)
+    return 0
     exit 1
     :
   #   shift
@@ -161,11 +162,13 @@ cmds() {
   #   bash "$SH_PATH/gpt.sh" "reset" &>/dev/null
     ;;
   gptr|gt|gtz|se|img|voice)
+    return 0
     exit 1
     :
     ;;
   gptmode)
-    changeai gpt $gateway
+    return 0
+    # changeai gpt $gateway
     ;;
   botmode)
     exit 1
@@ -394,7 +397,7 @@ $qt_text"
 text=$(cmds $text 2>>"$SH_PATH/error") || {
   e=$?
   [[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
-  push_err "failed to run cmd :|$text|$text_e|$e"
+  push_err "failed to run cmd :|$text|$e|$text_e"
   exit 1
 }
 [[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
