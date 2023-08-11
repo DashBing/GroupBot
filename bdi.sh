@@ -6,8 +6,8 @@ echo
 }
 
 if [[ -z "$1" ]]; then
-  echo "google bard"
-  echo ".bdi [-notr] \$image_url[ \$str]"
+  echo "google bard 图像识别，可以自定义要求"
+  echo ".bdi [-notr] \$image_url[ \$text]"
   echo "--"
   echo "link: https://github.com/EvanZhouDev/bard-ai"
   echo "link: https://bard.google.com/"
