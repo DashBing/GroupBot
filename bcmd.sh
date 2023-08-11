@@ -434,11 +434,10 @@ E: $text_e" || {
 # echo "b1 :|$text|" >> ~/tera/mt_msg.log
 
   [[ -z "$text" ]] && exit
-  text=$(bash "$SH_PATH/gene_res.sh" "$text" $gateway)
+  # text=$(bash "$SH_PATH/gene_res.sh" "$text" $gateway)
 
 # echo "b2 :|$text|" >> ~/tera/mt_msg.log
 #  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4243/api/message)
-
 
 res=$(send "$text" 2>"$SH_PATH/error") || {
   e=$?
