@@ -394,6 +394,7 @@ E: $text_e" || { [[ -z "$text" ]] && exit 0; }
   res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4240/api/message)
 echo "res: $res"
 echo "json: $text"
+echo "res :|$res|" >> ~/tera/mt_msg.log
   if [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
 echo "res :|$res|" >> ~/tera/mt_msg.log
 date &>> ~/tera/mt_msg.log
