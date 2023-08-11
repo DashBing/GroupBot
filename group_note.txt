@@ -131,3 +131,4 @@
 #test X liqsliu: 测试引用
 #test X liqsliu: 测试引用2
 #test X liqsliu: 测试引用3\n**C bot:** X liqsliu: #test
+#faq X sun: bye|bye~
