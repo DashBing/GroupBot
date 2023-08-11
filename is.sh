@@ -1,9 +1,8 @@
 #!/bin/bash
 
 if [[ -z "$1" ]]; then
+  echo "image search"
   echo ".is \$image_url"
-# elif [[ "$2" == "on" ]]; then
-#   :
 else
   url=$1
 
