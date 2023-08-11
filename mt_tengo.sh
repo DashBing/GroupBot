@@ -348,9 +348,11 @@ telegram.*)
 #     block_msg
 #   fi
 
-  if [[ $(echo "$TEXT" | grep -c -G "^> reply_from_telegram$" ) -eq 1 ]]; then
+  # if [[ $(echo "$TEXT" | grep -c -G "^> reply_from_telegram$" ) -eq 1 ]]; then
+  if echo "$TEXT" | grep -q -G "^_reply_$"; then
     #skip nick
-    TEXT=$(echo "$TEXT" | sed '/^> reply_from_telegram$/,$d';)
+    # TEXT=$(echo "$TEXT" | sed '/^> reply_from_telegram$/,$d';)
+    TEXT=$(echo "$TEXT" | sed '/^_reply_$/,$d';)
   fi
   ;;
 zulip.*)
