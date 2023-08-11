@@ -327,16 +327,16 @@ telegram.*)
 
   fi
 
-  if [[ "$NAME" == "Group" ]]; then
-    NAME="liqsliu"
-  elif [[ "$NAME" == "‏⁠‎ l​i​q​s‏l​i​u​‎" ]]; then
-    NAME="liqsliu"
-  fi
+  # if [[ "$NAME" == "Group" ]]; then
+  #   NAME="liqsliu"
+  # elif [[ "$NAME" == "‏⁠‎ l​i​q​s‏l​i​u​‎" ]]; then
+  #   NAME="liqsliu"
+  # fi
 
-  if [[ "${TEXT:0:15}" == "Forwarded from " ]]; then
-#    TEXT=$( echo "${TEXT}" | sed -r '1s/[^:]+: //' )
-    block_msg
-  fi
+#   if [[ "${TEXT:0:15}" == "Forwarded from " ]]; then
+# #    TEXT=$( echo "${TEXT}" | sed -r '1s/[^:]+: //' )
+#     block_msg
+#   fi
 
   if [[ $(echo "$TEXT" | grep -c -G "^> reply_from_telegram$" ) -eq 1 ]]; then
     #skip nick
