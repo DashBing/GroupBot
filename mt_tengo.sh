@@ -572,10 +572,10 @@ $NAME"
     fi
 
     if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
-#       TEXT="$(echo "$NAME" | sed '$d')
-# $TEXT"
-      TEXT="$TEXT
-$(echo "$NAME" | sed '$d')"
+      TEXT="$(echo "$NAME" | sed '$d')
+$TEXT"
+#       TEXT="$TEXT
+# $(echo "$NAME" | sed '$d')"
     fi
     NAME=$(echo "$NAME" | tail -n1)
     # NAME="${NAME:0:-2}"
