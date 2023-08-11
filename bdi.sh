@@ -18,6 +18,7 @@ elif [[ "$1" = "-notr" ]]; then
 shift
 bdi "$*"
 else
-bdi "$(bash "$SH_PATH/trans.sh" -brief :en "$*")
+# bdi "$(bash "$SH_PATH/trans.sh" -brief :en "$*")
+bdi "what is it?
 Please answer in Chinese."
 fi
