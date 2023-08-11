@@ -369,7 +369,12 @@ $qt_text"
   # if [[ "${text:0:6}" == ".note " ]]; then
 #text=$(cmds $text)
 #text=$(cmds $text 2>&1)
-text=$(cmds $text 2>>"$SH_PATH/error") || exit 1
+text=$(cmds $text 2>>"$SH_PATH/error") || {
+  e=$?
+[[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
+  echo "failed to run cmd :|$text|$text_e|$e" >> ~/tera/mt_msg.log
+  exit 1
+}
 [[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
 
 [[ -n "$text_e" ]] && text="$text
