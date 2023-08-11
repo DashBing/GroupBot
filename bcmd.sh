@@ -136,7 +136,7 @@ cmds() {
     ;;
   ai|AI)
     shift
-    # bash "$SH_PATH/ai.sh" "$@" || echo "E: $?"
+    bash "$SH_PATH/ai.sh" "$@" || echo "E: $?"
     ;;
   bd|BD)
     shift
