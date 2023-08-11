@@ -327,11 +327,13 @@ telegram.*)
 
 
 
-  if [[ $(echo "$TEXT" | grep -c -G "^> reply_from_telegram$" ) -eq 1 ]]; then
+  # if [[ $(echo "$TEXT" | grep -c -G "^> reply_from_telegram$" ) -eq 1 ]]; then
+  if echo "$TEXT" | grep -q -G "^_reply_$"; then
     # QT=$( python3 "$SH_PATH/get_msg.py" reply_msg "$(echo "$TEXT" | sed '/^> reply_from_telegram$/,$d')" "$2" "$5" ) || QT=""
-    QT=""
-    [[ -z "$QT" ]] && QT=$( echo "$TEXT" | sed '0,/^> reply_from_telegram$/d' )
-    QT=$(echo "$QT" | sed '1s/^T bot: //' | sed 's/^/> /' )
+    # QT=""
+    # [[ -z "$QT" ]] && QT=$( echo "$TEXT" | sed '0,/^_reply_$/d' )
+    QT=$( echo "$TEXT" | sed '0,/^_reply_$/d' )
+    QT=$(echo "$QT" | sed '1s/^G bot: //' | sed 's/^/> /' )
 
   fi
 
@@ -365,8 +367,12 @@ discord.*)
   if echo "${NAME}" | grep -q -P ".+#[0-9]{1,4}$"; then
     NAME=${NAME%#*}
   else
-    :
-    # block_msg
+    block_msg
+  fi
+  if echo "$TEXT" | grep -q -G "^_reply_$"; then
+    QT=$( echo "$TEXT" | sed '0,/^_reply_$/d' )
+    QT=$(echo "$QT" | sed '1s/^D bot: //' | sed 's/^/> /' )
+
   fi
   if [[ "$2" == "Telegram Bridge" ]]; then
       echo -n "blockthismessage"
