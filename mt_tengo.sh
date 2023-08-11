@@ -129,6 +129,7 @@ xmpp.*)
         QT=$( echo "$QT" | sed "1s/^> /> **X ${nick}** /")
       fi
     else
+      :
     fi
     TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
   fi
