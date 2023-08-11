@@ -311,11 +311,11 @@ telegram.*)
     exit 0
   fi
 
-  if [[ "${TEXT:0:15}" == "Forwarded from " ]]; then
-    # echo -n "bot"
-    echo -n "blockthismessage"
-    exit 0
-  fi
+  # if [[ "${TEXT:0:15}" == "Forwarded from " ]]; then
+  #   # echo -n "bot"
+  #   echo -n "blockthismessage"
+  #   exit 0
+  # fi
 
 
 
