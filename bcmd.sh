@@ -134,11 +134,19 @@ cmds() {
     # shift
     bash "$SH_PATH/qy.sh" "$@" || echo "E: $?"
     ;;
-  ai|AI|bd|BD)
+  ai|AI)
     shift
     # bash "$SH_PATH/ai.sh" "$@" || echo "E: $?"
+    ;;
+  bd|BD)
+    shift
     # bash "$SH_PATH/ai.sh" "reset" &>/dev/null
     bash "$SH_PATH/bd.sh" "$@" || echo "E: $?"
+    ;;
+  bdi)
+    shift
+    # bash "$SH_PATH/ai.sh" "reset" &>/dev/null
+    bash "$SH_PATH/bdi.sh" "$@" || echo "E: $?"
     ;;
   bot|BOT)
     shift
@@ -176,6 +184,9 @@ cmds() {
   google | g)
     shift
     bash "$SH_PATH/google.sh" "$@" || echo "E: $?"
+    ;;
+  is)
+    bash "$SH_PATH/is.sh" "$@" || echo "E: $?"
     ;;
   an | ia)
     shift
