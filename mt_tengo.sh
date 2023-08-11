@@ -118,7 +118,7 @@ xmpp.*)
     elif [[ "$H" =~ ^\>\ .+\ wrote:$ ]]; then
       nick=$(echo "$QT"|head -n1|cut -d ' ' -f2)
       QT=$( echo "$QT" | sed '1d')
-      QT=$( echo "$QT" | sed "1s/^> /> X ${nick}: /")
+      QT=$( echo "$QT" | sed "1s/^> /> **X ${nick}:** /")
     elif [[ "$H" =~ ^\>\ .+:$ && "$(echo "$QT" |wc -l)" -ge 2 ]]; then
       # monocles
       if [[ "$H" =~ ^\>\ bot:$ ]]; then
@@ -126,8 +126,9 @@ xmpp.*)
       else
         nick=$(echo "$QT"|head -n1|cut -d ' ' -f2)
         QT=$( echo "$QT" | sed '1d')
-        QT=$( echo "$QT" | sed "1s/^> /> X ${nick} /")
+        QT=$( echo "$QT" | sed "1s/^> /> **X ${nick}** /")
       fi
+    else
     fi
     TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
   fi
@@ -596,55 +597,57 @@ $TEXT"
     ;;
   telegram.*)
   # elif [[ "$9" == "telegram" ]] ; then
-    if [[ "${10}" == "-1001193563578" ]] ; then
-      block_msg
-    fi
+    # if [[ "${10}" == "-1001193563578" ]] ; then
+    #   block_msg
+    # fi
 
-    if [[ "NAME" == "C twitter: " ]]; then
-      exit 0 # another bot
-    fi
-    if [[ "NAME" == "C twitter: " ]]; then
-      TEXT='.>)\`'
-    elif [[ "$3" == "api.tg" && "$11" != "gateway0" ]]; then
-      TEXT='.>)\`'
-    elif [[ $(echo "$NAME" | wc -l) -ge 3 ]]; then
-#      NAME=$(bash "$SH_PATH/text2markdown.sh" "$NAME" | tail -n1 | sed 's/ / */' | sed 's/: $/*: /' )
-      last=$(echo "$NAME" | tail -n1)
+    # if [[ "NAME" == "C twitter: " ]]; then
+    #   exit 0 # another bot
+    # fi
+    # if [[ "NAME" == "C twitter: " ]]; then
+    #   TEXT='.>)\`'
+    # elif [[ "$3" == "api.tg" && "$11" != "gateway0" ]]; then
+    #   TEXT='.>)\`'
+#     if [[ $(echo "$NAME" | wc -l) -ge 3 ]]; then
+# #      NAME=$(bash "$SH_PATH/text2markdown.sh" "$NAME" | tail -n1 | sed 's/ / */' | sed 's/: $/*: /' )
+#       last=$(echo "$NAME" | tail -n1)
+#
+#       NAME=${last%: *}
+#       P=${NAME:0:1}
+#       NAME=${NAME:2}
+#       NAME=$(bash "$SH_PATH/text2markdown.sh" "$NAME")
+#       NAME="$P *${NAME}*: "
+#
+#       qt_text=$(echo "NAME" | sed '/^> /!d' | sed 's/^> //')
+#       line1=$(echo "$qt_text" | head -n1)
+#
+#       if [[ "${line1:0:2}" == "G " || "${line1%%: *}" == "C twitter" ]]; then
+#
+#         msg_text=$(echo "${line1#*: }"; echo "$qt_text" |sed '1d')
+#         msg_text=$(echo "$msg_text" | sed -r '$s|: https://wtfipfs\.eu\.org/[a-zA-Z0-9_./?=%-]+$||')
+#
+# #        msg_sender=$(echo "NAME" | head -n1 | cut -d' ' -f3- | cut -d':' -f1 )
+#         msg_sender="${line1%%: *}"
+#         msg_sender="${line1%%:\*\* *}"
+#         msg_sender="${msg_sender#* }"
+#
+#
+#       else
+#         msg_sender="bot"
+#         if [[ $( echo "$line1" | grep -c -P '^[A-Z] .*: .*' ) -eq 1 ]]; then
+#           msg_text=$qt_text
+#         else
+#           msg_text="$P ?: $qt_text"
+#         fi
+#       fi
+#       # use user api to send msg to tg and block this TEXT to tg
+#       bash "$SH_PATH/tg.sh" settoken wtfipfs setcid "${10}" "--reply" "$msg_text" "$msg_sender" "--md" "$NAME$(bash "$SH_PATH/text2markdown.sh" "$1")"
+#       TEXT='.>)\`'
+#     else
+#       TEXT=$(bash "$SH_PATH/text2markdown.sh" "$TEXT")
+#     fi
 
-      NAME=${last%: *}
-      P=${NAME:0:1}
-      NAME=${NAME:2}
-      NAME=$(bash "$SH_PATH/text2markdown.sh" "$NAME")
-      NAME="$P *${NAME}*: "
-
-      qt_text=$(echo "NAME" | sed '/^> /!d' | sed 's/^> //')
-      line1=$(echo "$qt_text" | head -n1)
-
-      if [[ "${line1:0:2}" == "T " || "${line1%%: *}" == "C twitter" ]]; then
-
-        msg_text=$(echo "${line1#*: }"; echo "$qt_text" |sed '1d')
-        msg_text=$(echo "$msg_text" | sed -r '$s|: https://liuu\.tk/[a-zA-Z0-9_./?=%-]+$||')
-
-#        msg_sender=$(echo "NAME" | head -n1 | cut -d' ' -f3- | cut -d':' -f1 )
-        msg_sender="${line1%%: *}"
-        msg_sender="${msg_sender#* }"
-
-
-      else
-        msg_sender="bot"
-        if [[ $( echo "$line1" | grep -c -P '^[A-Z] .*: .*' ) -eq 1 ]]; then
-          msg_text=$qt_text
-        else
-          msg_text="$P ?: $qt_text"
-        fi
-      fi
-      # use user api to send msg to tg and block this TEXT to tg
-      # bash "$SH_PATH/tg.sh" settoken wtfipfs setcid "${10}" "--reply" "$msg_text" "$msg_sender" "--md" "$NAME$(bash "$SH_PATH/text2markdown.sh" "$1")"
-      # TEXT='.>)\`'
-    else
-      TEXT=$(bash "$SH_PATH/text2markdown.sh" "$TEXT")
-    fi
-
+    TEXT=$(bash "$SH_PATH/text2markdown.sh" "$TEXT")
     [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(bash "$SH_PATH/text2markdown.sh" "$(echo "$NAME" | sed '/^$/,$d')" && echo)
     NAME=$(bash "$SH_PATH/text2markdown.sh" "$(echo "$NAME" | tail -n1)")
     # echo -n "*$(echo "$NAME" | cut -d' ' -f 2- | sed '$s|: $||')*: "
@@ -653,8 +656,6 @@ $TEXT"
     NAME=${NAME%: }
     NAME="$QT
 $M *$NAME*: "
-
-
     ;;
   zulip.*)
   # elif [[ "$9" == "zulip" ]] ; then
