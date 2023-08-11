@@ -369,7 +369,7 @@ $qt_text"
   # if [[ "${text:0:6}" == ".note " ]]; then
 #text=$(cmds $text)
 #text=$(cmds $text 2>&1)
-text=$(cmds $text 2>"$SH_PATH/error") || exit 1
+text=$(cmds $text 2>>"$SH_PATH/error") || exit 1
 [[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
 
 [[ -n "$text_e" ]] && text="$text
@@ -384,14 +384,14 @@ E: $text_e" || { [[ -z "$text" ]] && exit 0; }
 
 
 
-# echo "b1 :|$text|" >> ~/tera/mt_msg.log
+echo "b1 :|$text|" >> ~/tera/mt_msg.log
 
   [[ -z "$text" ]] && exit
   text=$(bash "$SH_PATH/gene_res.sh" "$text" $gateway)
 
-# echo "b2 :|$text|" >> ~/tera/mt_msg.log
+echo "b2 :|$text|" >> ~/tera/mt_msg.log
 #  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4243/api/message)
-  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4240/api/message)
+  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4240/api/message) || echo "failed to send res :|$res|" >> ~/tera/mt_msg.log
 echo "res: $res"
 echo "json: $text"
 echo "res :|$res|" >> ~/tera/mt_msg.log
