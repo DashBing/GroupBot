@@ -555,10 +555,10 @@ $NAME"
       TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
     fi
 
-    if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
-      TEXT="$(echo "$NAME" | sed '$d')
-$TEXT"
-    fi
+#     if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
+#       TEXT="$(echo "$NAME" | sed '$d')
+# $TEXT"
+#     fi
     NAME=$(echo "$NAME" | tail -n1)
     NAME="${NAME:0:-2}"
     if [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
