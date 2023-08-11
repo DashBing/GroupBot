@@ -372,22 +372,21 @@ discord.*)
     # if [[ "${NAME##*#}" == "0000" ]]; then
   if echo "${NAME}" | grep -q -P ".+#[0-9]{1,4}$"; then
     NAME=${NAME%#*}
+  elif [[ "$3" = "discord.mydiscord2" ]]; then
+    :
+  elif [[ "$2" == "Telegram Bridge" ]]; then
+      block_msg
+#    if [[ "${TEXT:0:15}" == "Forwarded from " ]]; then
+  elif [[ "${TEXT:0:31}" == "Forwarded message from channel " ]]; then
+    block_msg
   else
     block_msg
   fi
+
   if echo "$TEXT" | grep -q -G "^_reply_$"; then
     QT=$( echo "$TEXT" | sed '0,/^_reply_$/d' )
     QT=$(echo "$QT" | sed '1s/^D bot: //' | sed 's/^/> /' )
 
-  fi
-  if [[ "$2" == "Telegram Bridge" ]]; then
-      echo -n "blockthismessage"
-      exit 0
-#    if [[ "${TEXT:0:15}" == "Forwarded from " ]]; then
-    if [[ "${TEXT:0:31}" == "Forwarded message from channel " ]]; then
-      echo -n "blockthismessage"
-      exit 0
-    fi
   fi
 
   ;;
