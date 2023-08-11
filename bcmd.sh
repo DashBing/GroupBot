@@ -353,6 +353,27 @@ fi
 
 
 
+push_err(res){
+
+  if [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
+date &>> ~/tera/mt_msg.log
+echo "res :|$res|" >> ~/tera/mt_msg.log
+    curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: $(echo "$res" | jq -r ".message") b64: $(echo $text|base64)" $gateway)" http://127.0.0.1:4240/api/message &>> ~/tera/mt_msg.log
+  elif ! echo "$res" | jq ".message"; then
+date &>> ~/tera/mt_msg.log
+echo "res :|$res|" >> ~/tera/mt_msg.log
+    curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: $res b64: $(echo $text|base64)" $gateway)" http://127.0.0.1:4240/api/message &>> ~/tera/mt_msg.log
+  else
+date &>> ~/tera/mt_msg.log
+echo "res :|$res|" >> ~/tera/mt_msg.log
+    [[ -z "$(echo "$res" | jq -r ".text")" ]] && curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: empty message" $gateway)" http://127.0.0.1:4240/api/message &>> ~/tera/mt_msg.log
+  fi
+
+
+}
+
+
+
 [[ -z "$3" ]] && exit 1
 gateway=$1
 username=$2
@@ -371,8 +392,8 @@ $qt_text"
 #text=$(cmds $text 2>&1)
 text=$(cmds $text 2>>"$SH_PATH/error") || {
   e=$?
-[[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
-  echo "failed to run cmd :|$text|$text_e|$e" >> ~/tera/mt_msg.log
+  [[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
+  push_err("failed to run cmd :|$text|$text_e|$e")
   exit 1
 }
 [[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
@@ -396,17 +417,10 @@ echo "b1 :|$text|" >> ~/tera/mt_msg.log
 
 echo "b2 :|$text|" >> ~/tera/mt_msg.log
 #  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4243/api/message)
-  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4240/api/message) || echo "failed to send res :|$res|" >> ~/tera/mt_msg.log
-echo "res: $res"
-echo "json: $text"
-echo "res :|$res|" >> ~/tera/mt_msg.log
-  if [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
-echo "res :|$res|" >> ~/tera/mt_msg.log
-date &>> ~/tera/mt_msg.log
-    curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: $(echo "$res" | jq -r ".message") b64: $(echo $text|base64)" $gateway)" http://127.0.0.1:4240/api/message &>> ~/tera/mt_msg.log
-  else
-date &>> ~/tera/mt_msg.log
-    [[ -z "$(echo "$res" | jq -r ".text")" ]] && curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "E: empty message" $gateway)" http://127.0.0.1:4240/api/message &>> ~/tera/mt_msg.log
-  fi
 
 
+res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4240/api/message) || push_err("failed to send res :|$res|")
+# echo "res: $res"
+# echo "json: $text"
+# echo "res :|$res|" >> ~/tera/mt_msg.log
+push_err(res)
