@@ -111,6 +111,12 @@ log_msg(){
 }
 
 
+
+shorter(){
+text=$(echo "$text" | sed -r  '1s/^\s*\S+\s*//' )
+}
+
+
 # date >> ~/tera/mt_msg.log
 # echo "$*" >> ~/tera/mt_msg.log
 log_msg note "$@" >> $LOG_FILE
@@ -128,23 +134,26 @@ cmd_2=$(echo "$text_1" | awk '{print $2}' )
 if echo "$cmd_1" | grep -q -P "^#\S+$"; then
   tag="$cmd_1"
   # text=$(echo " $text" | cut -d ' ' -f3-)
-  text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
+  # text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
+  shorter
   case "${cmd_2}" in
   list)
     cmd=list
-    text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
+    # text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
+    shorter
     ;;
   add)
     cmd=add
-    text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
+    # text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
+    shorter
     ;;
   del)
     cmd=del
-    text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
+    shorter
     ;;
   delete)
     cmd=delete
-    text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
+    shorter
     ;;
   *)
     [[ -z "$text" ]] && cmd=list || cmd=add
@@ -163,19 +172,19 @@ else
     ;;
   list)
     cmd=list
-    text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
+    shorter
     ;;
   add)
     cmd=add
-    text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
+    shorter
     ;;
   del)
     cmd=del
-    text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
+    shorter
     ;;
   delete)
     cmd=delete
-    text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
+    shorter
     ;;
   *)
     cmd=add
@@ -184,7 +193,7 @@ else
   esac
   if echo "$cmd_2" | grep -q -P "^#\S+$"; then
     tag="$cmd_2"
-    text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
+    shorter
   else
     tag="#default"
   fi
