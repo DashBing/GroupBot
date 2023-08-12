@@ -55,6 +55,7 @@ gpt_chat=None
 
 UA = 'Chrome Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) Apple    WebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36'
 urlre=re.compile(r'((^|https?://|\s+)((([\dA-Za-z0-9.]+-?)+\.)+[A-Za-z]+|(\d+\.){3}\d+|(\[[\da-f]*:){7}[\da-f]*\])(:\d+)?(/[^/\s]+)*/?)')
+url_md_left=re.compile(r'\[[^\]]+\]\([^\)]+')
 
 
 logger = logging.getLogger(__name__)
@@ -1501,13 +1502,25 @@ async def tg2mt_loop(gateway="test"):
 
 
 
-    if not ending:
       #  if len(text.splitlines()) > 1:
         #  last = len(text.splitlines())-2
         #  text = text.rstrip("\n"+text.splitlines()[-1])
-      urls = urlre.findall(text)
-      if urls and text.endswith(urls[-1][0]):
-        text = text.rstrip(urls[-1][0])
+    #  urls = urlre.findall(text)
+    urls = url_md_left.findall(text)
+    if urls:
+      if not ending:
+        print("last url: "+urls[-1][0])
+        if text.endswith(urls[-1][0]):
+          text = text.rstrip(urls[-1][0])
+          print(f"rstriped: {text}")
+          urls.pop(-1)
+
+    if urls:
+      for url in urls:
+        url = url[0]
+        if f"{url})" in text:
+          if not text.endswith(f"{url})"):
+            text = text.replace(f"{url})", f"{url}) ")
 
 
 

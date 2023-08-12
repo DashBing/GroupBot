@@ -54,5 +54,6 @@ else
 fi
 
 # run_trans -no-auto $tl $opts "${*}" 2>/dev/null
-run_trans $tl $opts "${*}" 2>/dev/null
+# run_trans $tl $opts "${*}" 2>/dev/null
+run_trans $tl $opts "${@}" 2>/dev/null
 

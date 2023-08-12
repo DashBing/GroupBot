@@ -61,19 +61,19 @@ cmds() {
     fi
     if [[ -e $SH_PATH/.mode_for_tr_$gateway ]]; then
       echo -n "$username"
-      bash "$SH_PATH/tr.sh" "$*" || echo "E: $?"
+      bash "$SH_PATH/tr.sh" "$text" || echo "E: $?"
     elif [[ -e $SH_PATH/.mode_for_ai_$gateway ]]; then
       echo -n "$username"
-      bash "$SH_PATH/ai.sh" "$@" || echo "E: $?"
+      bash "$SH_PATH/ai.sh" "$text" || echo "E: $?"
     elif [[ -e $SH_PATH/.mode_for_bd_$gateway ]]; then
       echo -n "$username"
-      bash "$SH_PATH/bd.sh" "$@" || echo "E: $?"
+      bash "$SH_PATH/bd.sh" "$text" || echo "E: $?"
     # elif [[ -e $SH_PATH/.mode_for_bot_$gateway ]]; then
     #   echo -n "$username"
-    #   bash "$SH_PATH/bot.sh" "$@" || echo "E: $?"
+    #   bash "$SH_PATH/bot.sh" "$text" || echo "E: $?"
     # elif [[ -e $SH_PATH/.mode_for_gpt_$gateway ]]; then
     #   echo -n "$username"
-    #   bash "$SH_PATH/gpt.sh" "$@" || echo "E: $?"
+    #   bash "$SH_PATH/gpt.sh" "$text" || echo "E: $?"
     elif bash "$SH_PATH/faq.sh" "$text" ; then
       return 0
     else
@@ -271,10 +271,14 @@ cmds() {
     echo "${2%/download}" | cut -d'/' -f5,7-
     ;;
   tr)
-    shift
+    # shift
     # bash "$SH_PATH/muxiaoguo.sh" Tn_google "$@"
     # trans -brief "${@}"
-    bash "$SH_PATH/tr.sh" "$*" || echo "E: $?"
+    # bash "$SH_PATH/tr.sh" "$*" || echo "E: $?"
+    local tmp
+    tmp=${text#\.tr}
+    tmp=${tmp# }
+    bash "$SH_PATH/tr.sh" "$tmp" || echo "E: $?"
     ;;
   trmode)
     [[ -e $SH_PATH/.mode_for_tr_$gateway ]] && rm $SH_PATH/.mode_for_tr_$gateway || touch $SH_PATH/.mode_for_tr_$gateway
