@@ -98,7 +98,8 @@ log_msg(){
   echo
   echo
   date
-  echo "#### mt ####"
+  echo "#### $1 ####"
+  shift
   # echo "msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent"
   local i=0
   for i in "$@"
@@ -112,7 +113,7 @@ log_msg(){
 
 # date >> ~/tera/mt_msg.log
 # echo "$*" >> ~/tera/mt_msg.log
-log_msg "$@" >> ~/tera/mt_msg.log
+log_msg note "$@" >> $LOG_FILE
 #
 NOTE_FILE="$SH_PATH/group_note.txt"
 
@@ -120,11 +121,11 @@ username=$1
 username=$(my_encode "$1")
 text="$2"
 [[ -z "$text" ]] && print_help && exit 0
-text=$(my_encode "$text")
-cmd_1=$(echo "$text" | awk '{print $1}' )
-cmd_2=$(echo "$text" | awk '{print $2}' )
+text_1=$(echo "$text"|head -n1)
+cmd_1=$(echo "$text_1" | awk '{print $1}' )
+cmd_2=$(echo "$text_1" | awk '{print $2}' )
 
-if [[ $(echo "$cmd_1" | grep -c -P "^#\S+$") -eq 1 ]]; then
+if echo "$cmd_1" | grep -q -P "^#\S+$"; then
   tag="$cmd_1"
   # text=$(echo " $text" | cut -d ' ' -f3-)
   text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
@@ -188,6 +189,7 @@ else
     tag="#default"
   fi
 fi
+text=$(my_encode "$text")
 
 [[ -z "$text" ]] && [[ "$cmd" != "list" ]] && echo '内容不能为空' && exit 0
 
