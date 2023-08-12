@@ -63,6 +63,9 @@ for (( ; i < 4; i++)); do
     # [[ "$username" == "C titlebot: " ]] && continue
     # [[ "$username" == "C twitter: " ]] && continue
     # [[ $(echo "$text" | wc -l) -ne 1 ]] && continue
+  qt_text=$(echo "$username" | sed '/^> /!d' | sed 's/^> //')
+[[ -n "$qt_text" ]] && qt_text="
+$qt_text"
     username=$(echo "$username" | tail -n1 )
     account=$(echo "$restmp" | jq -r ".account")
 
@@ -95,7 +98,7 @@ for (( ; i < 4; i++)); do
     # gateway=cmd
     # echo nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" >> ~/tera/mt_msg.log
     # nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" &>/dev/null &
-    nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" &>> ~/tera/mt_msg.log &
+    nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" "$qt_text" &>> ~/tera/mt_msg.log &
 
   fi
 

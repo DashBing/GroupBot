@@ -402,9 +402,7 @@ username=$2
 text=$3
 res=$4
 # username=$(echo "$restmp" | jq -r ".username")
-qt_text=$(echo "$res" | jq -r ".username" | sed '/^> /!d' | sed 's/^> //')
-[[ -n "$qt_text" ]] && qt_text="
-$qt_text"
+qt_text=$5
 
 
 
