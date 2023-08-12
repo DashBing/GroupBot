@@ -1509,15 +1509,17 @@ async def tg2mt_loop(gateway="test"):
     urls = url_md_left.findall(text)
     if urls:
       if not ending:
-        print("last url: "+urls[-1][0])
-        if text.endswith(urls[-1][0]):
-          text = text.rstrip(urls[-1][0])
+        #  url = url[-1][0]
+        url = urls[-1]
+        print("last url: "+url)
+        if text.endswith(url):
+          text = text.rstrip(url)
           print(f"rstriped: {text}")
           urls.pop(-1)
 
     if urls:
       for url in urls:
-        url = url[0]
+        #  url = url[0]
         if f"{url})" in text:
           if not text.endswith(f"{url})"):
             text = text.replace(f"{url})", f"{url}) ")
