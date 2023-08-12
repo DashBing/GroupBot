@@ -98,7 +98,7 @@ $qt_text"
     # gateway=cmd
     # echo nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" >> ~/tera/mt_msg.log
     # nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" &>/dev/null &
-    nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" "$qt_text" &>> ~/tera/mt_msg.log &
+    nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" "$qt_text" &>> ~/tera/mt_cmd.log &
 
   fi
 

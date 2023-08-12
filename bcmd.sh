@@ -368,7 +368,12 @@ _push_err(){
     if [[ "$(send "E: mt api: $msg res: $res" | jq ".message")" != "null" ]]; then
       if [[ "$(send "E: mt api: $msg res_b64: $(echo "$res"|base64)" | jq ".message")" != "null" ]]; then
         if [[ "$(send "E: can't send res to mt api: $msg" | jq ".message")" != "null" ]]; then
-          echo "E: can't send text to mt api" >> ~/tera/mt_msg.log
+          if [[ "$(send "E: can't send res to mt api, msg_b64: $(echo "$msg"|base64)" | jq ".message")" != "null" ]]; then
+            echo "E: can't send text and err msg to mt api: |$msg|$res|" >> ~/tera/mt_msg.log
+            if [[ "$(send "E: can't send res and err msg to mt api" | jq ".message")" != "null" ]]; then
+              :
+            fi
+          fi
         fi
       fi
     fi
@@ -379,7 +384,7 @@ _push_err(){
 push_err(){
   local res=$1
 
-  if ! echo "$res" | jq ".message"; then
+  if ! echo "$res" | jq ".message" &>/dev/null; then
     res=$(send "$res ") || {
       _push_err "failed to send: $res"
       exit 1
