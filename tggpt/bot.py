@@ -828,6 +828,8 @@ async def mt2tg(msg):
         if name.startswith("**C "):
             return
 
+        #  if len(username.splitlines()) > 1:
+        #    pass
         #  # need fix
         #  if "gateway11" in MT_GATEWAY_LIST:
         #      if msgd["gateway"] == "gateway1":

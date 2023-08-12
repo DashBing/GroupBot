@@ -597,17 +597,6 @@ $TEXT"
       NAME="error"
     fi
     ;;
-  api.tox)
-    :
-    ;;
-  # api.gpt)
-  api.*)
-    if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
-      TEXT="$(echo "$NAME" | sed '$d')
-$TEXT"
-    fi
-    NAME=$(echo "$NAME" | tail -n1)
-    ;;
   telegram.*)
   # elif [[ "$9" == "telegram" ]] ; then
     # if [[ "${10}" == "-1001193563578" ]] ; then
@@ -679,6 +668,21 @@ $M *$NAME*: "
       TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
     elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
       TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
+    fi
+    ;;
+  api.tox)
+    :
+    ;;
+  # api.gpt)
+  api.*)
+    return 0
+    if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
+#       TEXT="$(echo "$NAME" | sed '$d')
+# $TEXT"
+      TEXT="$TEXT
+
+$(echo "$NAME" | sed -n -e '/^> /p' -e 's/^> //')"
+      NAME=$(echo "$NAME" | tail -n1)
     fi
     ;;
   esac
