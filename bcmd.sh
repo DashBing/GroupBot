@@ -116,7 +116,10 @@ cmds() {
     fi
     ;;
   debug)
-    if [[ "$2" = "cmd" ]]; then
+      echo ".debugcmd?"
+    ;;
+  debugcmd)
+    # if [[ "$2" = "cmd" ]]; then
     [[ -e "$SH_PATH/DEBUG" ]] && {
       rm "$SH_PATH/DEBUG"
       echo "debug off"
@@ -124,9 +127,7 @@ cmds() {
       touch "$SH_PATH/DEBUG"
       echo "debug on"
     }
-    else
-      echo ".debug cmd?"
-    fi
+    # fi
     ;;
   ping)
     if [[ -z "$2" ]]; then
