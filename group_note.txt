@@ -146,3 +146,4 @@
 #test\n\nX X liqsliu: liqsliu: 
 #test\n\nC X liqsliu: bot: ok
 #test X liqsliu: \n\nbot: ok
+#test X liqsliu: \n\nbot: ok
