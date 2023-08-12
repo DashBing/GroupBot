@@ -189,7 +189,7 @@ else
     tag="#default"
   fi
 fi
-echo "finally text: $test" >> $LOG_FILE
+echo "finally text: $text" >> $LOG_FILE
 text=$(my_encode "$text")
 
 [[ -z "$text" ]] && [[ "$cmd" != "list" ]] && echo '内容不能为空' && exit 0
