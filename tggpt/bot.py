@@ -1506,7 +1506,7 @@ async def tg2mt_loop(gateway="test"):
         #  text = text.rstrip("\n"+text.splitlines()[-1])
       urls = urlre.findall(text)
       if urls and text.endswith(urls[-1][0]):
-        text.rstrip(urls[-1][0])
+        text = text.rstrip(urls[-1][0])
 
 
 
