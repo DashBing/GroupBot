@@ -680,7 +680,9 @@ $M *$NAME*: "
 # $TEXT"
       TEXT="$TEXT
 
-$(echo "$NAME" | sed -e '/^[^>]/,$!d' -e 's/^> //')"
+$(echo "$NAME" | sed -e '/^> [^>]/!d' -e 's/^> //')"
+# $(echo "$NAME" | sed -e '/^$/,$d' -e 's/^> //')"
+# $(echo "$NAME" | sed -e '/^[^>]/,$d' -e 's/^> //')"
       NAME=$(echo "$NAME" | tail -n1)
     fi
     ;;
