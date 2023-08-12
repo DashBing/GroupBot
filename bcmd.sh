@@ -115,6 +115,15 @@ cmds() {
       echo stoped
     fi
     ;;
+  debug)
+    [[ -e "$SH_PATH/DEBUG" ]] && {
+      rm "$SH_PATH/DEBUG"
+      echo "debug off"
+    } || {
+      touch "$SH_PATH/DEBUG"
+      echo "debug on"
+    }
+    ;;
   ping)
     if [[ -z "$2" ]]; then
       echo "pong"

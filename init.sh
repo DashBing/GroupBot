@@ -52,3 +52,5 @@ file_name=group_note.txt
 
 
 
+rm "$SH_PATH/DEBUG"
+rm "$SH_PATH/STOP"
