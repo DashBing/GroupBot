@@ -35,7 +35,13 @@ if [[ -z "$2" ]]; then
       if [[ "${3}" == "api.gpt" ]] ; then
         echo -n "C gpt: "
         :
+      else
+        echo -n "C fixme_$8: "
       fi
+      ;;
+    # telegram.*)
+    *)
+      :
       ;;
   esac
   echo -n $SPLIT
@@ -414,7 +420,10 @@ api.gpt)
 api.tg)
   LABLE="G"
   ;;
-mattermost.mymattermost)
+api.*)
+  LABLE="A"
+  ;;
+mattermost.*)
   LABLE="m"
   ;;
 *)
