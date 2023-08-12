@@ -843,7 +843,10 @@ async def mt2tg(msg):
         need_clean = False
 
         if text == "ping":
-          await mt_send("pong", gateway=msgd["gateway"])
+          all = 0
+          for i mtmsgsg:
+            all += len(i)
+          await mt_send(f"pong. now tasks: {len(mtmsgsg[msgd["gateway"]])}/{all}", gateway=msgd["gateway"])
           return
         if text[0:1] == ".":
           if text == ".gptmode":
@@ -858,14 +861,14 @@ async def mt2tg(msg):
           elif text == ".gpt reset":
             if no_reset.is_set():
               no_reset.clear()
-              await mt_send("waiting...", gateway=msgd["gateway"])
+              await mt_send("now tasks: {len(mtmsgsg[msgd["gateway"]])}, waiting...", gateway=msgd["gateway"])
               for g in mtmsgsg:
                 await queues[g].put((0,0,0))
               text= CLEAN
             else:
               await mt_send("waiting reset...", gateway=msgd["gateway"])
               await no_reset.wait()
-              await mt_send("reset ok", gateway=msgd["gateway"])
+              await mt_send("reset ok, now tasks: {len(mtmsgsg[msgd["gateway"]])}", gateway=msgd["gateway"])
               return
           elif text == ".gpt" or text.startswith(".gpt ") or text.startswith(".gpt\n"):
             #  need_clean = True
@@ -1018,7 +1021,7 @@ async def mt2tg(msg):
         else:
           gateways.clear()
           no_reset.set()
-          await mt_send("reset ok", gateway=msgd["gateway"])
+          await mt_send("reset ok, now tasks: {len(mtmsgsg[msgd["gateway"]])}", gateway=msgd["gateway"])
         return
 
         text = name + text
