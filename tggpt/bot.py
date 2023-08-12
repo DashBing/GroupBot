@@ -850,8 +850,9 @@ async def mt2tg(msg):
         if text == "ping":
           all = 0
           for i in mtmsgsg:
-            all += len(i)
-          await mt_send(f"pong. now tasks: {here}/{all} {mtmsgsg}", gateway=msgd["gateway"])
+            all += len(mtmsgsg[i])
+          #  await mt_send(f"pong. now tasks: {here}/{all} {mtmsgsg}", gateway=msgd["gateway"])
+          await mt_send(f"pong. now tasks: {here}/{all}", gateway=msgd["gateway"])
           return
         if text[0:1] == ".":
           if text == ".gptmode":
