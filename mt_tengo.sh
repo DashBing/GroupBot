@@ -675,7 +675,6 @@ $M *$NAME*: "
     ;;
   # api.gpt)
   api.*)
-    return 0
     if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
 #       TEXT="$(echo "$NAME" | sed '$d')
 # $TEXT"
