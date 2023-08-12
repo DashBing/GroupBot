@@ -842,6 +842,10 @@ async def mt2tg(msg):
         global queue
         need_clean = False
 
+        if msgd["gateway"] not in queues:
+          queues[msgd["gateway"]] = asyncio.PriorityQueue(maxsize=512)
+          mtmsgsg[msgd["gateway"]] = {}
+          asyncio.create_task(tg2mt_loop(msgd["gateway"]))
         here = len(mtmsgsg[msgd["gateway"]])
         if text == "ping":
           all = 0
@@ -1015,10 +1019,6 @@ async def mt2tg(msg):
             gateways[msg.id] = msgd["gateway"]
             #  mtmsgs[msg.id] = [msgd,None]
             #  if msgd["gateway"] not in mtmsgs:
-            if msgd["gateway"] not in queues:
-              queues[msgd["gateway"]] = asyncio.PriorityQueue(maxsize=512)
-              mtmsgsg[msgd["gateway"]] = {}
-              asyncio.create_task(tg2mt_loop(msgd["gateway"]))
             mtmsgsg[msgd["gateway"]][msg.id] = [msgd, None]
         else:
           gateways.clear()
