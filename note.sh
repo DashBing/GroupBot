@@ -182,13 +182,14 @@ else
     cmd_2=""
     ;;
   esac
-  if [[ $(echo "$cmd_2" | grep -c -P "^#\S+$") -eq 1 ]]; then
+  if echo "$cmd_2" | grep -q -P "^#\S+$"; then
     tag="$cmd_2"
     text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
   else
     tag="#default"
   fi
 fi
+echo "finally text: $test" >> $LOG_FILE
 text=$(my_encode "$text")
 
 [[ -z "$text" ]] && [[ "$cmd" != "list" ]] && echo '内容不能为空' && exit 0
