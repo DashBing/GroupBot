@@ -123,20 +123,21 @@ xmpp.*)
       QT=$( echo "$QT" | sed '1d')
 #    elif [[ "$(echo "$QT"|head -n1|grep -c -P '^> [a-zA-Z0-9_]+ wrote:$')" -eq "1" ]]; then
     elif [[ "$H" =~ ^\>\ .+\ wrote:$ ]]; then
-      nick=$(echo "$QT"|head -n1|cut -d ' ' -f2)
-      QT=$( echo "$QT" | sed '1d')
-      QT=$( echo "$QT" | sed "1s/^> /> **X ${nick}:** /")
+      # nick=$(echo "$H"|cut -d' ' -f2)
+      nick=$(echo "$H"|cut -d':' -f1|cut -d' ' -f2-)
+      nick=${nick% wrote}
+      QT=$( echo "$QT" | sed " -e '1d' -e 1s/^> /> X ${nick}: /")
     elif [[ "$H" =~ ^\>\ .+:$ && "$(echo "$QT" |wc -l)" -ge 2 ]]; then
       # monocles
       if [[ "$H" =~ ^\>\ bot:$ ]]; then
         QT=$( echo "$QT" | sed '1d')
       else
-        nick=$(echo "$QT"|head -n1|cut -d ' ' -f2)
-        QT=$( echo "$QT" | sed '1d')
-        QT=$( echo "$QT" | sed "1s/^> /> **X ${nick}** /")
+        # nick=$(echo "$H"|cut -d' ' -f2)
+      nick=$(echo "$H"|cut -d':' -f1|cut -d' ' -f2-)
+        QT=$( echo "$QT" | sed -e '1d' -e "1s/^> /> X ${nick}: /")
       fi
-    else
-      :
+    elif echo "$H" | grep -q -G "^> \*\*[a-zA-Z0-9] .+?:\*\* "; then
+      QT=$( echo "$QT" | sed -r "1s/^> \*\*([a-zA-Z0-9] .+?:)\*\* /> \1 /")
     fi
 
     TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
@@ -145,13 +146,14 @@ xmpp.*)
   if [[ "$2" == "wtfipfs" ]]; then
     NAME=$( echo "$TEXT" | grep -P -o '^\*\*\w+ \S+?:\*\* ')
     NAME=${NAME:2}
-    LABLE=${NAME%%\ *}
-    NAME=${NAME%:\*\*\ }
+    LABLE=${NAME%% *}
+    NAME=${NAME%:\*\* }
     NAME=${NAME#* }
-    TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
+    # TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
+    TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
   elif [[ "$2" == "bot" ]]; then
     NAME+="[xmpp]"
-    TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
+    TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
   fi
   # if [[ "$5" =~ acg|ipfsrss ]]; then
   #   :
