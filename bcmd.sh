@@ -1,7 +1,7 @@
 #!/bin/bash
 #background cmd
 
-# echo "bcmd start" >> ~/tera/mt_msg.log
+echo "bcmd start" >> $LOG_FILE
 set -f
 
 
@@ -359,7 +359,7 @@ if [[ "$1" == "just_get_reply" ]]; then
 fi
 
 # echo "arg: $*"
-# echo "bcmd arg: $*" >> ~/tera/mt_msg.log
+echo "bcmd.sh arg: $*" >> $LOG_FILE
 
 
 send(){
@@ -370,15 +370,15 @@ send(){
 _push_err(){
   local res=$1
   if [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
-    date &>> ~/tera/mt_msg.log
-    echo "res :|$res|" >> ~/tera/mt_msg.log
+    date &>> $LOG_FILE
+    echo "res :|$res|" >> $LOG_FILE
     msg=$(echo "$res" | jq ".message")
     res=$(send "E: mt api: $msg res: $res") 
     if [[ "$(send "E: mt api: $msg res: $res" | jq ".message")" != "null" ]]; then
       if [[ "$(send "E: mt api: $msg res_b64: $(echo "$res"|base64)" | jq ".message")" != "null" ]]; then
         if [[ "$(send "E: can't send res to mt api: $msg" | jq ".message")" != "null" ]]; then
           if [[ "$(send "E: can't send res to mt api, msg_b64: $(echo "$msg"|base64)" | jq ".message")" != "null" ]]; then
-            echo "E: can't send text and err msg to mt api: |$msg|$res|" >> ~/tera/mt_msg.log
+            echo "E: can't send text and err msg to mt api: |$msg|$res|" >> $LOG_FILE
             if [[ "$(send "E: can't send res and err msg to mt api" | jq ".message")" != "null" ]]; then
               :
             fi
@@ -420,7 +420,7 @@ qt_text=$5
 
 
 
-# echo "b0 :|$text|" >> ~/tera/mt_msg.log
+echo "b0 :|$text|" >> $LOG_FILE
   # if [[ "${text:0:6}" == ".note " ]]; then
 #text=$(cmds $text)
 #text=$(cmds $text 2>&1)
@@ -447,7 +447,7 @@ E: $text_e" || {
 
 
 
-# echo "b1 :|$text|" >> ~/tera/mt_msg.log
+echo "b1 :|$text|" >> $LOG_FILE
 
   [[ -z "$text" ]] && exit
   # text=$(bash "$SH_PATH/gene_res.sh" "$text" $gateway)
