@@ -136,7 +136,7 @@ xmpp.*)
       nick=$(echo "$H"|cut -d':' -f1|cut -d' ' -f2-)
         QT=$( echo "$QT" | sed -e '1d' -e "1s/^> /> X ${nick}: /")
       fi
-    elif echo "$H" | grep -q -G "^> \*\*[a-zA-Z0-9] .+?:\*\* "; then
+    elif echo "$H" | grep -q -P "^> \*\*[a-zA-Z0-9] .+?:\*\* "; then
       QT=$( echo "$QT" | sed -r "1s/^> \*\*([a-zA-Z0-9] .+?:)\*\* /> \1 /")
     fi
 
@@ -144,7 +144,7 @@ xmpp.*)
   fi
   # if [[ "$2" == "wtfipfs" ]] || [[ "$2" == " " ]]; then
   if [[ "$2" == "wtfipfs" ]]; then
-    NAME=$( echo "$TEXT" | grep -P -o '^\*\*\w+ \S+?:\*\* ')
+    NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ \S+?:\*\* ')
     NAME=${NAME:2}
     LABLE=${NAME%% *}
     NAME=${NAME%:\*\* }
