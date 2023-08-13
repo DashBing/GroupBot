@@ -66,7 +66,9 @@ del() {
   # line_num=$(grep -n -G "^$text\$" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
   line_num=$(grep -n -F "$text" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
   if [[ -n "$line_num" ]]; then
-    text=$(sed -n -e "${line_num}p" -i -e "${line_num}d" "$NOTE_FILE") && echo "已删除: $text" || echo "E: $?"
+    # text=$(sed -n -e "${line_num}p" -i -e "${line_num}d" "$NOTE_FILE") && echo "已删除: $text" || echo "E: $?"
+    text=$(sed -n "${line_num}p")
+    sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $text" || echo "E: $?"
     # sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $text" || echo "E: $?"
   else
     echo "没找到: $text"
@@ -210,7 +212,8 @@ text=$(my_encode "$text")
 case "${cmd}" in
 list)
   echo "$tag"
-  my_decode "$(grep -G "^$tag " "$NOTE_FILE" | cut -d" " -f2- | sed 's/^/\n/g')"
+  # my_decode "$(grep -G "^$tag " "$NOTE_FILE" | cut -d" " -f2- | sed 's/^/\n/g')"
+  my_decode "$(grep -F "$tag " "$NOTE_FILE" | cut -d" " -f2- | sed 's/^/\n/g')"
   ;;
 add)
   add "$tag $username$text"
