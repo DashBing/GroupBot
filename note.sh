@@ -66,7 +66,8 @@ del() {
   # line_num=$(grep -n -G "^$text\$" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
   line_num=$(grep -n -F "$text" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
   if [[ -n "$line_num" ]]; then
-    sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $text" || echo "E: $?"
+    text=$(sed -e -n "${line_num}p" -e -i "${line_num}d" "$NOTE_FILE") && echo "已删除: $text" || echo "E: $?"
+    # sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $text" || echo "E: $?"
   else
     echo "没找到: $text"
   fi
@@ -82,13 +83,14 @@ list_tags() {
 
 print_help(){
   echo "公共记事本
-用法: .note [add|del|delete|list|tag|help] \$tag [\$text]
+用法: .note [add|del|list|tag|help] \$tag [\$text]
 tag的格式：#非空白字符
 tag可以写在命令（add del list等）前面
 示例：
 列出已经在使用的tag: .note tag
 查看默认tag下的记录: .note list
 添加记录到默认tag: .note add #default some text
+添加记录到默认tag: .note #default add some text
 添加记录到默认tag: .note #default some text
 添加记录到默认tag: .note some text
 
