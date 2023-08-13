@@ -8,6 +8,7 @@ I irc频道( #wtfipfs )
 M matrix群( #wtfipfs:matrix.org )
 T tox群( 5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66 )
 D discord( https://discord.gg/G6YmQuCJFD )
+S slack( https://join.slack.com/t/liqsliu/shared_invite/zt-21707h478-2jiGCRfjPGdOVmHCOEvu8A 如果过期，请联系管理)
 ...
 C bot自动回复或推送的新闻
 
