@@ -55,16 +55,8 @@ cmds() {
   # fi
   # if [[ "${cmd:0:1}" != "." ]] && [[ "${cmd:0:1}" != "/" ]]; then
   if [[ "${cmd:0:1}" != "." ]]; then
-    if echo "$text" | tail -n1 | grep -q -G "^> "; then
-      if echo "$text" | head -n1 | grep -q -G "^> "; then
-        :
-      else
-        exit 0
-      fi
-    fi
-    if [[ -e $SH_PATH/.mode_for_tr_$gateway ]]; then
-      echo -n "$username"
-      bash "$SH_PATH/tr.sh" "$text" || echo "E: $?"
+    if bash "$SH_PATH/faq.sh" "$text" ; then
+      return 0
     elif [[ -e $SH_PATH/.mode_for_ai_$gateway ]]; then
       echo -n "$username"
       bash "$SH_PATH/ai.sh" "$text" || echo "E: $?"
@@ -77,10 +69,11 @@ cmds() {
     # elif [[ -e $SH_PATH/.mode_for_gpt_$gateway ]]; then
     #   echo -n "$username"
     #   bash "$SH_PATH/gpt.sh" "$text" || echo "E: $?"
-    elif bash "$SH_PATH/faq.sh" "$text" ; then
-      return 0
-    else
-      :
+    elif echo "$text" | tail -n1 | grep -q -G "^> " && echo "$text" | head -n1 | grep -q -G "^> "; then
+        :
+    elif [[ -e $SH_PATH/.mode_for_tr_$gateway ]]; then
+      echo -n "$username"
+      bash "$SH_PATH/tr.sh" "$text" || echo "E: $?"
     fi
     return 0
   fi
