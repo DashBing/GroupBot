@@ -140,3 +140,9 @@
 #default X liqsliu: #测试 123
 #default X liqsliu: #测试 1234
 #default X liqsliu: #测试 12345
+#测试 X liqsliu: 12345
+#浏览器 X liqsliu: 移动端\n\nT tox: Bromite不积极维护了，目前是Cromite   https://github.com/uazo/cromite
+#gfw X liqsliu: 禁止刷机\n\n两部门：生产企业应完善移动智能终端权限管理机制 预防“刷机”行为\n《通告》还强调，生产企业应完善移动智能终端权限管理机制，提升操作系统安全性，采取技术和管理措施预防在产品流通环节发生置换操作系统和安装应用软件的行为。生产企业应按照《移动智能终端应用软件预置和分发管理暂行规定》有关规定，保证预置应用软件安全合规，明示所提供预置应用软件的相关信息，履行登记、审核、监测、留存、下架等全链条管理责任，完善投诉受理制度等服务保障措施，及时处理用户投诉，落实个人信息保护责任。\n对此，工业和信息化部表示，由于移动智能终端允许用户自行安装和卸载APP，在产品流通过程中就有可能会被非法“刷机”，包括被更换操作系统或安装一些非法的APP。为避免“刷机”带来的安全风险，保护用户权益，《通告》要求生产企业完善移动智能终端权限管理机制，提升操作系统安全性，采取技术和管理措施预防“刷机”行为。\n来自央广网：https://web.archive.org/web/20230811143736/https://tech.cnr.cn/ycbd/20221215/t20221215_526095308.shtml\nBy:匿名投稿
+#gfw X liqsliu: 破解方式-河南\n\nhttps://telegra.ph/登录-Twitter关注xiaohuangbo-08-13
+#李跳跳 X liqsliu: 应该没有开源\n\nhttps://meta.appinn.net/t/topic/44039
+#faq X liqsliu: meow\n> 喵|meow~
