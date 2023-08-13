@@ -1405,10 +1405,6 @@ async def tg2mt_loop(gateway="test"):
 
     if msg.file:
       file = msg.file
-      if file.size > FILE_DOWNLOAD_MAX_BYTES:
-        await mt_send(f"文件过大，取消下载。\nfile name: {file.name}\nsize: {format_byte(file.size)}\ntype: {file.mime_type}", gateway=gateway)
-        return
-
       logger.info(file)
       if hasattr(file, "name") and file.name:
         file_name = file.name
@@ -1416,6 +1412,10 @@ async def tg2mt_loop(gateway="test"):
         logger.warning(f"W: file: no name: {file=}")
         #  file_name = "%s.%s" % (int(time.time()), "jpg")
         file_name = "%s%s" % (int(time.time()), mimetypes.guess_extension(file.mime_type))
+      res = f"\nfile name: {file_name}\nsize: {format_byte(file.size)}\ntype: {file.mime_type}"
+      if file.size > FILE_DOWNLOAD_MAX_BYTES:
+        await mt_send(f"文件过大，取消下载。${res}", gateway=gateway)
+        return
       url = f"tmp link: https://{DOMAIN}/{file_name}"
       path = f"{TMP_PATH}/{file_name}"
       try:
@@ -1430,12 +1430,12 @@ async def tg2mt_loop(gateway="test"):
         try:
           await UB.download_media(msg, path)
         except Exception as e:
-          logger.warning(f"E: start to download to mem: {repr(e)}", exc_info=True, stack_info=True)
+          logger.warning(f"W: start to download to mem: {repr(e)}", exc_info=True, stack_info=True)
           try:
             url = await UB.download_media(msg, bytes)
           except Exception as e:
             logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
-            await mt_send(f"E: failed to downlaod, error: {repr(e)}\nfile_name: {file_name}\nsize: {format_byte(file.size)}\ntype: {file.mime_type}", gateway=gateway)
+            await mt_send(f"E: failed to downlaod, error: {repr(e)}${res}", gateway=gateway)
             return
 
       try:
@@ -1471,7 +1471,7 @@ async def tg2mt_loop(gateway="test"):
 
       #  while qid != min(queue.keys()):
       #    await asyncio.sleep(2)
-      res = f"{text}\n--\n{url}\n--\nfile_name: {file_name}\nsize: {format_byte(file.size)}\n type: {file.mime_type}"
+      res = f"{text}\n--\n{url}\n--${res}"
       if qid > nid:
         mtmsgs[qid][-1] = res
         mtmsgs[qid].append(None)
