@@ -367,6 +367,9 @@ telegram.*)
     TEXT=$(echo "$TEXT" | sed '/^_reply_$/,$d';)
   fi
   ;;
+slack.*)
+  LABLE="S"
+  ;;
 zulip.*)
   LABLE="Z"
   # if [[ $(echo "$TEXT" | grep -c -P "^\[.*\]\(/user_uploads/.*\)$" ) -eq 1 ]]; then
