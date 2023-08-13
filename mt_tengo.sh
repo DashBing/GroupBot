@@ -558,6 +558,15 @@ $NAME"
       unset NAME
     fi
     ;;
+  slack.*)
+    if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
+      TEXT="$(echo "$NAME" | sed '$d')
+$TEXT"
+#       TEXT="$TEXT
+# $(echo "$NAME" | sed '$d')"
+      NAME=$(echo "$NAME" | tail -n1)
+    fi
+    ;;
   discord.*)
   # elif [[ "$9" == "discord" ]] ; then
     if [[ "${10}" == "wtfipfs" ]] ; then
@@ -593,8 +602,8 @@ $NAME"
 $TEXT"
 #       TEXT="$TEXT
 # $(echo "$NAME" | sed '$d')"
+      NAME=$(echo "$NAME" | tail -n1)
     fi
-    NAME=$(echo "$NAME" | tail -n1)
     # NAME="${NAME:0:-2}"
     if [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
       NAME="error"
