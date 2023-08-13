@@ -482,7 +482,7 @@ res=$(send "$text" 2>"$SH_PATH/error") || {
 # [[ -f "$SH_PATH/error" ]] && {
 [[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]] && {
   set -x
-  send "$text" 2>"$SH_PATH/error" 1>"$SH_PATH/out
+  send "$text" 2>"$SH_PATH/error" 1>"$SH_PATH/out"
   set +x
   r=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
   res=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
@@ -497,3 +497,4 @@ res=$(send "$text" 2>"$SH_PATH/error") || {
 # echo "json: $text"
 # echo "res :|$res|" >> ~/tera/mt_msg.log
 push_err "$res"
+
