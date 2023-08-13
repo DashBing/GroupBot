@@ -120,7 +120,7 @@ log_msg(){
 
 
 shorter(){
-text=$(echo "$text" | sed -r  '1s/^\s*\S+\s*//' )
+text=$(echo "$text" | sed -r '1s/^\s*\S+\s*//' )
 }
 
 
@@ -138,7 +138,9 @@ text_1=$(echo "$text"|head -n1)
 cmd_1=$(echo "$text_1" | awk '{print $1}' )
 cmd_2=$(echo "$text_1" | awk '{print $2}' )
 
+echo "cmd_1: $cmd_1, cmd_2: $cmd_2" >> $LOG_FILE
 if echo "$cmd_1" | grep -q -P "^#\S+$"; then
+echo "cmd_1 is a tag: $tag" >> $LOG_FILE
   tag="$cmd_1"
   # text=$(echo " $text" | cut -d ' ' -f3-)
   # text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
@@ -166,6 +168,7 @@ if echo "$cmd_1" | grep -q -P "^#\S+$"; then
     [[ -z "$text" ]] && cmd=list || cmd=add
     ;;
   esac
+
 else
   case "${cmd_1}" in
   help)
@@ -199,6 +202,7 @@ else
     ;;
   esac
   if echo "$cmd_2" | grep -q -P "^#\S+$"; then
+    echo "cmd_2 is a tag: $tag" >> $LOG_FILE
     tag="$cmd_2"
     shorter
   else
