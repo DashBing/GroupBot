@@ -35,7 +35,6 @@
 #Archive_org资源 X 笔下分海行摩西,矛锥落刺钉救主: https://archive.org/details/hamonshuyv3mori
 #有用资源或网址 X 笔下分海行摩西,矛锥落刺钉救主: http://idp.bl.uk/
 #hack T liqsliu‎: https://bafkreidfwuebmhfyvkfcpj6dizif7xyjbsydoxwp3jwc6skzitp7cmwysa.ipfs.infura-ipfs.io/?filename=20220212_150154578_82d3.txt
-#default T liqsliu: liat
 #book X liqsliu: https://share.conversations.im/hongyanzyy/h9lgWrST0yuSpp2x/20220308_125342037_54e2.pdf 备用
 #book T liqsliu: https://share.conversations.im/hongyanzyy/h9lgWrST0yuSpp2x/20220308_125342037_54e2.pdf
 #book T liqsliu: X Katherine: 这也可以做个列表\n\n秘钥集合\n\nB7P64IMWOCXWEYOXIMBX6HN5MHEULFS4V 博客💕\n BRSSYZTSAC6UGYTUOJ22L4GCO7QESPPBD 政治\n BNZ6DOA6W577O6GUNH7C3MY6DWC6FTDQB 心理学\n BSH7FXJFVWJTKWGSX5GTWX7PHZZ2D2M7Q 历史\n B2FRYA6AXCDW6CF4YJVFWKH2HAXOFICOX 经济\n B3WNBTAAFFAODFR6FQ3E3L5BBSJAFNBSJ 管理\n BZR4TTYHT25QWUIE6YNMAKWUGBHKSGLC6 社会学\n BMBB5YLBIJJAE5H6TP27OS7YCEUKCYHZK 文艺\n B6WWVBXPMZDI5IL4KED6AAHA5FO4UNKQF 哲学\n BMWWZALG4P56LREF47EE2WSWHZEM4E6BL 军事\n BUPSDXFA3TP7KCMLHALRHLIX2FEJEUJFE 信息技术IT\n BKKORLE67ZDUHGHVWAVSRK3N5I7BXLCED 科普
@@ -74,17 +73,14 @@
 #briar T liqsliu: X Katherine: briar://abicvlxkxpisujrt3aclyjhnh6xqmph5ucmppjsowjmdlstnb2mt6
 #rss T liqsliu: https://github.com/AboutRSS/ALL-about-RSS
 #app T liqsliu: https://github.com/dmitriy-ilchenko/QrAndBarcodeScanner
-#default T liqsliu: app
 #app T liqsliu: https://github.com/markusfisch/BinaryEye
 #book T liqsliu: https://t.me/wtfipfs/48380\n--\nfile: EMUI11.0安全技术白皮书V1.0.pdf\ntype: application/pdf\nsize: 2564KB
 #book T liqsliu: X Katherine: https://suchat.org:5443/upload/8221638bab44d7c313e8d70da273edcb1b01782a/NIA7NBU0e7NBxXJ7JQ2IAp4PgT2gYd0r8D5EAn7I/-zanKHs1TtBYmTnGRscg.pdf
 #book T liqsliu: https://t.me/wtfipfs/48393\n--\nfile: MIUI12隐私白皮书.pdf\ntype: application/pdf\nsize: 4320KB
 #book T liqsliu: https://suchat.org:5443/upload/8221638bab44d7c313e8d70da273edcb1b01782a/NIA7NBU0e7NBxXJ7JQ2IAp4PgT2gYd0r8D5EAn7I/--zanKHs1TtBYmTnGRscg.pdf
 #book T liqsliu: https://suchat.org:5443/upload/8221638bab44d7c313e8d70da273edcb1b01782a/NIA7NBU0e7NBxXJ7JQ2IAp4PgT2gYd0r8D5EAn7I/-zanKHs1Tt--BYmTnGRscg.pdf
-#xmpp T liqsliu: X robertverynice2008: 我发现频道推荐里没有 blabber.im，你们可以下载试试，挺好用的。
 #matrix T liqsliu: https://www.hello-matrix.net/public_servers.php
 #matrix X mzltest: #xmpp matrix对xmpp的桥接服务： #room#matrix.domain.tld@matrix.org
-#xmpp X mzltest: #matrix
 #rss T liqsliu: X mzltest: xmpp:jabrss@cmeerw.net
 #rss T liqsliu: xmpp:jabrss@jotwewe.de
 #magisk T liqsliu: 修改系统文件 build.prop 可以参考该项目自己写模块 https://github.com/wacko1805/Volume-steps-magisk
@@ -101,8 +97,6 @@
 #default X Katherine: landrop跨平台局域网互传\nhttps://xmpp.pimux.de/share.php/a707cc89-ed89-40ad-abdc-b630ccee933a/LANDrop-flutter-latest-android.apk
 #rss T liqsliu: https://github.com/ipfs/go-ipfs/releases.atom\nhttps://github.com/eycorsican/leaf/releases.atom\nhttps://github.com/42wim/matterbridge/releases.atom\nhttps://www.solidot.org/index.rss\nhttps://www.reddit.com/r/China_irl/.rss\nhttps://www.reddit.com/r/worldnews/.rss\nhttps://www.reddit.com/r/TimedNews/.rss\nhttps://github.com/v2fly/v2ray-core/releases.atom\nhttps://github.com/SagerNet/SagerNet/releases.atom\nhttps://mikanani.me/RSS/Classic\nhttps://bbs.archlinuxcn.org/extern.php?action=feed&type=rss\nhttps://jac-animation-net.blogspot.com/feeds/posts/default\nhttps://feed.appinn.com/\nhttps://theinitium.com/newsfeed/\nhttps://www.archlinux.org/feeds/news/\nhttps://zh.greatfire.org/news/blog/rss\nhttps://www.chinagfw.org/feeds/posts/default\nhttps://www.ifanr.com/feed\nhttps://www.oschina.net/news/rss\nhttps://jandan.net/feed\nhttps://www.williamlong.info/rss.xml\nhttps://www.zhihu.com/rss\nhttps://www.ptt.cc/atom/MobileComm.xml\nhttps://ruby-china.org/topics/feed\nhttps://bangumi.moe/rss/latest\nhttps://www.ptt.cc/atom/HatePolitics.xml\nhttps://coolshell.cn/feed\nhttps://www.v2ex.com/index.xml\nhttps://iyouport.substack.com/feed\nhttps://www.gcores.com/rss\nhttps://www.ptt.cc/atom/Gossiping.xml\nhttps://pypi.org/rss/project/telethon/releases.xml\nhttps://www.ptt.cc/atom/sex.xml\nhttps://sspai.com/feed\nhttps://freeweibo.com/?rss\nhttps://feeds.feedburner.com/Freewechat\nhttps://bangumi.tv/feed/blog/anime\nhttps://www.debian.org/News/news\nhttps://lineageos.org/feed.xml\nhttps://gajim.org/index.xml\n\n\nhttps://rsshub.app/telegram/channel/v2ex_rss\nhttps://rsshub.app/telegram/channel/ipfsrss\nhttps://rsshub.app/telegram/channel/iyouport\nhttps://rsshub.app/telegram/channel/JISFW\nhttps://rsshub.app/telegram/channel/Yuan_En\nhttps://rsshub.app/telegram/channel/HouXuApp\nhttps://rsshub.app/telegram/channel/illusory_world\nhttps://rsshub.app/telegram/channel/realtimenewsbroadcasts\nhttps://rsshub.app/telegram/channel/tnews365\nhttps://rsshub.app/telegram/channel/atashare\nhttps://rsshub.app/telegram/channel/readhub_cn\nhttps://rsshub.app/telegram/channel/inmediahknet\nhttps://rsshub.app/telegram/channel/freeweibo\nhttps://rsshub.app/telegram/channel/anime1notify\nhttps://rsshub.app/telegram/channel/PikPak_Share_Channel\nhttps://rsshub.app/telegram/channel/zuanke8\nhttps://rsshub.app/telegram/channel/DejavuRSS\nhttps://rsshub.app/telegram/channel/ycombinatornews\nhttps://rsshub.app/telegram/channel/SagerNet\nhttps://rsshub.app/telegram/channel/haoshufenxiang\nhttps://rsshub.app/telegram/channel/xhqcankao\nhttps://rsshub.app/telegram/channel/GetoutofChina\nhttps://rsshub.app/telegram/channel/CE_Observe\nhttps://rsshub.app/telegram/channel/thisworldfeed\nhttps://rsshub.app/telegram/channel/Funny_Videos_Clips_Kaotic\nhttps://rsshub.app/telegram/channel/milkice_portal\nhttps://rsshub.app/telegram/channel/Havoc_OS\nhttps://rsshub.app/telegram/channel/crDroidUpdates\nhttps://rsshub.app/telegram/channel/PixelExperience\nhttps://rsshub.app/telegram/channel/appinnfeed\nhttps://rsshub.app/telegram/channel/aboutrss\nhttps://rsshub.app/telegram/channel/TestFlightCN\nhttps://rsshub.app/telegram/channel/iingtw\nhttps://rsshub.app/telegram/channel/amazondrop\nhttps://rsshub.app/telegram/channel/opencfdchannel\nhttps://rsshub.app/telegram/channel/SMDNF\nhttps://rsshub.app/telegram/channel/NewlearnerChannel\nhttps://rsshub.app/telegram/channel/tginfoen\nhttps://rsshub.app/telegram/channel/lightrekt\nhttps://rsshub.app/telegram/channel/jandan_pic\nhttps://rsshub.app/telegram/channel/ednovas2\nhttps://rsshub.app/telegram/channel/gengtuqun\nhttps://rsshub.app/telegram/channel/PDFtushuguan\nhttps://rsshub.app/telegram/channel/tg_InternetSecurity\nhttps://rsshub.app/telegram/channel/landiansub\n--\nps:备份20220427
 #briar X liqsliu: briar://adueeb5yickbijda3q2eiqqqul27aynmxtoz6ruoiasr4iezhskh6
-#xmpp T liqsliu: X mzltest: xmpp:non-anon-test@chat.disroot.org?join\n--\nps:匿名频道测试
-#xmpp T liqsliu: X mzltest: xmpp:non-anon-test@chat.disroot.org?join\n--\nps:匿名频道测试
 #tools T liqsliu: LANDrop/LANDrop: Drop any files to any devices on your LAN.\nhttps://github.com/LANDrop/LANDrop
 #book T liqsliu: X Katherine: https://suchat.org:5443/upload/8221638bab44d7c313e8d70da273edcb1b01782a/OikPhCBDJBQmO1q17Iq0hSuPXJxwDtc27A3FxiZB/oK6e6HR3QFehH6C0vZ9caA.epub\n--\nps:X Katherine: *深入理解计算机系统*
 #ipfs T liqsliu: X qy: updated my script https://ipfs.io/ipfs/QmT1Ho3BanJTs5yGud9xjTjbXV35pMhbnAvAht4oKX68SN
@@ -117,7 +111,7 @@
 #tox X liqsliu: 客户端 https://tox.chat/clients.html
 #default X honeybee: tags
 #rss X honeybee: https://ptah-alexs.info/rss-bridge/?action=display&bridge=VkBridge&u=sovuche&format=Atom
-#xmpp X liqsliu: 2023年07月27日 星期四 11时15分52秒 - 纽斯新闻时间: 服务器\nhttps://jabberfr.org/inscription/\nhttps://www.jabjab.de/register\nhttps://5222.de/register/\nhttps://www.xmpp.jp/signup\nhttps://www.jabjab.de/register\nhttps://xmpp.is/account/register/xmpp_is/\nhttps://jabber.hot-chilli.net/forms/create/#new_tab\nhttps://www.suchat.org/crear-una-cuenta/\nhttps://jabb.im/reg/
+#xmpp X liqsliu: 服务器\nhttps://jabberfr.org/inscription/\nhttps://www.jabjab.de/register\nhttps://5222.de/register/\nhttps://www.xmpp.jp/signup\nhttps://www.jabjab.de/register\nhttps://xmpp.is/account/register/xmpp_is/\nhttps://jabber.hot-chilli.net/forms/create/#new_tab\nhttps://www.suchat.org/crear-una-cuenta/\nhttps://jabb.im/reg/
 #faq X liqsliu: 你是机器人|我是机器人
 #faq X liqsliu: 没人吗？|你好，该群确实没多少活人，如果您有什么问题可以直接发出来。另外，xmpp也支持保存离线消息，有人上线就会看到。
 #tox X liqsliu: **T yue weikai:** 留个toxID:282CFC0B7F8E95CF06F52070D74770CE695B7B1ED6908038169DE6E64B8DAA0CAF4A8C10C927
