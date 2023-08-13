@@ -125,7 +125,6 @@
 #ffsend X liqsliu: https://github.com/timvisee/send-instances/\n传文件实例\n\n1.https://transfer.acted.org/\n\n(支持上传单个文件最大5GB,上传文件可下载次数最多3000次，上传文件有效期最长14天)\n\n2.https://send.portailpro.net/\n\n(支持上传单个文件最大10GB,上传文件可下载次数最多100次，上传文件有效期最长30天)\n\n3.https://send.datenpost.app/\n\n(支持上传单个文件最大30GB,上传文件可下载次数最多3次，上传文件有效期最长7天)\n\n4.https://files.psu.ru/\n\n(支持上传单个文件最大16GB,上传文件可下载次数最多500次，上传文件有效期最长7天)\n\n5.https://send.cyberjake.xyz/\n\n(支持上传单个文件最大10GB,上传文件可下载次数最多100次，上传文件有效期最长30天)\n\n6.https://send.adminforge.de/\n\n(支持上传单个文件最大8GB,上传文件可下载次数最多1000次，上传文件有效期最长7天)\n\n7.https://send.ephemeral.land/\n\n(支持上传单个文件最大8GB,上传文件可下载次数最多1000次，上传文件有效期最长28天)
 #tox X liqsliu: 客户端 https://toktok.ltd/integrations
 #ffsend X liqsliu: 第三方服务列表 https://github.com/timvisee/send-instances/#instances
-#xmpp X liqsliu: 自用cheogram(自带翻译)
 #xmpp X liqsliu: 自用cheogram(自带翻译)\nhumwj: try this https://ufile.io/tsnikjlm
 #xmpp X liqsliu: 自带翻译的cheogram\n> https://ufile.io/zewvl2f4
 #test X liqsliu: 测试引用
@@ -139,12 +138,3 @@
 #orbot X liqsliu: github https://github.com/guardianproject/orbot/releases
 #tor X liqsliu: #orbot
 #xmpp X liqsliu: 客户端\n> **D shayujiang_77825:** XMPP网页端\n> \n> https://conversejs.org/fullscreen.html\n> \n> (提供较为标准协议的XMPP网页端，推荐大家使用这个网页端，不过网站默认语言是英文的，建议搭配浏览器的翻译功能使用。)\n> \n> https://mov.im/login/\n> \n> (默认语言是中文的XMPP网页端，但部分提供的XMPP协议不够标准，并且关闭网页后无法自动离线，需要手动设置离线状态。)\n> \n> XMPP电脑端下载网址\n> \n> https://gajim.org/download/#linux\n> \n> XMPP苹果端\n> \n> 苹果端应用商店搜索下载Monal，或者Siskin，那个好用用那个。\n> \n> XMPP安卓端下载网址(需要安装F-dorid下载)\n> \n> https://f-droid.org/packages/eu.siacs.conversations/
-#test\n\n> X liqsliu: C bot: ok
-#test\n\n> X liqsliu: C bot: ok
-#test\n\n> X liqsliu: C bot: ok
-#test\n\n> X liqsliu: C bot: ok
-#test\n\nX X liqsliu: liqsliu: 
-#test\n\nC X liqsliu: bot: ok
-#test X liqsliu: \n\nbot: ok
-#test X liqsliu: \n\nbot: ok
-#test X liqsliu: \n\nbot: ok
