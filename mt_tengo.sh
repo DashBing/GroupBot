@@ -118,8 +118,7 @@ xmpp.*)
 
     if [[ "$H" =~ ^\>\ .+:$ ]] && echo "$QT"|sed -n '2p'|grep -q -P '^> [0-9]{4}-[0-9]{2}-[0-9]{2}  [0-9]{2}:[0-9]{2}'; then
       QT=$( echo "$QT" | sed '2d')
-    fi
-    if [[ "$H" =~ ^\>\ bot\ wrote:$ ]]; then
+    elif [[ "$H" =~ ^\>\ bot\ wrote:$ ]]; then
       QT=$( echo "$QT" | sed '1d')
 #    elif [[ "$(echo "$QT"|head -n1|grep -c -P '^> [a-zA-Z0-9_]+ wrote:$')" -eq "1" ]]; then
     elif [[ "$H" =~ ^\>\ .+\ wrote:$ ]]; then
@@ -127,19 +126,21 @@ xmpp.*)
       nick=$(echo "$H"|cut -d':' -f1|cut -d' ' -f2-)
       nick=${nick% wrote}
       QT=$( echo "$QT" | sed " -e '1d' -e 1s/^> /> X ${nick}: /")
-    elif [[ "$H" =~ ^\>\ .+:$ && "$(echo "$QT" |wc -l)" -ge 2 ]]; then
+    elif [[ "$H" =~ ^\>\ .+:$ ]] && [[ "$(echo "$QT" |wc -l)" -ge 2 ]]; then
       # monocles
       if [[ "$H" =~ ^\>\ bot:$ ]]; then
         QT=$( echo "$QT" | sed '1d')
       else
         # nick=$(echo "$H"|cut -d' ' -f2)
-      nick=$(echo "$H"|cut -d':' -f1|cut -d' ' -f2-)
+        nick=$(echo "$H"|cut -d':' -f1|cut -d' ' -f2-)
         QT=$( echo "$QT" | sed -e '1d' -e "1s/^> /> X ${nick}: /")
       fi
-    elif echo "$H" | grep -q -P "^> \*\*[a-zA-Z0-9] .+?:\*\* "; then
-      QT=$( echo "$QT" | sed -r "1s/^> \*\*([a-zA-Z0-9] .+?:)\*\* /> \1 /")
     fi
 
+    if echo "$H" | grep -q -P "^> \*\*[a-zA-Z0-9] .+?:\*\* "; then
+      # default
+      QT=$( echo "$QT" | sed -r "1s/^> \*\*([a-zA-Z0-9] .+?:)\*\* /> \1 /")
+    fi
     TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
   fi
   # if [[ "$2" == "wtfipfs" ]] || [[ "$2" == " " ]]; then
