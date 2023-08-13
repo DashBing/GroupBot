@@ -3,7 +3,8 @@ os := import("os")
 
 
 /* if inGateway == "test" { */
-if inProtocol == "discord" {
+/* if inProtocol == "discord" { */
+if inGateway == "ipfsrss" {
 fmt := import("fmt")
 fmt.println("############")
 /* fmt.println("## START") */
@@ -26,7 +27,8 @@ msgUsername = msgText[0]
 msgText = msgText[1]
 
 /* if inGateway == "test" { */
-if inProtocol == "discord" {
+/* if inProtocol == "discord" { */
+if inGateway == "ipfsrss" {
 fmt := import("fmt")
 fmt.println("############")
 fmt.println(msgText)
