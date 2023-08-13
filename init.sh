@@ -52,5 +52,5 @@ file_name=group_note.txt
 
 
 
-rm "$SH_PATH/DEBUG"
-rm "$SH_PATH/STOP"
+rm "$SH_PATH/DEBUG" || true
+rm "$SH_PATH/STOP" || true
