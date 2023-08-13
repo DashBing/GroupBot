@@ -70,7 +70,7 @@ cmds() {
     #   echo -n "$username"
     #   bash "$SH_PATH/gpt.sh" "$text" || echo "E: $?"
     elif echo "$text" | tail -n1 | grep -q -G "^> " && echo "$text" | head -n1 | grep -q -G "^> "; then
-        :
+      return 0
     elif [[ -e $SH_PATH/.mode_for_tr_$gateway ]]; then
       echo -n "$username"
       bash "$SH_PATH/tr.sh" "$text" || echo "E: $?"
