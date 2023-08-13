@@ -66,7 +66,7 @@ del() {
   # line_num=$(grep -n -G "^$text\$" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
   line_num=$(grep -n -F "$text" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
   if [[ -n "$line_num" ]]; then
-    text=$(sed -e -n "${line_num}p" -e -i "${line_num}d" "$NOTE_FILE") && echo "已删除: $text" || echo "E: $?"
+    text=$(sed -n -e "${line_num}p" -i -e "${line_num}d" "$NOTE_FILE") && echo "已删除: $text" || echo "E: $?"
     # sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $text" || echo "E: $?"
   else
     echo "没找到: $text"
