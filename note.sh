@@ -50,7 +50,9 @@ add() {
   #if [[ $(grep -c -G "^$text\$" "$NOTE_FILE") -ge 1 ]]; then
   # if grep -q -G "^$text\$" "$NOTE_FILE"; then
   if grep -q -F "$text" "$NOTE_FILE"; then
-    echo "已存在: $text"
+    line_num=$(grep -n -F "$text" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
+    line=$(sed -n "${line_num}p" "$NOTE_FILE")
+    echo "已存在: $line"
   else
     # echo "$text";exit 0
     # echo "$1" >> "$NOTE_FILE" && echo "I: added: $(grep -G "^$1\$" "$NOTE_FILE")" || echo "E: $?"
@@ -67,8 +69,8 @@ del() {
   line_num=$(grep -n -F "$text" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
   if [[ -n "$line_num" ]]; then
     # text=$(sed -n -e "${line_num}p" -i -e "${line_num}d" "$NOTE_FILE") && echo "已删除: $text" || echo "E: $?"
-    text=$(sed -n "${line_num}p")
-    sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $text" || echo "E: $?"
+    line=$(sed -n "${line_num}p" "$NOTE_FILE")
+    sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $line" || echo "E: $?"
     # sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $text" || echo "E: $?"
   else
     echo "没找到: $text"
