@@ -435,7 +435,7 @@ echo "b0 :|$text|" >> $LOG_FILE
 text=$(cmds $text 2>"$SH_PATH/error") || {
   e=$?
 # [[ -f "$SH_PATH/error" ]] && {
-[[ -f "$SH_PATH/error" ]] && [[ -n "$($SH_PATH/error)" ]] && {
+[[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]] && {
   set -x
   cmds $text 2>"$SH_PATH/error"
   set +x
@@ -444,7 +444,8 @@ text=$(cmds $text 2>"$SH_PATH/error") || {
   push_err "E: failed to run cmd: $e|$text|$res|$r"
   exit 1
 }
-[[ -f "$SH_PATH/error" ]] && [[ -n "$($SH_PATH/error)" ]] && {
+
+[[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]] && {
   set -x
   cmds $text 2>"$SH_PATH/error"
   set +x
@@ -477,7 +478,7 @@ echo "b1 :|$text|" >> $LOG_FILE
 res=$(send "$text" 2>"$SH_PATH/error") || {
   e=$?
 # [[ -f "$SH_PATH/error" ]] && {
-[[ -f "$SH_PATH/error" ]] && [[ -n "$($SH_PATH/error)" ]] && {
+[[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]] && {
   set -x
   res=$(send "$text" 2>"$SH_PATH/error")
   set +x
