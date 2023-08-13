@@ -136,3 +136,7 @@
 #faq X sun: meow|meow~
 #faq X sun: 没人吗|该群确实没多少活人，如果您有什么问题可以直接发出来。另外，xmpp也支持保存离线消息，有人上线就会看到。
 #faq X sun: :)|:P
+#default X liqsliu: #浏览器 移动端\n\nT tox: Bromite不积极维护了，目前是Cromite   https://github.com/uazo/cromite
+#default X liqsliu: #测试 123
+#default X liqsliu: #测试 1234
+#default X liqsliu: #测试 12345
