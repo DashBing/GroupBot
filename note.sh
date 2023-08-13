@@ -48,7 +48,8 @@ add() {
 
   local text=$1
   #if [[ $(grep -c -G "^$text\$" "$NOTE_FILE") -ge 1 ]]; then
-  if grep -q -G "^$text\$" "$NOTE_FILE"; then
+  # if grep -q -G "^$text\$" "$NOTE_FILE"; then
+  if grep -q -F "$text" "$NOTE_FILE"; then
     echo "已存在: $text"
   else
     # echo "$text";exit 0
@@ -62,7 +63,8 @@ del() {
   local text=$1
   text=$(echo "$text" | cut -d '\' --output-delimiter='\\' -f 1-)
   # [[ $( echo "$text" | wc -l ) -gt 1 ]] && text=$(echo "$text" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
-  line_num=$(grep -n -G "^$text\$" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
+  # line_num=$(grep -n -G "^$text\$" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
+  line_num=$(grep -n -F "$text" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
   if [[ -n "$line_num" ]]; then
     sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $text" || echo "E: $?"
   else

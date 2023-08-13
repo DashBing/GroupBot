@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# set -x
 
 
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
@@ -31,7 +32,8 @@ get_a(){
   # faq_text=$(bash "$SH_PATH/note.sh" "" "#faq" "list")
   local text_en=$(my_encode "$1")
   # faq_text=$(grep -G "^$text|\$" "$NOTE_FILE" | cut -d "|" -f2-)
-  faq_text=$(grep -G "^#faq " "$NOTE_FILE" | cut -d ":" -f2- | grep -G "^ $text_en|" | cut -d "|" -f2-)
+  # faq_text=$(grep -G "^#faq " "$NOTE_FILE" | cut -d ":" -f2- | grep -G "^ $text_en|" | cut -d "|" -f2-)
+  faq_text=$(grep -G "^#faq " "$NOTE_FILE" | cut -d ":" -f2- | grep -F " $text_en|" | cut -d "|" -f2-)
   if [[ -z "$faq_text" ]]; then
     return 1
   else
