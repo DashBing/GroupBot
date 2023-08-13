@@ -1,6 +1,9 @@
 #!/bin/bash
 #background cmd
 
+export LOG_FILE=${LOG_FILE:-/dev/null}
+
+
 echo "bcmd start" >> $LOG_FILE
 set -f
 
@@ -431,11 +434,21 @@ echo "b0 :|$text|" >> $LOG_FILE
 #text=$(cmds $text 2>&1)
 text=$(cmds $text 2>"$SH_PATH/error") || {
   e=$?
-  [[ -f "$SH_PATH/error" ]] && r=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
+[[ -f "$SH_PATH/error" ]] && {
+  set -x
+  cmds $text 2>"$SH_PATH/error"
+  set +x
+  r=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
+}
   push_err "E: failed to run cmd: $e|$text|$res|$r"
   exit 1
 }
-[[ -f "$SH_PATH/error" ]] && text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
+[[ -f "$SH_PATH/error" ]] && {
+  set -x
+  cmds $text 2>"$SH_PATH/error"
+  set +x
+  text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
+}
 
 [[ -n "$text_e" ]] && text="$text
 --
@@ -462,7 +475,12 @@ echo "b1 :|$text|" >> $LOG_FILE
 
 res=$(send "$text" 2>"$SH_PATH/error") || {
   e=$?
-  [[ -f "$SH_PATH/error" ]] && r=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
+[[ -f "$SH_PATH/error" ]] && {
+  set -x
+  res=$(send "$text" 2>"$SH_PATH/error")
+  set +x
+  r=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
+}
   push_err "E: failed to send: $?|$text|$r"
   if [[ -n "$res" ]]; then
     push_err "$res"
