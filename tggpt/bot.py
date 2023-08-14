@@ -780,6 +780,7 @@ session = None
 async def init_aiohttp_session():
     global session
     if session is None:
+        #  session = aiohttp.ClientSession()
         session = aiohttp.ClientSession()
         logger.warning("a new session")
     else:
@@ -822,20 +823,24 @@ async def mt_read():
   while True:
     line = ""
     try:
-      async with session.get(url, timeout=0) as resp:
-        print("N: mt api init ok")
+      #  async with session.get(url, timeout=0, read_bufsize=2**20) as resp:
+        #  print("N: mt api init ok")
         #  resp.content.read()
-        async for line in resp.content:
-          #  logger.info("I: got a msg from mt api: %s", len(line))
-          #  print(f"I: original msg: %s" % line)
-          await mt2tg(line)
-        # buffer = b""
-        # async for data, end_of_http_chunk in resp.content.iter_chunks():
-          # buffer += data
-          # if end_of_http_chunk:
+        #  async for line in resp.content:
+        #    #  logger.info("I: got a msg from mt api: %s", len(line))
+        #    #  print(f"I: original msg: %s" % line)
+        #    await mt2tg(line)
+
+      async with session.get(url, timeout=0, read_bufsize=2**20*4, chunked=True) as resp:
+        print("N: mt api init ok")
+        line = b""
+        async for data, end_of_http_chunk in resp.content.iter_chunks():
+          line += data
+          if end_of_http_chunk:
             # # print(buffer)
             # await send_mt_msg_to_queue(buffer, queue)
-            # buffer = b""
+            await mt2tg(line)
+            line = b""
 
     except ClientPayloadError:
       logger.warning("mt closed, data lost")
@@ -847,9 +852,6 @@ async def mt_read():
     except Exception as e:
       logger.error(f"{e=}")
     await asyncio.sleep(3)
-
-
-
 
 
 
