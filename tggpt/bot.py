@@ -1061,7 +1061,7 @@ async def mt2tg(msg):
             #  fast_reply(muc, res, msg_type)
             #  await mt_send(res, gateway=msgd["gateway"])
             await mt_send(res, gateway=msgd["gateway"], username="titlebot")
-            return
+          return
 
 
 
