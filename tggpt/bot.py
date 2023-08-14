@@ -820,6 +820,7 @@ async def mt_read():
   session = await init_aiohttp_session()
   logger.info("start read msg from mt api...")
   while True:
+    line = ""
     try:
       async with session.get(url, timeout=0) as resp:
         print("N: mt api init ok")
@@ -837,14 +838,15 @@ async def mt_read():
             # buffer = b""
 
     except ClientPayloadError:
-      logger.warning("mt closed")
-      print("mt closed, data lost")
+      logger.warning("mt closed, data lost")
     except ClientConnectorError:
       logger.warning("mt api is not ok, retry...")
+    except ValueError as e:
+      logger.warning(f"{e=}: {line}")
+      print("W: maybe a msg is lost")
     except Exception as e:
       logger.error(f"{e=}")
-      print(f"{e=}")
-    await asyncio.sleep(8)
+    await asyncio.sleep(3)
 
 
 
