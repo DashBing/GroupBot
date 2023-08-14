@@ -1146,7 +1146,7 @@ async def mt2tg(msg):
           here = len(mtmsgsg[msgd["gateway"]])
           all = 0
           for i in mtmsgsg:
-            all += len(i)
+            all += len(mtmsgsg[i])
           no_reset.set()
           await mt_send(f"reset ok, now tasks: {here}/{all}", gateway=msgd["gateway"])
         return
