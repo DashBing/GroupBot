@@ -6,7 +6,7 @@
 from . import *  # noqa: F403
 
 import logging
-#  from functools import wraps
+from functools import wraps
 
 import json
 import base64
