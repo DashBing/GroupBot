@@ -1034,12 +1034,12 @@ async def mt2tg(msg):
           for url in urls:
             url=url[0]
             if res:
-              res+="\n🔗 %s\n%s%s" % (url, M, get_title(url))
+              res+="\n🔗 %s\n%s%s" % (url, M, await get_title(url))
             else:
               if len(urls) > 1:
-                res="[ %s urls ]\n🔗 %s\n%s%s" % (len(urls), url, M, get_title(url))
+                res="[ %s urls ]\n🔗 %s\n%s%s" % (len(urls), url, M, await get_title(url))
               else:
-                res="%s" % get_title(url)
+                res="%s" % await get_title(url)
           if res is not None:
             #  if len(urls) > 1:
             #    res="[ %s urls ]\n%s%s" % (len(urls), M, res)
