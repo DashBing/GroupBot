@@ -957,7 +957,7 @@ async def mt2tg(msg):
           elif text == ".gpt reset":
             if no_reset.is_set():
               no_reset.clear()
-              await mt_send("now tasks: {here}, waiting...", gateway=msgd["gateway"])
+              await mt_send(f"now tasks: {here}, waiting...", gateway=msgd["gateway"])
               for g in mtmsgsg:
                 await queues[g].put((0,0,0))
               text= CLEAN
@@ -965,7 +965,7 @@ async def mt2tg(msg):
               await mt_send("waiting reset...", gateway=msgd["gateway"])
               await no_reset.wait()
               here = len(mtmsgsg[msgd["gateway"]])
-              await mt_send("reset ok, now tasks: {here}", gateway=msgd["gateway"])
+              await mt_send(f"reset ok, now tasks: {here}", gateway=msgd["gateway"])
               return
           #  elif text == ".gpt" or text.startswith(".gpt ") or text.startswith(".gpt\n"):
           elif cmd == "gpt":
@@ -1148,7 +1148,7 @@ async def mt2tg(msg):
           for i in mtmsgsg:
             all += len(i)
           no_reset.set()
-          await mt_send("reset ok, now tasks: {here}/{all}", gateway=msgd["gateway"])
+          await mt_send(f"reset ok, now tasks: {here}/{all}", gateway=msgd["gateway"])
         return
 
         text = name + text
