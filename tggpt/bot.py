@@ -970,7 +970,8 @@ async def mt2tg(msg):
           #  elif text == ".gpt" or text.startswith(".gpt ") or text.startswith(".gpt\n"):
           elif cmds[1] == "gpt":
             #  need_clean = True
-            text=text[5:]
+            #  text=text[5:]
+            text = ' '.join(cmds[1:])
             if not text:
               #  await mt_send(".gpt $text", gateway=msgd["gateway"])
               await mt_send(HELP, gateway=msgd["gateway"])
@@ -978,7 +979,7 @@ async def mt2tg(msg):
           #  elif text == ".se" or text.startswith(".se "):
           elif cmds[1] == "se":
             #  need_clean = True
-            text=text[4:]
+            text = ' '.join(cmds[1:])
             if not text:
               await mt_send(".se $text", gateway=msgd["gateway"])
               return
@@ -986,14 +987,16 @@ async def mt2tg(msg):
           #  elif text == ".img" or text.startswith(".img "):
           elif cmds[1] == "img":
             #  need_clean = True
-            text=text[5:]
+            #  text=text[5:]
+            text = ' '.join(cmds[1:])
             if not text:
               await mt_send(".img $text\n--\nhttps://t.me/littleb_gptBOT", gateway=msgd["gateway"])
               return
             text="/image "+text
           #  elif text.startswith(".gtz"):
           elif cmds[1] == "gtz":
-            text=text[5:]
+            #  text=text[5:]
+            text = ' '.join(cmds[1:])
             if not text:
               await mt_send("中文专用翻译", gateway=msgd["gateway"])
               return
@@ -1001,7 +1004,8 @@ async def mt2tg(msg):
             text = f'{PROMPT_TR_ZH}“{text}”'
           #  elif text.startswith(".gt"):
           elif cmds[1] == "gt":
-            text=text[4:]
+            #  text=text[4:]
+            text = ' '.join(cmds[1:])
             if not text:
               await mt_send("gpt translate", gateway=msgd["gateway"])
               return
@@ -1009,7 +1013,8 @@ async def mt2tg(msg):
             text = f'{PROMPT_TR_MY}“{text}”'
           #  elif text.startswith(".gptr"):
           elif cmds[1] == "gptr":
-            text=text[6:]
+            #  text=text[6:]
+            text = ' '.join(cmds[1:])
             if not text:
               await mt_send("gpt translate with short prompt", gateway=msgd["gateway"])
               return
