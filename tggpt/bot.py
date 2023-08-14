@@ -1020,6 +1020,8 @@ async def mt2tg(msg):
               return
             #  need_clean = True
             text = f'{PROMPT_TR_MY_S}“{text}”'
+          else:
+            return
 
         elif msgd["gateway"] in gptmode:
           pass
