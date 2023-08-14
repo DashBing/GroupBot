@@ -1051,9 +1051,11 @@ async def mt2tg(msg):
             #  else:
             #    nick='X %s: ' % nick
             nick = msgd['username']
-            res="**C titlebot:** %s%s" % (nick, res)
+            #  res="**C titlebot:** %s%s" % (nick, res)
+            res="%s%s" % (nick, res)
             #  fast_reply(muc, res, msg_type)
-            await mt_send(res, gateway=msgd["gateway"])
+            #  await mt_send(res, gateway=msgd["gateway"])
+            await mt_send(res, gateway=msgd["gateway"], username="titlebot")
             return
 
 
