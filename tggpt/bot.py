@@ -968,7 +968,7 @@ async def mt2tg(msg):
               await mt_send("reset ok, now tasks: {here}", gateway=msgd["gateway"])
               return
           #  elif text == ".gpt" or text.startswith(".gpt ") or text.startswith(".gpt\n"):
-          elif cmds[1] == "gpt":
+          elif cmd == "gpt":
             #  need_clean = True
             #  text=text[5:]
             text = ' '.join(cmds[1:])
@@ -977,7 +977,7 @@ async def mt2tg(msg):
               await mt_send(HELP, gateway=msgd["gateway"])
               return
           #  elif text == ".se" or text.startswith(".se "):
-          elif cmds[1] == "se":
+          elif cmd == "se":
             #  need_clean = True
             text = ' '.join(cmds[1:])
             if not text:
@@ -985,7 +985,7 @@ async def mt2tg(msg):
               return
             text="/search "+text
           #  elif text == ".img" or text.startswith(".img "):
-          elif cmds[1] == "img":
+          elif cmd == "img":
             #  need_clean = True
             #  text=text[5:]
             text = ' '.join(cmds[1:])
@@ -994,7 +994,7 @@ async def mt2tg(msg):
               return
             text="/image "+text
           #  elif text.startswith(".gtz"):
-          elif cmds[1] == "gtz":
+          elif cmd == "gtz":
             #  text=text[5:]
             text = ' '.join(cmds[1:])
             if not text:
@@ -1003,7 +1003,7 @@ async def mt2tg(msg):
             #  need_clean = True
             text = f'{PROMPT_TR_ZH}“{text}”'
           #  elif text.startswith(".gt"):
-          elif cmds[1] == "gt":
+          elif cmd == "gt":
             #  text=text[4:]
             text = ' '.join(cmds[1:])
             if not text:
@@ -1012,7 +1012,7 @@ async def mt2tg(msg):
             #  need_clean = True
             text = f'{PROMPT_TR_MY}“{text}”'
           #  elif text.startswith(".gptr"):
-          elif cmds[1] == "gptr":
+          elif cmd == "gptr":
             #  text=text[6:]
             text = ' '.join(cmds[1:])
             if not text:
