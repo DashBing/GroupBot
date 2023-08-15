@@ -107,6 +107,8 @@ LOADINGS2="\n\n"+LOADING2
 loadings = (
     LOADING,
     LOADING2,
+    """思考你发送的内容...
+If the bot doesn't respond, please /new_chat before asking.""",
     "Thinking about what you sent...\nIf the bot doesn't respond, please /new_chat before asking.",
 "处理图片请求并获得响应可能需要最多5分钟，请耐心等待。",
 "It may take up to 5 minutes to process image request and give a response, please wait patiently.",
