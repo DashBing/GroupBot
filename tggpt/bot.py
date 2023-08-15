@@ -107,8 +107,9 @@ LOADINGS2="\n\n"+LOADING2
 loadings = (
     LOADING,
     LOADING2,
+    "Thinking about what you sent...\nIf the bot doesn't respond, please /new_chat before asking.",
 "处理图片请求并获得响应可能需要最多5分钟，请耐心等待。",
-"It may take up to 5 minutes to process image request and give a response, please wait patiently."
+"It may take up to 5 minutes to process image request and give a response, please wait patiently.",
 )
 
 #  UB.parse_mode = None
@@ -1615,12 +1616,20 @@ async def tg2mt_loop(gateway="test"):
 
     ending= None
     #  print("< Q: %s" % queue[qid][0]['text'])
-    if text.endswith(LOADING):
-      #  print("> gpt(未结束): %s" % text)
-      text = text.rstrip(LOADINGS)
-    elif text.endswith(LOADING2):
-      #  print("> gpt(未结束): %s" % text)
-      text = text.rstrip(LOADINGS2)
+    #  if text.endswith(LOADING):
+    #    #  print("> gpt(未结束): %s" % text)
+    #    text = text.rstrip(LOADINGS)
+    #  elif text.endswith(LOADING2):
+    #    #  print("> gpt(未结束): %s" % text)
+    #    text = text.rstrip(LOADINGS2)
+    l = text.splitlines()
+    if l[-1] in loadings:
+      if len(l) > 1 and l[-2] == "":
+        text = "\n".join(l[:-2])
+      else:
+        text = "\n".join(l[:-1])
+      if not text:
+        text = "None"
     else:
       ending = "\n\n**[结束]**"
       #  print("> gpt: %s" % text)
