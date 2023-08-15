@@ -1632,7 +1632,7 @@ async def tg2mt_loop(gateway="test"):
         text = "\n".join(l[:-1])
       if not text:
         text = "None"
-    elif f"{l[-2]}\n{l[-1]}" in loadings:
+    elif len(l) > 1 and f"{l[-2]}\n{l[-1]}" in loadings:
       if len(l) > 2 and l[-3] == "":
         text = "\n".join(l[:-3])
       else:
