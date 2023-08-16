@@ -965,8 +965,10 @@ async def mt2tg(msg):
             if no_reset.is_set():
               no_reset.clear()
               await mt_send(f"now tasks: {here}, waiting...", gateway=msgd["gateway"])
-              for g in mtmsgsg:
-                await queues[g].put((0,0,0))
+              #  for g in mtmsgsg:
+              #  for g in queues:
+              #    await mt_send(f"clean {g}...", gateway="test")
+              #    await queues[g].put((0,0,0))
               text= CLEAN
             else:
               await mt_send("waiting reset...", gateway=msgd["gateway"])
@@ -1151,7 +1153,16 @@ async def mt2tg(msg):
             #  if msgd["gateway"] not in mtmsgs:
             mtmsgsg[msgd["gateway"]][msg.id] = [msgd, None]
         else:
+          await asyncio.sleep(1)
+          #  for g in queues:
+          for g in mtmsgsg:
+            mtmsgs = mtmsgsg[g]
+            await mt_send(f"{g}: {mtmsgs=}", gateway="test")
+            mtmsgs.clear()
+            await mt_send(f"{g}: {mtmsgs=}", gateway="test")
+          await mt_send(f"{gateways=}", gateway="test")
           gateways.clear()
+          await mt_send(f"{gateways=}", gateway="test")
           here = len(mtmsgsg[msgd["gateway"]])
           all = 0
           for i in mtmsgsg:
@@ -1483,20 +1494,24 @@ async def tg2mt_loop(gateway="test"):
     #  msg_id, msg, qid = await queue.get()
     #  msg_id, msg = await queue.get()
     date, qid, msg = await queue.get()
-    if date == 0:
-      mtmsgs.clear()
-      gateways.clear()
-      logger.warning(f"W: cleared mtmsgs")
-      #  await asyncio.sleep(2)
-      #  await no_reset.wait()
-      nid = 0
-      #  last = None
-      continue
+    #  if date == 0:
+    #    await mt_send(f"{gateway}: {mtmsgs=}", gateway="test")
+    #    await mt_send(f"{gateway}: {gateways=}", gateway="test")
+    #    mtmsgs.clear()
+    #    gateways.clear()
+    #    logger.warning(f"W: cleared mtmsgs")
+    #    #  await asyncio.sleep(2)
+    #    #  await no_reset.wait()
+    #    nid = 0
+    #    #  last = None
+    #    continue
     if not no_reset.is_set():
       continue
     #  print(f"I: got: {msg=}")
     text = msg.text
     #  qid=msg.reply_to_msg_id
+    if qid not in gateways:
+      continue
     if nid == 0:
       nid = qid
       print(f"init nid to {nid}")
