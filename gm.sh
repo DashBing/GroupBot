@@ -20,7 +20,7 @@ if [[ "$res" != "[]" ]]; then
 res=$(echo "$res" | jq 'del(.[].Extra.file[0].Data)') &>/dev/null || exit 0
 export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 res=$(bash "$SH_PATH/msg_for_tox.sh" "$res" 2>&1)
-echo -n "$res"
+echo "$res"
 [[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE="$HOME/tera/mt.log" || export LOG_FILE=/dev/null
 # bash "$SH_PATH/msg_for_tox.sh" "$res" &>> $LOG_FILE
 echo bash "$SH_PATH/msg_for_tox.sh" "$res" &>> $LOG_FILE
