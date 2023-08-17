@@ -36,7 +36,8 @@ for (( ; i < 4; i++)); do
             else
               #            [[ "$gateway" == "gateway1" ]] && echo -n "$(echo "$text" | sed "s/^/$username/g")"
               # [[ "$gateway" == "gateway1" ]] && echo -n "$(bash "$SH_PATH/change_long_text.sh" "$username$text")"
-              echo -n "$(bash "$SH_PATH/change_long_text.sh" "$username$text")"
+              # echo -n "$(bash "$SH_PATH/change_long_text.sh" "$username$text")"
+              echo "$(bash "$SH_PATH/change_long_text.sh" "$username$text")"
             fi
           else
             # if [[ "$gateway" == "gateway1" ]]; then
@@ -44,13 +45,14 @@ for (( ; i < 4; i++)); do
               Comment=$(echo "$restmp" | jq -r ".Extra.file[0].Comment")
               if [[ -z "$Comment" ]]; then
   #              echo -n "$username$text$URL"
-                echo -n "$(bash "$SH_PATH/change_long_text.sh" "$username$text $URL")"
+                # echo -n "$(bash "$SH_PATH/change_long_text.sh" "$username$text $URL")"
+                echo "$(bash "$SH_PATH/change_long_text.sh" "$username$text $URL")"
               else
                 # text="$username$Comment: $URL"
-                echo -n "$(bash "$SH_PATH/change_long_text.sh" "$username$text$Comment: $URL")"
+                # echo -n "$(bash "$SH_PATH/change_long_text.sh" "$username$text$Comment: $URL")"
+                echo "$(bash "$SH_PATH/change_long_text.sh" "$username$text$Comment: $URL")"
               fi
             fi
-            text=".ipfs $URL only"
           fi
         fi
       fi
