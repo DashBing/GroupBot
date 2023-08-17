@@ -425,7 +425,7 @@ echo "b0 :|$text|" >> $LOG_FILE
   # if [[ "${text:0:6}" == ".note " ]]; then
 #text=$(cmds $text)
 #text=$(cmds $text 2>&1)
-tmp=$(cmds $text 2>"$SH_PATH/error") || {
+out=$(cmds $text 2>"$SH_PATH/error") || {
   e=$?
 # [[ -f "$SH_PATH/error" ]] && {
 [[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]] && {
@@ -440,15 +440,15 @@ tmp=$(cmds $text 2>"$SH_PATH/error") || {
 }
 
 if [[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]]; then
-  # set -x
-  # cmds $text 2>"$SH_PATH/error" 1>"$SH_PATH/out"
-  # set +x
-  # text=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
-  text=$tmp
+  [[ -e "$SH_PATH/DEBUG" ]] && {
+    set -x
+    cmds $text 2>"$SH_PATH/error" 1>"$SH_PATH/out"
+    set +x
+    tout=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
+  }
   text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
-else
-text=$tmp
 fi
+text=$out
 
 [[ -n "$text_e" ]] && text="$text
 --
