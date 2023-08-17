@@ -440,10 +440,11 @@ tmp=$(cmds $text 2>"$SH_PATH/error") || {
 }
 
 if [[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]]; then
-  set -x
-  cmds $text 2>"$SH_PATH/error" 1>"$SH_PATH/out"
-  set +x
-  text=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
+  # set -x
+  # cmds $text 2>"$SH_PATH/error" 1>"$SH_PATH/out"
+  # set +x
+  # text=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
+  text=$tmp
   text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
 else
 text=$tmp
