@@ -1132,10 +1132,11 @@ static void purge_empty_groups(Tox *m)
 
 static void gm(Tox *m, char *gmsg, size_t len)
 {
+        /** if ( gmsg[len-1] == '\n' ) */
+        /**     gmsg[len-1] = '\0'; */
+        /** len = len-1 */
     if (len >= 1)
     {
-        if ( gmsg[len-1] == '\n' )
-            gmsg[len-1] = '\0';
 
 
         /** Tox_Err_Group_Send_Message error; */
