@@ -1042,8 +1042,9 @@ async def mt2tg(msg):
           #      tmp += i+"\n"
           #  text = tmp
           #  qre.sub()
-          text = qre.sub("", text)
-          urls=urlre.findall(text)
+          #  text = qre.sub("", text)
+          #  urls=urlre.findall(text)
+          urls=urlre.findall(qre.sub("", text))
           res=None
           M='- '
           M=' ⤷ '
