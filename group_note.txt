@@ -148,3 +148,5 @@
 #faq X liqsliu: meow\n> 喵|meow~
 #解锁 X liqsliu: 华为\n\nhttps://www.52pojie.cn/thread-816065-1-1.html
 #gfw X liqsliu: phantomsocks配置 https://zh.m.wikibooks.org/wiki/Phantomsocks/%E4%BF%AE%E6%94%B9%E6%96%B9%E5%BC%8F
+#tox T xx: 找人，找群： https://tox.directory/
+#tox X liqsliu: qtox原项目停止维护，新地址 https://github.com/Zoxcore/qTox_enhanced
