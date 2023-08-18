@@ -1050,6 +1050,8 @@ async def mt2tg(msg):
           M=' ⤷ '
           for url in urls:
             url=url[0]
+            if url.startswith("https://t.me/"):
+              continue
             if res:
               res+="\n🔗 %s\n%s%s" % (url, M, await get_title(url))
             else:

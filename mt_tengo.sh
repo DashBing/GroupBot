@@ -111,6 +111,19 @@ LABLE="C"
 case $3 in
 # xmpp.myxmpp|xmpp.myxmpp2)
 xmpp.*)
+  # for ipfsrss
+  if [[ "$5" = "ipfsrss" ]]; then
+    if [[ "$2" =~ liqsliu* ]]; then
+    block_msg
+    fi
+  fi
+  # if [[ "$2" == debitcards ]]; then
+  #   block_msg
+  # elif [[ "$2" =~ *debit* ]]; then
+  #   block_msg
+  if [[ "$2" =~ *debit*card* ]]; then
+    block_msg
+  fi
   LABLE="X"
   if echo "$TEXT" | head -n1 | grep -q -P "^>" && [[ $(echo "$TEXT" | sed '/^[^>]/,$!d' | grep -c -P "^>") -eq 0 && $(echo "$TEXT" | sed -n '/^>/!p' | sed -n '/^$/!p' | wc -l) -ge 1 ]]; then
     QT=$( echo "$TEXT" | sed -n '/^> /p')
