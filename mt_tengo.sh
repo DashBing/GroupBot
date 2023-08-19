@@ -538,7 +538,7 @@ ${NAME}"
   matrix.*)
   # elif [[ "$9" == "matrix" ]] ; then
     if [[ "${5}" == "-1001193563578" ]] ; then
-      if [[ "${10}" == "#ipfs:mozilla.org" ]] ; then
+      if [[ "${10}" == "#wtfipfs:mozilla.org" ]] ; then
         block_msg
       fi
     fi
@@ -583,11 +583,13 @@ $TEXT"
     ;;
   discord.*)
   # elif [[ "$9" == "discord" ]] ; then
-    if [[ "${10}" == "ID:1049107401992843306" ]] ; then
+    if [[ "${10}" == "ID:753567017822453861" ]] ; then
+    # if [[ "${10}" == "ID:1049107401992843306" ]] ; then
       # if [[ "${3}" != "api.in" ]] ; then
-      if [[ "${5}" == "#ipfs:mozilla.org" ]] ; then
+      if [[ "${5}" == "#wtfipfs:mozilla.org" ]] ; then
         block_msg
-      elif [[ "${5}" == "-1001193563578" ]] ; then
+      elif [[ "${5}" == "-1001503043923" ]] ; then
+      # elif [[ "${5}" == "-1001193563578" ]] ; then
         block_msg
       fi
     # if [[ "${10}" == "wtfipfs" ]] ; then
