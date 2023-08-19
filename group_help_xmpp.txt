@@ -55,7 +55,9 @@ rssbot: xmpp:jabrss@cmeerw.net
 rssbot: xmpp:jabrss@jotwewe.de
 
 副频道(RSS):
-news: xmpp:ipfsrss@chat.yax.im?join
+rss/news:
+  - xmpp:wtfipfs_rss@salas.suchat.org?join
+  - xmpp:ipfsrss@chat.yax.im?join
 acg: xmpp:acg@muc.pimux.de?join
 
 关于xmpp群发言权(仅限上面这几个群)：除非该群所在的xmpp服务器不支持，否则新人进群默认身份都是有发言权的群成员。
