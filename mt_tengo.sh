@@ -184,9 +184,9 @@ xmpp.*)
 # elif [[ "$3" == "matrix.mymatrix" ]]; then
 # matrix.mymatrix)
 matrix.*)
-  if [[ "$2" == "coybot beta" ]]; then
-    block_msg
-  fi
+  # if [[ "$2" == "coybot beta" ]]; then
+  #   block_msg
+  # fi
   LABLE="M"
 #  log_msg "$@" &>> ~/tera/mt.log
 
@@ -583,14 +583,16 @@ $TEXT"
     ;;
   discord.*)
   # elif [[ "$9" == "discord" ]] ; then
-    if [[ "${10}" == "wtfipfs" ]] ; then
+    # if [[ "${10}" == "wtfipfs" ]] ; then
+    if [[ "${10}" == "ID:753567017822453861" ]] ; then
       if [[ "${5}" == "#wtfipfs:matrix.org" ]] ; then
         block_msg
       elif [[ "${5}" == "-1001503043923" ]] ; then
         # new wtfipfs tg group
         block_msg
       fi
-    elif [[ "${10}" == "wtfipfs2" ]] ; then
+    # elif [[ "${10}" == "wtfipfs2" ]] ; then
+    elif [[ "${10}" == "ID:1049107401992843306" ]] ; then
       # if [[ "${3}" != "api.in" ]] ; then
       if [[ "${5}" == "#ipfs:mozilla.org" ]] ; then
         block_msg
