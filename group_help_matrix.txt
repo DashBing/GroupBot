@@ -9,11 +9,13 @@ rss:
   - matrix: @liqsliu:matrix.org (不常用matrix)
   - xmpp: liqsliu@suchat.org
 
+
+
 第三方(非本频道管理，无管理)镜像频道:
   - #xmpp_ipfs_salas.suchat.org:matrix.org <=> xmpp( ipfs@salas.suchat.org )
   - #_bifrost_ipfs_salas.suchat.org:aria-net.org <=> xmpp( ipfs@salas.suchat.org )
 
-
+matrix官方桥: https://ems-docs.element.io/books/element-cloud-documentation/page/public-slack-bridge
 关于matrix官方桥的介绍: https://github.com/matrix-org/matrix-bifrost/wiki/Address-syntax
 第三方维护的桥: 
 https://aria-net.org/SitePages/Portal/Bridges.aspx
