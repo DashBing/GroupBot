@@ -1,12 +1,10 @@
 主群: 
-#wtfipfs:matrix.org <=> discord( https://discord.gg/G6YmQuCJFD )
+#wtfipfs:matrix.org
 
-备用镜像群: #ipfs:mozilla.org => telegram ( @wtfipfs 无管理)
 
 rss: 
   新闻: #ipfsrss:matrix.org <=> discord
   ACG:  #acgchinese:matrix.org <=> discord
-
 
 A => B : 在A群会生成傀儡用户模仿B群用户发消息
 
