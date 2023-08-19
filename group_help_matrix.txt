@@ -1,18 +1,18 @@
 主群: 
 #wtfipfs:matrix.org
 
+非官服备用群：
+#ipfs:mozilla.org
+
 
 rss: 
-  新闻: #ipfsrss:matrix.org <=> discord
-  ACG:  #acgchinese:matrix.org <=> discord
-
-A => B : 在A群会生成傀儡用户模仿B群用户发消息
+  新闻: #ipfsrss:matrix.org
+  ACG:  #acgchinese:matrix.org
 
 群组管理:
-@liqsliu:matrix.org
+@liqsliu:matrix.org (不常用matrix)
 
 第三方(非本频道管理，无管理)镜像频道:
-#wtfipfs:libera.chat <=> irc( #wtfipfs )
 #xmpp_ipfs_salas.suchat.org:matrix.org <=> xmpp( ipfs@salas.suchat.org )
 #_bifrost_ipfs_salas.suchat.org:aria-net.org <=> xmpp( ipfs@salas.suchat.org )
 
