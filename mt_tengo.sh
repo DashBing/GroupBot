@@ -462,8 +462,13 @@ if echo "$QT" | tail -n1 | grep -q -G "^$"; then
 fi
 
 
-if [[ $11 = "gateway1" ]] && { [[ $6 = rss ]] && [[ $6 = acg ]]; }; then
-  NAME+='[rss]'
+# if [[ $11 = "gateway1" ]] && { [[ $6 = rss ]] || [[ $6 = acg ]]; }; then
+if [[ $11 = "gateway1" ]] && { [[ $5 = wtfipfs_rss ]] || [[ $5 = acg ]]; }; then
+  if [[ "$2" = bot ]] || [[ "$2" = wtfipfs ]]; then
+    block_msg
+  else
+    NAME+='[rss]'
+  fi
 fi
 
 if [[ "$LABLE" == "0" ]]; then
