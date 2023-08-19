@@ -462,7 +462,7 @@ if echo "$QT" | tail -n1 | grep -q -G "^$"; then
 fi
 
 
-if [[ $11 = "gateway1" ]] && { [[ $6 = wtfipfs_rss ]] && [[ $6 = acg ]]; }; then
+if [[ $11 = "gateway1" ]] && { [[ $6 = rss ]] && [[ $6 = acg ]]; }; then
   NAME+='[rss]'
 fi
 
