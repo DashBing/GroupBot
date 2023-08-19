@@ -256,6 +256,8 @@ chang_name_from_bifrost(){
     elif [[ "${matrix_name:0:9}" == "telegram_" ]]; then
       block_msg
       LABLE="T"
+    elif [[ "${matrix_name}" == "telegram:t2bot.io" ]]; then
+      block_msg
     fi
   else
     return 1
