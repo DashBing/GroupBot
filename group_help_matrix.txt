@@ -1,5 +1,4 @@
 主群: 
-#wtfipfs:matrix.org <=> irc( #wtfipfs )
 #wtfipfs:matrix.org <=> discord( https://discord.gg/G6YmQuCJFD )
 
 备用镜像群: #ipfs:mozilla.org => telegram ( @wtfipfs 无管理)
@@ -24,7 +23,3 @@ A => B : 在A群会生成傀儡用户模仿B群用户发消息
 第三方维护的桥: 
 https://aria-net.org/SitePages/Portal/Bridges.aspx
 https://t2bot.io/
-
-
-友情链接: https://matrix.to/#/#serverless:encom.eu.org
-友情链接: https://matrix.to/#/#wallcountry:matrix.org 

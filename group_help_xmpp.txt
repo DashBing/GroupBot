@@ -74,10 +74,3 @@ acg: xmpp:acg@muc.pimux.de?join
 xmpp:#wtfipfs#matrix.org@matrix.org?join 
 xmpp:#ipfs#mozilla.org@matrix.org?join 
 xmpp:#wtfipfs#matrix.org@aria-net.org?join 
-
-友情链接(提前声明：无任何利益相关，不对它们做任何担保，有任何问题请找他们群组的管理):
-xmpp:红岸青芽外部交流群@conference.conversations.im?join
-xmpp:chinese@conference.07f.de?join
-xmpp:#btsync#matrix.org@aria-net.org?join
-xmpp:#wallcountry#matrix.org@aria-net.org?join v
-
