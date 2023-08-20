@@ -185,7 +185,7 @@ if [[ $5 = wtfipfs_rss ]] || [[ $5 = acg ]]; then
     fi
   else
     if [[ "$2" = wtfipfs ]] || [[ "$2" = bot ]]; then
-      if [[ $5 = wtfipfs_rss ]]
+      if [[ $5 = wtfipfs_rss ]]; then
         NAME=news
       elif [[ $5 = acg ]]; then
         NAME=acg
