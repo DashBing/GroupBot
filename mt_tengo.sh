@@ -112,11 +112,11 @@ case $3 in
 # xmpp.myxmpp|xmpp.myxmpp2)
 xmpp.*)
   # for ipfsrss
-  if [[ "$5" = "ipfsrss" ]]; then
-    if [[ "$2" =~ liqsliu* ]]; then
-    block_msg
-    fi
-  fi
+  # if [[ "$5" = "wtfipfs_rss" ]]; then
+  #   if [[ "$2" =~ liqsliu* ]]; then
+  #   block_msg
+  #   fi
+  # fi
   # if [[ "$2" == debitcards ]]; then
   #   block_msg
   # elif [[ "$2" =~ *debit* ]]; then
@@ -173,6 +173,26 @@ xmpp.*)
   #   :
   #   NAME+="[rss]"
   # fi
+
+# if [[ ${11} = "gateway1" ]] && { [[ $5 = wtfipfs_rss ]] || [[ $5 = acg ]]; }; then
+# if [[ ${11} = "gateway1" ]] && [[ $5 = wtfipfs_rss ]]; then
+if [[ $5 = wtfipfs_rss ]] || [[ $5 = acg ]]; then
+  if [[ ${11} = "gateway1" ]]; then
+    if [[ "$2" = wtfipfs ]]; then
+      block_msg
+    else
+      NAME+='[rss]'
+    fi
+  else
+    if [[ "$2" = wtfipfs ]] || [[ "$2" = bot ]]; then
+      if [[ $5 = wtfipfs_rss ]]
+        NAME=news
+      elif [[ $5 = acg ]]; then
+        NAME=acg
+      fi
+    fi
+  fi
+fi
 
   # if [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
   if [[ -z "$NAME" ]]; then
@@ -461,17 +481,6 @@ if echo "$QT" | tail -n1 | grep -q -G "^$"; then
   QT=$( echo "$QT" | sed '$d')
 fi
 
-
-# if [[ $11 = "gateway1" ]] && { [[ $6 = rss ]] || [[ $6 = acg ]]; }; then
-if [[ ${11} = "gateway1" ]] && { [[ $5 = wtfipfs_rss ]] || [[ $5 = acg ]]; }; then
-# if [[ ${11} = "gateway1" ]] && [[ $5 = wtfipfs_rss ]]; then
-  # if [[ "$2" = bot ]] || [[ "$2" = wtfipfs ]]; then
-  if [[ "$2" = wtfipfs ]]; then
-    block_msg
-  else
-    NAME+='[rss]'
-  fi
-fi
 
 if [[ "$LABLE" == "0" ]]; then
 # echo -n "${NAME}: "
