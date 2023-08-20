@@ -463,8 +463,10 @@ fi
 
 
 # if [[ $11 = "gateway1" ]] && { [[ $6 = rss ]] || [[ $6 = acg ]]; }; then
-if [[ $11 = "gateway1" ]] && { [[ $5 = wtfipfs_rss ]] || [[ $5 = acg ]]; }; then
-  if [[ "$2" = bot ]] || [[ "$2" = wtfipfs ]]; then
+if [[ ${11} = "gateway1" ]] && { [[ $5 = wtfipfs_rss ]] || [[ $5 = acg ]]; }; then
+# if [[ ${11} = "gateway1" ]] && [[ $5 = wtfipfs_rss ]]; then
+  # if [[ "$2" = bot ]] || [[ "$2" = wtfipfs ]]; then
+  if [[ "$2" = wtfipfs ]]; then
     block_msg
   else
     NAME+='[rss]'
