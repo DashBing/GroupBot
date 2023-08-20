@@ -96,6 +96,30 @@ else
   fi
 fi
 
+if [[ $5 = wtfipfs_rss ]] || [[ $5 = acg ]]; then
+  if [[ ${11} = "gateway1" ]]; then
+    if [[ "$2" = wtfipfs ]]; then
+      block_msg
+    else
+      NAME+='[rss]'
+    fi
+  else
+    # if [[ "$2" = wtfipfs ]] || [[ "$2" = bot ]]; then
+    if [[ "$2" = wtfipfs ]]; then
+      # if [[ $5 = wtfipfs_rss ]]; then
+      #   NAME=news
+      # elif [[ $5 = acg ]]; then
+      #   NAME=acg
+      # fi
+      # NAME=$(echo "$TEXT"|head -n1 | cut -d ' ' -f2)
+      TEXT=$( echo "$TEXT" | sed -e '1s/^\[\s*/**/' -e '1s/\s*\]$/**/')
+      echo -n $SPLIT
+      echo -n "$TEXT"
+      exit 0
+    fi
+  fi
+fi
+
 LABLE="C"
 
 
@@ -176,29 +200,6 @@ xmpp.*)
 
 # if [[ ${11} = "gateway1" ]] && { [[ $5 = wtfipfs_rss ]] || [[ $5 = acg ]]; }; then
 # if [[ ${11} = "gateway1" ]] && [[ $5 = wtfipfs_rss ]]; then
-if [[ $5 = wtfipfs_rss ]] || [[ $5 = acg ]]; then
-  if [[ ${11} = "gateway1" ]]; then
-    if [[ "$2" = wtfipfs ]]; then
-      block_msg
-    else
-      NAME+='[rss]'
-    fi
-  else
-    # if [[ "$2" = wtfipfs ]] || [[ "$2" = bot ]]; then
-    if [[ "$2" = wtfipfs ]]; then
-      # if [[ $5 = wtfipfs_rss ]]; then
-      #   NAME=news
-      # elif [[ $5 = acg ]]; then
-      #   NAME=acg
-      # fi
-      # NAME=$(echo "$TEXT"|head -n1 | cut -d ' ' -f2)
-      TEXT=$( echo "$TEXT" | sed -e '1s/^\[\s*/**/' -e '1s/\s*\]$/**/')
-      echo -n $SPLIT
-      echo -n "$TEXT"
-      exit 0
-    fi
-  fi
-fi
 
   # if [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
   if [[ -z "$NAME" ]]; then
