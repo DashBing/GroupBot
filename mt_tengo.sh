@@ -96,6 +96,10 @@ else
   fi
 fi
 
+# if [[ "$5" =~ acg|ipfsrss ]]; then
+#   :
+#   NAME+="[rss]"
+# fi
 if [[ $5 = wtfipfs_rss ]] || [[ $5 = acg ]]; then
   if [[ ${11} = "gateway1" ]]; then
     if [[ "$2" = wtfipfs ]]; then
@@ -176,10 +180,11 @@ xmpp.*)
 
     if echo "$H" | grep -q -P "^> \*\*[a-zA-Z0-9] .+?:\*\* "; then
       # default
-      QT=$( echo "$QT" | sed -r '1s/^> \*\*([a-zA-Z0-9] .+?:)\*\* /> \\1 /')
+      QT=$( echo "$QT" | sed -r '1s/^> \*\*([a-zA-Z0-9] .+?:)\*\* /> \1 /')
     fi
     TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
   fi
+
   # if [[ "$2" == "wtfipfs" ]] || [[ "$2" == " " ]]; then
   if [[ "$2" == "wtfipfs" ]]; then
     NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ \S+?:\*\* ')
@@ -193,10 +198,6 @@ xmpp.*)
     NAME+="[xmpp]"
     TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
   fi
-  # if [[ "$5" =~ acg|ipfsrss ]]; then
-  #   :
-  #   NAME+="[rss]"
-  # fi
 
 # if [[ ${11} = "gateway1" ]] && { [[ $5 = wtfipfs_rss ]] || [[ $5 = acg ]]; }; then
 # if [[ ${11} = "gateway1" ]] && [[ $5 = wtfipfs_rss ]]; then
