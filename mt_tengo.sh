@@ -138,7 +138,7 @@ xmpp.*)
       # nick=$(echo "$H"|cut -d' ' -f2)
       nick=$(echo "$H"|cut -d':' -f1|cut -d' ' -f2-)
       nick=${nick% wrote}
-      QT=$( echo "$QT" | sed " -e '1d' -e 1s/^> /> X ${nick}: /")
+      QT=$( echo "$QT" | sed -e '1d' -e '1s/^> /> X '"${nick}"': /')
     elif [[ "$H" =~ ^\>\ .+:$ ]] && [[ "$(echo "$QT" |wc -l)" -ge 2 ]]; then
       # monocles
       if [[ "$H" =~ ^\>\ bot:$ ]]; then
@@ -146,13 +146,13 @@ xmpp.*)
       else
         # nick=$(echo "$H"|cut -d' ' -f2)
         nick=$(echo "$H"|cut -d':' -f1|cut -d' ' -f2-)
-        QT=$( echo "$QT" | sed -e '1d' -e "1s/^> /> X ${nick}: /")
+        QT=$( echo "$QT" | sed -e '1d' -e '1s/^> /> X '"${nick}"': /')
       fi
     fi
 
     if echo "$H" | grep -q -P "^> \*\*[a-zA-Z0-9] .+?:\*\* "; then
       # default
-      QT=$( echo "$QT" | sed -r "1s/^> \*\*([a-zA-Z0-9] .+?:)\*\* /> \1 /")
+      QT=$( echo "$QT" | sed -r '1s/^> \*\*([a-zA-Z0-9] .+?:)\*\* /> \\1 /')
     fi
     TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
   fi
@@ -184,12 +184,18 @@ if [[ $5 = wtfipfs_rss ]] || [[ $5 = acg ]]; then
       NAME+='[rss]'
     fi
   else
-    if [[ "$2" = wtfipfs ]] || [[ "$2" = bot ]]; then
-      if [[ $5 = wtfipfs_rss ]]; then
-        NAME=news
-      elif [[ $5 = acg ]]; then
-        NAME=acg
-      fi
+    # if [[ "$2" = wtfipfs ]] || [[ "$2" = bot ]]; then
+    if [[ "$2" = wtfipfs ]]; then
+      # if [[ $5 = wtfipfs_rss ]]; then
+      #   NAME=news
+      # elif [[ $5 = acg ]]; then
+      #   NAME=acg
+      # fi
+      # NAME=$(echo "$TEXT"|head -n1 | cut -d ' ' -f2)
+      TEXT=$( echo "$TEXT" | sed -e '1s/^\[\s*/**/' -e '1s/\s*\]$/**/')
+      echo -n $SPLIT
+      echo -n "$TEXT"
+      exit 0
     fi
   fi
 fi
