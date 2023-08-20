@@ -69,7 +69,8 @@ TMP_PATH=HOME+"/tera/tmp"
 gpt_chat=None
 
 UA = 'Chrome Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) Apple    WebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36'
-urlre=re.compile(r'((^|https?://|\s+)((([\dA-Za-z0-9.]+-?)+\.)+[A-Za-z]+|(\d+\.){3}\d+|(\[[\da-f]*:){7}[\da-f]*\])(:\d+)?(/[^/\s]+)*/?)')
+#  urlre=re.compile(r'((^|https?://|\s+)((([\dA-Za-z0-9.]+-?)+\.)+[A-Za-z]+|(\d+\.){3}\d+|(\[[\da-f]*:){7}[\da-f]*\])(:\d+)?(/[^/\s]+)*/?)')
+urlre=re.compile(r'((https?://)?((([\dA-Za-z0-9.]+-?)+\.)+[A-Za-z]+|(\d+\.){3}\d+|(\[[\da-f]*:){7}[\da-f]*\])(:\d+)?(/[^/\s]+)*/?)')
 url_md_left=re.compile(r'\[[^\]]+\]\([^\)]+')
 
 qre = re.compile(r'^(>( .+)?)$', re.M)
@@ -1051,14 +1052,17 @@ async def mt2tg(msg):
           for url in urls:
             url=url[0]
             if url.startswith("https://t.me/"):
-              continue
-            if res:
-              res+="\n🔗 %s\n%s%s" % (url, M, await get_title(url))
-            else:
-              if len(urls) > 1:
-                res="[ %s urls ]\n🔗 %s\n%s%s" % (len(urls), url, M, await get_title(url))
-              else:
+              return
+            if url.startswith("https://conversations.im/j/"):
+              return
+            if url.startswith("https://icq.im"):
+              return
+            if not res:
+              if len(urls) == 1:
                 res="%s" % await get_title(url)
+                break
+              res="[ %s urls ]" % len(urls)
+            res+="\n🔗 %s\n%s%s" % (url, M, await get_title(url))
           if res is not None:
             #  if len(urls) > 1:
             #    res="[ %s urls ]\n%s%s" % (len(urls), M, res)
