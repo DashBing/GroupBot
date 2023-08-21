@@ -1549,9 +1549,10 @@ async def tg2mt_loop(gateway="test"):
       if len(mtmsgs) > 2:
         for i in mtmsgs:
           if mtmsgs[i][0]["text"] == mtmsgs[qid][0]["text"]:
-            for q in mtmsgs.copy():
-              if q != qid:
-                mtmsgs.pop(q)
+            async with queue_lock:
+              for q in mtmsgs.copy():
+                if q != qid:
+                  mtmsgs.pop(q)
             if len(mtmsgs) == 1:
               await mt_send("已清理历史任务，切换到最新任务..", gateway=gateway)
               nid = qid
@@ -1727,31 +1728,33 @@ async def tg2mt_loop(gateway="test"):
       res += ending
       await mt_send(res, gateway=gateway, username="")
       print(f"I: end {msg.id}")
-      async with queue_lock:
-          #  no_reset.set()
-          #  await mt_send("reset ok", gateway=msgd["gateway"])
-        while True:
-          if not no_reset.is_set():
-            continue
+        #  no_reset.set()
+        #  await mt_send("reset ok", gateway=msgd["gateway"])
+      while True:
+        if not no_reset.is_set():
+          logger.info("wait for end of reset...")
+          await asyncio.sleep(1)
+          continue
+        async with queue_lock:
           mtmsgs.pop(nid)
           gateways.pop(nid)
-          #  last = None
-          print(f"removed {nid=}")
-          if len(mtmsgs) == 0:
-            nid = 0
-            #  gateways.clear()
-            print("I: now mtmsgs is empty")
-            break
-          nid = min(mtmsgs.keys())
-          print(f"update nid to {nid} {mtmsgs.keys()=} {mtmsgs=}")
-          if mtmsgs[nid][1] is None:
-            break
-          if mtmsgs[nid][-1] is None:
-            await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
-            print(f"will to remove {nid=} {mtmsgs=} {gateways=}")
-          else:
-            await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
-            break
+        #  last = None
+        print(f"removed {nid=}")
+        if len(mtmsgs) == 0:
+          nid = 0
+          #  gateways.clear()
+          print("I: now mtmsgs is empty")
+          break
+        nid = min(mtmsgs.keys())
+        print(f"update nid to {nid} {mtmsgs.keys()=} {mtmsgs=}")
+        if mtmsgs[nid][1] is None:
+          break
+        if mtmsgs[nid][-1] is None:
+          await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
+          print(f"will to remove {nid=} {mtmsgs=} {gateways=}")
+        else:
+          await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
+          break
     else:
 
       mtmsgs[qid][1] = text
