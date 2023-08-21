@@ -798,18 +798,22 @@ reader = URLTitleReader(verify_ssl=True)
 
 async def get_title(url):
   try:
-    res = await reader.title(url)
+    #  res = reader.title(url)
+    res = await asyncio.to_thread(reader.title, url)
   except TypeError as e:
     res=f"{e=}"
-    prof.cons_show(res)
+    logger.info(res)
+    #  prof.cons_show(res)
   #  except urltitle.urltitle.URLTitleError as e:
   except URLTitleError as e:
     res=f"{e=}"
-    prof.cons_show(res)
+    #  prof.cons_show(res)
+    logger.info(res)
   except Exception as e:
     logger.warning(f"E: {e=}", exc_info=True, stack_info=True)
     res=f"{e=}"
-    prof.cons_show(res)
+    #  prof.cons_show(res)
+    logger.info(res)
   return res
 
 
