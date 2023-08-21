@@ -1525,6 +1525,7 @@ async def tg2mt_loop(gateway="test"):
     #    nid = 0
     #    #  last = None
     #    continue
+    logger.info(f"got msg: {qid=} {msg=}")
     if not no_reset.is_set():
       continue
     #  print(f"I: got: {msg=}")
@@ -1545,15 +1546,16 @@ async def tg2mt_loop(gateway="test"):
     if qid > nid:
       #  if len(mtmsgs) > 1 and mtmsgs[qid][0]["text"] == mtmsgs[max(list(mtmsgs.keys()).remove(qid))][0]["text"]:
       #  if len(mtmsgs) > 1 and mtmsgs[qid][0]["text"] == mtmsgs[list(mtmsgs.keys()).sort()[-2]][0]["text"]:
-      if len(mtmsgs) > 1:
+      if len(mtmsgs) > 2:
         for i in mtmsgs:
           if mtmsgs[i][0]["text"] == mtmsgs[qid][0]["text"]:
             for q in mtmsgs.copy():
               if q != qid:
                 mtmsgs.pop(q)
-            await mt_send("已清理历史任务，继续当前任务中..", gateway=gateway)
-            nid = qid
-            #  last = None
+            if len(mtmsgs) == 1:
+              await mt_send("已清理历史任务，切换到最新任务..", gateway=gateway)
+              nid = qid
+              #  last = None
             break
 
     if qid == nid:
