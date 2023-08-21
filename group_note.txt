@@ -151,3 +151,4 @@
 #tox T xx: 找人，找群： https://tox.directory/
 #tox X liqsliu: qtox原项目停止维护，新地址 https://github.com/Zoxcore/qTox_enhanced
 #youtube X liqsliu: https://github.com/j-hc/revanced-magisk-module/releases
+#prompt X liqsliu: https://github.com/wikieden/Awesome-ChatGPT-Prompts-CN
