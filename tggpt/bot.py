@@ -798,7 +798,7 @@ reader = URLTitleReader(verify_ssl=True)
 
 async def get_title(url):
   try:
-    res = reader.title(url)
+    res = await reader.title(url)
   except TypeError as e:
     res=f"{e=}"
     prof.cons_show(res)
