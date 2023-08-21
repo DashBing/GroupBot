@@ -105,6 +105,12 @@ def get_my_key(key, path=f"{HOME}/.ssh/private_keys.txt"):
 api_id = int(get_my_key("TELEGRAM_API_ID"))
 api_hash = get_my_key("TELEGRAM_API_HASH")
 gpt_id = int(get_my_key("TELEGRAM_GPT_ID"))
+#  rss_id = int(get_my_key("TELEGRAM_RSS_ID"))
+rss_id = 284403259
+id2gateway = {
+    rss_id: "rss",
+    gpt_id: "gateway1",
+    }
 
 
 MY_ID = int(get_my_key("TELEGRAM_MY_ID"))

@@ -1409,8 +1409,15 @@ async def read_res(event):
 
   if not no_reset.is_set():
     return
-  if event.chat_id != gpt_id:
+  #  if event.chat_id in id2gateway:
+  if event.chat_id == gpt_id:
+    pass
+  elif event.chat_id == rss_id:
+    msg = event.message
+    await mt_send(msg.text, "rss2tg_bot", id2gateway[rss_id])
+    return
     #  print("N: skip: %s != %s" % (event.chat_id, gpt_id))
+  else:
     return
   #  if not no_reset.is_set():
   #    print("W: skiped the msg because of reset is waiting")
