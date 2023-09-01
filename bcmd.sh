@@ -210,6 +210,8 @@ cmds() {
   ip | nali*)
     if [[ -z "$2" ]]; then
       echo "ip \$domain/\$ip"
+      echo
+      echo "https://github.com/out0fmemory/nali"
     else
       if [[ "$1" == ".ip" ]]; then
         if [[ $(echo "$2" | grep -c -P "[0-9a-zA-Z.-]+\.[a-zA-Z]+" | head -n1) -eq 1 ]]; then
