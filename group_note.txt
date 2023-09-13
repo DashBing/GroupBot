@@ -152,3 +152,10 @@
 #tox X liqsliu: qtox原项目停止维护，新地址 https://github.com/Zoxcore/qTox_enhanced
 #youtube X liqsliu: https://github.com/j-hc/revanced-magisk-module/releases
 #prompt X liqsliu: https://github.com/wikieden/Awesome-ChatGPT-Prompts-CN
+#default D kanjoniie: discord
+#xmpp T xmpp:xmpp.tw?register  ，xmpp:jabber.tw?register: \n这2个我这边能直接使用，还挺快的，注册的人越少越好\nxmpp:xmpp.tw?register\nxmpp:jabber.tw?register
+#xmpp X liqsliu: conversations play版不支持频道发现\n> **T Tox:** 版本2.12.7\n> \n> 从 Google Play 版本中删除频道发现功能
+#ffsend X liqsliu: https://github.com/timvisee/ffsend
+#xmpp X liqsliu: 导出xmpp通讯录\n\nT Tox: https://migrate.modernxmpp.org/
+#反诈 X liqsliu: https://telegra.ph/%E5%B0%8F%E7%B1%B3MIUI%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6%E7%9B%91%E5%90%AC%E7%94%A8%E6%88%B7%E9%9A%90%E7%A7%81-09-06
+#nitter X liqsliu: 服务器实例列表 https://github.com/zedeus/nitter/wiki/Instances
