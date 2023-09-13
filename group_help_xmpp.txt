@@ -58,7 +58,8 @@ rssbot: xmpp:jabrss@jotwewe.de
 rss/news:
   - xmpp:wtfipfs_rss@salas.suchat.org?join
   - xmpp:ipfsrss@chat.yax.im?join
-acg: xmpp:acg@muc.pimux.de?join
+acg:
+  - xmpp:acg@muc.pimux.de?join
 
 关于xmpp群发言权(仅限上面这几个群)：除非该群所在的xmpp服务器不支持，否则新人进群默认身份都是有发言权的群成员。
 目前有个xmppbot在管理监视群组: 检测到刷屏会撤销其发言权并尝试撤回消息，不过检测很保守，禁言时间也不会很长，普通用户应该感觉不到影响；同时自动发放发言权（临时，如果你近期被禁言过）和群成员身份（永久）。

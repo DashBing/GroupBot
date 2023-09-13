@@ -23,6 +23,9 @@ C bot自动回复或推送的新闻
 .note #matrix
 ...
 
+bot频道（bot测试、gpt、bard...）:
+  - xmpp:wtfipfs_bot@salas.suchat.org?join
+  - xmpp:wtfipfs_bot@conference.conversations.im?join
 
 全部入口都是公开频道，注意自我保护
 
