@@ -6,7 +6,7 @@ export LOG_FILE=${LOG_FILE:-/dev/null}
 # echo cmd start >> ~/tera/mt_msg.log
 #export SH_PATH=$(cd $(dirname ${BASH_SOURCE[0]}); pwd )
 # SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}); pwd )}
-SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
+SH_PATH=${SH_PATH:-$(cd $(dirname "${BASH_SOURCE[0]}") || exit; pwd )}
 
 
 #[[ "$(echo "$res" | jq ".[0]")" != "null" ]] && bash "$SH_PATH/cmd.sh" "$res"
