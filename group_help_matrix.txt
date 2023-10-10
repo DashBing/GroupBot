@@ -1,5 +1,6 @@
 主群: #wtfipfs:matrix.org
 非官服备用群: #wtfipfs:mozilla.org (使用傀儡用户与discord和telegram桥接)
+国内: #wtfipfs:chat.neboer.site (该服务器屏蔽了国外ip访问)
 
 rss: 
   新闻: #wtfipfs_rss:matrix.org
