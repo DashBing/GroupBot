@@ -159,3 +159,11 @@
 #xmpp X liqsliu: 导出xmpp通讯录\n\nT Tox: https://migrate.modernxmpp.org/
 #反诈 X liqsliu: https://telegra.ph/%E5%B0%8F%E7%B1%B3MIUI%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6%E7%9B%91%E5%90%AC%E7%94%A8%E6%88%B7%E9%9A%90%E7%A7%81-09-06
 #nitter X liqsliu: 服务器实例列表 https://github.com/zedeus/nitter/wiki/Instances
+#xmpp X liqsliu: \n\n- conversations.im 用户较多，长期稳定，国内部分地区被屏蔽无法直接注册使用，最好使用VPN注册，不记录ip，能每次上传100MB文件，90天内的消息和文件\n- xmpp.jp 用户较多，长期稳定，延迟比较低，国内大部分地区能直接使用，能记录你的的信息，能每次上传1MB文件，300条离线消息\n- yax.im 用户较多，近期不稳定，保留14天ip，能每次上传50MB以上文件，30天内的无限文件保留，离线消息直到你上线或者账号删除，消息存档14天\n- pimux.de 用户少，单个文件大小限制是1GB，30天文件和消息，不记录与个人有关的信息，那几天有严重安全问题，最近更新已修复\n- 07f.de 用户少，能每次上传5GB文件，根据其他群的反馈，服务器不够稳定，不接受大量信息\n- suchat.org 用户少，对新特性的支持很快，能每次上传15MB文件，保留14天ip，离线存储最多 100 条消息，14天内存储无限数量的群消息，最多存储500MB数据30天\n- 404.city  用户多，能每次上传1GB文件，在线期间一直记录与个人有关ip，离线后删除这些，7天消息\n- 如果比较在意记录IP，那就不要用，有更好的可以选择，为什么要让这些服务器获取?
+#android X liqsliu: https://github.com/chenxiaolong/BCR
+#tool X liqsliu: url2markdown https://devtool.tech/html-md
+#android X liqsliu: 跳过开屏广告\nhttps://github.com/GuoXiCheng/SKIP\nhttps://github.com/zfdang/Android-Touch-Helper
+#xmpp X liqsliu: xmpp网页版客户端 https://wtfipfs.eu.org/xmpp/
+#wtf G wtfipfs_fucktelegram: \n\nG Matrix Telegram Bridge: X XGRku:#0000: https://github.com/chengdepolice/clue/issues 承德警方貌似到 github 上开了一个接受群众举报的帐号
+#default X 华南网友: # xmpp 
+#tigase T Tox: \nsure.im\ntigase.im\ntigase.me\nxmpp.cloud\njabber.today\n还有其他的待补充\ntigase功能较多，公开测试的服务器问题较多\n如果你有一个域名，也能白嫖服务器帮助测试\n最大可上传20MB文件\n储存文件未设置上限，消息和文件存储365天(未强制执行)\n服务器在美国的AWS cloud，国内可能无法正常连接
