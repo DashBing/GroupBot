@@ -8,8 +8,6 @@ SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd -P )}
 
 
 _(){
-  export http_proxy=http://127.0.0.1:6080
-  export https_proxy=http://127.0.0.1:6080
   # curl -m 19 -s "http://api.qingyunke.com/api.php?key=free&appid=0&msg=$(bash "$SH_PATH/urlencode.sh" "$*")" || exit $?
   local res=$(curl -m 19 -s "http://api.qingyunke.com/api.php?key=free&appid=0&msg=$(bash "$SH_PATH/urlencode.sh" "$*")") && {
 
