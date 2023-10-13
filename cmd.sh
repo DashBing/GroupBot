@@ -4,8 +4,8 @@
 export LOG_FILE=${LOG_FILE:-/dev/null}
 
 
-export http_proxy=http://127.0.0.1:6080
-export https_proxy=http://127.0.0.1:6080
+# export http_proxy=http://127.0.0.1:6080
+# export https_proxy=http://127.0.0.1:6080
 
 # echo cmd start >> ~/tera/mt_msg.log
 #export SH_PATH=$(cd $(dirname ${BASH_SOURCE[0]}); pwd )
