@@ -393,9 +393,12 @@ telegram.*)
 
   fi
 
+    QT=$(echo "$QT" | sed '1s/^G Group: /G admin:/')
   # if [[ "$NAME" == "Group" ]]; then
   if [[ "$NAME" == "wtfipfs_fucktelegram" ]]; then
-    NAME="liqsliu"
+    NAME="admin"
+  elif [[ "$NAME" == "wtfipfs" ]]; then
+    NAME="admin"
   # elif [[ "$NAME" == "‏⁠‎ l​i​q​s‏l​i​u​‎" ]]; then
   #   NAME="liqsliu"
   fi
