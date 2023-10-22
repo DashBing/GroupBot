@@ -1,5 +1,5 @@
 #!/bin/bash
-#send msg of tox to matterbridge api
+#send msg of tox(change port for other app) to matterbridge api
 
 text=$2
 [[ -z "$text" ]] && exit 1
