@@ -466,6 +466,9 @@ api.cmdres)
 api.gpt)
   LABLE="C"
   ;;
+api.simplex)
+  LABLE="S"
+  ;;
 api.tg)
   LABLE="G"
   ;;
