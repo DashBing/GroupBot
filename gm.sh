@@ -8,6 +8,7 @@ export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 # [[ -e "$SH_PATH/DEBUG" ]] && export DEBUG=true
 [[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE="$HOME/tera/mt.log" || export LOG_FILE=/dev/null
 }
+
 #res="[]"
 # for cmd
 res=$(curl -m 1 -s http://127.0.0.1:4240/api/messages) || exit 0
@@ -44,7 +45,7 @@ fi
 res=$(curl -m 3 -s http://127.0.0.1:4250) || exit 0
 if [[ "$res" != "[]" ]]; then
   set_log
-  bash "$SH_PATH/sm_simplex.sh" "$msg"
+  bash "$SH_PATH/sm_simplex.sh" "$res"
 else
 sleep 0.3
 fi
