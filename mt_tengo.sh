@@ -412,7 +412,7 @@ telegram.*)
   fi
   ;;
 slack.*)
-  LABLE="S"
+  LABLE="s"
   ;;
 zulip.*)
   LABLE="Z"
