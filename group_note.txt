@@ -167,3 +167,7 @@
 #wtf G wtfipfs_fucktelegram: \n\nG Matrix Telegram Bridge: X XGRku:#0000: https://github.com/chengdepolice/clue/issues 承德警方貌似到 github 上开了一个接受群众举报的帐号
 #default X 华南网友: # xmpp 
 #tigase T Tox: \nsure.im\ntigase.im\ntigase.me\nxmpp.cloud\njabber.today\n还有其他的待补充\ntigase功能较多，公开测试的服务器问题较多\n如果你有一个域名，也能白嫖服务器帮助测试\n最大可上传20MB文件\n储存文件未设置上限，消息和文件存储365天(未强制执行)\n服务器在美国的AWS cloud，国内可能无法正常连接
+#android X liqsliu: \n\n2023年10月15日 星期日 14时51分46秒 - 我是鲨鱼酱: 每日科普一个信息技术常识\n我们在使用安卓手机的时候，有的国产操作系统非常脑瘫，经常打着比用户更懂用户需求的口号，来限制我们下载安装一些应用程序，这个时候应该怎么办呢？这里我为大家推荐一款自由开源软件，那就是lnstallerX，这款软件可以替换掉，国产系统的应用安装程序，使得大家可以自由安装应用程序，以下是这款软件的下载链接: https://github.com/iamr0s/InstallerX/releases/tag/v1.7\n软件使用时，需要下载Shizuku，给予Shizuku无线调试权限，然后再给lnstallerX授权即可使用，以下是Shizuku的官网下载链接: https://shizuku.rikka.app/zh-hans/download/
+#fdroid G wtfipfs_fucktelegram: repo列表\nhttps://forum.f-droid.org/t/known-repositories/721
+#fdroid G wtfipfs_fucktelegram: 国内镜像 https://mirrors.tuna.tsinghua.edu.cn/fdroid/repo/?fingerprint=43238D512C1E5EB2D6569F4A3AFBF5523418B82E0A3ED1552770ABB9A9C9CCA
+#fdroid G wtfipfs_fucktelegram: \n\nG Matrix Telegram Bridge: X 南方大陆网友:#0000: F-aroid 国内源汇总:\nhttps://help.mirrors.cernet.edu.cn/fdroid/
