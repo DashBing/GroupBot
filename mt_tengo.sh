@@ -389,15 +389,16 @@ telegram.*)
     # QT=""
     # [[ -z "$QT" ]] && QT=$( echo "$TEXT" | sed '0,/^_reply_$/d' )
     QT=$( echo "$TEXT" | sed '0,/^_reply_$/d' )
-    QT=$(echo "$QT" | sed '1s/^G bot: //' | sed 's/^/> /' )
+    QT=$(echo "$QT" | sed '1s/^G Matrix Telegram Bridge: //' | sed '1s/^G bot: //' | sed 's/^/> /' )
 
   fi
 
   # if [[ "$NAME" == "Group" ]]; then
-  #   NAME="liqsliu"
+  if [[ "$NAME" == "wtfipfs_fucktelegram" ]]; then
+    NAME="liqsliu"
   # elif [[ "$NAME" == "‏⁠‎ l​i​q​s‏l​i​u​‎" ]]; then
   #   NAME="liqsliu"
-  # fi
+  fi
 
 #   if [[ "${TEXT:0:15}" == "Forwarded from " ]]; then
 # #    TEXT=$( echo "${TEXT}" | sed -r '1s/[^:]+: //' )
@@ -716,6 +717,8 @@ $TEXT"
     M=$(echo "$NAME" | cut -d' ' -f1)
     NAME=$(echo "$NAME" | cut -d' ' -f 2-)
     NAME=${NAME%: }
+#     NAME="$QT
+# $M *$NAME*: "
     NAME="$QT
 $M *$NAME*: "
     ;;
