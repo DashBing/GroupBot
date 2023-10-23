@@ -51,7 +51,8 @@ fi
 res=$(curl -m 1 -s http://127.0.0.1:4250) || exit 0
 if [[ "$res" != "[]" ]]; then
   set_log
-  bash "$SH_PATH/sm_simplex.sh" "$res"
+  echo bash "$SH_PATH/sm_simplex.sh" "$res" &>> $LOG_FILE
+  bash "$SH_PATH/sm_simplex.sh" "$res" &>> $LOG_FILE
 else
 sleep 0.3
 fi
