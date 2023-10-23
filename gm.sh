@@ -18,11 +18,8 @@ res=$(echo "$res" | jq 'del(.[].Extra.file[0].Data)') &>/dev/null || exit 0
 res=$(curl -m 1 -s http://127.0.0.1:4240/api/messages) || exit 0
 if [[ "$res" != "[]" ]]; then
   delete_raw
-echo "msg to tex..." &>> $LOG_FILE
 echo bash "$SH_PATH/cmd.sh" "$res" &>> $LOG_FILE
-echo "msg to tex 2..." &>> $LOG_FILE
 bash "$SH_PATH/cmd.sh" "$res" &>> $LOG_FILE
-echo "msg to tex ok" &>> $LOG_FILE
 else
 sleep 0.3
 fi
@@ -30,7 +27,11 @@ fi
 res=$(curl -m 1 -s http://127.0.0.1:4241/api/messages) || exit 0
 if [[ "$res" != "[]" ]]; then
   delete_raw
+echo "msg to tox..." &>> $LOG_FILE
 echo bash "$SH_PATH/msg_for_tox.sh" "$res" &>> $LOG_FILE
+echo "msg to tox 2..." &>> $LOG_FILE
+bash "$SH_PATH/msg_for_tox.sh" "$res" &>> $LOG_FILE
+echo "msg to tox ok" &>> $LOG_FILE
 echo "$res" >> $LOG_FILE
 else
 sleep 0.3
@@ -54,8 +55,6 @@ if [[ "$res" != "[]" ]]; then
 else
 sleep 0.3
 fi
-
-
 
 
 if [[ "$res" == "[]" ]]; then
