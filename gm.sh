@@ -30,7 +30,7 @@ if [[ "$res" != "[]" ]]; then
 echo "msg to tox..." &>> $LOG_FILE
 echo bash "$SH_PATH/msg_for_tox.sh" "$res" &>> $LOG_FILE
 echo "msg to tox 2..." &>> $LOG_FILE
-bash "$SH_PATH/msg_for_tox.sh" "$res"
+bash "$SH_PATH/msg_for_tox.sh" "$res" 2>> $LOG_FILE
 echo "msg to tox ok" &>> $LOG_FILE
 echo "$res" >> $LOG_FILE
 else
