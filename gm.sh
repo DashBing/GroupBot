@@ -18,14 +18,15 @@ res=$(echo "$res" | jq 'del(.[].Extra.file[0].Data)') &>/dev/null || exit 0
 res=$(curl -m 1 -s http://127.0.0.1:4240/api/messages) || exit 0
 if [[ "$res" != "[]" ]]; then
   delete_raw
+echo "msg to tex..." &>> $LOG_FILE
 echo bash "$SH_PATH/cmd.sh" "$res" &>> $LOG_FILE
+echo "msg to tex 2..." &>> $LOG_FILE
 bash "$SH_PATH/cmd.sh" "$res" &>> $LOG_FILE
+echo "msg to tex ok" &>> $LOG_FILE
 else
 sleep 0.3
 fi
 
-# for tox
-# echo "gm" >> ~/tera/mt_msg.log
 res=$(curl -m 1 -s http://127.0.0.1:4241/api/messages) || exit 0
 if [[ "$res" != "[]" ]]; then
   delete_raw

@@ -388,7 +388,7 @@ telegram.*)
     # QT=$( python3 "$SH_PATH/get_msg.py" reply_msg "$(echo "$TEXT" | sed '/^> reply_from_telegram$/,$d')" "$2" "$5" ) || QT=""
     # QT=""
     # [[ -z "$QT" ]] && QT=$( echo "$TEXT" | sed '0,/^_reply_$/d' )
-    QT=$( echo "$TEXT" | sed -e '0,/^_reply_$/d' -e '1s/^G Matrix Telegram Bridge: //' -e '1s/^G bot: //' -e '1s/^G Group: /G admin:/' -e 's/^/> /' )
+    QT=$( echo "$TEXT" | sed -e '0,/^_reply_$/d' -e '1s/^G Matrix Telegram Bridge: //' -e '1s/^G bot: //' -e '1s/^G Group: /G admin: /' -e 's/^/> /' )
 
   fi
 
