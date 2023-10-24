@@ -31,8 +31,8 @@ gateway=${4-gateway1}
 _send(){
   local text=$1
   local text_en=$(bash "$SH_PATH/"gene_res.sh "$text" "$gateway" "$username")
-curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message || exit 0
-# curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/"gene_res.sh "$text" "$gateway" "$username")" http://127.0.0.1:$api_port/api/message
+# res=$(curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message)
+curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message
 }
 
 send(){
@@ -76,7 +76,12 @@ send(){
 
     let i++
     echo "send...$i/$n" &>> $LOG_FILE
-    _send "$tmp" "$@" || return $?
+    local res=$(_send "$tmp" "$@") || {
+      if [[ -n "$res" ]]; then
+        echo $res
+      fi
+      return $?
+    }
 # $i/$n" "$@" || return $?
     username=""
     if [[ $i -ge 9 ]]; then
@@ -144,16 +149,11 @@ res=$(send "$text" 2>"$SH_PATH/error") || {
   res=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
 }
   push_err "E: failed to send text: ${text:0:10}...|$e|$r"
-  if [[ -n "$res" ]]; then
-    push_err "$res"
-  fi
-  exit
 }
 # echo "res: $res"
 # echo "json: $text"
 # echo "res :|$res|" >> ~/tera/mt_msg.log
-push_err "$res"
 
-
-
-
+if [[ -n "$res" ]]; then
+  push_err "$res"
+fi
