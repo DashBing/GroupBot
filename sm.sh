@@ -40,26 +40,40 @@ send(){
   MAX_BYTES=$[MAX_BYTES-9-${#username}]
   local text=$1
   if [[ ${#text} -le $MAX_BYTES ]]; then
-    echo "sm.sh: the length of msg is ok: ${#text}" &>> $LOG_FILE
+    echo "sm.sh: the length of msg is ok: ${#text}"
     _send "$@"
     return $?
   fi
-  echo "sm.sh: text is too long: ${#text}" &>> $LOG_FILE
+  echo "sm.sh: text is too long: ${#text}"
   shift
   local i=0
   local n=$[${#text}/MAX_BYTES]
+  local now=0
   if [[ $[${#text}%MAX_BYTES] -ne 0 ]]; then
     let n++
   fi
   while true
   do
-    if [[ $((i*MAX_BYTES)) -ge ${#text} ]]; then
+    # now=$[i*MAX_BYTES]
+    # if [[ $((i*MAX_BYTES)) -ge ${#text} ]]; then
+    if [[ $now -ge ${#text} ]]; then
       return 0
       break
     fi
-    tmp=${text:$((i*MAX_BYTES)):$MAX_BYTES}
+    tmp=${text:$now:$MAX_BYTES}
+    if [[ ${tmp: -1} != $'\n' ]]; then
+      if [[ ${tmp: -1} != $'\t' ]]; then
+        if [[ ${tmp: -1} != " " ]]; then
+          if [[ -n "$(echo "$tmp"|sed '$d')" ]]; then
+            tmp=$(echo "$tmp"|sed '$d')
+          fi
+        fi
+      fi
+    fi
+    now=$[now+${tmp}]
+
     let i++
-    echo "send...$i/$n" &>> $LOG_FILE
+    echo "send...$i/$n"
     _send "$tmp" "$@" || return $?
 # $i/$n" "$@" || return $?
     username=""
