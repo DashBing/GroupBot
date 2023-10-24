@@ -71,8 +71,3 @@ if [[ "$res" != "[]" ]]; then
 else
 sleep 0.3
 fi
-
-
-if [[ "$res" == "[]" ]]; then
-sleep 1
-fi
