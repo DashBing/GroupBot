@@ -82,8 +82,10 @@ cmds() {
   help|h)
     if [[ -z "$2" ]]; then
       [[ -e "$SH_PATH/group_help.txt" ]] && cat "$SH_PATH/group_help.txt" || echo "E: no group_help.txt"
-    elif [[ "$2" == "cmd" ]]; then
-      cat "$SH_PATH/group_cmd.txt"
+      [[ -e "$SH_PATH/group_help_bot.txt" ]] && echo && cat "$SH_PATH/group_help_bot.txt"
+      [[ -e "$SH_PATH/group_help_rule.txt" ]] && echo && cat "$SH_PATH/group_help_rule.txt"
+    # elif [[ "$2" == "cmd" ]]; then
+    #   cat "$SH_PATH/group_cmd.txt"
     else
       [[ -e "$SH_PATH/group_help_${2}.txt" ]] && cat "$SH_PATH/group_help_$2.txt" || echo "E: no group_help_${2}.txt"
     fi
@@ -366,7 +368,8 @@ echo "bcmd.sh arg: $*" >> $LOG_FILE
 
 
 send(){
-  curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "$1" $gateway)" http://127.0.0.1:4240/api/message
+  # curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "$1" $gateway)" http://127.0.0.1:4240/api/message
+  bash "$SH_PATH/sm.sh" bot "$text" 4240 $gateway
 }
 
 
@@ -450,7 +453,7 @@ if [[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]]; then
   }
   text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
 fi
-text=$out
+text=$tout
 
 [[ -n "$text_e" ]] && text="$text
 --
@@ -474,6 +477,11 @@ echo "b1 :|$text|" >> $LOG_FILE
 
 # echo "b2 :|$text|" >> ~/tera/mt_msg.log
 #  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4243/api/message)
+# bash "$SH_PATH/sm.sh" bot "$text" 4240 $gateway || echo "E: $?"
+send "$text" || echo "E: $?"
+exit 0
+
+#下面的代码暂时废弃
 
 res=$(send "$text" 2>"$SH_PATH/error") || {
   e=$?
