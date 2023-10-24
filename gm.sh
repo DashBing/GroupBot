@@ -13,11 +13,12 @@ delete_raw(){
 res=$(echo "$res" | jq 'del(.[].Extra.file[0].Data)') &>/dev/null || exit 0
   set_log
 }
+
 send_err(){
   local ll=${1:-cmd.sh}
   echo bash "$SH_PATH/$ll" "$res" &>> $LOG_FILE
   bash "$SH_PATH/$ll" "$res" 1> "$SH_PATH/.STDOUT" 2> "$SH_PATH/.ERROR"
-  text=$(cat "$SH_PATH/.STDOUT"
+  local text=$(cat "$SH_PATH/.STDOUT"
   echo "---"
   cat "$SH_PATH/.ERROR")
   bash "$SH_PATH/$ll" "C bot" "$text" 4240 &>> $LOG_FILE
