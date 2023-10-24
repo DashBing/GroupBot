@@ -213,7 +213,8 @@ cmds() {
     if [[ -z "$2" ]]; then
       echo "查询 ip 地理位置"
       echo
-      echo ".iplo \$ipv4 or \$ipv6"
+      echo ".iplo \$ipv4"
+      echo ".iplo \$ipv6"
     else
       curl -m 8 -s "https://api.iplocation.net/?ip=$2"
     fi
