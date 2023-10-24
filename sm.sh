@@ -61,6 +61,7 @@ send(){
     echo "send...$i/$n" &>> $LOG_FILE
     _send "$tmp" "$@" || return $?
 # $i/$n" "$@" || return $?
+    username=""
     sleep 1
   done
 }
