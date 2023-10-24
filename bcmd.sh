@@ -374,47 +374,6 @@ send(){
 }
 
 
-_push_err(){
-  local res=$1
-  if [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
-    date &>> $LOG_FILE
-    echo "res :|$res|" >> $LOG_FILE
-    msg=$(echo "$res" | jq ".message")
-    res=$(send "E: mt api: $msg res: $res") 
-    if [[ "$(send "E: mt api: $msg res: $res" | jq ".message")" != "null" ]]; then
-      if [[ "$(send "E: mt api: $msg res_b64: $(echo "$res"|base64)" | jq ".message")" != "null" ]]; then
-        if [[ "$(send "E: can't send res to mt api: $msg" | jq ".message")" != "null" ]]; then
-          if [[ "$(send "E: can't send res to mt api, msg_b64: $(echo "$msg"|base64)" | jq ".message")" != "null" ]]; then
-            echo "E: can't send text and err msg to mt api: |$msg|$res|" >> $LOG_FILE
-            if [[ "$(send "E: can't send res and err msg to mt api" | jq ".message")" != "null" ]]; then
-              :
-            fi
-          fi
-        fi
-      fi
-    fi
-  fi
-}
-
-
-push_err(){
-  local res=$1
-
-  if ! echo "$res" | jq ".message" &>/dev/null; then
-    res=$(send "$res ") || {
-      _push_err "failed to send: $res"
-      exit 1
-    }
-    _push_err "$res"
-  elif [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
-    _push_err "$res"
-  else
-    if [[ -z "$(echo "$res" | jq -r ".text")" ]]; then
-      send "E: empty message"
-    fi
-  fi
-
-}
 
 
 [[ -z "$3" ]] && exit 1
@@ -441,7 +400,8 @@ out=$(cmds $text 2>"$SH_PATH/error") || {
   text=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
   r=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
 }
-  push_err "E: failed to run cmd: $text|$e|$r"
+  # push_err "E: failed to run cmd: $text|$e|$r"
+  send "E: failed to run cmd: $text|$e|$r"
   exit 1
 }
 
@@ -479,29 +439,5 @@ echo "b1 :|$text|" >> $LOG_FILE
 # echo "b2 :|$text|" >> ~/tera/mt_msg.log
 #  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4243/api/message)
 # bash "$SH_PATH/sm.sh" bot "$text" 4240 $gateway || echo "E: $?"
-send "$text" || echo "E: $?"
-exit 0
-
-#下面的代码暂时废弃
-
-res=$(send "$text" 2>"$SH_PATH/error") || {
-  e=$?
-# [[ -f "$SH_PATH/error" ]] && {
-[[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]] && {
-  set -x
-  send "$text" 2>"$SH_PATH/error" 1>"$SH_PATH/out"
-  set +x
-  r=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
-  res=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
-}
-  push_err "E: failed to send text: $text|$e|$r"
-  if [[ -n "$res" ]]; then
-    push_err "$res"
-  fi
-  exit
-}
-# echo "res: $res"
-# echo "json: $text"
-# echo "res :|$res|" >> ~/tera/mt_msg.log
-push_err "$res"
+send "$text"
 

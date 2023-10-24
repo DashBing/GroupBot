@@ -33,6 +33,7 @@ _send(){
 # curl -m 2 -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/"gene_res.sh "$text" "$gateway" "$username")" http://127.0.0.1:$api_port/api/message || exit 0
 curl -m 2 -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/"gene_res.sh "$text" "$gateway" "$username")" http://127.0.0.1:$api_port/api/message || exit 0
 }
+
 send(){
   local MAX_BYTES=1371
   # local MAX_BYTES=1024
@@ -41,7 +42,7 @@ send(){
   if [[ ${#text} -le $MAX_BYTES ]]; then
     echo "sm.sh: the length of msg is ok: ${#text}" &>> $LOG_FILE
     _send "$@"
-    return
+    return $?
   fi
   echo "sm.sh: text is too long: ${#text}" &>> $LOG_FILE
   shift
@@ -55,12 +56,12 @@ send(){
     if [[ $((i*MAX_BYTES)) -ge ${#text} ]]; then
       break
     fi
-    echo "send...$i/$n" &>> $LOG_FILE
     tmp=${text:$((i*MAX_BYTES)):$MAX_BYTES}
+    let i++
+    echo "send...$i/$n" &>> $LOG_FILE
     _send "$tmp
 $i/$n" "$@" || return $?
     sleep 1
-    let i++
   done
 }
 
@@ -126,7 +127,7 @@ res=$(send "$text" 2>"$SH_PATH/error") || {
 # echo "res: $res"
 # echo "json: $text"
 # echo "res :|$res|" >> ~/tera/mt_msg.log
-push_err "$res"
+# push_err "$res"
 
 
 
