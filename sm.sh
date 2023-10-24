@@ -30,7 +30,8 @@ gateway=${4-gateway1}
 
 _send(){
   local text=$1
-curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/"gene_res.sh "$text" "$gateway" "$username")" http://127.0.0.1:$api_port/api/message || exit 0
+  local text_en=$(bash "$SH_PATH/"gene_res.sh "$text" "$gateway" "$username")
+curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message || exit 0
 # curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/"gene_res.sh "$text" "$gateway" "$username")" http://127.0.0.1:$api_port/api/message
 }
 
@@ -112,7 +113,9 @@ _push_err(){
 push_err(){
   local res=$1
 
-  if ! echo "$res" | jq ".message" &>/dev/null; then
+  if [[ -z "$res" ]]; then
+    _push_err "res is empty"
+  elif ! echo "$res" | jq ".message" &>/dev/null; then
     res=$(send "$res") || {
       # send "$res"
       _push_err "wtf: $res"
@@ -123,7 +126,7 @@ push_err(){
     # send "E: $(echo "$res" | jq ".message")"
   else
     if [[ -z "$(echo "$res" | jq -r ".text")" ]]; then
-      send "E: empty message"
+      send "the content of last msg is empty"
     fi
   fi
 

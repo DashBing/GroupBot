@@ -48,7 +48,7 @@ send_err2(){
 res=$(curl -m 1 -s http://127.0.0.1:4240/api/messages) || exit 0
 if [[ "$res" != "[]" ]]; then
   delete_raw
-  nohup send_err2 &>/dev/null &
+  send_err2
 else
 sleep 0.3
 fi
@@ -58,7 +58,7 @@ fi
 res=$(curl -m 1 -s http://127.0.0.1:4247/api/messages) || exit 0
 if [[ "$res" != "[]" ]]; then
   delete_raw
-  nohup send_err2 msg_for_simplex.sh &>/dev/null &
+  send_err2 msg_for_simplex.sh
 else
 sleep 0.3
 fi
@@ -67,7 +67,8 @@ fi
 res=$(curl -m 1 -s http://127.0.0.1:4250) || exit 0
 if [[ "$res" != "[]" ]]; then
   set_log
-  nohup send_err2 sm_simplex.sh &>/dev/null &
+  send_err2 sm_simplex.sh
 else
 sleep 0.3
 fi
+
