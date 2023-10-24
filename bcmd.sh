@@ -209,9 +209,18 @@ cmds() {
     shift
     bash "$SH_PATH/twitter_to_text.sh" "$@" || echo "E: $?"
     ;;
+  iplo)
+    if [[ -z "$2" ]]; then
+      echo "查询 ip 地理位置"
+      echo
+      echo ".iplo \$ipv4 or \$ipv6"
+    else
+      curl -m 8 -s "https://api.iplocation.net/?ip=$2"
+    fi
+    ;;
   ip | nali*)
     if [[ -z "$2" ]]; then
-      echo "ip \$domain/\$ip"
+      echo ".ip \$domain/\$ip"
       echo
       echo "https://github.com/out0fmemory/nali"
     else
@@ -225,12 +234,26 @@ cmds() {
           nali-dig @8.8.8.8 +subnet=114.114.114.114/24 +short "$host" || echo "E: $?"
 #          echo -n "114(from cn): ";  nali-dig @172.22.0.6 -p 54 +timeout=2 +short "$host" || echo "E: $?"
 #          echo -n "ali(from cn): ";  nali-dig @172.22.0.7 -p 55 +timeout=2 +short "$host" || echo "E: $?"
-          echo -n "114(from us): "
-          nali-dig @114.114.114.114 +timeout=2 +short "$host" || echo "E: $?"
-          echo -n "ali(from us): "
-          nali-dig @223.5.5.5 +timeout=2 +short "$host" || echo "E: $?"
-          echo -n "ipv6 from us: "
-          nali-dig +short aaaa "$host" || echo "E: $?"
+          # echo -n "114(from us): "
+          # nali-dig @114.114.114.114 +timeout=2 +short "$host" || echo "E: $?"
+          echo -n "114(over warp): "
+          nali-dig @127.0.0.1 -p 6054 +timeout=2 +short "$host" || echo "E: $?"
+          # echo -n "ali(from us): "
+          # nali-dig @223.5.5.5 +timeout=2 +short "$host" || echo "E: $?"
+          echo -n "ali(over warp): "
+          nali-dig @127.0.0.1 -p 6055 +timeout=2 +short "$host" || echo "E: $?"
+          echo -n "tx(over warp): "
+          nali-dig @127.0.0.1 -p 6059 +timeout=2 +short "$host" || echo "E: $?"
+          local ip6=""
+          local ip6=$(nali-dig +short aaaa "$host") {
+            if [[ -n "$ip6" ]]; then
+              echo -n "ipv6 from us: "
+              echo $ip6
+              curl -m 5 -s "https://api.iplocation.net/?ip=$(echo "ip6"|head -n1)"
+            else
+              echo -n "no ipv6"
+            fi
+          } || echo "E: $?"
         elif [[ $(echo "$2" | grep -c -P "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+") -eq 1 ]]; then
           local host=$(echo "$2" | grep -o -P "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" | head -n1)
           echo "$host"
