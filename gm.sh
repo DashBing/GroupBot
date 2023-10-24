@@ -36,7 +36,6 @@ else
 sleep 0.3
 fi
 
-
 send_err2(){
   local ll=${1:-cmd.sh}
   bash "$SH_PATH/$ll" "$res" &>> $LOG_FILE || {
@@ -49,7 +48,7 @@ send_err2(){
 res=$(curl -m 1 -s http://127.0.0.1:4240/api/messages) || exit 0
 if [[ "$res" != "[]" ]]; then
   delete_raw
-  send_err2
+  nohup send_err2 &>/dev/null &
 else
 sleep 0.3
 fi
@@ -59,7 +58,7 @@ fi
 res=$(curl -m 1 -s http://127.0.0.1:4247/api/messages) || exit 0
 if [[ "$res" != "[]" ]]; then
   delete_raw
-  send_err2 msg_for_simplex.sh
+  nohup send_err2 msg_for_simplex.sh &>/dev/null &
 else
 sleep 0.3
 fi
@@ -68,8 +67,7 @@ fi
 res=$(curl -m 1 -s http://127.0.0.1:4250) || exit 0
 if [[ "$res" != "[]" ]]; then
   set_log
-  send_err2 sm_simplex.sh
-
+  nohup send_err2 sm_simplex.sh &>/dev/null &
 else
 sleep 0.3
 fi
