@@ -246,7 +246,7 @@ cmds() {
           echo -n "tx(over warp): "
           nali-dig @127.0.0.1 -p 6059 +timeout=2 +short "$host" || echo "E: $?"
           local ip6=""
-          local ip6=$(nali-dig +short aaaa "$host") {
+          local ip6=$(nali-dig +short aaaa "$host") && {
             if [[ -n "$ip6" ]]; then
               echo -n "ipv6 from us: "
               echo $ip6
