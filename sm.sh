@@ -39,9 +39,11 @@ send(){
   MAX_BYTES=$[MAX_BYTES-5-${#username}]
   local text=$1
   if [[ ${#text} -le $MAX_BYTES ]]; then
+    echo "sm.sh: the length of msg is ok: ${#text}" &>> $LOG_FILE
     _send "$@"
     return
   fi
+  echo "sm.sh: text is too long: ${#text}" &>> $LOG_FILE
   shift
   local i=0
   local n=$[${#text}/MAX_BYTES]
@@ -53,6 +55,7 @@ send(){
     if [[ $((i*MAX_BYTES)) -ge ${#text} ]]; then
       break
     fi
+    echo "send...$i/$n" &>> $LOG_FILE
     tmp=${text:$((i*MAX_BYTES)):$MAX_BYTES}
     _send "$tmp
 $i/$n" "$@" || return $?

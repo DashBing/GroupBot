@@ -368,6 +368,7 @@ echo "bcmd.sh arg: $*" >> $LOG_FILE
 
 
 send(){
+  local text=$1
   # curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "$1" $gateway)" http://127.0.0.1:4240/api/message
   bash "$SH_PATH/sm.sh" bot "$text" 4240 $gateway
 }
@@ -453,7 +454,7 @@ if [[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]]; then
   }
   text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
 fi
-text=$tout
+text=$out
 
 [[ -n "$text_e" ]] && text="$text
 --
