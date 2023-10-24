@@ -9,7 +9,7 @@ send_msg_to_simplex(){
 # get msg from simplex to mt
 # curl -m 300 -s -XPOST -d "msg from mt" 127.0.0.1:4250
 # res=$(curl -m 1 -s 127.0.0.1:4250) || exit 0
-res=$(curl -m 2 -s -XPOST -d "$*"  127.0.0.1:4250) || exit 0
+res=$(curl -m 5 -s -XPOST -d "$*"  127.0.0.1:4250) || exit 0
 if [[ "$res" != "[]" ]]; then
   bash "$SH_PATH/sm_simplex.sh" "$msg"
 fi
@@ -26,8 +26,9 @@ for (( ; i < 4; i++)); do
   else
     text=$(echo "$restmp" | jq -r ".text")
     username=$(echo "$restmp" | jq -r ".username")
-    gateway=$(echo "$restmp" | jq -r ".gateway")
-    send_msg_to_simplex "$username: $text"
+    # gateway=$(echo "$restmp" | jq -r ".gateway")
+    # if [[ -z "$username" ]]; then
+    send_msg_to_simplex "$username$text"
   fi
 
 done

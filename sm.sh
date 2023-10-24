@@ -41,7 +41,7 @@ send(){
   MAX_BYTES=$[MAX_BYTES-9-${#username}]
   local text=$1
   if [[ ${#text} -le $MAX_BYTES ]]; then
-    echo "sm.sh: the length of msg is ok: ${#text}" &>> $LOG_FILE
+    echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." &>> $LOG_FILE
     _send "$@"
     return $?
   fi
@@ -63,14 +63,14 @@ send(){
     fi
     tmp=${text:$now:$MAX_BYTES}
     if [[ "${tmp: -1}" != $'\n' ]]; then
-      if [[ "${tmp: -1}" != $'\t' ]]; then
-        if [[ "${tmp: -1}" != " " ]]; then
+      # if [[ "${tmp: -1}" != $'\t' ]]; then
+        # if [[ "${tmp: -1}" != " " ]]; then
           if [[ -n "$(echo "$tmp"|sed -e '$d' -e '/^ *$/d')" ]]; then
             tmp=$(echo "$tmp"|sed '$d')
             let now++
           fi
-        fi
-      fi
+        # fi
+      # fi
     fi
     now=$[now+${#tmp}]
 
@@ -78,7 +78,7 @@ send(){
     echo "send...$i/$n" &>> $LOG_FILE
     local res=$(_send "$tmp" "$@") || {
       if [[ -n "$res" ]]; then
-        echo $res
+        echo "$res"
       fi
       return $?
     }
@@ -119,18 +119,19 @@ push_err(){
   local res=$1
 
   if [[ -z "$res" ]]; then
-    _push_err "res is empty"
+    echo "res is empty" &>> $LOG_FILE
+    return
   elif ! echo "$res" | jq ".message" &>/dev/null; then
+    echo "E: $res" &>> $LOG_FILE
     res=$(send "$res") || {
-      # send "$res"
-      _push_err "wtf: $res"
+      send "wtf: failed to send res"
     }
-    # _push_err "$res"
   elif [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
     _push_err "$res"
     # send "E: $(echo "$res" | jq ".message")"
   else
     if [[ -z "$(echo "$res" | jq -r ".text")" ]]; then
+      echo "the content of last msg is empty" &>> $LOG_FILE
       send "the content of last msg is empty"
     fi
   fi
@@ -138,8 +139,12 @@ push_err(){
 }
 
 
-res=$(send "$text" 2>"$SH_PATH/error") || {
+send "$text"
+exit 0
+
+res=$(send "$text" 2>"$SH_PATH/error") && push_err "$res" || {
   e=$?
+  echo "E: fail to send text(1)" &>> $LOG_FILE
 # [[ -f "$SH_PATH/error" ]] && {
 [[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]] && {
   set -x
@@ -147,13 +152,16 @@ res=$(send "$text" 2>"$SH_PATH/error") || {
   set +x
   r=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
   res=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
+  echo "E: $r" &>> $LOG_FILE
+  echo "res: $res" &>> $LOG_FILE
 }
+  # send "E: failed to send text: ${text:0:10}...|$e|$r"
   push_err "E: failed to send text: ${text:0:10}...|$e|$r"
+if [[ -n "$res" ]]; then
+  push_err "$res"
+fi
 }
 # echo "res: $res"
 # echo "json: $text"
 # echo "res :|$res|" >> ~/tera/mt_msg.log
 
-if [[ -n "$res" ]]; then
-  push_err "$res"
-fi

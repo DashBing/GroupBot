@@ -49,8 +49,6 @@ res=$(curl -m 1 -s http://127.0.0.1:4240/api/messages) || exit 0
 if [[ "$res" != "[]" ]]; then
   delete_raw
   send_err2
-else
-sleep 0.3
 fi
 
 
@@ -59,8 +57,6 @@ res=$(curl -m 1 -s http://127.0.0.1:4247/api/messages) || exit 0
 if [[ "$res" != "[]" ]]; then
   delete_raw
   send_err2 msg_for_simplex.sh
-else
-sleep 0.3
 fi
 
 # get msg from simplex
@@ -68,7 +64,5 @@ res=$(curl -m 1 -s http://127.0.0.1:4250) || exit 0
 if [[ "$res" != "[]" ]]; then
   set_log
   send_err2 sm_simplex.sh
-else
-sleep 0.3
 fi
 
