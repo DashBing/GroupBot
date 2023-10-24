@@ -71,7 +71,7 @@ send(){
         fi
       fi
     fi
-    now=$[now+${tmp}]
+    now=$[now+${#tmp}]
 
     let i++
     echo "send...$i/$n" &>> $LOG_FILE
