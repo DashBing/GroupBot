@@ -47,8 +47,8 @@ send(){
   echo "sm.sh: text is too long: ${#text}" &>> $LOG_FILE
   shift
   local i=0
-  local n=$[${#text}/MAX_BYTES]
   local now=0
+  local n=$[${#text}/MAX_BYTES]
   if [[ $[${#text}%MAX_BYTES] -ne 0 ]]; then
     let n++
   fi
@@ -64,8 +64,9 @@ send(){
     if [[ "${tmp: -1}" != $'\n' ]]; then
       if [[ "${tmp: -1}" != $'\t' ]]; then
         if [[ "${tmp: -1}" != " " ]]; then
-          if [[ -n "$(echo "$tmp"|sed '$d')" ]]; then
+          if [[ -n "$(echo "$tmp"|sed -e '$d' -e '/^ *$/d')" ]]; then
             tmp=$(echo "$tmp"|sed '$d')
+            let now++
           fi
         fi
       fi
@@ -77,6 +78,10 @@ send(){
     _send "$tmp" "$@" || return $?
 # $i/$n" "$@" || return $?
     username=""
+    if [[ $i -ge 9 ]]; then
+      echo "fixme...$i/$n" &>> $LOG_FILE
+      return 1
+    fi
     sleep 0.5
   done
 }
