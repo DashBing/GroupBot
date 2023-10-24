@@ -370,7 +370,7 @@ echo "bcmd.sh arg: $*" >> $LOG_FILE
 send(){
   local text=$1
   # curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "$1" $gateway)" http://127.0.0.1:4240/api/message
-  bash "$SH_PATH/sm.sh" bot "$text" 4240 $gateway
+  bash "$SH_PATH/sm.sh" "C bot" "$text" 4240 $gateway
 }
 
 
