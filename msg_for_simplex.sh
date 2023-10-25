@@ -11,7 +11,7 @@ send_msg_to_simplex(){
 # res=$(curl -m 1 -s 127.0.0.1:4250) || exit 0
 res=$(curl -m 5 -s -XPOST -d "$*"  127.0.0.1:4250) || exit 0
 if [[ "$res" != "[]" ]]; then
-  bash "$SH_PATH/sm_simplex.sh" "$msg"
+  bash "$SH_PATH/sm_simplex.sh" "$res"
 fi
 }
 
@@ -25,10 +25,17 @@ for (( ; i < 4; i++)); do
     break
   else
     text=$(echo "$restmp" | jq -r ".text")
+    if [[ -z "$text" ]]; then
+      continue
+    fi
     username=$(echo "$restmp" | jq -r ".username")
-    # gateway=$(echo "$restmp" | jq -r ".gateway")
-    # if [[ -z "$username" ]]; then
-    send_msg_to_simplex "$username$text"
+    gateway=$(echo "$restmp" | jq -r ".gateway")
+    if [[ "$gateway" == "gateway1" ]]; then
+      if [[ "${username:0:2}" != "S " ]]; then
+        # if [[ -z "$username" ]]; then
+        send_msg_to_simplex "$username$text"
+      fi
+    fi
   fi
 
 done
