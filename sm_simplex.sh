@@ -3,8 +3,8 @@
 
 
 send_msg_mt(){
-text=$(echo "$1"|cut -d' ' -f2)
 username=$(echo "$1"|cut -d':' -f1)
+text=$(echo "$1"|cut -d':' -f2)
 bash "$SH_PATH/sm.sh" "$username" "$text" 4247
 }
 

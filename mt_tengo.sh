@@ -470,6 +470,9 @@ api.gpt)
   ;;
 api.simplex)
   LABLE="S"
+  if [[ "$2" == "simplexbot" ]]; then
+    LABLE="C"
+  fi
   ;;
 api.tg)
   LABLE="G"
