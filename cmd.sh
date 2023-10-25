@@ -14,7 +14,10 @@ send_msg_to_simplex(){
 # get msg from simplex to mt
 # curl -m 300 -s -XPOST -d "msg from mt" 127.0.0.1:4250
 # res=$(curl -m 1 -s 127.0.0.1:4250) || exit 0
+ # &>> $LOG_FILE
+echo "send to sx: $*" &>> $LOG_FILE
 res=$(curl -m 2 -s -XPOST -d "$*"  127.0.0.1:4250) || return 1
+echo "got from sx: $res" &>> $LOG_FILE
 if [[ "$res" != "[]" ]]; then
   bash "$SH_PATH/sm_simplex.sh" "$res"
 fi
@@ -79,6 +82,7 @@ for (( ; i < 4; i++)); do
   if [[ "$restmp" == "null" ]]; then
     break
   else
+echo "start to check restmp: $restmp" &>> $LOG_FILE
     text=$(echo "$restmp" | jq -r ".text")
 #    echo "$text" | sed '/^[^>]/,$d'
 #    text=$(echo "$text" | sed '/^[^>]/,$!d')
@@ -128,6 +132,7 @@ for (( ; i < 4; i++)); do
         fi
         # if [[ "$username" != "O bot: " ]]; then
         if [[ "${username:0:2}" != "O " ]]; then
+echo "send to tox: $msg" &>> $LOG_FILE
           echo "$msg"
         fi
       fi

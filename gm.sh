@@ -5,7 +5,8 @@ export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
 
 run_sh(){
-[[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE="$HOME/tera/mt.log" || export LOG_FILE=/dev/null
+# [[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE="$HOME/tera/mt.log" || export LOG_FILE=/dev/null
+[[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE="$HOME/mt.log" || export LOG_FILE=/dev/null
   # local res=${1}
   # local ll=${2:-cmd.sh}
   local e=0
@@ -14,25 +15,24 @@ run_sh(){
   # bash "$SH_PATH/$ll" "$res" 1> "$SH_PATH/.STDOUT" 2> "$SH_PATH/.ERROR" || e=$?
   local out=$(bash "$SH_PATH/$ll" "$res" 2> "$SH_PATH/.ERROR") || e=$?
   [[ -f "$SH_PATH/.ERROR" ]] && [[ -n "$(cat "$SH_PATH/.ERROR")" ]] && {
-    bash "$SH_PATH/sm.sh" "C bot" "E: $?
-$(
-cat "$SH_PATH/.ERROR"
-echo "---"
-echo "$out"
-)" 4240 &>> $LOG_FILE
-[[ -e "$SH_PATH/DEBUG" ]] && {
-  set -x
-  local d=$(bash "$SH_PATH/$ll" "$res"  2>&1) || e=$?
-  set +x
+if [[ -e "$SH_PATH/DEBUG" ]]; then
+  local d=$(bash -x "$SH_PATH/$ll" "$res"  2>&1) || e=$?
+echo "d=$d" &>> $LOG_FILE
   bash "$SH_PATH/sm.sh" "C bot" "$(
   echo '#DEBUG'
   echo "$d"
   echo '#DEBUG'
   echo "---"
   echo "E: $e"
+)" 4240 test &>> $LOG_FILE
+else
+    bash "$SH_PATH/sm.sh" "C bot" "E: $?
+$(
+cat "$SH_PATH/.ERROR"
+echo "---"
+echo "$out"
 )" 4240 &>> $LOG_FILE
-echo "d=$d" &>> $LOG_FILE
-}
+fi
   }
   if [[ "$ll" == cmd.sh ]]; then
     if [[ -n "$out" ]]; then
