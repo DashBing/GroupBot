@@ -260,7 +260,7 @@ export https_proxy=http://127.0.0.1:6080
             if [[ -n "$ip6" ]]; then
               echo -n "ipv6 from us: "
               echo $ip6
-              curl -m 5 -s "https://api.iplocation.net/?ip=$(echo "$ip6"|head -n1|sed 's/.* //')"
+              curl -m 5 -s "https://api.iplocation.net/?ip=$(echo "$ip6"|tail -n1|sed 's/.* //')"
             else
               echo -n "no ipv6"
             fi
