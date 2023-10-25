@@ -42,7 +42,7 @@ echo "d=$d" &>> $LOG_FILE
   fi
 }
 # get msg from simplex
-res=$(curl -m 1 -s http://127.0.0.1:4250) || exit 0
+res=$(curl -m 2 -s http://127.0.0.1:4250) || exit 0
 if [[ "$res" != "[]" ]]; then
   # bash "$SH_PATH/run_sh.sh" "$res" sm_simplex.sh
   ll=sm_simplex.sh
@@ -53,7 +53,7 @@ fi
 
 #res="[]"
 # for cmd
-res=$(curl -m 1 -s http://127.0.0.1:4240/api/messages) || exit 0
+res=$(curl -m 2 -s http://127.0.0.1:4240/api/messages) || exit 0
 if [[ "$res" != "[]" ]]; then
 res=$(echo "$res" | jq 'del(.[].Extra.file[0].Data)') &>/dev/null || exit 0
   ll=cmd.sh

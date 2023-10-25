@@ -1,6 +1,5 @@
 #!/bin/bash
 
-[[ -e "$SH_PATH/DEBUG" ]] && set -x
 
 export LOG_FILE=${LOG_FILE:-/dev/null}
 
@@ -23,6 +22,7 @@ fi
 
 bcmd(){
   local text=$1
+  local username=$2
 
   # [[ "$username" == "C bot: " ]] && continue
   # [[ "$username" == "C xmppbot: " ]] && continue
@@ -60,7 +60,8 @@ $qt_text"
       text=".type $text autocheck"
     fi
   else
-    [[ -z "${username}" ]] && continue
+    # [[ -z "${username}" ]] && continue
+    [[ -z "${username}" ]] && return 0
   fi
   nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" "$qt_text" &>> $LOG_FILE &
 
@@ -91,8 +92,9 @@ for (( ; i < 4; i++)); do
   # ########################################################
 
     [[ "${username:0:2}" == "C " ]] || {
-      bcmd "$text"
+      bcmd "$text" "$username"
     }
+    continue
 
 
     if [[ "$gateway" == "test" ]]; then
@@ -153,8 +155,9 @@ for (( ; i < 4; i++)); do
   fi
 
 done
+          # [[ -e "$SH_PATH/DEBUG" ]] && set -x
 
-[[ -e "$SH_PATH/DEBUG" ]] && set +x
+# [[ -e "$SH_PATH/DEBUG" ]] && set +x
 
 
 
