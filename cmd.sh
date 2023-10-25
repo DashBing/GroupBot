@@ -1,5 +1,6 @@
 #!/bin/bash
 
+[[ -e "$SH_PATH/DEBUG" ]] && set -x
 
 export LOG_FILE=${LOG_FILE:-/dev/null}
 
@@ -152,3 +153,11 @@ for (( ; i < 4; i++)); do
   fi
 
 done
+
+[[ -e "$SH_PATH/DEBUG" ]] && set +x
+
+
+
+
+
+

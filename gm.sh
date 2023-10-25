@@ -20,18 +20,19 @@ cat "$SH_PATH/.ERROR"
 echo "---"
 echo "$out"
 )" 4240 &>> $LOG_FILE
+[[ -e "$SH_PATH/DEBUG" ]] && {
   set -x
   local d=$(bash "$SH_PATH/$ll" "$res"  2>&1) || e=$?
   set +x
-    bash "$SH_PATH/sm.sh" "C bot" "$(
-[[ -e "$SH_PATH/DEBUG" ]] && {
-  echo "#DEBUG"
+  bash "$SH_PATH/sm.sh" "C bot" "$(
+  echo '#DEBUG'
   echo "$d"
-  echo "#DEBUG"
+  echo '#DEBUG'
   echo "---"
   echo "E: $e"
-}
 )" 4240 &>> $LOG_FILE
+echo "d=$d" &>> $LOG_FILE
+}
   }
   if [[ "$ll" == cmd.sh ]]; then
     if [[ -n "$out" ]]; then
