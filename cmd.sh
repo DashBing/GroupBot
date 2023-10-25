@@ -42,7 +42,8 @@ $qt_text"
     if [[ "$text" == "ping" ]]; then
       text=".ping"
     elif [[ -z "${username}" ]]; then
-      continue
+      # continue
+      return 0
     elif [[ "$text" == "help" ]]; then
       # text=".help"
       nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" ".help" "$restmp" &>/dev/null &

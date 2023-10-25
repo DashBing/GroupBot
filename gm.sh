@@ -24,7 +24,7 @@ echo "$out"
 [[ -e "$SH_PATH/DEBUG" ]] && {
   echo "#DEBUG"
   set -x
-  bash "$SH_PATH/$ll" "$res" || e=$?
+  bash "$SH_PATH/$ll" "$res"  2>&1 || e=$?
   set +x
   echo "#DEBUG"
   echo "---"
