@@ -9,12 +9,14 @@ export LOG_FILE=${LOG_FILE:-/dev/null}
 SH_PATH=${SH_PATH:-$(cd $(dirname "${BASH_SOURCE[0]}") || exit; pwd )}
 
 send_msg_to_simplex(){
+# [[ -e "$SH_PATH/DEBUG" ]] && set -x
+# [[ -e "$SH_PATH/DEBUG" ]] && set +x
 # get msg from simplex to mt
 # curl -m 300 -s -XPOST -d "msg from mt" 127.0.0.1:4250
 # res=$(curl -m 1 -s 127.0.0.1:4250) || exit 0
 res=$(curl -m 2 -s -XPOST -d "$*"  127.0.0.1:4250) || return 1
 if [[ "$res" != "[]" ]]; then
-  bash "$SH_PATH/sm_simplex.sh" "$res" &>> $LOG_FILE
+  bash "$SH_PATH/sm_simplex.sh" "$res"
 fi
 }
 
@@ -122,7 +124,7 @@ for (( ; i < 4; i++)); do
           :
           # bash "$SH_PATH/run_sh.sh" "[$restmp]" msg_for_simplex.sh
           # send_msg_to_simplex "$username$text"
-          send_msg_to_simplex "$msg"
+          send_msg_to_simplex "$msg" &>> $LOG_FILE
         fi
         # if [[ "$username" != "O bot: " ]]; then
         if [[ "${username:0:2}" != "O " ]]; then
