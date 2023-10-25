@@ -71,7 +71,7 @@ fi
 
 max=30 #3s
 min=2
-if [[ "$busy" -eq "0" ]]; then
+if [[ "$busy" == "0" ]]; then
   busy=$min
 else
 export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
