@@ -64,7 +64,7 @@ export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
     busy=$[busy+1]
     busy2=$[(busy-max)*(busy-max)/30]
     sleep 0.2
-    echo sleep2 $[busy2/10].$[busy2*10/10]
+    echo sleep2 $[busy2/10].$[busy2*10/10] 1>&2
     sleep $[busy2/10].$[busy2*10/10]
   else
     busy=$[busy+1]
