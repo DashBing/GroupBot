@@ -3,6 +3,7 @@
 
 export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 [[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE="$HOME/tera/mt.log" || export LOG_FILE=/dev/null
+LOG_FILE_E="$HOME/tera/err.log"
 
 
 username=$1
@@ -42,7 +43,7 @@ _send(){
 # echo curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message >> $LOG_FILE
 # } && echo "sm.sh: send return code: $?" >> $LOG_FILE
 unset http_proxy https_proxy
-curl -m 3 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message || export >> $LOG_FILE
+curl -m 5 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message || export &>> $LOG_FILE_E
 }
 
 send(){
