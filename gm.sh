@@ -78,10 +78,12 @@ else
   busy=$[busy*2]
   if [[ "$busy" -ge "$max" ]]; then
     busy=$max
+    echo max 1>&2
+  else
+    echo $busy 1>&2
   fi
   sleep $[busy/10].$[busy%10]
 fi
 
 export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 echo $busy > "$SH_PATH/.BUSY"
-echo $busy 1>&2
