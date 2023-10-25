@@ -84,3 +84,4 @@ fi
 
 export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 echo $busy > "$SH_PATH/.BUSY"
+echo $busy 1>&2
