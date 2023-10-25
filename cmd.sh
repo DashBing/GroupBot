@@ -12,7 +12,7 @@ send_msg_to_simplex(){
 # get msg from simplex to mt
 # curl -m 300 -s -XPOST -d "msg from mt" 127.0.0.1:4250
 # res=$(curl -m 1 -s 127.0.0.1:4250) || exit 0
-res=$(curl -m 5 -s -XPOST -d "$*"  127.0.0.1:4250) || exit 0
+res=$(curl -m 2 -s -XPOST -d "$*"  127.0.0.1:4250) || return 1
 if [[ "$res" != "[]" ]]; then
   bash "$SH_PATH/sm_simplex.sh" "$res" &>> $LOG_FILE
 fi
@@ -64,8 +64,6 @@ $qt_text"
     [[ -z "${username}" ]] && return 0
   fi
   nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" "$qt_text" &>> $LOG_FILE &
-
-
 }
 
 #[[ "$(echo "$res" | jq ".[0]")" != "null" ]] && bash "$SH_PATH/cmd.sh" "$res"
@@ -91,9 +89,7 @@ for (( ; i < 4; i++)); do
   # continue # run cmd by python: mybots.py. but not running now
   # ########################################################
 
-    [[ "${username:0:2}" == "C " ]] || {
-      bcmd "$text" "$username"
-    }
+    [[ "${username:0:2}" != "C " ]] && [[ "${username: -5}" != "bot: " ]] && bcmd "$text" "$username"
 
     # continue
 
@@ -104,32 +100,20 @@ for (( ; i < 4; i++)); do
         rm "$SH_PATH/.BUSY"
       fi
     elif [[ "$gateway" == "gateway1" ]]; then
-    # if true; then
       URL=$(echo "$restmp" | jq -r ".Extra.file[0].URL")
       if [[ -z "$URL" || "$URL" == "null" ]]; then
         if [[ -z "$text" ]]; then
           continue
         else
-          #            [[ "$gateway" == "gateway1" ]] && echo -n "$(echo "$text" | sed "s/^/$username/g")"
-          # [[ "$gateway" == "gateway1" ]] && echo -n "$(bash "$SH_PATH/change_long_text.sh" "$username$text")"
-          # echo -n "$(bash "$SH_PATH/change_long_text.sh" "$username$text")"
-          # echo "$(bash "$SH_PATH/change_long_text.sh" "$username$text")"
-          msg="$(bash "$SH_PATH/change_long_text.sh" "$username$text")"
+          msg=$(bash "$SH_PATH/change_long_text.sh" "$username$text")
         fi
       else
-        # if [[ "$gateway" == "gateway1" ]]; then
         if [[ -n "$gateway" ]]; then
           Comment=$(echo "$restmp" | jq -r ".Extra.file[0].Comment")
           if [[ -z "$Comment" ]]; then
-#              echo -n "$username$text$URL"
-            # echo -n "$(bash "$SH_PATH/change_long_text.sh" "$username$text $URL")"
-            # echo "$(bash "$SH_PATH/change_long_text.sh" "$username$text $URL")"
-            msg="$(bash "$SH_PATH/change_long_text.sh" "$username$text $URL")"
+            msg=$(bash "$SH_PATH/change_long_text.sh" "$username$text $URL")
           else
-            # text="$username$Comment: $URL"
-            # echo -n "$(bash "$SH_PATH/change_long_text.sh" "$username$text$Comment: $URL")"
-            # echo "$(bash "$SH_PATH/change_long_text.sh" "$username$text$Comment: $URL")"
-            msg="$(bash "$SH_PATH/change_long_text.sh" "$username$text$Comment: $URL")"
+            msg=$(bash "$SH_PATH/change_long_text.sh" "$username$text$Comment: $URL")
           fi
         fi
       fi
@@ -138,7 +122,7 @@ for (( ; i < 4; i++)); do
           :
           # bash "$SH_PATH/run_sh.sh" "[$restmp]" msg_for_simplex.sh
           # send_msg_to_simplex "$username$text"
-          # send_msg_to_simplex "$msg"
+          send_msg_to_simplex "$msg"
         fi
         # if [[ "$username" != "O bot: " ]]; then
         if [[ "${username:0:2}" != "O " ]]; then
@@ -149,15 +133,10 @@ for (( ; i < 4; i++)); do
 
 
 
-
-
-
-
-
   fi
 
 done
-          # [[ -e "$SH_PATH/DEBUG" ]] && set -x
+# [[ -e "$SH_PATH/DEBUG" ]] && set -x
 
 # [[ -e "$SH_PATH/DEBUG" ]] && set +x
 
