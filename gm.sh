@@ -20,6 +20,17 @@ cat "$SH_PATH/.ERROR"
 echo "---"
 echo "$out"
 )" 4240 &>> $LOG_FILE
+    bash "$SH_PATH/sm.sh" "C bot" "$(
+[[ -e "$SH_PATH/DEBUG" ]] && {
+  echo "#DEBUG"
+  set -x
+  bash "$SH_PATH/$ll" "$res" || e=$?
+  set +x
+  echo "#DEBUG"
+  echo "---"
+  echo "E: $e"
+}
+)" 4240 &>> $LOG_FILE
   }
   if [[ "$ll" == cmd.sh ]]; then
     if [[ -n "$out" ]]; then
