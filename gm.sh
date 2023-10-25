@@ -49,7 +49,10 @@ fi
 
 
 min=2
-if [[ "$busy" == "1" ]]; then
+
+if [[ -e "$SH_PATH/.BUSY" ]]; then
+  busy=$min
+elif [[ "$busy" == "1" ]]; then
   busy=$min
 else
 max=50 #3s
