@@ -234,6 +234,7 @@ export https_proxy=http://127.0.0.1:6080
           echo -n "from us: "
           nali-dig +short "$host" || echo "E: $?"
           nali-dig +short aaaa "$host" || echo "E: $?"
+          echo
           echo -n "fake cn: "
           nali-dig @8.8.8.8 +subnet=114.114.114.114/24 +short "$host" || echo "E: $?"
           nali-dig @8.8.8.8 +subnet=114.114.114.114/24 +short aaaa "$host" || echo "E: $?"
@@ -241,20 +242,26 @@ export https_proxy=http://127.0.0.1:6080
 #          echo -n "ali(from cn): ";  nali-dig @172.22.0.7 -p 55 +timeout=2 +short "$host" || echo "E: $?"
           # echo -n "114(from us): "
           # nali-dig @114.114.114.114 +timeout=2 +short "$host" || echo "E: $?"
+          echo
           echo -n "114(over warp): "
           nali-dig @127.0.0.1 -p 6054 +timeout=2 +short "$host" || echo "E: $?"
           nali-dig @127.0.0.1 -p 6054 +timeout=2 +short aaaa "$host" || echo "E: $?"
           # echo -n "ali(from us): "
           # nali-dig @223.5.5.5 +timeout=2 +short "$host" || echo "E: $?"
+          echo
           echo -n "ali(over warp): "
           nali-dig @127.0.0.1 -p 6055 +timeout=2 +short "$host" || echo "E: $?"
           nali-dig @127.0.0.1 -p 6055 +timeout=2 +short aaaa "$host" || echo "E: $?"
+          (
+          echo
           echo -n "tx(over warp): "
           # nali-dig @127.0.0.1 -p 6059 +timeout=2 +short "$host" || echo "E: $?"
           export http_proxy="http://127.0.0.1:6080"
           export https_proxy="http://127.0.0.1:6080"
           q a "$host" @https://doh.pub/dns-query |cut -d' ' -f4 |nali
           unset http_proxy https_proxy
+          )
+          echo
           local ip6=""
           local ip6=$(nali-dig +short aaaa "$host") && {
             if [[ -n "$ip6" ]]; then

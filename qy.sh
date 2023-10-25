@@ -4,6 +4,8 @@
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd -P )}
 
 
+export http_proxy="http://127.0.0.1:6080"
+export https_proxy="http://127.0.0.1:6080"
 
 
 

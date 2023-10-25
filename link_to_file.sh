@@ -14,6 +14,8 @@ MAX_SHARE_FILE_SIZE=${MAX_SHARE_FILE_SIZE:-64000000}
 # $3 12345
 # [[ -n "$2" ]] && MAX_SHARE_FILE_SIZE="$2"
 
+export http_proxy="http://127.0.0.1:6080"
+export https_proxy="http://127.0.0.1:6080"
 
 
 link_to_file() {
