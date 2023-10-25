@@ -31,34 +31,29 @@ send_err2(){
 }
 
 
-
-res=$(curl -m 1 -s http://127.0.0.1:4241/api/messages) || exit 0
+#res="[]"
+# for cmd
+res=$(curl -m 1 -s http://127.0.0.1:4240/api/messages) || exit 0
 if [[ "$res" != "[]" ]]; then
   delete_raw
-bash "$SH_PATH/msg_for_tox.sh" "$res" 2>> $LOG_FILE || {
-  send_err msg_for_tox.sh
-}
+  send_err2
 fi
 
-max=30 #3s
-min=2
-if [[ "$busy" == "1" ]]; then
-  busy=$min
-else
-export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
-  busy=$(cat "$SH_PATH/.BUSY")
-  # busy=$[busy*2]
-  busy=$[busy+1]
-  if [[ $busy -ge $max ]]; then
-    busy=$max
-    echo max 1>&2
-  else
-    echo $busy 1>&2
-  fi
-  sleep $[busy/10].$[busy%10]
+# get msg from simplex
+res=$(curl -m 1 -s http://127.0.0.1:4250) || exit 0
+if [[ "$res" != "[]" ]]; then
+  set_log
+  send_err2 sm_simplex.sh
 fi
 
-echo $busy > "$SH_PATH/.BUSY"
 
 
-nohup bash "$SH_PATH/bgm.sh" &>/dev/null &
+
+# get msg from mt for simplex
+res=$(curl -m 1 -s http://127.0.0.1:4247/api/messages) || exit 0
+if [[ "$res" != "[]" ]]; then
+  delete_raw
+  send_err2 msg_for_simplex.sh
+fi
+
+
