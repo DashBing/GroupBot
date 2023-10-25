@@ -7,6 +7,7 @@ export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 # [[ -e "$SH_PATH/DEBUG" ]] && export DEBUG=true
 [[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE="$HOME/tera/mt.log" || export LOG_FILE=/dev/null
 # [[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE="$HOME/mt.log" || export LOG_FILE=/dev/null
+  busy=1
 }
 
 delete_raw(){
@@ -14,7 +15,6 @@ res=$(echo "$res" | jq 'del(.[].Extra.file[0].Data)') &>/dev/null || exit 0
   set_log
 }
 
-busy=2
 send_err(){
   local ll=${1:-cmd.sh}
   echo bash "$SH_PATH/$ll" "$res" &>> $LOG_FILE
@@ -23,7 +23,6 @@ send_err(){
   echo "---"
   cat "$SH_PATH/.ERROR")
   bash "$SH_PATH/$ll" "C bot" "$text" 4240 &>> $LOG_FILE
-  busy=1
 
 }
 send_err2(){
@@ -71,7 +70,7 @@ fi
 
 max=30 #3s
 min=2
-if [[ $busy -eq 1 ]]; then
+if [[ "$busy" == "1" ]]; then
   busy=$min
 else
 export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
