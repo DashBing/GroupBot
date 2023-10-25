@@ -388,7 +388,8 @@ telegram.*)
     # QT=$( python3 "$SH_PATH/get_msg.py" reply_msg "$(echo "$TEXT" | sed '/^> reply_from_telegram$/,$d')" "$2" "$5" ) || QT=""
     # QT=""
     # [[ -z "$QT" ]] && QT=$( echo "$TEXT" | sed '0,/^_reply_$/d' )
-    QT=$( echo "$TEXT" | sed -e '0,/^_reply_$/d' -e '1s/^G Matrix Telegram Bridge: //' -e '1s/^G bot: //' -e '1s/^G Group: /G admin: /' -e 's/^/> /' )
+    QT=$( echo "$TEXT" | sed '0,/^_reply_$/d' |sed -e '1s/^G Matrix Telegram Bridge: //1' -e '1s/^G bot: //1' -e '1s/^G Group: /G admin: /1' -e '1s/:#0000: /: /1' -e 's/^/> /' )
+    TEXT=$(echo "$TEXT" | sed '/^_reply_$/,$d')
 
   fi
 
@@ -407,11 +408,11 @@ telegram.*)
 #   fi
 
   # if [[ $(echo "$TEXT" | grep -c -G "^> reply_from_telegram$" ) -eq 1 ]]; then
-  if echo "$TEXT" | grep -q -G "^_reply_$"; then
+  # if echo "$TEXT" | grep -q -G "^_reply_$"; then
     #skip nick
     # TEXT=$(echo "$TEXT" | sed '/^> reply_from_telegram$/,$d';)
-    TEXT=$(echo "$TEXT" | sed '/^_reply_$/,$d';)
-  fi
+    # TEXT=$(echo "$TEXT" | sed '/^_reply_$/,$d';)
+  # fi
   ;;
 slack.*)
   LABLE="s"
