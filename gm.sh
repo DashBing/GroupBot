@@ -78,7 +78,7 @@ export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
   busy=$(cat "$SH_PATH/.BUSY")
   # busy=$[busy*2]
   busy=$[busy+1]
-  if [[ "$busy" -ge "$max" ]]; then
+  if [[ $busy -ge $max ]]; then
     busy=$max
     echo max 1>&2
   else
