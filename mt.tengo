@@ -1,25 +1,22 @@
 os := import("os")
-
-
-
 /* if inGateway == "test" { */
 /* if inProtocol == "discord" { */
 /* if inGateway == "rss" { */
-if outGateway == "gateway1" {
-fmt := import("fmt")
-fmt.println("############")
+/* if outGateway == "gateway1" { */
+/* fmt := import("fmt") */
+/* fmt.println("############") */
 /* fmt.println("## START") */
 /* fmt.println("############") */
-fmt.println(msgText)
-fmt.println(msgUsername)
-fmt.println(inAccount)
-fmt.println(inChannel)
-fmt.println(inGateway)
-fmt.println(inEvent)
-fmt.println(outChannel)
-fmt.println(outGateway)
-fmt.println(outEvent)
-}
+/* fmt.println(msgText) */
+/* fmt.println(msgUsername) */
+/* fmt.println(inAccount) */
+/* fmt.println(inChannel) */
+/* fmt.println(inGateway) */
+/* fmt.println(inEvent) */
+/* fmt.println(outChannel) */
+/* fmt.println(outGateway) */
+/* fmt.println(outEvent) */
+/* } */
 
 cmd := os.exec("/run/user/1000/bot/mt_tengo.sh", msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent)
 /* msgUsername = string(cmd.output()) */
@@ -37,24 +34,9 @@ msgText = msgText[1]
 /* if inGateway == "test" { */
 /* if inProtocol == "discord" { */
 /* if inGateway == "rss" { */
-if outGateway == "gateway1" {
-fmt := import("fmt")
-fmt.println("##")
-/* fmt.println(msgText) */
-fmt.println(msgUsername)
-fmt.println(inAccount)
-/* fmt.println(inProtocol) */
-/* fmt.println(inChannel) */
-/* fmt.println(inGateway) */
-/* fmt.println(inEvent) */
-/* fmt.println(outAccount) */
-/* fmt.println(outProtocol) */
-/* fmt.println(outChannel) */
-/* fmt.println(outGateway) */
-/* fmt.println(outEvent) */
-}
-}
-
+/* if outGateway == "gateway1" { */
+/* fmt := import("fmt") */
+/* fmt.println("##") */
 /* fmt.println(msgText) */
 /* fmt.println(msgUsername) */
 /* fmt.println(inAccount) */
@@ -67,4 +49,6 @@ fmt.println(inAccount)
 /* fmt.println(outChannel) */
 /* fmt.println(outGateway) */
 /* fmt.println(outEvent) */
-/* fmt.println("####") */
+/* } */
+}
+
