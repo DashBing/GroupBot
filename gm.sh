@@ -69,15 +69,13 @@ bash "$SH_PATH/msg_for_tox.sh" "$res" 2>> $LOG_FILE || {
 }
 fi
 
-if [[ -z "$busy" ]]; then
-export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
-  busy=$(cat "$SH_PATH/.BUSY")
-fi
 max=30 #3s
 min=2
-if [[ "$busy" -eq 0 ]]; then
+if [[ "$busy" -eq "0" ]]; then
   busy=$min
 else
+export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
+  busy=$(cat "$SH_PATH/.BUSY")
   # busy=$[busy*2]
   busy=$[busy+1]
   if [[ "$busy" -ge "$max" ]]; then
