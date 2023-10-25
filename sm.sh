@@ -1,8 +1,9 @@
 #!/bin/bash
 #send msg of tox(change port for other app) to matterbridge api
 
+export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
+[[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE="$HOME/tera/mt.log" || export LOG_FILE=/dev/null
 
-. "$SH_PATH/init_for_gmsm.sh"
 
 username=$1
 text=$2

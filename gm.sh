@@ -3,7 +3,8 @@
 # export SH_PATH=$(cd $(dirname ${BASH_SOURCE[0]}); pwd )
 
 set_log(){
-  . "$SH_PATH/init_for_gmsm.sh"
+export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
+[[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE="$HOME/tera/mt.log" || export LOG_FILE=/dev/null
   busy=1
 }
 
