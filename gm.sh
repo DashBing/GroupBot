@@ -73,8 +73,5 @@ export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
   echo $busy 1>&2
   # sleep $[busy/10].$[busy%10]
 fi
-
 echo $busy > "$SH_PATH/.BUSY"
-
-
 # nohup bash "$SH_PATH/bgm.sh" &>/dev/null &
