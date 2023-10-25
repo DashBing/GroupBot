@@ -20,12 +20,13 @@ cat "$SH_PATH/.ERROR"
 echo "---"
 echo "$out"
 )" 4240 &>> $LOG_FILE
+  set -x
+  local d=$(bash "$SH_PATH/$ll" "$res"  2>&1) || e=$?
+  set +x
     bash "$SH_PATH/sm.sh" "C bot" "$(
 [[ -e "$SH_PATH/DEBUG" ]] && {
   echo "#DEBUG"
-  set -x
-  bash "$SH_PATH/$ll" "$res"  2>&1 || e=$?
-  set +x
+  echo "$d"
   echo "#DEBUG"
   echo "---"
   echo "E: $e"
@@ -76,13 +77,13 @@ max2=150
     busy=$[busy+1]
     busy2=$[(busy-max)*(busy-max)*(busy-max)/35714]
     sleep 0.2
-    echo sleep2 $[busy2/10].$[busy2%10] 1>&2
+    # echo sleep2 $[busy2/10].$[busy2%10] 1>&2
     sleep $[busy2/10].$[busy2%10]
   else
     busy=$[busy+1]
     sleep 0.2
   fi
-  echo $busy 1>&2
+  # echo $busy 1>&2
   # sleep $[busy/10].$[busy%10]
 fi
 echo $busy > "$SH_PATH/.BUSY"

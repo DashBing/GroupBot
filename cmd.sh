@@ -61,7 +61,7 @@ $qt_text"
   else
     [[ -z "${username}" ]] && continue
   fi
-  nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" "$qt_text" &
+  nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" "$qt_text" &>> $LOG_FILE &
 
 
 }
@@ -90,7 +90,7 @@ for (( ; i < 4; i++)); do
   # ########################################################
 
     [[ "${username:0:2}" == "C " ]] || {
-      bcmd "$text" &>> $LOG_FILE
+      bcmd "$text"
     }
 
 
