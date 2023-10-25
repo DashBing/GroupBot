@@ -24,8 +24,6 @@ send_err(){
   bash "$SH_PATH/$ll" "C bot" "$text" 4240 &>> $LOG_FILE
 export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 busy=$(cat "$SH_PATH/.BUSY")
-max=30 #3s
-min=2
   busy=0
 
 }
@@ -72,6 +70,8 @@ bash "$SH_PATH/msg_for_tox.sh" "$res" 2>> $LOG_FILE || {
 }
 fi
 
+max=30 #3s
+min=2
 if [[ "$busy" -eq 0 ]]; then
   busy=$min
 else
