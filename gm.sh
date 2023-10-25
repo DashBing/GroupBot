@@ -23,7 +23,6 @@ send_err(){
   cat "$SH_PATH/.ERROR")
   bash "$SH_PATH/$ll" "C bot" "$text" 4240 &>> $LOG_FILE
 export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
-busy=$(cat "$SH_PATH/.BUSY")
   busy=0
 
 }
@@ -72,6 +71,10 @@ fi
 
 max=30 #3s
 min=2
+if [[ -z "$busy" ]]; then
+export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
+  busy=$(cat "$SH_PATH/.BUSY")
+fi
 if [[ "$busy" -eq 0 ]]; then
   busy=$min
 else
@@ -85,5 +88,4 @@ else
   sleep $[busy/10].$[busy%10]
 fi
 
-export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 echo $busy > "$SH_PATH/.BUSY"
