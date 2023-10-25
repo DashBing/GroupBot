@@ -2,12 +2,8 @@
 
 
 
-SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}); pwd )}
-# LP=${LP:-/var/www/dav/tmp}
-LP=${LP:-$HOME/tera/tmp}
-#DOMAIN=${DOMAIN:-liuu.tk}
-DOMAIN=$(cat $SH_PATH/DOMAIN)
-MAX_SHARE_FILE_SIZE=${MAX_SHARE_FILE_SIZE:-64000000}
+. "$SH_PATH/init_for_gmsm.sh"
+
 
 
 # $2 type

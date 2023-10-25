@@ -1,7 +1,9 @@
 #!/bin/bash
 #send msg of tox(change port for other app) to matterbridge api
-# export SH_PATH=$(cd $(dirname ${BASH_SOURCE[0]}); pwd )
-export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
+
+
+. "$SH_PATH/init_for_gmsm.sh"
+
 username=$1
 text=$2
 # [[ "$username" == "bot" || "$username" == "ToxBot" ]] && exit 0
@@ -48,7 +50,7 @@ send(){
   MAX_BYTES=$[MAX_BYTES-9-${#username}]
   local text=$1
   if [[ ${#text} -le $MAX_BYTES ]]; then
-    echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." >> $LOG_FILE
+echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." &>> $LOG_FILE
     _send "$text"
     return $?
   fi
