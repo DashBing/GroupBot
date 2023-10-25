@@ -94,7 +94,8 @@ for (( ; i < 4; i++)); do
     [[ "${username:0:2}" == "C " ]] || {
       bcmd "$text" "$username"
     }
-    continue
+
+    # continue
 
 
     if [[ "$gateway" == "test" ]]; then
