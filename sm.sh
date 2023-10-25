@@ -31,8 +31,15 @@ gateway=${4-gateway1}
 _send(){
   local text=$1
   local text_en=$(bash "$SH_PATH/"gene_res.sh "$text" "$gateway" "$username")
+  echo "sm.sh: text_en: $text_en" >> $LOG_FILE
 # res=$(curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message)
-curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message
+# curl -m 3 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message || {
+#   echo "sm.sh: send return code: $?" >> $LOG_FILE
+#   export  >> $LOG_FILE
+# echo curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message >> $LOG_FILE
+# } && echo "sm.sh: send return code: $?" >> $LOG_FILE
+unset http_proxy https_proxy
+curl -m 3 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message
 }
 
 send(){
@@ -41,12 +48,12 @@ send(){
   MAX_BYTES=$[MAX_BYTES-9-${#username}]
   local text=$1
   if [[ ${#text} -le $MAX_BYTES ]]; then
-    echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." &>> $LOG_FILE
-    _send "$@"
+    echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." >> $LOG_FILE
+    _send "$text"
     return $?
   fi
   echo "sm.sh: text is too long: ${#text}" &>> $LOG_FILE
-  shift
+  # shift
   local i=0
   local now=0
   local n=$[${#text}/MAX_BYTES]
@@ -63,20 +70,20 @@ send(){
     fi
     tmp=${text:$now:$MAX_BYTES}
     if [[ "${tmp: -1}" != $'\n' ]]; then
-      # if [[ "${tmp: -1}" != $'\t' ]]; then
+      if [[ "${tmp: -1}" != $'\t' ]]; then
         # if [[ "${tmp: -1}" != " " ]]; then
           if [[ -n "$(echo "$tmp"|sed -e '$d' -e '/^ *$/d')" ]]; then
             tmp=$(echo "$tmp"|sed '$d')
             let now++
           fi
         # fi
-      # fi
+      fi
     fi
     now=$[now+${#tmp}]
 
     let i++
     echo "send...$i/$n" &>> $LOG_FILE
-    local res=$(_send "$tmp" "$@") || {
+    local res=$(_send "$tmp") || {
       if [[ -n "$res" ]]; then
         echo "$res"
       fi
@@ -139,8 +146,8 @@ push_err(){
 }
 
 
-send "$text"
-exit 0
+# send "$text"
+# exit 0
 
 res=$(send "$text" 2>"$SH_PATH/error") && push_err "$res" || {
   e=$?
@@ -157,11 +164,11 @@ res=$(send "$text" 2>"$SH_PATH/error") && push_err "$res" || {
 }
   # send "E: failed to send text: ${text:0:10}...|$e|$r"
   push_err "E: failed to send text: ${text:0:10}...|$e|$r"
-if [[ -n "$res" ]]; then
-  push_err "$res"
-fi
 }
 # echo "res: $res"
 # echo "json: $text"
 # echo "res :|$res|" >> ~/tera/mt_msg.log
 
+if [[ -n "$res" ]]; then
+  push_err "$res"
+fi

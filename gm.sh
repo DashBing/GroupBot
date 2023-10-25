@@ -22,20 +22,13 @@ send_err(){
   echo "---"
   cat "$SH_PATH/.ERROR")
   bash "$SH_PATH/$ll" "C bot" "$text" 4240 &>> $LOG_FILE
+export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
+busy=$(cat "$SH_PATH/.BUSY")
+max=30 #3s
+min=2
+  busy=0
 
 }
-
-
-res=$(curl -m 1 -s http://127.0.0.1:4241/api/messages) || exit 0
-if [[ "$res" != "[]" ]]; then
-  delete_raw
-bash "$SH_PATH/msg_for_tox.sh" "$res" 2>> $LOG_FILE || {
-  send_err msg_for_tox.sh
-}
-else
-sleep 0.3
-fi
-
 send_err2(){
   local ll=${1:-cmd.sh}
   bash "$SH_PATH/$ll" "$res" &>> $LOG_FILE || {
@@ -43,12 +36,23 @@ send_err2(){
   }
 }
 
+
+# get msg from simplex
+res=$(curl -m 1 -s http://127.0.0.1:4250) || exit 0
+if [[ "$res" != "[]" ]]; then
+  set_log
+  send_err2 sm_simplex.sh
+  sleep 0.2
+fi
+
+
 #res="[]"
 # for cmd
 res=$(curl -m 1 -s http://127.0.0.1:4240/api/messages) || exit 0
 if [[ "$res" != "[]" ]]; then
   delete_raw
   send_err2
+  sleep 0.4
 fi
 
 
@@ -59,10 +63,24 @@ if [[ "$res" != "[]" ]]; then
   send_err2 msg_for_simplex.sh
 fi
 
-# get msg from simplex
-res=$(curl -m 1 -s http://127.0.0.1:4250) || exit 0
+
+res=$(curl -m 1 -s http://127.0.0.1:4241/api/messages) || exit 0
 if [[ "$res" != "[]" ]]; then
-  set_log
-  send_err2 sm_simplex.sh
+  delete_raw
+bash "$SH_PATH/msg_for_tox.sh" "$res" 2>> $LOG_FILE || {
+  send_err msg_for_tox.sh
+}
 fi
 
+if [[ "$busy" -eq 0 ]]; then
+  busy=$min
+else
+  busy=$[busy*2]
+  if [[ "$busy" -ge "$max" ]]; then
+    busy=$max
+  fi
+  sleep $[busy/10].$[busy%10]
+fi
+
+export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
+echo $busy > "$SH_PATH/.BUSY"

@@ -55,3 +55,13 @@ file_name=group_note.txt
 # rm "$SH_PATH/DEBUG" || true
 # rm "$SH_PATH/STOP" || true
 
+
+
+[[ -e "$SH_PATH/.BUSY" ]] || {
+  echo 2 > "$SH_PATH/.BUSY"
+}
+
+
+
+
+

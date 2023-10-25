@@ -43,6 +43,8 @@ changeai(){
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
 cmds() {
+export http_proxy=http://127.0.0.1:6080
+export https_proxy=http://127.0.0.1:6080
   # cmd="$*"
   if [[ "${text:0:2}" == ". " ]]; then
     return 0
@@ -381,6 +383,12 @@ cmds() {
     echo '?'
     ;;
   esac
+
+
+export http_proxy=
+export https_proxy=
+unset http_proxy https_proxy
+
 }
 
 
