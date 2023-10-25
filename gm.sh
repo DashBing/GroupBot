@@ -1,10 +1,10 @@
 #!/bin/bash
 #get msg for tox and run cmd
 # export SH_PATH=$(cd $(dirname ${BASH_SOURCE[0]}); pwd )
+export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
 
 run_sh(){
-export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 [[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE="$HOME/tera/mt.log" || export LOG_FILE=/dev/null
   # local res=${1}
   # local ll=${2:-cmd.sh}
@@ -50,14 +50,13 @@ fi
 
 min=2
 
-if [[ -e "$SH_PATH/.BUSY" ]]; then
+if [[ "$busy" == "1" ]]; then
   busy=$min
-elif [[ "$busy" == "1" ]]; then
+elif ! [[ -e "$SH_PATH/.BUSY" ]]; then
   busy=$min
 else
 max=50 #3s
 max2=150
-export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
   busy=$(cat "$SH_PATH/.BUSY")
   # busy=$[busy*2]
   if [[ $busy -ge $max2 ]]; then
