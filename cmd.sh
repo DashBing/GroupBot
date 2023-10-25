@@ -95,7 +95,9 @@ for (( ; i < 4; i++)); do
 
     if [[ "$gateway" == "test" ]]; then
       # echo 2 > "$SH_PATH/.BUSY"
-      rm "$SH_PATH/.BUSY"
+      if [[ -e "$SH_PATH/.BUSY" ]]; then
+        rm "$SH_PATH/.BUSY"
+      fi
     elif [[ "$gateway" == "gateway1" ]]; then
     # if true; then
       URL=$(echo "$restmp" | jq -r ".Extra.file[0].URL")

@@ -18,7 +18,7 @@ run_sh(){
 $(
 cat "$SH_PATH/.ERROR"
 echo "---"
-echo "out"
+echo "$out"
 )" 4240 &>> $LOG_FILE
   }
   if [[ "$ll" == cmd.sh ]]; then
