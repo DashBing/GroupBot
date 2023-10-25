@@ -134,9 +134,10 @@ for (( ; i < 4; i++)); do
       fi
       if [[ -n "$msg" ]]; then
         if [[ "${username:0:2}" != "S " ]]; then
+          :
           # bash "$SH_PATH/run_sh.sh" "[$restmp]" msg_for_simplex.sh
           # send_msg_to_simplex "$username$text"
-          send_msg_to_simplex "$msg"
+          # send_msg_to_simplex "$msg"
         fi
         # if [[ "$username" != "O bot: " ]]; then
         if [[ "${username:0:2}" != "O " ]]; then
