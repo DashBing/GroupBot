@@ -45,11 +45,12 @@ fi
 res=$(curl -m 1 -s http://127.0.0.1:4250) || exit 0
 if [[ "$res" != "[]" ]]; then
   set_log
-  send_err2 sm_simplex.sh
+  run_sh sm_simplex.sh
 fi
 
 
-max=30 #3s
+max=50 #3s
+max2=80
 min=2
 if [[ "$busy" == "1" ]]; then
   busy=$min
@@ -57,14 +58,20 @@ else
 export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
   busy=$(cat "$SH_PATH/.BUSY")
   # busy=$[busy*2]
-  busy=$[busy+1]
-  if [[ $busy -ge $max ]]; then
-    busy=$max
-    echo max 1>&2
+  if [[ $busy -ge $max2 ]]; then
+    sleep 3
+  elif [[ $busy -ge $max ]]; then
+    busy=$[busy+1]
+    busy2=$[(busy-max)*(busy-max)/30]
+    sleep 0.2
+    echo sleep2 $[busy2/10].$[busy2*10/10]
+    sleep $[busy2/10].$[busy2*10/10]
   else
-    echo $busy 1>&2
+    busy=$[busy+1]
+    sleep 0.2
   fi
-  sleep $[busy/10].$[busy%10]
+  echo $busy 1>&2
+  # sleep $[busy/10].$[busy%10]
 fi
 
 echo $busy > "$SH_PATH/.BUSY"
