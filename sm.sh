@@ -43,6 +43,7 @@ echo "$text"
 }
 wtf(){
   local text=$1
+text="$(echo "$text" | cut -d '\' --output-delimiter='\\' -f 1- )"
   text=$(echo "$text" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\r//g' -e 's/\t/\\t/g' | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
 [[ $( echo "$text" | wc -l ) -gt 1 ]] && text=$(echo "$text" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
 echo "$text"
@@ -96,12 +97,13 @@ send(){
   local ulength=$(echo -n "$username"|wc -c)
   local MAX_BYTES=$[MAX_BYTES-9-ulength]
   local text=$1
-  text=$(wtf1 "$text")
-  local length=$(echo -n "$text"|wc -c)
+  # text=$(wtf1 "$text")
+  text_en=$(wtf "$text")
+  local length=$(echo -n "$text_en"|wc -c)
   # if [[ ${#text} -le $MAX_BYTES ]]; then
   if [[ $length -le $MAX_BYTES ]]; then
 echo "sm.sh: the length of msg is ok: $length:${text:0:256}..." &>> $LOG
-    _send "$text"
+    _send "$text_en"
     return $?
   fi
   echo "sm.sh: text is too long: $length:${text:0:128}..." &>> $LOG
