@@ -16,7 +16,8 @@ text=$(wtf "$text")
 
 username=$(wtf "$username")
 
-text=$(bash "$SH_PATH/change_long_text.sh" "$text" 4096)
+# text=$(bash "$SH_PATH/change_long_text.sh" "$text" 4096)
+text=$(bash "$SH_PATH/change_long_text.sh" "$text" 1024)
 cat <<EOF
 {"text":"${text}","username":"${username}","gateway":"${gateway}"}
 EOF

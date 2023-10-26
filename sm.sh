@@ -47,6 +47,7 @@ _send(){
 # } && echo "sm.sh: send return code: $?" >> $LOG_FILE
 unset http_proxy https_proxy
 curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message || {
+  local e=$?
   echo "E: $?"
   echo "fail to send msg to mt: $text"
   echo "username: $username"
@@ -55,13 +56,14 @@ curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127
   echo "export:"
   export
 
+  return $e
 } &>> $LOG
 }
 
 send(){
   local MAX_BYTES=1371
-  # local MAX_BYTES=1024
-  MAX_BYTES=$[MAX_BYTES-9-${#username}]
+  local MAX_BYTES=1024
+  MAX_BYTES=$[MAX_BYTES-5-${#username}]
   local text=$1
   if [[ ${#text} -le $MAX_BYTES ]]; then
 echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." &>> $LOG
@@ -109,12 +111,13 @@ echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." &>> $LOG
       return $?
     }
 # $i/$n" "$@" || return $?
+
+    # sleep 1
     username=""
     if [[ $i -ge 9 ]]; then
       echo "E: fixme, msg is too long, stop sending...$i/$n" &>> $LOG
       return 1
     fi
-    sleep 0.5
   done
 }
 
