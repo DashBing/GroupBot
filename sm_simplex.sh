@@ -22,7 +22,7 @@ bash "$SH_PATH/sm.sh" "$username" "$text" 4247 $gateway
 
 res=$1
 if [[ "$res" == "[]" ]]; then
-  return
+  exit 0
 fi
 gateway=${2:-gateway1}
 
