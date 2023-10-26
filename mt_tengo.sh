@@ -49,7 +49,7 @@ if [[ -z "$2" ]]; then
         echo -n "C gpt: "
         :
       else
-        echo -n "C fixme_$8: "
+        echo -n "C fixme_$3: "
       fi
       ;;
     # telegram.*)

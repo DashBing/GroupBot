@@ -35,9 +35,13 @@ gateway=${4-gateway1}
 # touch /tmp/test_sm.sh
 # echo "$*" > /tmp/test_sm.sh.txt
 
-wtf(){
+wtf1(){
   local text=$1
 text="$(echo "$text" | cut -d '\' --output-delimiter='\\' -f 1- )"
+echo "$text"
+}
+wtf(){
+  local text=$1
   text=$(echo "$text" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\r//g' -e 's/\t/\\t/g' | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
 [[ $( echo "$text" | wc -l ) -gt 1 ]] && text=$(echo "$text" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
 echo "$text"
@@ -93,7 +97,7 @@ send(){
   local MAX_BYTES=1024
   MAX_BYTES=$[MAX_BYTES-5-${#username}]
   local text=$1
-  text=$(wtf "$text")
+  text=$(wtf1 "$text")
   if [[ ${#text} -le $MAX_BYTES ]]; then
 echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." &>> $LOG
     _send "$text"
@@ -116,21 +120,38 @@ echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." &>> $LOG
       break
     fi
     tmp=${text:$now:$MAX_BYTES}
-    if [[ "${tmp: -1}" != $'\n' ]]; then
-      if [[ "${tmp: -1}" != $'\t' ]]; then
-        # if [[ "${tmp: -1}" != " " ]]; then
-          if [[ -n "$(echo "$tmp"|sed -e '$d' -e '/^ *$/d')" ]]; then
-            tmp=$(echo "$tmp"|sed '$d')
-            let now++
-          fi
-        # fi
+    tmp0=$tmp
+    local need_1=0
+    while true
+    do
+      if [[ "${tmp: -1}" != $'\n' ]]; then
+        if [[ "${tmp: -1}" != $'\t' ]]; then
+          # if [[ "${tmp: -1}" != " " ]]; then
+            if [[ -n "$(echo "$tmp"|sed -e '$d' -e '/^ *$/d')" ]]; then
+              tmp=$(echo "$tmp"|sed '$d')
+              need_1=1
+            fi
+          # fi
+        fi
       fi
+      tmp1=$(wtf "$tmp")
+      if [[ ${#tmp1} -gt $MAX_BYTES ]]; then
+        tmp=${tmp::-1}
+        if [[ $need_1 -eq 1 ]]; then
+              need_1=0
+        fi
+      else
+        break
+      fi
+    done
+    if [[ $need_1 -eq 1 ]]; then
+      let now++
     fi
     now=$[now+${#tmp}]
 
     let i++
     echo "send...$i/$n" &>> $LOG
-    local res=$(_send "$tmp") || {
+    local res=$(_send "$tmp1") || {
   echo "E: $?" >> $LOG
   echo "fail to send msg to mt$i/$n: $tmp" >> $LOG
   echo "res: $res" >> $LOG
