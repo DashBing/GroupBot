@@ -47,18 +47,12 @@ send_msg_to_simplex(){
 # curl -m 300 -s -XPOST -d "msg from mt" 127.0.0.1:4250
 # res=$(curl -m 1 -s 127.0.0.1:4250) || exit 0
  # &>> $LOG_FILE
-# echo "send to sx: $*" &>> $LOG_FILE
 # local res=$(curl -m 2 -s -XPOST -d "$*"  127.0.0.1:4250) || return 1
 
 local NAME=$username
 # local QT=qt
 local TEXT=text
 
-    if [[ "$NAME" == "C twitter: " ]]; then
-      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' )
-    elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
-      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
-    fi
     if [[ "$NAME" == "M rssbot: " ]] || [[ "$NAME" == "M feeds: " ]]; then
       NAME=${TEXT%%:*}
       TEXT=${TEXT#*: }
@@ -73,10 +67,11 @@ local TEXT=text
       # fi
     fi
   local msg=$(get_msg "$NAME" "$TEXT") || return
+echo "send to sx: $msg" &>> $LOG
 local res=$(curl -m 5 -s -XPOST -d "$msg"  127.0.0.1:4250) || return 1
 echo "got from sx: $res" &>> $LOG_FILE
   bash "$SH_PATH/sm_simplex.sh" "$res" 2>> $LOG 1>> $LOG_FILE
-echo "send to sx end: $*" &>> $LOG_FILE
+echo "send to sx end" &>> $LOG
 }
 
 
