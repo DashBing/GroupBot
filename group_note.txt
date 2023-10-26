@@ -172,3 +172,4 @@
 #fdroid G wtfipfs_fucktelegram: 国内镜像 https://mirrors.tuna.tsinghua.edu.cn/fdroid/repo/?fingerprint=43238D512C1E5EB2D6569F4A3AFBF5523418B82E0A3ED1552770ABB9A9C9CCA
 #fdroid G wtfipfs_fucktelegram: \n\nG Matrix Telegram Bridge: X 南方大陆网友:#0000: F-aroid 国内源汇总:\nhttps://help.mirrors.cernet.edu.cn/fdroid/
 #simplex X liqsliu: 我的地址 https://simplex.chat/contact#/?v=1-2&smp=smp%3A%2F%2F0YuTwO05YJWS8rkjn9eLJDjQhFKvIYd8d4xG8X1blIU%3D%40smp8.simplex.im%2FRCIkZFCzEUzTKNaB2_XkQLlb_U-IYTE-%23%2F%3Fv%3D1-2%26dh%3DMCowBQYDK2VuAyEAtHj5bmDP39tvF7-PpVK-fZie--crymb8-YDS44Rn21U%253D%26srv%3Dbeccx4yfxxbvyhqypaavemqurytl6hozr47wfc7uuecacjqdvwpw2xid.onion
+#faq X liqsliu: 测试|成功
