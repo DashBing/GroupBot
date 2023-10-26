@@ -2,6 +2,7 @@
 #send msg of tox(change port for other app) to matterbridge api
 
 export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
+MAX_BYTES=1371 #tox
 
 
 export LOG="$HOME/mt.log"
@@ -54,7 +55,6 @@ local username=${3-C bot: }
 
 
 
-username=$(wtf "$username")
 
 # text=$(bash "$SH_PATH/change_long_text.sh" "$text" 4096)
 # text=$(bash "$SH_PATH/change_long_text.sh" "$text" 1371)
@@ -93,22 +93,25 @@ curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127
 
 
 send(){
-  local MAX_BYTES=1371
-  local MAX_BYTES=1024
-  MAX_BYTES=$[MAX_BYTES-5-${#username}]
+  # local MAX_BYTES=1371
+  # local MAX_BYTES=1024
+  local ulength=$(echo -n "$username"|wc -c)
+  local MAX_BYTES=$[MAX_BYTES-9-ulength]
   local text=$1
   text=$(wtf1 "$text")
-  if [[ ${#text} -le $MAX_BYTES ]]; then
-echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." &>> $LOG
+  local length=$(echo -n "$text"|wc -c)
+  # if [[ ${#text} -le $MAX_BYTES ]]; then
+  if [[ $length -le $MAX_BYTES ]]; then
+echo "sm.sh: the length of msg is ok: $length:${text:0:64}..." &>> $LOG
     _send "$text"
     return $?
   fi
-  echo "sm.sh: text is too long: ${#text}:${text:0:10}..." &>> $LOG
+  echo "sm.sh: text is too long: $length:${text:0:64}..." &>> $LOG
   # shift
   local i=0
   local now=0
-  local n=$[${#text}/MAX_BYTES]
-  if [[ $[${#text}%MAX_BYTES] -ne 0 ]]; then
+  local n=$[length/MAX_BYTES]
+  if [[ $[length%MAX_BYTES] -ne 0 ]]; then
     let n++
   fi
   while true
@@ -135,7 +138,8 @@ echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." &>> $LOG
         fi
       fi
       tmp1=$(wtf "$tmp")
-      if [[ ${#tmp1} -gt $MAX_BYTES ]]; then
+      # if [[ ${#tmp1} -gt $MAX_BYTES ]]; then
+      if [[ $(echo -n "$tmp1"|wc -c) -gt $MAX_BYTES ]]; then
         tmp=${tmp::-1}
         if [[ $need_1 -eq 1 ]]; then
               need_1=0
@@ -151,21 +155,22 @@ echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." &>> $LOG
 
     let i++
     echo "send...$i/$n" &>> $LOG
+
     local res=$(_send "$tmp1") || {
-  echo "E: $?" >> $LOG
-  echo "fail to send msg to mt$i/$n: $tmp" >> $LOG
-  echo "res: $res" >> $LOG
+      echo "E: $?" >> $LOG
+      echo "fail to send msg to mt$i/$n: $tmp" >> $LOG
+      echo "res: $res" >> $LOG
       if [[ -n "$res" ]]; then
         echo "$res"
       fi
       return $?
     }
-# $i/$n" "$@" || return $?
 
     # sleep 1
     username=""
-    if [[ $i -ge 9 ]]; then
-      echo "E: fixme, msg is too long, stop sending...$i/$n" &>> $LOG
+    if [[ $i -ge 16 ]]; then
+      echo "E: msg is too long, stop sending...$i/$n" &>> $LOG
+      _send "E: msg is too long, stop sending, now $i/$n" &>> $LOG
       return 1
     fi
   done
@@ -220,6 +225,7 @@ push_err(){
 
 # send "$text"
 # exit 0
+username=$(wtf "$username")
 
 res=$(send "$text" 2>"$SH_PATH/error") && push_err "$res" || {
   e=$?

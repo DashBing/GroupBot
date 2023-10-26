@@ -1,7 +1,6 @@
 #!/bin/bash
 text="$1"
-# MAX_BYTES=${2:-1371}
-MAX_BYTES=${2:-1024}
+MAX_BYTES=${2:-1371}
 # MAX_BYTES=${2:-1024}
 if [[ $(echo -n "$text" | wc -c) -gt $MAX_BYTES ]]; then
   LP=${LP:-/var/www/dav/tmp}

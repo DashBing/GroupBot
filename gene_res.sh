@@ -16,9 +16,10 @@ echo "$text"
 text=$(wtf "$text")
 
 username=$(wtf "$username")
+ulength=$(echo -n "$username"|wc -c)
 
 # text=$(bash "$SH_PATH/change_long_text.sh" "$text" 4096)
-text=$(bash "$SH_PATH/change_long_text.sh" "$text" $[1371-${username}-5])
+text=$(bash "$SH_PATH/change_long_text.sh" "$text" $[1371-ulength-9])
 # text=$(bash "$SH_PATH/change_long_text.sh" "$text" 1370)
 cat <<EOF
 {"text":"${text}","username":"${username}","gateway":"${gateway}"}
