@@ -20,16 +20,23 @@ os := import("os")
 
 cmd := os.exec("/run/user/1000/bot/mt_tengo.sh", msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent)
 /* msgUsername = string(cmd.output()) */
-msgUsername = string(cmd.combined_output())
+/* msgUsername = string(cmd.combined_output()) */
+tmp := string(cmd.combined_output())
 /* fmt.println(msgUsername) */
-if msgUsername == "blockthismessage" {
+if tmp == "originalmessage" {
+
+} else {
+
+if tmp == "blockthismessage" {
 msgDrop = true
 msgText = ""
+msgUsername = tmp
 } else {
 text := import("text")
-msgText = text.split(msgUsername, "_SPLIT_FOR_MT_")
-msgUsername = msgText[0]
-msgText = msgText[1]
+tmp = text.split(tmp, "_SPLIT_FOR_MT_")
+msgUsername = tmp[0]
+msgText = tmp[1]
+}
 
 /* if inGateway == "test" { */
 /* if inProtocol == "discord" { */

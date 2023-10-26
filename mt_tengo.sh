@@ -23,12 +23,25 @@
 # fi
 
 
-
-
-
 NAME="$2"
 SPLIT="_SPLIT_FOR_MT_"
 TEXT="$1"
+
+
+block_msg(){
+  echo -n "blockthismessage"
+  exit 0
+}
+orig_msg(){
+  echo -n "originalmessage"
+  exit 0
+  echo -n "$NAME"
+  echo -n "$SPLIT"
+  echo -n "$TEXT"
+  exit 0
+}
+
+
 if [[ -z "$2" ]]; then
   case $8 in
     discord.*)
@@ -44,23 +57,21 @@ if [[ -z "$2" ]]; then
       :
       ;;
   esac
-  echo -n $SPLIT
+  echo -n "$SPLIT"
   echo -n "$TEXT"
   exit 0
 elif [[ "$2" == "blockthismessage" ]]; then
-    # echo -n "bot"
-    echo -n "$2"
-    exit 0
+  block_msg
 fi
 
 
 
 
-[[ $( echo "${NAME}" | wc -l ) -ge 3 ]] && echo -n "$2" && exit 0
-[[ "${NAME:0:1}" == ">" ]] && echo -n "$2" && exit 0
-[[ "${NAME:0:2}" == "> " ]] && echo -n "$2" && exit 0
-[[ "${NAME:1:1}" == " " ]] && [[ "${NAME: -2}" == ": " ]] && echo -n "$2" && exit 0
-[[ "${NAME:3:1}" == " " ]] && [[ "${NAME: -4}" == ":** " ]] && echo -n "$2" && exit 0
+[[ "${NAME:0:1}" == ">" ]] && orig_msg
+[[ "${NAME:0:2}" == "> " ]] && orig_msg
+[[ "${NAME:1:1}" == " " ]] && [[ "${NAME: -2}" == ": " ]] && orig_msg
+[[ "${NAME:3:1}" == " " ]] && [[ "${NAME: -4}" == ":** " ]] && orig_msg
+[[ $( echo "${NAME}" | wc -l ) -ge 3 ]] && orig_msg
 
 
 
@@ -68,11 +79,6 @@ SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
 
 
-
-block_msg(){
-  echo -n "blockthismessage"
-  exit 0
-}
 
 #if [[ $3 = xmpp.myxmpp ]]; then
 # if [[ $3 = xmpp.conversations ]]; then

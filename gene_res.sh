@@ -5,7 +5,7 @@ text="$(echo "$text" | cut -d '\' --output-delimiter='\\' -f 1- )"
 
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}); pwd )}
 gateway=${2-gateway1}
-username=${3-C bot}
+username=${3-C bot: }
 
 wtf(){
 echo "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\r//g' -e 's/\t/\\t/g' | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
