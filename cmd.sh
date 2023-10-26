@@ -73,7 +73,7 @@ local TEXT=text
       # fi
     fi
   local msg=$(get_msg "$NAME" "$TEXT") || return
-local res=$(curl -m 2 -s -XPOST -d "$msg"  127.0.0.1:4250) || return 1
+local res=$(curl -m 5 -s -XPOST -d "$msg"  127.0.0.1:4250) || return 1
 echo "got from sx: $res" &>> $LOG_FILE
   bash "$SH_PATH/sm_simplex.sh" "$res" 2>> $LOG 1>> $LOG_FILE
 echo "send to sx end: $*" &>> $LOG_FILE
@@ -162,6 +162,8 @@ echo "start to check restmp: $restmp" &>> $LOG_FILE
       text="$TEXT
 
 $qt"
+    else
+      text="$TEXT"
     fi
     username=$(echo "$NAME" | tail -n1)
 
