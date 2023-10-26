@@ -187,7 +187,7 @@ $qt"
         fi
         # if [[ "$username" != "O bot: " ]]; then
         if [[ "${username:0:2}" != "O " ]]; then
-          msg=$(get_msg "$username" $text") || continue
+          msg=$(get_msg "$username" "$text") || continue
           echo "send to tox: $msg" &>> $LOG_FILE
           echo "$msg"
         fi
