@@ -9,6 +9,37 @@ export LOG=${LOG:-$HOME/mt.log}
 # SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}); pwd )}
 SH_PATH=${SH_PATH:-$(cd $(dirname "${BASH_SOURCE[0]}") || exit; pwd )}
 
+
+get_msg(){
+  local username=$1
+  local text=$2
+  # local msg
+  if [[ -z "$URL" || "$URL" == "null" ]]; then
+    if [[ -z "$text" ]]; then
+      return 1
+      # continue
+    else
+      bash "$SH_PATH/change_long_text.sh" "$username$text"
+    fi
+  else
+    if [[ -n "$gateway" ]]; then
+      Comment=$(echo "$restmp" | jq -r ".Extra.file[0].Comment")
+      if [[ -z "$Comment" ]]; then
+        bash "$SH_PATH/change_long_text.sh" "$username$text $URL"
+      else
+        bash "$SH_PATH/change_long_text.sh" "$username$text$Comment: $URL"
+      fi
+    fi
+  fi
+  # echo "$msg"
+}
+
+
+
+
+
+
+
 send_msg_to_simplex(){
 # [[ -e "$SH_PATH/DEBUG" ]] && set -x
 # [[ -e "$SH_PATH/DEBUG" ]] && set +x
@@ -16,8 +47,33 @@ send_msg_to_simplex(){
 # curl -m 300 -s -XPOST -d "msg from mt" 127.0.0.1:4250
 # res=$(curl -m 1 -s 127.0.0.1:4250) || exit 0
  # &>> $LOG_FILE
-echo "send to sx: $*" &>> $LOG_FILE
-local res=$(curl -m 2 -s -XPOST -d "$*"  127.0.0.1:4250) || return 1
+# echo "send to sx: $*" &>> $LOG_FILE
+# local res=$(curl -m 2 -s -XPOST -d "$*"  127.0.0.1:4250) || return 1
+
+local NAME=$username
+# local QT=qt
+local TEXT=text
+
+    if [[ "$NAME" == "C twitter: " ]]; then
+      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' )
+    elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
+      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
+    fi
+    if [[ "$NAME" == "M rssbot: " ]] || [[ "$NAME" == "M feeds: " ]]; then
+      NAME=${TEXT%%:*}
+      TEXT=${TEXT#*: }
+    else
+
+
+      NAME="**${NAME% }** "
+      # if [[ -n "$QT" ]]; then
+        # QT=$(echo "$QT" | sed '/^[^>]/d'; echo )
+#         NAME="$QT
+# ${NAME}"
+      # fi
+    fi
+  local msg=$(get_msg "$NAME" "$TEXT") || return
+local res=$(curl -m 2 -s -XPOST -d "$msg"  127.0.0.1:4250) || return 1
 echo "got from sx: $res" &>> $LOG_FILE
   bash "$SH_PATH/sm_simplex.sh" "$res" 2>> $LOG 1>> $LOG_FILE
 echo "send to sx end: $*" &>> $LOG_FILE
@@ -88,10 +144,10 @@ for (( ; i < 4; i++)); do
     break
   else
 echo "start to check restmp: $restmp" &>> $LOG_FILE
-    text=$(echo "$restmp" | jq -r ".text")
+    TEXT=$(echo "$restmp" | jq -r ".text")
 #    echo "$text" | sed '/^[^>]/,$d'
 #    text=$(echo "$text" | sed '/^[^>]/,$!d')
-    username=$(echo "$restmp" | jq -r ".username")
+    NAME=$(echo "$restmp" | jq -r ".username")
 
 #    username="$(echo "$text" | head -n1 | cut -s -d ":" -f1 ): "
 #    text=$(echo "$text" | cut -d" " -f3-)
@@ -99,6 +155,15 @@ echo "start to check restmp: $restmp" &>> $LOG_FILE
     gateway=$(echo "$restmp" | jq -r ".gateway")
   # continue # run cmd by python: mybots.py. but not running now
   # ########################################################
+
+    QT=$(echo "$NAME" | sed -e '/^> [^>]/!d')
+    qt=$(echo "$QT" | sed -e 's/^> //')
+    if [[ -n "$qt" ]]; then
+      text="$TEXT
+
+$qt"
+    fi
+    username=$(echo "$NAME" | tail -n1)
 
     [[ "${username:0:2}" != "C " ]] && [[ "${username: -5}" != "bot: " ]] && bcmd "$text" "$username" "$gateway" "$restmp"
 
@@ -112,32 +177,18 @@ echo "start to check restmp: $restmp" &>> $LOG_FILE
       fi
     elif [[ "$gateway" == "gateway1" ]]; then
       URL=$(echo "$restmp" | jq -r ".Extra.file[0].URL")
-      if [[ -z "$URL" || "$URL" == "null" ]]; then
-        if [[ -z "$text" ]]; then
-          continue
-        else
-          msg=$(bash "$SH_PATH/change_long_text.sh" "$username$text")
-        fi
-      else
-        if [[ -n "$gateway" ]]; then
-          Comment=$(echo "$restmp" | jq -r ".Extra.file[0].Comment")
-          if [[ -z "$Comment" ]]; then
-            msg=$(bash "$SH_PATH/change_long_text.sh" "$username$text $URL")
-          else
-            msg=$(bash "$SH_PATH/change_long_text.sh" "$username$text$Comment: $URL")
-          fi
-        fi
-      fi
       if [[ -n "$msg" ]]; then
         if [[ "${username:0:2}" != "S " ]]; then
           :
           # bash "$SH_PATH/run_sh.sh" "[$restmp]" msg_for_simplex.sh
           # send_msg_to_simplex "$username$text"
-          send_msg_to_simplex "$msg" 2>> $LOG 1>> $LOG_FILE
+          # send_msg_to_simplex "$msg" 2>> $LOG 1>> $LOG_FILE
+          send_msg_to_simplex 2>> $LOG 1>> $LOG_FILE
         fi
         # if [[ "$username" != "O bot: " ]]; then
         if [[ "${username:0:2}" != "O " ]]; then
-echo "send to tox: $msg" &>> $LOG_FILE
+          msg=$(get_msg "$username" $text") || continue
+          echo "send to tox: $msg" &>> $LOG_FILE
           echo "$msg"
         fi
       fi

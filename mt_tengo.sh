@@ -477,9 +477,9 @@ api.gpt)
   ;;
 api.simplex)
   LABLE="S"
-  # if [[ "$2" == "simplexbot" ]]; then
-  #   LABLE="C"
-  # fi
+  if [[ "$2" == "simplexbot" ]]; then
+    LABLE="C"
+  fi
   ;;
 api.tg)
   LABLE="G"
@@ -552,19 +552,21 @@ if [[ -n "$4" ]] ; then
       # NAME=$(echo "$TEXT" | head -n1 | cut -d ":" -f 1)
       NAME=${TEXT%%:*}
       # TEXT=$(echo "$TEXT" | sed '1s/[^:]*://')
-      TEXT=${TEXT#*:}
-      TEXT=${TEXT# }
+      TEXT=${TEXT#*: }
     else
       [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(echo "$NAME" | sed '/^[^>]/d'; echo )
       NAME=$(echo "$NAME" | tail -n1)
       # NAME=$(echo "$NAME" | cut -d ":" -f 1)
       # NAME=${NAME%: }
-      NAME="**${NAME%: }:** "
+      NAME="**${NAME% }** "
       if [[ -n "$QT" ]]; then
         NAME="$QT
 ${NAME}"
       fi
     fi
+    ;;
+  api.simplex)
+    :
     ;;
   irc.*)
   # elif [[ "$9" == "irc" ]] ; then
@@ -745,19 +747,22 @@ $M *$NAME*: "
     ;;
   api.tox)
     :
+    # go to edit cmd.sh
     ;;
   # api.gpt)
   api.*)
-    if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
-#       TEXT="$(echo "$NAME" | sed '$d')
-# $TEXT"
-      TEXT="$TEXT
-
-$(echo "$NAME" | sed -e '/^> [^>]/!d' -e 's/^> //')"
-# $(echo "$NAME" | sed -e '/^$/,$d' -e 's/^> //')"
-# $(echo "$NAME" | sed -e '/^[^>]/,$d' -e 's/^> //')"
-      NAME=$(echo "$NAME" | tail -n1)
-    fi
+    :
+    # go to edit cmd.sh
+#     if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
+# #       TEXT="$(echo "$NAME" | sed '$d')
+# # $TEXT"
+#       TEXT="$TEXT
+#
+# $(echo "$NAME" | sed -e '/^> [^>]/!d' -e 's/^> //')"
+# # $(echo "$NAME" | sed -e '/^$/,$d' -e 's/^> //')"
+# # $(echo "$NAME" | sed -e '/^[^>]/,$d' -e 's/^> //')"
+#       NAME=$(echo "$NAME" | tail -n1)
+#     fi
     ;;
   esac
   # fi
