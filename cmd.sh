@@ -17,14 +17,10 @@ send_msg_to_simplex(){
 # res=$(curl -m 1 -s 127.0.0.1:4250) || exit 0
  # &>> $LOG_FILE
 echo "send to sx: $*" &>> $LOG_FILE
-echo "send to sx: $*" &>> $LOG
-res=$(curl -m 2 -s -XPOST -d "$*"  127.0.0.1:4250) || return 1
+local res=$(curl -m 2 -s -XPOST -d "$*"  127.0.0.1:4250) || return 1
 echo "got from sx: $res" &>> $LOG_FILE
-if [[ "$res" != "[]" ]]; then
-  bash "$SH_PATH/sm_simplex.sh" "$res" &>> $LOG
-fi
+  bash "$SH_PATH/sm_simplex.sh" "$res" 2>> $LOG 1>> $LOG_FILE
 echo "send to sx end: $*" &>> $LOG_FILE
-echo "send to sx end: $*" &>> $LOG
 }
 
 
@@ -32,6 +28,12 @@ echo "send to sx end: $*" &>> $LOG
 bcmd(){
   local text=$1
   local username=$2
+  local gateway=$3
+  local restmp=$4
+
+
+
+  local account=$(echo "$restmp" | jq -r ".account")
 
   # [[ "$username" == "C bot: " ]] && continue
   # [[ "$username" == "C xmppbot: " ]] && continue
@@ -42,7 +44,6 @@ qt_text=$(echo "$username" | sed '/^> /!d' | sed 's/^> //')
 [[ -n "$qt_text" ]] && qt_text="
 $qt_text"
   username=$(echo "$username" | tail -n1 )
-  account=$(echo "$restmp" | jq -r ".account")
 
   # if [[ "$gateway" != "gateway2" && $(echo "$text" | wc -l) -eq 1 ]]; then
   if [[ $(echo "$text" | wc -l) -eq 1 ]]; then
@@ -99,7 +100,7 @@ echo "start to check restmp: $restmp" &>> $LOG_FILE
   # continue # run cmd by python: mybots.py. but not running now
   # ########################################################
 
-    [[ "${username:0:2}" != "C " ]] && [[ "${username: -5}" != "bot: " ]] && bcmd "$text" "$username"
+    [[ "${username:0:2}" != "C " ]] && [[ "${username: -5}" != "bot: " ]] && bcmd "$text" "$username" "$gateway" "$restmp"
 
     # continue
 

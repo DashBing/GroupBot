@@ -46,7 +46,7 @@ _send(){
 # echo curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message >> $LOG_FILE
 # } && echo "sm.sh: send return code: $?" >> $LOG_FILE
 unset http_proxy https_proxy
-curl -m 5 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message || {
+curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message || {
   echo "E: $?"
   echo "fail to send msg to mt: $text"
   echo "username: $username"

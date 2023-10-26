@@ -1,5 +1,6 @@
 #!/bin/bash
 #get msg for tox and run cmd
+#export SH_PATH=/run/user/1000/bot
 # export SH_PATH=$(cd $(dirname ${BASH_SOURCE[0]}); pwd )
 export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 

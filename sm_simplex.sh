@@ -20,9 +20,13 @@ bash "$SH_PATH/sm.sh" "$username" "$text" 4247 $gateway
 # fi
 
 
-tmp=$1
-gateway=gateway1
+res=$1
+if [[ "$res" == "[]" ]]; then
+  return
+fi
+gateway=${2:-gateway1}
 
+tmp=$res
 while true
 do
   if [[ -z "$tmp" ]]; then

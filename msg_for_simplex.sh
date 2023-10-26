@@ -9,7 +9,7 @@ send_msg_to_simplex(){
 # get msg from simplex to mt
 # curl -m 300 -s -XPOST -d "msg from mt" 127.0.0.1:4250
 # res=$(curl -m 1 -s 127.0.0.1:4250) || exit 0
-res=$(curl -m 5 -s -XPOST -d "$*"  127.0.0.1:4250) || exit 0
+local res=$(curl -m 5 -s -XPOST -d "$*"  127.0.0.1:4250) || exit 0
 if [[ "$res" != "[]" ]]; then
   bash "$SH_PATH/sm_simplex.sh" "$res"
 fi
