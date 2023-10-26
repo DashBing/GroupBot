@@ -64,11 +64,11 @@ send(){
   MAX_BYTES=$[MAX_BYTES-9-${#username}]
   local text=$1
   if [[ ${#text} -le $MAX_BYTES ]]; then
-echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." &>> $LOG_FILE
+echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." &>> $LOG
     _send "$text"
     return $?
   fi
-  echo "sm.sh: text is too long: ${#text}" &>> $LOG_FILE
+  echo "sm.sh: text is too long: ${#text}:${text:0:10}..." &>> $LOG
   # shift
   local i=0
   local now=0
@@ -98,7 +98,7 @@ echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." &>> $LOG_FILE
     now=$[now+${#tmp}]
 
     let i++
-    echo "send...$i/$n" &>> $LOG_FILE
+    echo "send...$i/$n" &>> $LOG
     local res=$(_send "$tmp") || {
   echo "E: $?" >> $LOG
   echo "fail to send msg to mt$i/$n: $tmp" >> $LOG
