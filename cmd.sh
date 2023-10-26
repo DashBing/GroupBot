@@ -59,7 +59,7 @@ local TEXT=$text
     else
 
 
-      NAME="**${NAME% }** "
+      NAME="*${NAME% }* "
       # if [[ -n "$QT" ]]; then
         # QT=$(echo "$QT" | sed '/^[^>]/d'; echo )
 #         NAME="$QT
