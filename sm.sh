@@ -52,10 +52,6 @@ gene_res(){
 local text=$1
 local gateway=${2-gateway1}
 local username=${3-C bot: }
-
-
-
-
 # text=$(bash "$SH_PATH/change_long_text.sh" "$text" 4096)
 # text=$(bash "$SH_PATH/change_long_text.sh" "$text" 1371)
 # text=$(bash "$SH_PATH/change_long_text.sh" "$text" 1370)
@@ -75,19 +71,21 @@ _send(){
 #   export  >> $LOG_FILE
 # echo curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message >> $LOG_FILE
 # } && echo "sm.sh: send return code: $?" >> $LOG_FILE
-unset http_proxy https_proxy
-curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message || {
+  unset http_proxy https_proxy
+  curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message || {
   local e=$?
-  echo "E: $?"
-  echo "fail to send msg to mt: $text"
-  echo "username: $username"
-  echo "gateway: $gateway"
-  echo "api_port: $api_port"
-  echo "export:"
-  export
+    {
+    echo "E: $e"
+    echo "fail to send msg to mt: $text"
+    echo "username: $username"
+    echo "gateway: $gateway"
+    echo "api_port: $api_port"
+    # echo "export:"
+    # export
 
+    } &>> $LOG
   return $e
-} &>> $LOG
+  }
 }
 
 
@@ -102,11 +100,11 @@ send(){
   local length=$(echo -n "$text"|wc -c)
   # if [[ ${#text} -le $MAX_BYTES ]]; then
   if [[ $length -le $MAX_BYTES ]]; then
-echo "sm.sh: the length of msg is ok: $length:${text:0:64}..." &>> $LOG
+echo "sm.sh: the length of msg is ok: $length:${text:0:256}..." &>> $LOG
     _send "$text"
     return $?
   fi
-  echo "sm.sh: text is too long: $length:${text:0:64}..." &>> $LOG
+  echo "sm.sh: text is too long: $length:${text:0:128}..." &>> $LOG
   # shift
   local i=0
   local now=0
@@ -180,8 +178,12 @@ _push_err(){
   local res=$1
   if [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
     date &>> $LOG_FILE
-    echo "res :|$res|" >> $LOG_FILE
-    msg=$(echo "$res" | jq ".message") && send "E: mt api res msg: $msg" && return $?
+    echo "res :|$res|" >> $LOG
+    msg=$(echo "$res" | jq ".message") && {
+      echo "E: mt api res msg: $msg" &>> $LOG
+      send "E: mt api res msg: $msg"
+      return $?
+    }
     # res=$(send "E: mt api: $res") && return $?
     if [[ "$(send "E: mt api: $msg res: $res" | jq ".message")" != "null" ]]; then
       if [[ "$(send "E: mt api: $msg res_b64: $(echo "$res"|base64)" | jq ".message")" != "null" ]]; then
@@ -229,7 +231,7 @@ username=$(wtf "$username")
 
 res=$(send "$text" 2>"$SH_PATH/error") && push_err "$res" || {
   e=$?
-  echo "E: fail to send text(1)" &>> $LOG_FILE
+  echo "E: fail to send text(1)" &>> $LOG
 # [[ -f "$SH_PATH/error" ]] && {
 [[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]] && {
   set -x
@@ -237,8 +239,8 @@ res=$(send "$text" 2>"$SH_PATH/error") && push_err "$res" || {
   set +x
   r=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
   res=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
-  echo "E: $r" &>> $LOG_FILE
-  echo "res: $res" &>> $LOG_FILE
+  echo "E: $r" &>> $LOG
+  echo "res: $res" &>> $LOG
   echo "E: $e
 fail to run cmd
 text=$text
