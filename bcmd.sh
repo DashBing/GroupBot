@@ -2,6 +2,7 @@
 #background cmd
 
 export LOG_FILE=${LOG_FILE:-/dev/null}
+export LOG=${LOG:-$HOME/mt.log}
 
 
 echo "bcmd start" >> $LOG_FILE
@@ -437,29 +438,47 @@ echo "b0 :|$text|" >> $LOG_FILE
   # if [[ "${text:0:6}" == ".note " ]]; then
 #text=$(cmds $text)
 #text=$(cmds $text 2>&1)
-out=$(cmds $text 2>"$SH_PATH/error") || {
+out=$(cmds $text 2>"$SH_PATH/error") && e=$? || {
   e=$?
 # [[ -f "$SH_PATH/error" ]] && {
 [[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]] && {
   set -x
   cmds $text 2>"$SH_PATH/error" 1>"$SH_PATH/out"
   set +x
-  text=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
+  out=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
   r=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
+  echo "E: $e
+fail to run cmd
+text=$text
+error=$r
+out=$out
+" >> $LOG
 }
   # push_err "E: failed to run cmd: $text|$e|$r"
-  send "E: failed to run cmd: $text|$e|$r"
+  send "E: failed to run cmd: $text|$e|$r|$out"
   exit 1
 }
 
 if [[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]]; then
+  echo "E: $e?
+fail to run cmd
+text=$text
+out=$out" >> $LOG
+
   [[ -e "$SH_PATH/DEBUG" ]] && {
     set -x
     cmds $text 2>"$SH_PATH/error" 1>"$SH_PATH/out"
     set +x
-    tout=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
+    out=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
+  echo "debug:
+fail to run cmd
+text=$text
+out=$out" >> $LOG
   }
   text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
+  echo "E: $e?
+fail to run cmd
+error=$text_e" >> $LOG
 fi
 text=$out
 
@@ -486,5 +505,5 @@ echo "b1 :|$text|" >> $LOG_FILE
 # echo "b2 :|$text|" >> ~/tera/mt_msg.log
 #  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4243/api/message)
 # bash "$SH_PATH/sm.sh" bot "$text" 4240 $gateway || echo "E: $?"
-send "$text"
+send "$text" 2>> $LOG 1>> $LOG_FILE
 

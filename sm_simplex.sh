@@ -1,21 +1,35 @@
 #!/bin/bash
-#send msg from simplex to mt
+#send msg of simplex to mt
+
+export LOG_FILE=${LOG_FILE:-/dev/null}
+export LOG=${LOG:-$HOME/mt.log}
 
 
 send_msg_mt(){
-username=$(echo "$1"|cut -d':' -f1)
-text=$(echo "$1"|cut -d':' -f2)
-bash "$SH_PATH/sm.sh" "$username" "$text" 4247
+# local username=$(echo "$1"|head -n1|cut -d':' -f1)
+# local text=$(echo "$1"|sed '1s/^[^:]*://')
+local username=$(echo "$1"|head -n1)
+local text=$(echo "$1"|sed '1d')
+bash "$SH_PATH/sm.sh" "$username" "$text" 4247 $gateway
 }
 
+# res=$(curl -m 3 -s 127.0.0.1:4250) || exit 1
+# # echo "got from sx: $res" &>> $LOG_FILE
+# if [[ "$res" == "[]" ]]; then
+#   exit
+# fi
+
+
 tmp=$1
+gateway=gateway1
+
 while true
 do
   if [[ -z "$tmp" ]]; then
     break
   else
-    msg=$(echo "$tmp" | sed '/^SPLIT_FOR_MT$/,$d')
-    send_msg_mt "$msg"
+    msg=$(echo "$tmp" | sed '/^_MSG_END_$/,$d')
+    send_msg_mt "$msg" 2>> $LOG 1>> $LOG_FILE
   fi
-  tmp=$(echo "$tmp" | sed '1,/^SPLIT_FOR_MT$/d')
+  tmp=$(echo "$tmp" | sed '1,/^_MSG_END_$/d')
 done

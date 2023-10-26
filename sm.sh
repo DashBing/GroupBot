@@ -2,9 +2,12 @@
 #send msg of tox(change port for other app) to matterbridge api
 
 export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
-[[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE="$HOME/tera/mt.log" || export LOG_FILE=/dev/null
-LOG_FILE_E="$HOME/tera/err.log"
 
+
+export LOG="$HOME/mt.log"
+[[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE=$LOG || export LOG_FILE=/dev/null
+
+LOG_FILE_E="$LOG"
 
 username=$1
 text=$2
@@ -43,7 +46,16 @@ _send(){
 # echo curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message >> $LOG_FILE
 # } && echo "sm.sh: send return code: $?" >> $LOG_FILE
 unset http_proxy https_proxy
-curl -m 5 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message || export &>> $LOG_FILE_E
+curl -m 5 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message || {
+  echo "E: $?"
+  echo "fail to send msg to mt: $text"
+  echo "username: $username"
+  echo "gateway: $gateway"
+  echo "api_port: $api_port"
+  echo "export:"
+  export
+
+} &>> $LOG
 }
 
 send(){
@@ -88,6 +100,9 @@ echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." &>> $LOG_FILE
     let i++
     echo "send...$i/$n" &>> $LOG_FILE
     local res=$(_send "$tmp") || {
+  echo "E: $?" >> $LOG
+  echo "fail to send msg to mt$i/$n: $tmp" >> $LOG
+  echo "res: $res" >> $LOG
       if [[ -n "$res" ]]; then
         echo "$res"
       fi
@@ -96,7 +111,7 @@ echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." &>> $LOG_FILE
 # $i/$n" "$@" || return $?
     username=""
     if [[ $i -ge 9 ]]; then
-      echo "fixme...$i/$n" &>> $LOG_FILE
+      echo "E: fixme, msg is too long, stop sending...$i/$n" &>> $LOG
       return 1
     fi
     sleep 0.5
@@ -165,14 +180,20 @@ res=$(send "$text" 2>"$SH_PATH/error") && push_err "$res" || {
   res=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
   echo "E: $r" &>> $LOG_FILE
   echo "res: $res" &>> $LOG_FILE
+  echo "E: $e
+fail to run cmd
+text=$text
+error=$r
+out=$res
+" >> $LOG
 }
   # send "E: failed to send text: ${text:0:10}...|$e|$r"
-  push_err "E: failed to send text: ${text:0:10}...|$e|$r"
+  push_err "E: failed to send text: ${text:0:14}...|$e|$r|$res" 2>> $LOG 1>> $LOG_FILE
 }
 # echo "res: $res"
 # echo "json: $text"
 # echo "res :|$res|" >> ~/tera/mt_msg.log
 
 if [[ -n "$res" ]]; then
-  push_err "$res"
+  push_err "$res" 2>> $LOG 1>> $LOG_FILE
 fi

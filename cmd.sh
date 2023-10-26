@@ -2,6 +2,7 @@
 
 
 export LOG_FILE=${LOG_FILE:-/dev/null}
+export LOG=${LOG:-$HOME/mt.log}
 
 # echo cmd start >> ~/tera/mt_msg.log
 #export SH_PATH=$(cd $(dirname ${BASH_SOURCE[0]}); pwd )
@@ -16,11 +17,14 @@ send_msg_to_simplex(){
 # res=$(curl -m 1 -s 127.0.0.1:4250) || exit 0
  # &>> $LOG_FILE
 echo "send to sx: $*" &>> $LOG_FILE
+echo "send to sx: $*" &>> $LOG
 res=$(curl -m 2 -s -XPOST -d "$*"  127.0.0.1:4250) || return 1
 echo "got from sx: $res" &>> $LOG_FILE
 if [[ "$res" != "[]" ]]; then
-  bash "$SH_PATH/sm_simplex.sh" "$res"
+  bash "$SH_PATH/sm_simplex.sh" "$res" &>> $LOG
 fi
+echo "send to sx end: $*" &>> $LOG_FILE
+echo "send to sx end: $*" &>> $LOG
 }
 
 
@@ -68,7 +72,7 @@ $qt_text"
     # [[ -z "${username}" ]] && continue
     [[ -z "${username}" ]] && return 0
   fi
-  nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" "$qt_text" &>> $LOG_FILE &
+  nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" "$qt_text" 2>> $LOG 1>> $LOG_FILE &
 }
 
 #[[ "$(echo "$res" | jq ".[0]")" != "null" ]] && bash "$SH_PATH/cmd.sh" "$res"
@@ -128,7 +132,7 @@ echo "start to check restmp: $restmp" &>> $LOG_FILE
           :
           # bash "$SH_PATH/run_sh.sh" "[$restmp]" msg_for_simplex.sh
           # send_msg_to_simplex "$username$text"
-          send_msg_to_simplex "$msg" &>> $LOG_FILE
+          send_msg_to_simplex "$msg" 2>> $LOG 1>> $LOG_FILE
         fi
         # if [[ "$username" != "O bot: " ]]; then
         if [[ "${username:0:2}" != "O " ]]; then
