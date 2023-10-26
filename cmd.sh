@@ -51,7 +51,7 @@ send_msg_to_simplex(){
 
 local NAME=$username
 # local QT=qt
-local TEXT=text
+local TEXT=$text
 
     if [[ "$NAME" == "M rssbot: " ]] || [[ "$NAME" == "M feeds: " ]]; then
       NAME=${TEXT%%:*}
