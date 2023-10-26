@@ -70,7 +70,7 @@ local TEXT=$text
 echo "send to sx: $msg" &>> $LOG
 local res=$(curl -m 5 -s -XPOST -d "$msg"  127.0.0.1:4250) || return 1
 echo "got from sx: $res" &>> $LOG_FILE
-  bash "$SH_PATH/sm_simplex.sh" "$res" 2>> $LOG 1>> $LOG_FILE
+bash "$SH_PATH/sm_simplex.sh" "$res" 2>> $LOG 1>> $LOG_FILE
 echo "send to sx end" &>> $LOG
 }
 
@@ -181,7 +181,8 @@ $qt"
         send_msg_to_simplex 2>> $LOG 1>> $LOG_FILE
       fi
       # if [[ "$username" != "O bot: " ]]; then
-      if [[ "${username:0:2}" != "O " ]]; then
+      # if [[ "${username:0:2}" != "O " ]]; then
+      if [[ "${username:0:2}" != "T " ]]; then
         msg=$(get_msg "$username" "$text") || continue
         echo "send to tox: $msg" &>> $LOG_FILE
         echo "$msg"

@@ -481,6 +481,8 @@ out=$out" >> $LOG
 fail to run cmd
 error=$text_e" >> $LOG
 fi
+
+
 text=$out
 
 [[ -n "$text_e" ]] && text="$text
