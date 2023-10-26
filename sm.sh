@@ -35,9 +35,37 @@ gateway=${4-gateway1}
 # touch /tmp/test_sm.sh
 # echo "$*" > /tmp/test_sm.sh.txt
 
+wtf(){
+  local text=$(echo "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\r//g' -e 's/\t/\\t/g' | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
+[[ $( echo "$text" | wc -l ) -gt 1 ]] && text=$(echo "$text" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
+echo "$text"
+}
+
+gene_res(){
+local text=$1
+text="$(echo "$text" | cut -d '\' --output-delimiter='\\' -f 1- )"
+
+SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}); pwd )}
+local gateway=${2-gateway1}
+local username=${3-C bot: }
+
+
+text=$(wtf "$text")
+
+username=$(wtf "$username")
+
+# text=$(bash "$SH_PATH/change_long_text.sh" "$text" 4096)
+# text=$(bash "$SH_PATH/change_long_text.sh" "$text" 1371)
+# text=$(bash "$SH_PATH/change_long_text.sh" "$text" 1370)
+cat <<EOF
+{"text":"${text}","username":"${username}","gateway":"${gateway}"}
+EOF
+}
+
 _send(){
   local text=$1
-  local text_en=$(bash "$SH_PATH/"gene_res.sh "$text" "$gateway" "$username")
+  # local text_en=$(bash "$SH_PATH/"gene_res.sh "$text" "$gateway" "$username")
+  local text_en=$(gene_res "$text" "$gateway" "$username")
   echo "sm.sh: text_en: $text_en" >> $LOG_FILE
 # res=$(curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message)
 # curl -m 3 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127.0.0.1:$api_port/api/message || {
@@ -59,6 +87,9 @@ curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127
   return $e
 } &>> $LOG
 }
+
+
+
 
 send(){
   local MAX_BYTES=1371
