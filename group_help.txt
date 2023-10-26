@@ -10,9 +10,9 @@ T tox群( 5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66 )
 D discord( https://discord.gg/G6YmQuCJFD )
 S simplex( https://simplex.chat/contact#/?v=1-2&smp=smp%3A%2F%2F6iIcWT_dF2zN_w5xzZEY7HI2Prbh3ldP07YTyDexPjE%3D%40smp10.simplex.im%2FE5iH2o5oWz2tfJEUwxqmwrTxqdlG3iEJ%23%2F%3Fv%3D1-2%26dh%3DMCowBQYDK2VuAyEAX59JqhAyVVYHp_hVvOdbZXCOtLPchXgjz3QtMDNt-jE%253D%26srv%3Drb2pbttocvnbrngnwziclp2f4ckjq65kebafws6g4hy22cdaiv5dwjqd.onion&data=%7B%22type%22%3A%22group%22%2C%22groupLinkId%22%3A%22zBZ_LHhJrlLU0p7fihJg-g%3D%3D%22%7D )
 s slack( https://join.slack.com/t/liqsliu/shared_invite/zt-21707h478-2jiGCRfjPGdOVmHCOEvu8A 如果过期，请联系管理)
+G telegram( https://t.me/wtfipfs_fucktelegram )
 ...
 C bot自动回复或推送的新闻
-
 
 发送以下命令到群内查看各分群介绍
 .help xmpp
@@ -41,8 +41,4 @@ https://github.com/JFreegman/ToxBot
 https://github.com/LonamiWebs/Telethon
 https://profanity-im.github.io/
 ...
-
-
-G telegram群( https://t.me/wtfipfs_fucktelegram )，需要的话可以进，不推荐。
-
 本群和ipfs官方没关系。

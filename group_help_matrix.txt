@@ -10,7 +10,6 @@ rss:
   - matrix: @liqsliu:matrix.org (不常用matrix)
   - xmpp: liqsliu@suchat.org
 
-
 第三方(非本频道管理，无管理)镜像频道:
   - #xmpp_ipfs_salas.suchat.org:matrix.org <=> xmpp( ipfs@salas.suchat.org )
   - #_bifrost_ipfs_salas.suchat.org:aria-net.org <=> xmpp( ipfs@salas.suchat.org )
