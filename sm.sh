@@ -50,7 +50,6 @@ local gateway=${2-gateway1}
 local username=${3-C bot: }
 
 
-text=$(wtf "$text")
 
 username=$(wtf "$username")
 
@@ -90,12 +89,12 @@ curl -m 9 -s -XPOST -H 'Content-Type: application/json' -d "$text_en" http://127
 
 
 
-
 send(){
   local MAX_BYTES=1371
   local MAX_BYTES=1024
   MAX_BYTES=$[MAX_BYTES-5-${#username}]
   local text=$1
+  text=$(wtf "$text")
   if [[ ${#text} -le $MAX_BYTES ]]; then
 echo "sm.sh: the length of msg is ok: ${#text}:${text:0:10}..." &>> $LOG
     _send "$text"
