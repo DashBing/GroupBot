@@ -48,6 +48,9 @@ if [[ -z "$2" ]]; then
       if [[ "${3}" == "api.gpt" ]] ; then
         echo -n "C gpt: "
         :
+      elif [[ "${3}" == "api.cmdres" ]] ; then
+        echo -n "C bot: "
+        :
       else
         echo -n "C fixme_need_name: "
       fi
