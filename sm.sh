@@ -75,7 +75,7 @@ __send(){
   local text=$1
   local msg=$(gene_res "$text" "$gateway" "$username")
   unset http_proxy https_proxy
-  curl -m 8 -s -XPOST -H 'Content-Type: application/json' -d "$msg" http://127.0.0.1:$api_port/api/message || {
+  curl -m 15 -s -XPOST -H 'Content-Type: application/json' -d "$msg" http://127.0.0.1:$api_port/api/message || {
   return $?
   }
 }
@@ -85,7 +85,9 @@ _send(){
 
 local res=$(__send "$text" 2>"$SH_PATH/error") && {
 
-  if [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
+  if [[ "$(echo "$res" | jq ".message")" == "" ]]; then
+    __send "E: empty msg|$res|${text:0:64}" 2>> $LOG 1>> $LOG
+  elif [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
     __send "E: $(echo "$res" | jq ".message")|${text:0:64}" 2>> $LOG 1>> $LOG
   else
     if [[ -z "$(echo "$res" | jq -r ".text")" ]]; then
