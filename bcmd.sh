@@ -327,6 +327,19 @@ cmds() {
       fi
     fi
     ;;
+  xp)
+    if [[ -z "$2" ]]; then
+      echo ".xp \$domain"
+    else
+      srv=$(dig +short srv "_xmpp-client._tcp.$domain"|head -n1)
+        srv=${srv##* }
+        srv=${srv%.}
+      if [[ -n "$srv" ]]; then
+        # echo "domain: $srv"
+        cmds .ip $srv
+      fi
+    fi
+    ;;
   ipfs)
     if [[ -z "$2" ]]; then
       echo ".ipfs \$URL [all|tmp|*only dtube]"
