@@ -332,6 +332,10 @@ cmds() {
       echo ".xp \$domain"
     else
       local srv=$(dig +short srv "_xmpp-client._tcp.$2"|head -n1)
+      echo "SRV _xmpp-client._tcp.$2:"
+      echo "$srv"
+      echo
+        srv=$(echo "srv"|head -n1)
         srv=${srv##* }
         srv=${srv%.}
       if [[ -n "$srv" ]]; then
