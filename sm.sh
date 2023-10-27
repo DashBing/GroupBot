@@ -81,14 +81,15 @@ __send(){
 }
 
 _send(){
+  local text=$1
 
 local res=$(__send "$text" 2>"$SH_PATH/error") && {
 
   if [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
-    __send "E: $(echo "$res" | jq ".message")|${text:0:64}" 2>> $LOG 1>> $LOG_FILE
+    __send "E: $(echo "$res" | jq ".message")|${text:0:64}" 2>> $LOG 1>> $LOG
   else
     if [[ -z "$(echo "$res" | jq -r ".text")" ]]; then
-      echo "the content of last msg is empty" &>> $LOG_FILE
+      echo "the content of last msg is empty" &>> $LOG
       __send "the content of last msg is empty"
     fi
   fi

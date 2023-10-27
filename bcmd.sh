@@ -295,8 +295,6 @@ cmds() {
       if [[ $(echo "$2" | grep -c -P "[0-9a-zA-Z.-]+\.[a-zA-Z]+" | head -n1) -eq 1 ]]; then
         local host=$(echo "$2" | grep -o -P "[0-9a-zA-Z.-]+\.[a-zA-Z]+" | head -n1)
         echo "$host"
-        echo -n "from us: "
-        nali-dig +short aaaa "$host" || echo "E: $?"
         echo -n "fake cn: "
         nali-dig @8.8.8.8 +subnet=114.114.114.114/24 +short aaaa "$host" || echo "E: $?"
           echo -n "114(over warp): "
