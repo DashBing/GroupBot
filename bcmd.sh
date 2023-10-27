@@ -335,7 +335,7 @@ cmds() {
       echo "SRV _xmpp-client._tcp.$2:"
       echo "$srv"
       echo
-        srv=$(echo "srv"|head -n1)
+        srv=$(echo "$srv"|head -n1)
         srv=${srv##* }
         srv=${srv%.}
       if [[ -n "$srv" ]]; then
