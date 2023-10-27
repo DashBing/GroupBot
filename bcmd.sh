@@ -331,12 +331,14 @@ cmds() {
     if [[ -z "$2" ]]; then
       echo ".xp \$domain"
     else
-      srv=$(dig +short srv "_xmpp-client._tcp.$domain"|head -n1)
+      local srv=$(dig +short srv "_xmpp-client._tcp.$2"|head -n1)
         srv=${srv##* }
         srv=${srv%.}
       if [[ -n "$srv" ]]; then
         # echo "domain: $srv"
         cmds .ip $srv
+      else
+        echo "not found"
       fi
     fi
     ;;
