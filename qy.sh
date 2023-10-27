@@ -38,6 +38,6 @@ if [[ -z "$2" ]]; then
 else
   shift
   # ai "$@"
-  _ "$*"
+  _ "$*" | sed 's/{br}/\n/g'
 fi
 
