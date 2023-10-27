@@ -44,8 +44,6 @@ changeai(){
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
 cmds() {
-export http_proxy=http://127.0.0.1:6080
-export https_proxy=http://127.0.0.1:6080
   # cmd="$*"
   if [[ "${text:0:2}" == ". " ]]; then
     return 0
@@ -260,6 +258,7 @@ export https_proxy=http://127.0.0.1:6080
           export http_proxy="http://127.0.0.1:6080"
           export https_proxy="http://127.0.0.1:6080"
           q a "$host" @https://doh.pub/dns-query |cut -d' ' -f4 |nali
+          q aaaa "$host" @https://doh.pub/dns-query |cut -d' ' -f4 |nali
           unset http_proxy https_proxy
           )
           echo
@@ -300,10 +299,31 @@ export https_proxy=http://127.0.0.1:6080
         nali-dig +short aaaa "$host" || echo "E: $?"
         echo -n "fake cn: "
         nali-dig @8.8.8.8 +subnet=114.114.114.114/24 +short aaaa "$host" || echo "E: $?"
-        echo -n "114(from us): "
-        nali-dig @114.114.114.114 +timeout=2 +short aaaa "$host" || echo "E: $?"
-        echo -n "ali(from us): "
-        nali-dig @223.5.5.5 +timeout=2 +short aaaa "$host" || echo "E: $?"
+          echo -n "114(over warp): "
+          nali-dig @127.0.0.1 -p 6054 +timeout=2 +short aaaa "$host" || echo "E: $?"
+          echo
+          echo -n "ali(over warp): "
+          nali-dig @127.0.0.1 -p 6055 +timeout=2 +short aaaa "$host" || echo "E: $?"
+          (
+          echo
+          echo -n "tx(over warp): "
+          # nali-dig @127.0.0.1 -p 6059 +timeout=2 +short "$host" || echo "E: $?"
+          export http_proxy="http://127.0.0.1:6080"
+          export https_proxy="http://127.0.0.1:6080"
+          q aaaa "$host" @https://doh.pub/dns-query |cut -d' ' -f4 |nali
+          unset http_proxy https_proxy
+          )
+          echo
+          local ip6=""
+          local ip6=$(nali-dig +short aaaa "$host") && {
+            if [[ -n "$ip6" ]]; then
+              echo -n "ipv6 from us: "
+              echo $ip6
+              curl -m 5 -s "https://api.iplocation.net/?ip=$(echo "$ip6"|tail -n1|sed 's/.* //')"
+            else
+              echo -n "no ipv6"
+            fi
+          } || echo "E: $?"
       else
         echo "W: 格式不正确: $2"
       fi
@@ -395,9 +415,9 @@ export https_proxy=http://127.0.0.1:6080
   esac
 
 
-export http_proxy=
-export https_proxy=
-unset http_proxy https_proxy
+# export http_proxy=
+# export https_proxy=
+# unset http_proxy https_proxy
 
 }
 

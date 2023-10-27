@@ -91,10 +91,10 @@ bcmd(){
   # [[ "$username" == "C titlebot: " ]] && continue
   # [[ "$username" == "C twitter: " ]] && continue
   # [[ $(echo "$text" | wc -l) -ne 1 ]] && continue
-qt_text=$(echo "$username" | sed '/^> /!d' | sed 's/^> //')
-[[ -n "$qt_text" ]] && qt_text="
-$qt_text"
-  username=$(echo "$username" | tail -n1 )
+# qt_text=$(echo "$username" | sed '/^> /!d' | sed 's/^> //')
+# [[ -n "$qt_text" ]] && qt_text="
+# $qt_text"
+  # username=$(echo "$username" | tail -n1 )
 
   # if [[ "$gateway" != "gateway2" && $(echo "$text" | wc -l) -eq 1 ]]; then
   if [[ $(echo "$text" | wc -l) -eq 1 ]]; then
@@ -124,7 +124,7 @@ $qt_text"
     # [[ -z "${username}" ]] && continue
     [[ -z "${username}" ]] && return 0
   fi
-  nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" "$qt_text" 2>> $LOG 1>> $LOG_FILE &
+  nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" "$qt" 2>> $LOG 1>> $LOG_FILE &
 }
 
 #[[ "$(echo "$res" | jq ".[0]")" != "null" ]] && bash "$SH_PATH/cmd.sh" "$res"
