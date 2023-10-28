@@ -30,6 +30,7 @@ _(){
 
 if [[ -z "$2" ]]; then
   echo "$1"
+  echo "$1 help"
   echo "$1 \$str"
   echo '---'
   echo '菲菲内置多种功能，通过发送命令可执行特殊操作
