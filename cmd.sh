@@ -180,12 +180,16 @@ $qt"
         # send_msg_to_simplex "$msg" 2>> $LOG 1>> $LOG_FILE
         send_msg_to_simplex 2>> $LOG 1>> $LOG_FILE
       fi
+      msg=$(get_msg "$username" "$text") || continue
       # if [[ "$username" != "O bot: " ]]; then
       # if [[ "${username:0:2}" != "O " ]]; then
       if [[ "${username:0:2}" != "T " ]]; then
-        msg=$(get_msg "$username" "$text") || continue
+        # msg=$(get_msg "$username" "$text") || continue
         echo "send to tox: $msg" &>> $LOG_FILE
         echo "$msg"
+      fi
+      if [[ "${username:0:2}" != "Q " ]]; then
+        bash "$SH_PATH/mqtt.sh" "$msg"
       fi
     fi
 
