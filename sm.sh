@@ -85,19 +85,25 @@ _send(){
 
 local res=$(__send "$text" 2>"$SH_PATH/error") && {
 
+  local tmp=$username
+  username="C bot"
   if [[ "$(echo "$res" | jq ".message")" == "" ]]; then
-    __send "E: empty msg|$res|${text:0:64}" 2>> $LOG 1>> $LOG
+    # __send "E: no error|$res|${text:0:64}" 2>> $LOG 1>> $LOG
+    __send "E: no error|$res" 2>> $LOG 1>> $LOG
   elif [[ "$(echo "$res" | jq ".message")" != "null" ]]; then
-    __send "E: $(echo "$res" | jq ".message")|${text:0:64}" 2>> $LOG 1>> $LOG
+    __send "E: $(echo "$res" | jq ".message")|$res|${text:0:64}" 2>> $LOG 1>> $LOG
   else
     if [[ -z "$(echo "$res" | jq -r ".text")" ]]; then
       echo "the content of last msg is empty" &>> $LOG
       __send "the content of last msg is empty"
     fi
   fi
+  username=$tmp
 
 } || {
   e=$?
+  local tmp=$username
+  username="C bot"
   echo "E: fail to send text(1)" &>> $LOG
   [[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]] && {
     set -x
@@ -118,11 +124,12 @@ res=$res
 " >> $LOG
     if [[ "$ee" -ne 0 ]]; then
       # echo "E: $e|$ee|$err|$out|${text:0:64}...$res" 2>> $LOG 1>> $LOG
-      __send "E: $e|$ee|$err|${text:0:15}" 2>> $LOG 1>> $LOG
+      __send "E: fail to send: $e|$ee|$err|${text:0:15}" 2>> $LOG 1>> $LOG
       __send "D: $res|$out" 2>> $LOG 1>> $LOG
     fi
 
   }
+  username=$tmp
 }
 
 }
