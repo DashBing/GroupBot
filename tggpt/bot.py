@@ -911,6 +911,8 @@ async def mt2tg(msg):
         #  print(f"I: got msg: {name}: {text}")
         if not text:
           return
+        if not name:
+          return
 
         #  if name == "C twitter: ":
         #      return
