@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+#
+#
+# broker.emqx.io
+# broker-cn.emqx.io
+# test.mosquitto.org
+# broker.hivemq.com
+# mqtt.eclipseprojects.io
+
+# mosquitto_pub -d -L mqtt://broker.hivemq.com:1883/wtfipfs -m "$*"
+# mosquitto_pub -d -L mqtt://test.mosquitto.org:1883/wtfipfs -m "$*"
+mosquitto_pub -d -L mqtts://test.mosquitto.org:8883/wtfipfs -m "$*"
