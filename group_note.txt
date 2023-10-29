@@ -173,3 +173,7 @@
 #fdroid G wtfipfs_fucktelegram: \n\nG Matrix Telegram Bridge: X 南方大陆网友:#0000: F-aroid 国内源汇总:\nhttps://help.mirrors.cernet.edu.cn/fdroid/
 #simplex X liqsliu: 我的地址 https://simplex.chat/contact#/?v=1-2&smp=smp%3A%2F%2F0YuTwO05YJWS8rkjn9eLJDjQhFKvIYd8d4xG8X1blIU%3D%40smp8.simplex.im%2FRCIkZFCzEUzTKNaB2_XkQLlb_U-IYTE-%23%2F%3Fv%3D1-2%26dh%3DMCowBQYDK2VuAyEAtHj5bmDP39tvF7-PpVK-fZie--crymb8-YDS44Rn21U%253D%26srv%3Dbeccx4yfxxbvyhqypaavemqurytl6hozr47wfc7uuecacjqdvwpw2xid.onion
 #faq X liqsliu: 测试|成功
+#xmpp G admin: \n\nX Tox: 主用就conversations.im(访问无限制，ejabberd)，jabberfr备用(部分服务器也是无法访问，Prosody)，tigase(访问无限制)和suchat管理员的另一个(部分服务器也是无法访问，ejabberd)测试某些功能
+#wtf404 X liqsliu: \n\nT Tox: > 话说404.city这个服务器，服务器主人真的人品有问题吗？\n404.city比suchat.org还严格，只是用户多，影响大，违背了自由通信，大家都谈论它，有一次管理员配置太狠了，只能自家用户之间用\n**C titlebot:** T Tox: 404.city - XMPP serverT Tox: > 话说404.city这个服务器，服务器主人真的人品有问题吗？\n404.city比suchat.org还严格，只是用户多，影响大，违背了自由通信，大家都谈论它，有一次管理员配置太狠了，只能自家用户之间用\n**C titlebot:** T Tox: 404.city - XMPP server
+#wtf404 X liqsliu: 当初他们的官方中文群的群规还有这样的规定：不允许宣传其他xmpp服务器，不知道现在改没改。好多人包括我都被那个服务器管理员封禁过。后面有没有解封我不知道，反正我也不敢用那个账号了
+#wtf404 X liqsliu: 毕竟404，那个管理员喜欢404才选择这个名字\n\nT Tox: 后来配置宽松了些，尽管宽松了，在大部分服务器中还是太严格T Tox: 后来配置宽松了些，尽管宽松了，在大部分服务器中还是太严格
