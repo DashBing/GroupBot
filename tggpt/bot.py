@@ -1046,15 +1046,16 @@ async def mt2tg(msg):
           pass
         else:
 
-          #  tmp=""
-          #  for i in text.splitlines():
-          #    if not i.startswith("> "):
-          #      tmp += i+"\n"
+          tmp=""
+          for i in text.splitlines():
+            if not i.startswith("> ") and  i != ">":
+              tmp += i+"\n"
           #  text = tmp
           #  qre.sub()
           #  text = qre.sub("", text)
           #  urls=urlre.findall(text)
-          urls=urlre.findall(qre.sub("", text))
+          #  urls=urlre.findall(qre.sub("", text))
+          urls=urlre.findall(qre.sub("", tmp))
           res=None
           M='- '
           M=' ⤷ '
@@ -1085,7 +1086,8 @@ async def mt2tg(msg):
             #    nick='X %s: ' % nick
             nick = msgd['username']
             #  res="**C titlebot:** %s%s" % (nick, res)
-            res="%s%s" % (nick, res)
+            #  res="%s%s" % (nick, res)
+            res="%s%s" % (nick.splitlines()[-1], res)
             #  fast_reply(muc, res, msg_type)
             #  await mt_send(res, gateway=msgd["gateway"])
             await mt_send(res, gateway=msgd["gateway"], username="titlebot")
