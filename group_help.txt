@@ -30,9 +30,10 @@ bot频道（bot测试、gpt、bard...）:
 全部入口都是公开频道，注意自我保护
 
 群组管理:
-xmpp: liqsliu@suchat.org liqsliu@pimux.de liqsliu@conversations.im
+xmpp: liqsliu@...(suchat.org yax.im jabber.fr jabb3r.org...不固定，不过一般可根据群身份确认，除非我忘记设置了)
 matrix: @liqsliu:matrix.org @liqsliu:mozilla.org
 discord: liqsliu
+telegram: @liqsliu
 
 bot用到的软件:
 https://github.com/42wim/matterbridge
