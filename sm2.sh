@@ -173,17 +173,16 @@ echo "sm.sh: the length of msg is ok: $length:${text:0:256}..." &>> $LOG
     local need_1=0
     while true
     do
-      if [[ $[now+${#tmp}] -ge ${#text} ]]; then
-        break
-      fi
-      if [[ "${tmp: -1}" != $'\n' ]]; then
-        if [[ "${tmp: -1}" != $'\t' ]]; then
-          # if [[ "${tmp: -1}" != " " ]]; then
-            if [[ -n "$(echo "$tmp"|sed -e '$d' -e '/^ *$/d')" ]]; then
-              tmp=$(echo "$tmp"|sed '$d')
-              need_1=1
-            fi
-          # fi
+      if [[ $[now+${#tmp}] -lt ${#text} ]]; then
+        if [[ "${tmp: -1}" != $'\n' ]]; then
+          if [[ "${tmp: -1}" != $'\t' ]]; then
+            # if [[ "${tmp: -1}" != " " ]]; then
+              if [[ -n "$(echo "$tmp"|sed -e '$d' -e '/^ *$/d')" ]]; then
+                tmp=$(echo "$tmp"|sed '$d')
+                need_1=1
+              fi
+            # fi
+          fi
         fi
       fi
       tmp1=$(wtf "$tmp")
