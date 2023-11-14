@@ -45,13 +45,13 @@ fi
   fi
 }
 # get msg from simplex
-res=$(curl -m 2 -s http://127.0.0.1:4250) || exit 0
-if [[ "$res" != "[]" ]]; then
-  # bash "$SH_PATH/run_sh.sh" "$res" sm_simplex.sh
-  ll=sm_simplex.sh
-  run_sh
-  busy=1
-fi
+# res=$(curl -m 2 -s http://127.0.0.1:4250) || exit 0
+# if [[ "$res" != "[]" ]]; then
+#   # bash "$SH_PATH/run_sh.sh" "$res" sm_simplex.sh
+#   ll=sm_simplex.sh
+#   run_sh
+#   busy=1
+# fi
 
 
 #res="[]"

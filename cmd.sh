@@ -174,12 +174,12 @@ $qt"
       fi
     elif [[ "$gateway" == "gateway1" ]]; then
       URL=$(echo "$restmp" | jq -r ".Extra.file[0].URL")
-      if [[ "${username:0:2}" != "S " ]]; then
-        # bash "$SH_PATH/run_sh.sh" "[$restmp]" msg_for_simplex.sh
-        # send_msg_to_simplex "$username$text"
-        # send_msg_to_simplex "$msg" 2>> $LOG 1>> $LOG_FILE
-        send_msg_to_simplex 2>> $LOG 1>> $LOG_FILE
-      fi
+      # if [[ "${username:0:2}" != "S " ]]; then
+      #   # bash "$SH_PATH/run_sh.sh" "[$restmp]" msg_for_simplex.sh
+      #   # send_msg_to_simplex "$username$text"
+      #   # send_msg_to_simplex "$msg" 2>> $LOG 1>> $LOG_FILE
+      #   send_msg_to_simplex 2>> $LOG 1>> $LOG_FILE
+      # fi
       msg=$(get_msg "$username" "$text") || continue
       # if [[ "$username" != "O bot: " ]]; then
       # if [[ "${username:0:2}" != "O " ]]; then
@@ -188,9 +188,9 @@ $qt"
         echo "send to tox: $msg" &>> $LOG_FILE
         echo "$msg"
       fi
-      if [[ "${username:0:2}" != "Q " ]]; then
-        bash "$SH_PATH/mqtt.sh" "$msg"
-      fi
+      # if [[ "${username:0:2}" != "Q " ]]; then
+      #   bash "$SH_PATH/mqtt.sh" "$msg"
+      # fi
     fi
 
 
