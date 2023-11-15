@@ -1533,6 +1533,7 @@ async def tg2mt_loop(gateway="test"):
     #    continue
     logger.info(f"got msg: {qid=} {msg=}")
     if not no_reset.is_set():
+      await no_reset.wait()
       continue
     #  print(f"I: got: {msg=}")
     text = msg.text
