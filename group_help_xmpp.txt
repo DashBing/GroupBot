@@ -11,12 +11,14 @@ xmpp:wtfipfs@conference.xmpp.jp?join
 目前有个xmppbot在管理监视群组: 检测到刷屏会撤销其发言权并尝试撤回消息，不过检测很保守，禁言时间也不会很长，普通用户应该感觉不到影响
 
 分群/避难区(由于主群是公开群，难免会有机器人账号发送垃圾信息甚至进行消息轰炸，故特设此群。新人被管理邀请或私聊管理获取到成员身份才能正常发言，有需要的请私聊管理): xmpp:wtfipfs@salas.suchat.org?join
-群组管理:
 
+群组管理:
 xmpp(可群内私聊或加好友):
   liqsliu@suchat.org
+  liqsliu@jabb3r.org
   liqsliu@pimux.de
   liqsliu@conversations.im
+tg: @liqsliu
 
 XMPP客户端列表: https://xmpp.org/software/
 android平台:
