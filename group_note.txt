@@ -145,7 +145,6 @@
 #gfw X liqsliu: 禁止刷机\n\n两部门：生产企业应完善移动智能终端权限管理机制 预防“刷机”行为\n《通告》还强调，生产企业应完善移动智能终端权限管理机制，提升操作系统安全性，采取技术和管理措施预防在产品流通环节发生置换操作系统和安装应用软件的行为。生产企业应按照《移动智能终端应用软件预置和分发管理暂行规定》有关规定，保证预置应用软件安全合规，明示所提供预置应用软件的相关信息，履行登记、审核、监测、留存、下架等全链条管理责任，完善投诉受理制度等服务保障措施，及时处理用户投诉，落实个人信息保护责任。\n对此，工业和信息化部表示，由于移动智能终端允许用户自行安装和卸载APP，在产品流通过程中就有可能会被非法“刷机”，包括被更换操作系统或安装一些非法的APP。为避免“刷机”带来的安全风险，保护用户权益，《通告》要求生产企业完善移动智能终端权限管理机制，提升操作系统安全性，采取技术和管理措施预防“刷机”行为。\n来自央广网：https://web.archive.org/web/20230811143736/https://tech.cnr.cn/ycbd/20221215/t20221215_526095308.shtml\nBy:匿名投稿
 #gfw X liqsliu: 破解方式-河南\n\nhttps://telegra.ph/登录-Twitter关注xiaohuangbo-08-13
 #李跳跳 X liqsliu: 应该没有开源\n\nhttps://meta.appinn.net/t/topic/44039
-#faq X liqsliu: meow\n> 喵|meow~
 #解锁 X liqsliu: 华为\n\nhttps://www.52pojie.cn/thread-816065-1-1.html
 #gfw X liqsliu: phantomsocks配置 https://zh.m.wikibooks.org/wiki/Phantomsocks/%E4%BF%AE%E6%94%B9%E6%96%B9%E5%BC%8F
 #tox T xx: 找人，找群： https://tox.directory/
@@ -177,3 +176,91 @@
 #wtf404 X liqsliu: \n\nT Tox: > 话说404.city这个服务器，服务器主人真的人品有问题吗？\n404.city比suchat.org还严格，只是用户多，影响大，违背了自由通信，大家都谈论它，有一次管理员配置太狠了，只能自家用户之间用\n**C titlebot:** T Tox: 404.city - XMPP serverT Tox: > 话说404.city这个服务器，服务器主人真的人品有问题吗？\n404.city比suchat.org还严格，只是用户多，影响大，违背了自由通信，大家都谈论它，有一次管理员配置太狠了，只能自家用户之间用\n**C titlebot:** T Tox: 404.city - XMPP server
 #wtf404 X liqsliu: 当初他们的官方中文群的群规还有这样的规定：不允许宣传其他xmpp服务器，不知道现在改没改。好多人包括我都被那个服务器管理员封禁过。后面有没有解封我不知道，反正我也不敢用那个账号了
 #wtf404 X liqsliu: 毕竟404，那个管理员喜欢404才选择这个名字\n\nT Tox: 后来配置宽松了些，尽管宽松了，在大部分服务器中还是太严格T Tox: 后来配置宽松了些，尽管宽松了，在大部分服务器中还是太严格
+#xmpp X liqsliu: 服务器列表\nhttps://jabberworld.info/servers/\nhttps://compliance.conversations.im/old/\nhttps://xmpp.love\nhttps://the-federation.info/protocol/20/\n上边那是老用户和高级用户，XMPP新用户看这个 https://providers.xmpp.net/
+#xmpp X liqsliu: 公开群搜索 https://search.jabber.network/
+#xmpp X liqsliu~: jabb3r这家服务器支持443端口登录，地址是 server.jabber.hot-chilli.net
+#接码 X liqsliu: https://bestsms.xyz/
+#接码 X liqsliu: https://www.supercloudsms.com/
+#xmpp X liqsliu: \n\nT Tox: jabbim也是另一家比较大型的XMPP提供者，也支持443，服务器在捷克T Tox: jabbim也是另一家比较大型的XMPP提供者，也支持443，服务器在捷克
+#irc X liqsliu_2: \n\nG admin: libera.chat\n**C titlebot:** G admin: Libera Chat | A next-generation IRC network for FOSS projects collaboration!\n**G admin:** 目前一般都是用这个吧？G admin: libera.chat\n**C titlebot:** G admin: Libera Chat | A next-generation IRC network for FOSS projects collaboration!\n**G admin:** 目前一般都是用这个吧？
+#faq X liqsliu_2: 这个群是干什么的|你是干什么的？
+#faq X liqsliu_2: 这个群是干什么的？|你是干什么的？
+#faq X liqsliu_2: 这个群是干什么的?|你是干什么的？
+#faq X we.: hi|hi
+#faq X we.: 嗷|嗷～
+#faq X we.: 嗷呜|嗷呜～
+#faq X we.: woof|woof~
+#faq X we.: moo|moo~
+#faq X we.: 嘎|嘎～
+#faq X we.: quack|quack~
+#faq X we.: baa|baa~
+#faq X we.: 呱|呱～
+#faq X we.: 喳|喳～
+#faq X we.: tweet|tweet~
+#faq X we.: 准备好了吗？|\n我准备好了，我准备好了，我准备好了……
+#faq X liqsliu_2: 6|🥳
+#faq X we.: 😂|😂
+#faq X we.: 🤣|🤣
+#faq X we.: 🤔|🤔
+#faq X we.: 😁|😁
+#faq X we.: 😀|😀
+#faq X we.: 😃|😃
+#faq X we.: 😄|😄
+#faq X we.: 😅|😅
+#faq X we.: 😮‍💨|😮‍💨
+#faq X we.: 😶‍🌫️|😶‍🌫️
+#faq X we.: 🫥|🫥
+#faq X we.: 🫠|🫠
+#faq X we.: 🫢|🫢
+#faq X we.: 🫣|🫣
+#faq X we.: 🫡|🫡
+#faq X we.: 🤧|🤧
+#faq X we.: 🤮|🤮
+#faq X we.: 🤢|🤢
+#faq X we.: 🫤|🫤
+#faq X we.: 🥹|🥹
+#faq X we.: 🥺|🥺
+#faq X we.: 😳|😳
+#faq X we.: 🤨|🤨
+#faq X we.: 🤫|🤫
+#faq X we.: 😋|😋
+#faq X we.: 😵‍💫|😵‍💫
+#faq X we.: 😵|😵
+#faq X we.: 🫰|🫰
+#faq X we.: 🫶|🫶
+#faq X we.: 喵|🐱🐈🐈‍⬛喵喵喵～
+#faq X we.: 汪|🐶🐕🦮🐕‍🦺🐩汪汪汪汪汪～
+#faq X we.: 咩|🐏🐑🐐咩咩咩～
+#faq X we.: 哞|🦬🐮🐂🐃🐄哞哞哞哞哞～
+#faq X we.: 😇|😇
+#faq X we.: 😴|😴
+#faq X we.: 😪|😪
+#faq X we.: 🥲|🥲
+#faq X we.: 🤗|🤗
+#faq X we.: 😝|😝
+#faq X we.: 😌|😌
+#faq X we.: 😷|😷
+#faq X we.: 🤒|🤒
+#faq X we.: 🤤|🤤
+#faq X we.: 🥳|🥳
+#faq X we.: 😭|😭
+#faq X we.: 💩|💩
+#faq X we.: 🤡|🤡
+#faq X we.: 👻|👻
+#faq X we.: 🤖|🤖
+#faq X we.: 🤬|🤬
+#faq X we.: 😠|😠
+#faq X we.: 🥱|🥱
+#faq X we.: 🤭|🤭
+#faq X we.: 🙂‍↔️|🙂‍↔️
+#faq X we.: 🙂‍↕️|🙂‍↕️
+#faq X we.: 🫨|🫨
+#faq X we.: 👏|👏
+#faq X we.: 👍|👍
+#faq X we.: 👌|👌
+#faq X we.: 😘|😘
+#faq X we.: 😰|😰
+#faq X we.: 😨|😨
+#xmpp X Tox: \n1.XMPP 公开群聊或频道搜索引擎\nhttps://search.jabber.network/\n部分符合条件的服务器会搜索到，也有的不符合条件的拒绝，有的管理员也会拒绝自己的服务器被搜索。\n搜索不支持中文，不支持搜索2个字母，不区分大小写，不支持搜索群聊语言配置。\n配置公开群聊时，最好在描述里边包含Chinese或者China之类的关键词，最好是中文英文都有。\n中文是给了解中文的人看的，英文是为了搜索方便。正确的语言设置是为了方便让别人知道这个群聊主要说什么语言。\n\n2.XMPP 状态检查器 \nhttps://connect.xmpp.net/\n帮助你检查服务器的连接状态。\n\n3.XMPP 服务器的 MITM 检测和监控\nhttps://certwatch.xmpp.net/\n帮助你检查 XMPP 服务器的 TLS 设置。\n\n4.XMPP 账号导出器\nhttps://migrate.modernxmpp.org/\n下边这个是suchat.org管理员自己搭建的。\nhttps://www.suchat.org/exportador/\n\n5.XMPP 合规性测试\nhttps://compliance.conversations.im/\n废弃好久了，还能用，仅参考。\n\n6.Matrix对XMPP的桥接服务\n#room#matrix.domain.tld@matrix.org
+#xmpp X Tox: \n7.XMPP 服务器列表\n①https://providers.xmpp.net/\n可能对新用户友好，根据一些条件对服务器进行了等级划分，也许有不合理之处，选择一个适合自己的。\n②https://jabberworld.info/servers/\n记录服务器软件及其版本、在线时长，有好多不能用。\n③https://compliance.conversations.im/old/\n旧版的合规性测试结果，当初按照这个404.city在第一，很多人按照顺序注册，一些信息不准确。后来换成新版的随机推荐5个，\n④https://xmpp.love/\nC2S是客户端到服务器的连接， S2S是服务器到服务器的连接，INBAND表示用户可以从软件直接注册。结果不一定准确，有些服务器管理设置了，不允许通过这种方式注册。\n⑤https://the-federation.info/protocol/20/\n好久没更新了，有些服务器不能用，显示服务器版本和位置等其他信息。\n⑥https://xmpp.404.city/\n还算更新，有些服务器不能用。当初404.city管理员的服务器没被一些列表接受，才有了这个。\n⑦https://list.jabber.at/\n好久没更新了，有些服务器不能用。\n⑧https://www.freie-messenger.de/xmpp/server/\n服务器能用，一些信息不准确，以实际服务条款为主。\n⑨https://status.conversations.im/historical/\n一些服务器的正常运行时间数据。
+#xmpp X Tox: \n8.Android 客户端\n曾经使用过好多，说几个常见的无广告的吧。\n①Conversations（期待版本3）\nF-Droid 下载地址：https://f-droid.org/zh_Hans/packages/eu.siacs.conversations/\nGoogle play 下载地址：https://play.google.com/store/apps/details?id=eu.siacs.conversations\nGoogle play 付费版相当于捐钱给开发者，经常限免。简单说下区别，Google play 版从2.12.7版开始删除频道发现功能，好处是能加入测试，更新频繁，向开发者反馈错误。新用户友好，一般使用 F-droid 版本的。\n②blabber.im\nF-Droid 下载地址：https://f-droid.org/zh_Hans/packages/de.pixart.messenger/\n停止维护了，不影响使用的继续使用。\n③monocles chat\nF-Droid 下载地址：https://f-droid.org/zh_Hans/packages/de.monocles.chat/\n保留了 Conversations 废弃的一些功能和设置，也增加了许多功能，另外界面修改的不错，有好多问题，容易卡住。\n④Cheogram\nF-Droid 下载地址：https://f-droid.org/zh_Hans/packages/com.cheogram.android/\nGoogle play 下载地址：https://play.google.com/store/apps/details?id=com.cheogram.android.playstore\nGoogle play 付费版相当于买 1 个月的 JMP.chat 服务，功能和 F-Droid 版差不多。有电话号码的话，能体验更多功能。没有的话，和 monocles chat 差不多，容易卡住。\n⑤aTalk\nF-Droid 下载地址：https://f-droid.org/zh_Hans/packages/org.atalk.android/\nGoogle play 下载地址：https://play.google.com/store/apps/details?id=org.atalk.android/\n一些用户估计连自己的账号都无法成功登录。里边有好多功能，连自己账号都无法成功登录的用户就别试了。\n⑥yaxim\nF-Droid 下载地址：https://f-droid.org/zh_Hans/packages/org.yaxim.androidclient/\nGoogle play 下载地址：https://play.google.com/store/apps/details?id=org.yaxim.androidclient\nhttps://play.google.com/store/apps/details?id=org.yaxim.bruno\nBruno the Jabber Bear 只是 yaxim 换个主题，有生之年能看到升级版本1吗？\n⑦Xabber（曾是Android上最流行的客户端，Google play 下载100多万，不包含Classic版、Beta版、Dev版、VIP版以及F-Droid的所有版本）\nF-Droid 下载地址：https://f-droid.org/zh_Hans/packages/com.xabber.android/\nXabber 想开发自己的，目前还没比较成熟的客户端。\nAndroid Dev版下载地址：https://www.xabber.com/rel/client/android/last/xabber.apk\niOS Alpha版：https://testflight.apple.com/join/s5uARgJ6\n半成熟产品，因为开发者坚持要放弃当前使用的一些协议，研究自己的，与当前 XMPP 功能不一样，功能好少，有特色功能。有生之年能看到网页版更多特色功能吗？\n⑧BombusMod\nF-Droid 下载地址：https://f-droid.org/zh_Hans/packages/org.bombusmod/\nGoogle play 下载地址：https://play.google.com/store/apps/details?id=org.bombusmod\n基于 J2ME 应用程序的全功能 XMPP 客户端。这是他们自己说的。功能确实挺多，很卡。\n⑨jTalk Messenger\nGoogle play 下载地址：https://play.google.com/store/apps/details?id=com.jtalk2\n全功能的 Jabber 客户端。这是他们自己说的。功能确实多了点，有点卡。\n⑩Stork IM \nF-Droid 下载地址：https://f-droid.org/en/packages/org.tigase.messenger.phone.pro/\nGoogle play 下载地址：https://play.google.com/store/apps/details?id=org.tigase.messenger.phone.pro\n据说是与 Tigase 使用很好，使用后感觉太差了，很卡。\n\n9.Web 客户端\n①Converse\n功能挺多，需要服务器支持，这个是官方实例：https://conversejs.org/fullscreen.html\n群主自己也搭了一个，大家可以试试：https://wtfipfs.eu.org/xmpp/\n有的管理员也会提供这个，去相应的网站寻找。有中文，我没找到怎么设置，用浏览器翻译吧。\n②Movim\nMovim 是一个社交和聊天平台，充当 XMPP 网络的前端，功能好多，非常棒，有中文。\n此处列出一些实例：https://join.movim.eu/\n这是官方实例：https://mov.im/login\n部分功能需要服务器支持，某些旧版服务器无法使用正常功能。登录账号后一直在线，需要手动设置。如果不再使用此实例，选择离开实例，删除在此实例的数据。不要选择删除账号，否则会从服务器中注销删除账号！\n③Xabber\nhttps://web.xabber.com\n几年前很火，目前在尝试给 XMPP 带来点新东西，好多年了没反应。\n开发版地址：https://web.xabber.com/develop/\n这是他们正在开发的，看起来不错，就是好多功能与当前使用的 XMPP 不一致，有中文。与当前 XMPP 好多不兼容。感兴趣的试试。\n\n10.其他客户端\n①Gajim：Gajim 适用于 Windows、MacOS 和 Linux 。新用户友好，有点卡，也会崩溃，还不错。\n下载地址：https://gajim.org/download/\n②Dino：支持 Linux。https://github.com/dino/dino/wiki/Distribution-Packages\n第三方也支持Windows：https://github.com/LAGonauta/dino\n新用户友好，有点卡，也会崩溃，还不错。Gajim不支持视频通话，Dino支持，两者搭配使用更好。\n③Psi 与 Psi+，适用于 Windows、MacOS 和 Linux。\nPsi 是一款跨平台的强大 XMPP 客户端，专为经验丰富的用户而设计。 它采用经典的开发模式，发布的版本相当少见。 https://psi-im.org/\nPsi+是 Psi XMPP 客户端的一个开发分支。 由于滚动发布开发模型，用户可以非常快速地收到新功能和错误修复。 https://psi-plus.com/\nhttps://sourceforge.net/projects/psiplus/\n功能好多，专为经验丰富的用户而设计，高级用户的选择，新用户别玩了。与上边2个搭配使用。\n④Profanity：适用于 Linux、FreeBSD、OpenBSD、OSX、Windows 和 Android (Termux)，功能丰富，感兴趣的试试。https://profanity-im.github.io/\n⑤Poezio，功能也许不如Profanity丰富，感兴趣的试试。https://poez.io/en/\n⑥Monal IM，iOS 和 macOS XMPP 聊天客户端 。这是他们自己说的。https://monal-im.org/\n⑦Siskin IM，适用于 iPhone 和 iPad 的轻量级且功能强大的 XMPP 客户端。这是他们自己说的。https://siskin.im/\n⑧Beagle IM，适用于 macOS 的轻量级且功能强大的 XMPP 客户端。这是他们自己说的。 https://beagle.im/\n\n上边只是列出一些常见的客户端，仅供参考，喜欢的话可以给他们捐款！
