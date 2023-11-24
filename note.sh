@@ -26,14 +26,10 @@ EOF
 my_encode() {
 
   local text="$1"
-
   text=$(echo "$text" | cut -d '\' --output-delimiter='\\' -f 1-)
   text=$(echo "$text" | cut -d '"' --output-delimiter='\"' -f 1-)
-
   [[ $(echo "$text" | wc -l) -gt 1 ]] && text=$(echo "$text" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
-
   # echo -e "$text"
-
   cat <<EOF
 $text
 EOF
@@ -61,7 +57,6 @@ add() {
 }
 
 del() {
-
   local text=$1
   text=$(echo "$text" | cut -d '\' --output-delimiter='\\' -f 1-)
   # [[ $( echo "$text" | wc -l ) -gt 1 ]] && text=$(echo "$text" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
@@ -87,8 +82,12 @@ list_tags() {
 print_help(){
   echo "公共记事本
 用法: .note [add|del|list|tag|help] \$tag [\$text]
+用法: .note delete \$tag \$name: [\$text]
 tag的格式：#非空白字符
 tag可以写在命令（add del list等）前面
+删除时文本text可以不写全，任意位置的一部分即可，留空也可以。总之，会删除第一个匹配到的记录。
+delete命令后面的name参数要包含平台名字，比如X T...
+
 示例：
 列出已经在使用的tag: .note tag
 查看默认tag下的记录: .note list
