@@ -178,7 +178,6 @@
 #xmpp X liqsliu~: jabb3r这家服务器支持443端口登录，地址是 server.jabber.hot-chilli.net
 #接码 X liqsliu: https://bestsms.xyz/
 #接码 X liqsliu: https://www.supercloudsms.com/
-#xmpp X liqsliu: \n\nT Tox: jabbim也是另一家比较大型的XMPP提供者，也支持443，服务器在捷克T Tox: jabbim也是另一家比较大型的XMPP提供者，也支持443，服务器在捷克
 #irc X liqsliu_2: \n\nG admin: libera.chat\n**C titlebot:** G admin: Libera Chat | A next-generation IRC network for FOSS projects collaboration!\n**G admin:** 目前一般都是用这个吧？G admin: libera.chat\n**C titlebot:** G admin: Libera Chat | A next-generation IRC network for FOSS projects collaboration!\n**G admin:** 目前一般都是用这个吧？
 #faq X liqsliu_2: 这个群是干什么的|你是干什么的？
 #faq X liqsliu_2: 这个群是干什么的？|你是干什么的？
