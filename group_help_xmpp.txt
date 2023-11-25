@@ -24,3 +24,5 @@ acg:
 xmpp:#wtfipfs#matrix.org@matrix.org?join 
 xmpp:#ipfs#mozilla.org@matrix.org?join 
 xmpp:#wtfipfs#matrix.org@aria-net.org?join 
+
+更多xmpp相关的内容: .note #xmpp
