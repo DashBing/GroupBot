@@ -67,7 +67,13 @@ del() {
   # [[ $( echo "$text" | wc -l ) -gt 1 ]] && text=$(echo "$text" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
   # line_num=$(grep -n -G "^$text\$" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
   # line_num=$(grep -n -F "$text" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
-  line_num=$(grep -G "^$tag" "$NOTE_FILE" | grep -n -F "$text" | cut -d ':' -f1 | head -n1)
+  if echo "$text"|grep -q -P '^\d+$'; then
+    line_num=$text
+  else
+    line_num=$(grep -n -G "^$tag" "$NOTE_FILE" | grep -F "$text" | cut -d ':' -f1 | head -n1)
+  fi
+  # echo num$line_num
+  # read -p ok?
   if [[ -n "$line_num" ]]; then
     line=$(sed -n "${line_num}p" "$NOTE_FILE")
     sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $line" || echo "E: $?"
@@ -225,7 +231,7 @@ case "${cmd}" in
 list)
   echo "$tag"
   # my_decode "$(grep -G "^$tag " "$NOTE_FILE" | cut -d" " -f2- | sed 's/^/\n/g')"
-  my_decode "$(grep -F "$tag " "$NOTE_FILE" | cut -d" " -f2- | sed 's/^/\n/g')"
+  my_decode "$(grep -n -F "$tag " "$NOTE_FILE" | cut -d" " -f2- | sed 's/^/\n/g')"
   ;;
 add)
   add "$tag $username$text"
