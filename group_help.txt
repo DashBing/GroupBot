@@ -12,6 +12,8 @@ G telegram( https://t.me/wtfipfs_fucktelegram )
 ...
 C bot自动回复或推送的新闻
 
+全部入口都是公开频道，注意自我保护
+
 发送以下命令到群内查看各分群介绍
 .help xmpp
 .help matrix
@@ -22,22 +24,10 @@ C bot自动回复或推送的新闻
 .note #matrix
 ...
 
-bot频道（bot测试、gpt、bard...）:
-  - xmpp:wtfipfs_bot@salas.suchat.org?join
-  - xmpp:wtfipfs_bot@conference.conversations.im?join
-
-全部入口都是公开频道，注意自我保护
-
 群组管理:
-xmpp: liqsliu@...(suchat.org yax.im jabber.fr jabb3r.org...不固定，不过一般可根据群身份确认，除非我忘记设置了)
+xmpp: liqsliu@...(suchat.org yax.im jabber.fr jabb3r.org...)
 matrix: @liqsliu:matrix.org @liqsliu:mozilla.org
 discord: liqsliu
 telegram: @liqsliu
 
-bot用到的软件:
-https://github.com/42wim/matterbridge
-https://github.com/JFreegman/ToxBot
-https://github.com/LonamiWebs/Telethon
-https://profanity-im.github.io/
-...
 本群和ipfs官方没关系。
