@@ -6,7 +6,7 @@
 X xmpp群( ipfs@salas.suchat.org )
 I irc频道( #wtfipfs )
 M matrix群( #wtfipfs:matrix.org )
-T tox群( 5CD71E298857CA3B502BE58383E3AF7122FCDE5BF46D5424192234DF83A76A66 )
+T tox群( 2436380A97D9FE41898C2482DF9B52428EBE5E86E2427B4A3EFEDCC7E139136FB40917DAAFFF )
 D discord( https://discord.gg/G6YmQuCJFD )
 G telegram( https://t.me/wtfipfs_fucktelegram )
 ...
