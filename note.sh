@@ -94,11 +94,14 @@ list_tags() {
 print_help(){
   echo "公共记事本
 用法: .note [add|del|list|tag|help] \$tag [\$text]
-用法: .note delete \$tag \$name: [\$text]
+用法: .note delete \$tag [\$name: [\$text]]
 tag的格式：#非空白字符
 tag可以写在命令（add del list等）前面
+
+delete: text可以不写全。如果不设置name，text可以是任意位置的字符串片段。如果设置了name，text比如从首字母开始。留空也可以。总之，会删除第一个匹配到的记录。name参数要包含平台名字，比如X T...
+del:text可以不写全，但必须是从第一个字符开始，留空也可以。总之，会删除第一个匹配到的记录。
+
 删除时文本text可以不写全，任意位置的一部分即可，留空也可以。总之，会删除第一个匹配到的记录。
-delete命令后面的name参数要包含平台名字，比如X T...
 
 示例：
 列出已经在使用的tag: .note tag
