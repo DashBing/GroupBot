@@ -2,6 +2,7 @@
 
 help(){
   echo "翻译
+用法: .tr \$text
 默认: 非中文翻译为中文，中文则翻译为英文
 --
 详情: https://github.com/soimort/translate-shell"

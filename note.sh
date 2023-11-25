@@ -113,7 +113,8 @@ del: text可以不写全，但必须从首字母开始，留空也可以。总�
 添加记录到默认tag: .note #default some text
 添加记录到默认tag: .note some text
 
-备份： https://github.com/liqsliu/bot/blob/master/group_note.txt "
+备份: https://github.com/liqsliu/bot/blob/master/group_note.txt
+源码: https://github.com/liqsliu/bot/blob/master/note.sh"
 
 }
 
