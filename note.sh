@@ -57,11 +57,17 @@ add() {
 }
 
 del() {
-  local text=$1
+  if [[ -z "$2" ]]; then
+    local text=$1
+  else
+    local tag=$1
+    local text=$2
+  fi
   text=$(echo "$text" | cut -d '\' --output-delimiter='\\' -f 1-)
   # [[ $( echo "$text" | wc -l ) -gt 1 ]] && text=$(echo "$text" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
   # line_num=$(grep -n -G "^$text\$" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
-  line_num=$(grep -n -F "$text" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
+  # line_num=$(grep -n -F "$text" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
+  line_num=$(grep -n -G "$tag" "$NOTE_FILE" | grep -n -F "$text" | cut -d ':' -f1 | head -n1)
   if [[ -n "$line_num" ]]; then
     line=$(sed -n "${line_num}p" "$NOTE_FILE")
     sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $line" || echo "E: $?"
@@ -228,7 +234,7 @@ del)
   del "$tag $username$text"
   ;;
 delete)
-  del "$tag $text"
+  del "$tag" "$text"
   ;;
 *)
   add "$tag $username$text"
