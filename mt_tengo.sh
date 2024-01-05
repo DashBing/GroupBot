@@ -163,7 +163,8 @@ xmpp.*)
   fi
   LABLE="X"
   if echo "$TEXT" | head -n1 | grep -q -P "^>" && [[ $(echo "$TEXT" | sed '/^[^>]/,$!d' | grep -c -P "^>") -eq 0 && $(echo "$TEXT" | sed -n '/^>/!p' | sed -n '/^$/!p' | wc -l) -ge 1 ]]; then
-    QT=$( echo "$TEXT" | sed -n '/^> /p')
+    # QT=$( echo "$TEXT" | sed -n '/^> /p')
+    QT=$( echo "$TEXT" | sed '/^[^>]/,$d')
     H=$(echo "$QT"|head -n1)
 
     if [[ "$H" =~ ^\>\ .+:$ ]] && echo "$QT"|sed -n '2p'|grep -q -P '^> [0-9]{4}-[0-9]{2}-[0-9]{2}  [0-9]{2}:[0-9]{2}'; then
@@ -192,6 +193,9 @@ xmpp.*)
       QT=$( echo "$QT" | sed -r '1s/^> \*\*([a-zA-Z0-9] .+?:)\*\* /> \1 /')
     fi
     TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
+  elif echo "$TEXT" | head -n1 | grep -q -P "^» ["; then
+    QT=$( echo "$TEXT" | sed -e '/^[^»]/,$d' -e 's/» /> /1')
+    TEXT=$( echo "$TEXT" | sed '/^[^»]/,$!d')
   fi
 
   # if [[ "$2" == "wtfipfs" ]] || [[ "$2" == " " ]]; then
