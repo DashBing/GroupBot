@@ -573,13 +573,13 @@ ${NAME}"
     ;;
   irc.*)
   # elif [[ "$9" == "irc" ]] ; then
-    NAME=$(echo "$NAME" | tail -n1)
-#    echo -n "$(echo "$NAME" | tail -n1)"
-    TEXT=$(echo "$TEXT" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
     if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
       QT=$(echo "$NAME" | head -n 1 | sed 's/> //' )
       TEXT="$TEXT RE: $QT"
+      NAME=$(echo "$NAME" | tail -n1)
     fi
+#    echo -n "$(echo "$NAME" | tail -n1)"
+    TEXT=$(echo "$TEXT" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
     ;;
   matrix.*)
   # elif [[ "$9" == "matrix" ]] ; then
