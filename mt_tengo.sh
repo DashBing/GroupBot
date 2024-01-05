@@ -193,7 +193,7 @@ xmpp.*)
       QT=$( echo "$QT" | sed -r '1s/^> \*\*([a-zA-Z0-9] .+?:)\*\* /> \1 /')
     fi
     TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
-  elif echo "$TEXT" | head -n1 | grep -q -P "^» ["; then
+  elif echo "$TEXT" | head -n1 | grep -q -P '^» \['; then
     QT=$( echo "$TEXT" | sed -e '/^[^»]/,$d' -e 's/» /> /1')
     TEXT=$( echo "$TEXT" | sed '/^[^»]/,$!d')
   fi
