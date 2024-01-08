@@ -352,10 +352,8 @@ cmds() {
       echo ".gh \$text"
       echo ".gh \$URL"
     else
-      file_path=$(bash "$SH_PATH/link_to_file.sh" "$2")
-      [[ -f "$file_path" ]] && bash "$SH_PATH/file_to_ipfs.sh" "$file_path" "${3}" || {
-        echo "E: $file_path"
-      }
+      shift
+      bash "$SH_PATH/save_to_sh.sh" "$@" || echo "E: $?"
     fi
     ;;
   ipfs)

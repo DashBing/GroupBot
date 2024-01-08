@@ -24,13 +24,6 @@ export https_proxy="http://127.0.0.1:6080"
 
 
 
-
-
-
-
-
-
-
 if [[ $(echo "$1" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/?[\S]*(txt)$") -eq 1 ]]; then
   URL=$1
   file_path=$(bash "$SH_PATH/link_to_file.sh" "$URL" "only")
@@ -40,7 +33,7 @@ if [[ $(echo "$1" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/
       if [[ $fs -le 512000 ]]; then
         fn=${URL##*/}
         if [[ -f "$GP/$fn" ]]; then
-          fn=$(date "+%Y%m%d_%H%M%S")"_$fn".txt
+          fn=$(date "+%Y%m%d_%H%M%S")"_$fn"
         fi
         cp "$file_path" "$GP/$fn"
       else
