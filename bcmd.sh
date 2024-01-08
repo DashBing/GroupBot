@@ -349,6 +349,7 @@ cmds() {
     ;;
   gh)
     if [[ -z "$2" ]]; then
+      echo "保存文本或txt文件到github"
       echo ".gh \$text"
       echo ".gh \$URL"
     else
