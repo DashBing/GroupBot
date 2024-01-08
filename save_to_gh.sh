@@ -37,7 +37,7 @@ if [[ $(echo "$1" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/
   if [[ -f "$file_path" ]]; then
     if file -i "$file_path"| grep -q "text/plain"; then
       fs=$(du -b "$file_path"|cut -f1)
-      if $fs -le 512000 ]]; then
+      if [[ $fs -le 512000 ]]; then
         fn=${URL##*/}
         if [[ -f "$GP/$fn" ]]; then
           fn=$(date "+%Y%m%d_%H%M%S")"_$fn".txt
