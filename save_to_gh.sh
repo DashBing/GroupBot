@@ -35,7 +35,7 @@ if [[ $(echo "$1" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/
   URL=$2
   file_path=$(bash "$SH_PATH/link_to_file.sh" "$1" "only")
   if [[ -f "$file_path" ]]; then
-    if file -i "$file_path"| grep -q "text/html"; then
+    if file -i "$file_path"| grep -q "text/plain"; then
       fs=$(du -b "$file_path"|cut -f1)
       if $fs -le 512000 ]]; then
         fn=${URL##*/}
