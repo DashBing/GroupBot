@@ -347,6 +347,17 @@ cmds() {
       fi
     fi
     ;;
+  gh)
+    if [[ -z "$2" ]]; then
+      echo ".gh \$text"
+      echo ".gh \$URL"
+    else
+      file_path=$(bash "$SH_PATH/link_to_file.sh" "$2")
+      [[ -f "$file_path" ]] && bash "$SH_PATH/file_to_ipfs.sh" "$file_path" "${3}" || {
+        echo "E: $file_path"
+      }
+    fi
+    ;;
   ipfs)
     if [[ -z "$2" ]]; then
       echo ".ipfs \$URL [all|tmp|*only dtube]"

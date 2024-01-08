@@ -144,7 +144,7 @@ curl_exit: $error: $curl_res"
     fi
     if [[ "$2" == "type" ]]; then
       #if [[ "$ft" = *text/html* ]]; then
-      if [[ "$ft" = "text/html" ]]; then
+      if [[ "$ft" == "text/html" ]]; then
         if [[ $( file -i "$fn"| grep -c "application/gzip" ) -eq 1 ]]; then
           title=$(cat "$fn" | gzip -d -c -)
         elif [[ $( file -i "$fn"| grep -c "text/html" ) -eq 1 ]]; then
@@ -167,6 +167,9 @@ curl_exit: $error: $curl_res"
         
       fi
     else
+      # if [[ "$ft" == "text/plain" ]] && [[ $fs -le 512000 ]]; then
+      #   :
+      # fi
       echo "$LP/${sub_dir}${fn}"
     fi
   elif [[ "$flag" == "64" ]]; then
