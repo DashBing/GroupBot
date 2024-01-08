@@ -32,8 +32,8 @@ export https_proxy="http://127.0.0.1:6080"
 
 
 if [[ $(echo "$1" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/?[\S]*(txt)$") -eq 1 ]]; then
-  URL=$2
-  file_path=$(bash "$SH_PATH/link_to_file.sh" "$1" "only")
+  URL=$1
+  file_path=$(bash "$SH_PATH/link_to_file.sh" "$URL" "only")
   if [[ -f "$file_path" ]]; then
     if file -i "$file_path"| grep -q "text/plain"; then
       fs=$(du -b "$file_path"|cut -f1)
