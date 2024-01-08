@@ -353,7 +353,7 @@ cmds() {
       echo ".gh \$URL"
     else
       shift
-      bash "$SH_PATH/save_to_sh.sh" "$@" || echo "E: $?"
+      bash "$SH_PATH/save_to_gh.sh" "$@" || echo "E: $?"
     fi
     ;;
   ipfs)
