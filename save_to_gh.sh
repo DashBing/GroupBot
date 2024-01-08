@@ -65,9 +65,7 @@ cd ..
 bash init.sh
 tgpp
 " &>/dev/null
-
-echo ok
-
+echo https://github.com/liqsliu/bot/blob/master/note/"$fn"
 else
 echo error
 fi
