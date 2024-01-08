@@ -43,6 +43,11 @@ if [[ $(echo "$2" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/
           fn=$(date "+%Y%m%d_%H%M%S")"_$fn".txt
         fi
         cp "$file_path" "$GP/$fn"
+      else
+        echo "E: too big"
+      fi
+    else
+      echo "E: txt only"
     fi
   else
     echo "E: no $file_path"
