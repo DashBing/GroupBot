@@ -347,16 +347,6 @@ cmds() {
       fi
     fi
     ;;
-  gh)
-    if [[ -z "$2" ]]; then
-      echo "保存文本或txt文件到github"
-      echo ".gh \$text"
-      echo ".gh \$URL"
-    else
-      shift
-      bash "$SH_PATH/save_to_gh.sh" "$@" || echo "E: $?"
-    fi
-    ;;
   ipfs)
     if [[ -z "$2" ]]; then
       echo ".ipfs \$URL [all|tmp|*only dtube]"
@@ -417,6 +407,24 @@ cmds() {
     ;;
   faq)
     bash "$SH_PATH/faq.sh" "$text" "$username" || echo "E: $?"
+    ;;
+  gh)
+    if [[ -z "$2" ]]; then
+      echo "保存文本或txt文件到github"
+      echo ".gh \$text"
+      echo ".gh \$URL"
+    else
+      bash "$SH_PATH/save_to_gh.sh" "${text:4}$qt_text" || echo "E: $?"
+    fi
+    ;;
+  ghm)
+    if [[ -z "$2" ]]; then
+      echo "保存markdown文本或文件到github"
+      echo ".ghm \$text"
+      echo ".ghm \$URL"
+    else
+      bash "$SH_PATH/save_to_gh.sh" "${text:5}$qt_text" md || echo "E: $?"
+    fi
     ;;
   hhsh | wtf)
     shift

@@ -25,6 +25,12 @@ export https_proxy="http://127.0.0.1:6080"
 
 
 
+if [[ "$2" == md ]]; then
+  fe=md
+else
+  fe=txt
+fi
+
 
 if [[ $(echo "$1" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/?[\S]*(txt|md)$") -eq 1 ]]; then
   URL=$1
@@ -35,6 +41,9 @@ if [[ $(echo "$1" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/
       # if [[ $fs -le 512000 ]]; then
       if [[ $fs -le 1024000 ]]; then
         fn=${URL##*/}
+        if [[ $fe != "${URL##*.}" ]]; then
+          fn+=.$fe
+        fi
         if [[ -f "$GP/$fn" ]]; then
           fn=$(date "+%Y%m%d_%H%M%S")"_$fn"
         fi
@@ -49,8 +58,8 @@ if [[ $(echo "$1" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/
     echo "E: no $file_path"
   fi
 else
-  fn=$(date "+%Y%m%d_%H%M%S").txt
-  echo "$*" > "$GP/$fn"
+  fn=$(date "+%Y%m%d_%H%M%S").$fe
+  echo "$1" > "$GP/$fn"
 fi
 
 # mp m && mygit pull && bash init.sh && mygitcommit
