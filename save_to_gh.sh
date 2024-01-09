@@ -58,9 +58,11 @@ if [[ -n "fn" ]]; then
 bash -i -c "
 cd $GP
 cd ..
-mp m && mygit pull && mygitcommit || exit $?
-"
-# " &>/dev/null
+mp m && mygit pull && mygitcommit
+" &>/dev/null || {
+  echo "E: git"
+  exit
+}
 echo https://github.com/liqsliu/wtfipfs/blob/master/txt/"$fn"
 else
 echo error
