@@ -41,7 +41,7 @@ if [[ $(echo "$1" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/
       # if [[ $fs -le 512000 ]]; then
       if [[ $fs -le 1024000 ]]; then
         fn=${URL##*/}
-        if [[ $fe != "${URL##*.}" ]]; then
+        if [[ "$fe" != "${URL##*.}" ]]; then
           fn+=.$fe
         fi
         if [[ -f "$GP/$fn" ]]; then
@@ -70,7 +70,8 @@ cd $GP
 cd ..
 mp m && mygit pull && mygitcommit
 " &>/dev/null
-echo https://github.com/liqsliu/wtfipfs/blob/master/txt/"$fn"
+# echo https://github.com/liqsliu/wtfipfs/blob/master/txt/"$fn"
+echo https://github.com/liqsliu/wtfipfs/blob/main/txt/"$fn"
 else
 echo unknown error
 fi
