@@ -72,7 +72,7 @@ if [[ -n "fn" ]]; then
 # " &>/dev/null
 cd $GP
 cd ..
-{ git pull && git add . && git commit -a -m "$(dddd): commit by $USER/${host_name}/${operating_system_name}/${kernel_name}/${machine_hardware_name}" --no-edit && git push; } 2>&1 >/dev/null
+{ git pull && git add . && git commit -a -m "$(dddd): commit by $USER/${host_name}/${operating_system_name}/${kernel_name}/${machine_hardware_name}" --no-edit && git push; } >/dev/null 2>&1
 
 # echo https://github.com/liqsliu/wtfipfs/blob/master/txt/"$fn"
 echo https://github.com/liqsliu/wtfipfs/blob/main/txt/"$fn"
