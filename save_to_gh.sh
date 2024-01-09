@@ -14,9 +14,11 @@ LP=${LP:-$HOME/tera/tmp}
 DOMAIN=$(cat $SH_PATH/DOMAIN)
 MAX_SHARE_FILE_SIZE=${MAX_SHARE_FILE_SIZE:-64000000}
 
-GP=${GP:-$HOME/bot/note}
 
 
+
+# GP=${GP:-$HOME/bot/note}
+GP=${GP:-$HOME/wtfipfs/txt}
 
 export http_proxy="http://127.0.0.1:6080"
 export https_proxy="http://127.0.0.1:6080"
@@ -55,10 +57,9 @@ if [[ -n "fn" ]]; then
 bash -i -c "
 cd $GP
 cd ..
-bash init.sh
-tgpp
+mp m && mygit pull && bash init.sh && mygitcommit
 " &>/dev/null
-echo https://github.com/liqsliu/bot/blob/master/note/"$fn"
+echo https://github.com/liqsliu/wtfipfs/blob/master/txt/"$fn"
 else
 echo error
 fi
