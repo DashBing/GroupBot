@@ -52,13 +52,15 @@ else
   echo "$*" > "$GP/$fn"
 fi
 
+# mp m && mygit pull && bash init.sh && mygitcommit
 
 if [[ -n "fn" ]]; then
 bash -i -c "
 cd $GP
 cd ..
-mp m && mygit pull && bash init.sh && mygitcommit
-" &>/dev/null
+mp m && mygit pull && mygitcommit || exit $?
+"
+# " &>/dev/null
 echo https://github.com/liqsliu/wtfipfs/blob/master/txt/"$fn"
 else
 echo error
