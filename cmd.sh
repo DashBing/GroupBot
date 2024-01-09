@@ -127,6 +127,10 @@ bcmd(){
   nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" "$qt" 2>> $LOG 1>> $LOG_FILE &
 }
 
+
+
+
+
 #[[ "$(echo "$res" | jq ".[0]")" != "null" ]] && bash "$SH_PATH/cmd.sh" "$res"
 #
 # echo "cmd > arg: $*" >> /tmp/cmd.log
@@ -192,8 +196,6 @@ $qt"
       #   bash "$SH_PATH/mqtt.sh" "$msg"
       # fi
     fi
-
-
 
   fi
 
