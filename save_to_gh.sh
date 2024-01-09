@@ -69,17 +69,8 @@ bash -i -c "
 cd $GP
 cd ..
 mp m && mygit pull && mygitcommit
-" &>/dev/null || {
-  echo "E: git"
-  exit
-}
+" &>/dev/null
 echo https://github.com/liqsliu/wtfipfs/blob/master/txt/"$fn"
 else
-echo error
+echo unknown error
 fi
-
-
-
-      # if [[ "$ft" == "text/plain" ]] && [[ $fs -le 512000 ]]; then
-      #   :
-      # fi
