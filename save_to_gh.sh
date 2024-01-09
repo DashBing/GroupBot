@@ -65,11 +65,15 @@ fi
 # mp m && mygit pull && bash init.sh && mygitcommit
 
 if [[ -n "fn" ]]; then
-bash -i -c "
+# bash -i -c "
+# cd $GP
+# cd ..
+# mp m && mygit pull && mygitcommit
+# " &>/dev/null
 cd $GP
 cd ..
-mp m && mygit pull && mygitcommit
-" &>/dev/null
+git pull && git add . && git commit -a -m "$(dddd): commit by $USER/${host_name}/${operating_system_name}/${kernel_name}/${machine_hardware_name}" --no-edit && git push || exit $?
+
 # echo https://github.com/liqsliu/wtfipfs/blob/master/txt/"$fn"
 echo https://github.com/liqsliu/wtfipfs/blob/main/txt/"$fn"
 else
