@@ -33,7 +33,9 @@ echo "$out"
 )" 4240 &>> $LOG
 fi
   }
-  echo "$out"
+  if [[ -n "$out" ]]; then
+    echo "$out"
+  fi
 }
 
 
@@ -41,4 +43,3 @@ fi
 res=$1
 ll=cmd.sh
 run_sh
-
