@@ -12,7 +12,7 @@ _log_msg(){
   echo
   echo "##"
 }
-alias log_msg='log_msg "$@" >> ~/tera/mt.log'
+alias log_msg='_log_msg "$@" >> ~/tera/mt.log'
 
 
 #if [[ $3 = xmpp.myxmpp ]]; then
