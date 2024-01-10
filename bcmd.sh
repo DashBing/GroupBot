@@ -92,7 +92,7 @@ cmds() {
       [[ -e "$SH_PATH/group_help_${2}.txt" ]] && cat "$SH_PATH/group_help_$2.txt" || echo "E: no group_help_${2}.txt"
     fi
     ;;
-  ban|ban2|ub|ub2|jid|users|msgs|muc|debugxmpp|sbmode|retr|blocked|b)
+  myid|myjid|ban|ban2|ub|ub2|jid|users|msgs|muc|debugxmpp|sbmode|retr|blocked|b)
     ;;
   cmd)
     cat "$SH_PATH/group_cmd.txt"
