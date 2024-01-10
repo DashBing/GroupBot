@@ -70,7 +70,7 @@ log_msg(){
 }
 # alias log_msg='_log_msg "$@" >> ~/mt.log'
   # log_msg
-  log_msg "$@" >> ~/mt.log
+  # log_msg "$@" >> ~/mt.log
 
 
 #if [[ $3 = xmpp.myxmpp ]]; then
@@ -80,10 +80,6 @@ log_msg(){
 #   log_msg
 # fi
 
-SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
-
-
-
 
 #if [[ $3 = xmpp.myxmpp ]]; then
 # if [[ $3 = xmpp.conversations ]]; then
@@ -92,6 +88,7 @@ SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
 
 
+SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
 # if [[ $3 = api.cmd ]]; then
 #   :
