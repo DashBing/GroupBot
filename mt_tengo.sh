@@ -1,26 +1,5 @@
 #!/bin/bash
 
-_log_msg(){
-  echo
-  echo "#### mt $(date) ####"
-  echo "msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent"
-  local i
-  for i in "$@"
-  do
-    echo -n "|$i|"
-  done
-  echo
-  echo "##"
-}
-alias log_msg='_log_msg "$@" >> ~/tera/mt.log'
-
-
-#if [[ $3 = xmpp.myxmpp ]]; then
-# if [[ "$1" =~ *pong* ]]; then
-# if [[ $3 = xmpp.conversations ]]; then
-# if [[ "$6" = test ]]; then
-#   log_msg
-# fi
 
 
 NAME="$2"
@@ -35,10 +14,10 @@ block_msg(){
 orig_msg(){
   echo -n "originalmessage"
   exit 0
-  echo -n "$NAME"
-  echo -n "$SPLIT"
-  echo -n "$TEXT"
-  exit 0
+  # echo -n "$NAME"
+  # echo -n "$SPLIT"
+  # echo -n "$TEXT"
+  # exit 0
 }
 
 
@@ -77,6 +56,27 @@ fi
 [[ $( echo "${NAME}" | wc -l ) -ge 3 ]] && orig_msg
 
 
+_log_msg(){
+  echo
+  echo "#### mt $(date) ####"
+  echo "msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent"
+  local i
+  for i in "$@"
+  do
+    echo -n "|$i|"
+  done
+  echo
+  echo "##"
+}
+alias log_msg='_log_msg "$@" >> ~/tera/mt.log'
+
+
+#if [[ $3 = xmpp.myxmpp ]]; then
+# if [[ "$1" =~ *pong* ]]; then
+# if [[ $3 = xmpp.conversations ]]; then
+# if [[ "$6" = test ]]; then
+#   log_msg
+# fi
 
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
@@ -424,10 +424,12 @@ telegram.*)
 
   log_msg
   # if echo "$TEXT" |tail -n1| grep -q -G ": https://wtfipfs.eu.org/"; then
-  if echo "$TEXT" |tail -n1| grep -q ": https://wtfipfs.eu.org/\S*$"; then
-    TEXT=$(echo "$TEXT"|sed -r '$s|: (https://wtfipfs.eu.org/\S*)$|\n--\n\1|')
+  # if echo "$TEXT" |tail -n1| grep -q ": https://wtfipfs.eu.org/\S*$"; then
+  #   TEXT=$(echo "$TEXT"|sed -r '$s|: (https://wtfipfs.eu.org/\S*)$|\n--\n\1|')
+  if echo "$TEXT" |tail -n1| grep -q ": $"; then
+    # TEXT=$(echo "$TEXT"|sed -r '$s|: $|\n--\n|')
+    TEXT=$(echo "$TEXT"|sed '$s|: $|\n--\n|')
   fi
-
   ;;
 slack.*)
   LABLE="s"
