@@ -380,21 +380,28 @@ telegram.*)
     block_msg
   fi
   LABLE="G"
-  if [[ "$2" == "Telegram" ]]; then
+  # if [[ "$NAME" == "Group" ]]; then
+  if [[ "$NAME" == "wtfipfs_fucktelegram" ]]; then
+    NAME="admin"
+  elif [[ "$NAME" == "wtfipfs" ]]; then
+    NAME="admin"
+  # elif [[ "$NAME" == "‏⁠‎ l​i​q​s‏l​i​u​‎" ]]; then
+  #   NAME="liqsliu"
+  fi
+
 # https://github.com/42wim/matterbridge/pull/1272
 #    echo "block the msg" &>> ~/tera/test_tengo.log
-    echo -n "blockthismessage"
     # echo -n "bot"
-    exit 0
-  fi
 
   # if [[ "${TEXT:0:15}" == "Forwarded from " ]]; then
   #   # echo -n "bot"
   #   echo -n "blockthismessage"
   #   exit 0
   # fi
-
-
+#   if [[ "${TEXT:0:15}" == "Forwarded from " ]]; then
+#     TEXT=$( echo "${TEXT}" | sed -r '1s/[^:]+: //' )
+#     block_msg
+#   fi
 
   # if [[ $(echo "$TEXT" | grep -c -G "^> reply_from_telegram$" ) -eq 1 ]]; then
   if echo "$TEXT" | grep -q -G "^_reply_$"; then
@@ -406,19 +413,7 @@ telegram.*)
 
   fi
 
-  # if [[ "$NAME" == "Group" ]]; then
-  if [[ "$NAME" == "wtfipfs_fucktelegram" ]]; then
-    NAME="admin"
-  elif [[ "$NAME" == "wtfipfs" ]]; then
-    NAME="admin"
-  # elif [[ "$NAME" == "‏⁠‎ l​i​q​s‏l​i​u​‎" ]]; then
-  #   NAME="liqsliu"
-  fi
 
-#   if [[ "${TEXT:0:15}" == "Forwarded from " ]]; then
-# #    TEXT=$( echo "${TEXT}" | sed -r '1s/[^:]+: //' )
-#     block_msg
-#   fi
 
   # if [[ $(echo "$TEXT" | grep -c -G "^> reply_from_telegram$" ) -eq 1 ]]; then
   # if echo "$TEXT" | grep -q -G "^_reply_$"; then
@@ -426,6 +421,12 @@ telegram.*)
     # TEXT=$(echo "$TEXT" | sed '/^> reply_from_telegram$/,$d';)
     # TEXT=$(echo "$TEXT" | sed '/^_reply_$/,$d';)
   # fi
+
+  # if echo "$TEXT" |tail -n1| grep -q -G ": https://wtfipfs.eu.org/"; then
+  if echo "$TEXT" |tail -n1| grep -q ": https://wtfipfs.eu.org/\S*$"; then
+    TEXT=$(echo "$TEXT"|sed -r '$s|: (https://wtfipfs.eu.org/\S*)$|\n--\n\1|')
+  fi
+
   ;;
 slack.*)
   LABLE="s"
