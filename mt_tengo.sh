@@ -1,25 +1,25 @@
 #!/bin/bash
 
-# log_msg(){
-#   echo
-#   echo
-#   date
-#   echo "#### mt ####"
-#   echo "msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent"
-#   local i=0
-#   for i in "$@"
-#   do
-#     echo -n "|$i|"
-#   done
-#   echo
-#   echo "#### end ####"
-# }
+_log_msg(){
+  echo
+  echo "#### mt $(date) ####"
+  echo "msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent"
+  local i
+  for i in "$@"
+  do
+    echo -n "|$i|"
+  done
+  echo
+  echo "##"
+}
+alias log_msg='log_msg "$@" >> ~/tera/mt.log'
+
 
 #if [[ $3 = xmpp.myxmpp ]]; then
 # if [[ "$1" =~ *pong* ]]; then
 # if [[ $3 = xmpp.conversations ]]; then
 # if [[ "$6" = test ]]; then
-#   log_msg "$@" >> ~/tera/mt_msg.log
+#   log_msg
 # fi
 
 
@@ -422,6 +422,7 @@ telegram.*)
     # TEXT=$(echo "$TEXT" | sed '/^_reply_$/,$d';)
   # fi
 
+  log_msg
   # if echo "$TEXT" |tail -n1| grep -q -G ": https://wtfipfs.eu.org/"; then
   if echo "$TEXT" |tail -n1| grep -q ": https://wtfipfs.eu.org/\S*$"; then
     TEXT=$(echo "$TEXT"|sed -r '$s|: (https://wtfipfs.eu.org/\S*)$|\n--\n\1|')
