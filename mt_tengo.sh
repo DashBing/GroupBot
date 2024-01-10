@@ -63,12 +63,14 @@ log_msg(){
   local i
   for i in "$@"
   do
-    echo -n "|$i|"
+    echo -n "^$i"
   done
   echo
   echo "##"
 }
 # alias log_msg='_log_msg "$@" >> ~/mt.log'
+  # log_msg
+  log_msg "$@" >> ~/mt.log
 
 
 #if [[ $3 = xmpp.myxmpp ]]; then
@@ -91,19 +93,19 @@ SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
 
 
-if [[ $3 = api.cmd ]]; then
-  :
-elif [[ $6 = gateway6 ]]; then
-  :
-# elif [[ $2 = "wtfipfs" ]] && [[ $8 = xmpp.myxmpp ]]; then
-#   block_msg
-elif [[ $2 = "liqsliu" ]] && [[ $8 = api.cmd ]] && [[ $3 = xmpp.myxmpp ]]; then
-  :
-else
-  if [[ -e "$SH_PATH/STOP" ]]; then
-    block_msg
-  fi
-fi
+# if [[ $3 = api.cmd ]]; then
+#   :
+# elif [[ $6 = gateway6 ]]; then
+#   :
+# # elif [[ $2 = "wtfipfs" ]] && [[ $8 = xmpp.myxmpp ]]; then
+# #   block_msg
+# elif [[ $2 = "liqsliu" ]] && [[ $8 = api.cmd ]] && [[ $3 = xmpp.myxmpp ]]; then
+#   :
+# else
+#   if [[ -e "$SH_PATH/STOP" ]]; then
+#     block_msg
+#   fi
+# fi
 
 # if [[ "$5" =~ acg|ipfsrss ]]; then
 #   :
@@ -140,10 +142,6 @@ LABLE="C"
 # msgText, msgUsername, inAccount, inProtocol, inChannel
 # inGateway, inEvent, outAccount, outProtocol, outChannel
 # outGateway, outEvent
-
-
-
-
 
 case $3 in
 # xmpp.myxmpp|xmpp.myxmpp2)
@@ -422,15 +420,16 @@ telegram.*)
     # TEXT=$(echo "$TEXT" | sed '/^_reply_$/,$d';)
   # fi
 
-  # log_msg
-  log_msg "$@" >> ~/mt.log
   # if echo "$TEXT" |tail -n1| grep -q -G ": https://wtfipfs.eu.org/"; then
   # if echo "$TEXT" |tail -n1| grep -q ": https://wtfipfs.eu.org/\S*$"; then
   #   TEXT=$(echo "$TEXT"|sed -r '$s|: (https://wtfipfs.eu.org/\S*)$|\n--\n\1|')
-  if echo "$TEXT" |tail -n1| grep -q ": $"; then
-    # TEXT=$(echo "$TEXT"|sed -r '$s|: $|\n--\n|')
-    TEXT=$(echo "$TEXT"|sed '$s|: $|\n--\n|')
-  fi
+  # if echo "$TEXT" |tail -n1| grep -q ": $"; then
+  #   # TEXT=$(echo "$TEXT"|sed -r '$s|: $|\n--\n|')
+  #   TEXT=$(echo "$TEXT"|sed '$s|: $|\n--\n|')
+  # fi
+   if [[ $8 = xmpp.myxmpp ]]; then
+    log_msg "$@" >> ~/mt.log
+   fi
   ;;
 slack.*)
   LABLE="s"
