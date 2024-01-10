@@ -154,6 +154,14 @@ cmds() {
     shift
     bash "$SH_PATH/ai.sh" "$@" || echo "E: $?"
     ;;
+  ai2)
+    shift
+    bash "$SH_PATH/ai2.sh" "$@" || echo "E: $?"
+    ;;
+  ai22)
+    shift
+    bash "$SH_PATH/ai22.sh" "$@" || echo "E: $?"
+    ;;
   bd|BD)
     shift
     bash "$SH_PATH/bd.sh" "$@" || echo "E: $?"
