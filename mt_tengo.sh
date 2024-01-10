@@ -56,7 +56,7 @@ fi
 [[ $( echo "${NAME}" | wc -l ) -ge 3 ]] && orig_msg
 
 
-_log_msg(){
+log_msg(){
   echo
   echo "#### mt $(date) ####"
   echo "msgText, msgUsername, inAccount, inProtocol, inChannel, inGateway, inEvent, outAccount, outProtocol, outChannel, outGateway, outEvent"
@@ -68,7 +68,7 @@ _log_msg(){
   echo
   echo "##"
 }
-alias log_msg='_log_msg "$@" >> ~/tera/mt.log'
+# alias log_msg='_log_msg "$@" >> ~/mt.log'
 
 
 #if [[ $3 = xmpp.myxmpp ]]; then
@@ -422,7 +422,8 @@ telegram.*)
     # TEXT=$(echo "$TEXT" | sed '/^_reply_$/,$d';)
   # fi
 
-  log_msg
+  # log_msg
+  log_msg "$@" >> ~/mt.log
   # if echo "$TEXT" |tail -n1| grep -q -G ": https://wtfipfs.eu.org/"; then
   # if echo "$TEXT" |tail -n1| grep -q ": https://wtfipfs.eu.org/\S*$"; then
   #   TEXT=$(echo "$TEXT"|sed -r '$s|: (https://wtfipfs.eu.org/\S*)$|\n--\n\1|')
