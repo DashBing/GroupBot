@@ -78,7 +78,7 @@ cmds() {
 
     elif [[ "${text:0:5}" == "bot: " ]] || [[ "${text:0:5}" == "bot, " ]]; then
       echo -n "$username"
-      echo "bot是机器人，要回复bot转发的而来自其他平台的消息，直接引用bot的消息即可。"
+      echo "bot是机器人，要回复bot转发的来自其他平台的消息，直接引用bot的消息即可。"
 
     fi
 
