@@ -85,7 +85,7 @@ bcmd(){
 
 
 
-  local account=$(echo "$restmp" | jq -r ".account")
+  # local account=$(echo "$restmp" | jq -r ".account")
 
   # [[ "$username" == "C bot: " ]] && continue
   # [[ "$username" == "C xmppbot: " ]] && continue
