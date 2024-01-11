@@ -75,7 +75,13 @@ cmds() {
     elif [[ -e $SH_PATH/.mode_for_tr_$gateway ]]; then
       echo -n "$username"
       bash "$SH_PATH/tr.sh" "$text" || echo "E: $?"
+
+    elif [[ "${text:0:5}" == "bot: " ]] || [[ "${text:0:5}" == "bot, " ]]; then
+      echo -n "$username"
+      echo "bot是机器人，要回复bot转发的而来自其他平台的消息，直接引用bot的消息即可。"
+
     fi
+
     return 0
   fi
   echo -n "$username"
@@ -496,6 +502,14 @@ res=$4
 # username=$(echo "$restmp" | jq -r ".username")
 qt_text=$5
 
+
+if [[ "$text" == "ping" ]]; then
+  text=".ping"
+elif [[ $(echo "$text" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/?[\S]*(jpe?g|png|mp4|gif|txt)$") -eq 1 ]]; then
+  text=".ipfs $text only"
+elif [[ $(echo "$text" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/?[\S]*$") -eq 1 ]]; then
+  text=".type $text autocheck"
+fi
 
 
 echo "b0 :|$text|" >> $LOG_FILE

@@ -79,6 +79,7 @@ echo "send to sx end" &>> $LOG
 bcmd(){
   local text=$1
   local username=$2
+  [[ -z "${username}" ]] && return 0
   local gateway=$3
   local restmp=$4
 
@@ -97,33 +98,33 @@ bcmd(){
   # username=$(echo "$username" | tail -n1 )
 
   # if [[ "$gateway" != "gateway2" && $(echo "$text" | wc -l) -eq 1 ]]; then
-  if [[ $(echo "$text" | wc -l) -eq 1 ]]; then
-    # if [[ "$gateway" == "gateway1" ]]; then
-    #   gateway=gateway11
-    # fi
-    if [[ "$text" == "ping" ]]; then
-      text=".ping"
-    elif [[ -z "${username}" ]]; then
-      # continue
-      return 0
-    elif [[ "$text" == "help" ]]; then
-      # text=".help"
-      nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" ".help" "$restmp" &>/dev/null &
-      sleep 3
-    elif [[ $(echo "$text" | grep -c -P "^https://(mobile\.)?twitter\.com/[a-zA-Z0-9_./?=&%-]+$") -eq 1 ]]; then
-      :
-      # text=".tw $text" # not work because of fordiben by twitter
-    # elif [[ $(echo "$text" | grep -c -P "^https://wtfipfs\.eu\.org/[a-zA-Z0-9_./?=%-]+$") -eq 1 ]]; then
-    #   text=".ipfs $text only"
-    elif [[ $(echo "$text" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/?[\S]*(jpe?g|png|mp4|gif|txt)$") -eq 1 ]]; then
-      text=".ipfs $text only"
-    elif [[ $(echo "$text" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/?[\S]*$") -eq 1 ]]; then
-      text=".type $text autocheck"
-    fi
-  else
-    # [[ -z "${username}" ]] && continue
-    [[ -z "${username}" ]] && return 0
-  fi
+  # if [[ $(echo "$text" | wc -l) -eq 1 ]]; then
+  #   # if [[ "$gateway" == "gateway1" ]]; then
+  #   #   gateway=gateway11
+  #   # fi
+  #   if [[ "$text" == "ping" ]]; then
+  #     text=".ping"
+  #   # elif [[ -z "${username}" ]]; then
+  #   #   # continue
+  #   #   return 0
+  #   # elif [[ "$text" == "help" ]]; then
+  #   #   # text=".help"
+  #   #   nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" ".help" "$restmp" &>/dev/null &
+  #   #   sleep 3
+  #   # elif [[ $(echo "$text" | grep -c -P "^https://(mobile\.)?twitter\.com/[a-zA-Z0-9_./?=&%-]+$") -eq 1 ]]; then
+  #   #   :
+  #     # text=".tw $text" # not work because of fordiben by twitter
+  #   # elif [[ $(echo "$text" | grep -c -P "^https://wtfipfs\.eu\.org/[a-zA-Z0-9_./?=%-]+$") -eq 1 ]]; then
+  #   #   text=".ipfs $text only"
+  #   # elif [[ $(echo "$text" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/?[\S]*(jpe?g|png|mp4|gif|txt)$") -eq 1 ]]; then
+  #   #   text=".ipfs $text only"
+  #   # elif [[ $(echo "$text" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/?[\S]*$") -eq 1 ]]; then
+  #   #   text=".type $text autocheck"
+  #   fi
+  # # else
+  # #   # [[ -z "${username}" ]] && continue
+  # #   [[ -z "${username}" ]] && return 0
+  # fi
   nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" "$qt" 2>> $LOG 1>> $LOG_FILE &
 }
 
