@@ -39,14 +39,10 @@ changeai(){
     echo $1 > $SH_PATH/.mode_cur
 }
 
-
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
 cmds() {
   # cmd="$*"
-  if [[ "${text:0:2}" == ". " ]]; then
-    return 0
-  fi
   cmd="$1"
   # if [[ "$cmd" == "pong" ]]; then
   #   cmd=".pong"
@@ -75,13 +71,13 @@ cmds() {
     elif [[ -e $SH_PATH/.mode_for_tr_$gateway ]]; then
       echo -n "$username"
       bash "$SH_PATH/tr.sh" "$text" || echo "E: $?"
-
-    elif [[ "${text:0:5}" == "bot: " ]] || [[ "${text:0:5}" == "bot, " ]]; then
+    elif [[ "${text:0:5}" == "bot: " ]] || [[ "${text:0:4}" == "bot," ]]; then
       echo -n "$username"
       echo "bot是机器人，要回复bot转发的来自其他平台的消息，直接引用bot的消息即可。"
-
     fi
 
+    return 0
+  elif [[ "${text:0:2}" == ". " ]]; then
     return 0
   fi
   echo -n "$username"
