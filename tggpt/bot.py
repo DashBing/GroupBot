@@ -73,7 +73,8 @@ UA = 'Chrome Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) Apple    WebKit/537
 #  urlre=re.compile(r'((https?://)?((([\dA-Za-z0-9.]+-?)+\.)+(?!https?)[A-Za-z]+|(\d+\.){3}\d+|(\[[\da-f]*:){7}[\da-f]*\])(:\d+)?(/[^/\s]+)*/?)')
 #  urlre=re.compile(r'(^|\n|\s+)((https?://)?((([\dA-Za-z0-9.]+-?)+\.)+(?!https?)[A-Za-z]+|(\d+\.){3}\d+|(\[[\da-f]*:){7}[\da-f]*\])(:\d+)?(/[^/\s]+)*/?)')
 #  urlre=re.compile(r'(^|\n|\s+)((https?://)?((([\dA-Za-z0-9.]+-?)+\.)+(?!https?)[A-Za-z]+|(\d+\.){3}\d+|(\[[\da-f]*:){7}[\da-f]*\])(:\d+)?(/[^/\s"]+)*/?)')
-urlre=re.compile(r'(^|\n|\s+)((https?://)?((([\dA-Za-z0-9.]+-?)+\.)+(?!https?)[A-Za-z]+|(\d+\.){3}\d+|(\[[\da-f]*:){7}[\da-f]*\])(:\d+)?(/[0-9a-zA-Z$\-_\.\+\!\*\'\(\)\,]+)*/?)')
+#  urlre=re.compile(r'(^|\n|\s+)((https?://)?((([\dA-Za-z0-9.]+-?)+\.)+(?!https?)[A-Za-z]+|(\d+\.){3}\d+|(\[[\da-f]*:){7}[\da-f]*\])(:\d+)?(/[0-9a-zA-Z$\-_\.\+\!\*\'\(\)\,]+)*/?)')
+urlre=re.compile(r'(^|\n|\s+)((https?://)((([\dA-Za-z0-9.]+-?)+\.)+(?!https?)[A-Za-z]+|(\d+\.){3}\d+|(\[[\da-f]*:){7}[\da-f]*\])(:\d+)?(/[0-9a-zA-Z$\-_\.\+\!\*\'\(\)\,]+)*/?)')
 url_md_left=re.compile(r'\[[^\]]+\]\([^\)]+')
 
 qre = re.compile(r'^(>( .+)?)$', re.M)
@@ -1057,8 +1058,9 @@ async def mt2tg(msg):
           #  urls=urlre.findall(qre.sub("", text))
           urls=urlre.findall(qre.sub("", tmp))
           res=None
-          M='- '
-          M=' ⤷ '
+          #  M=' 🔗 '
+          #  M='- '
+          #  M=' ⤷ '
           for url in urls:
             #  url=url[0]
             url=url[1]
@@ -1073,7 +1075,7 @@ async def mt2tg(msg):
                 res="%s" % await get_title(url)
                 break
               res="[ %s urls ]" % len(urls)
-            res+="\n🔗 %s\n%s%s" % (url, M, await get_title(url))
+            res+="\n\n> %s\n%s" % (url, await get_title(url))
           if res is not None:
             #  if len(urls) > 1:
             #    res="[ %s urls ]\n%s%s" % (len(urls), M, res)
