@@ -20,7 +20,6 @@ is_me(){
 
 }
 
-
 changeai(){
     [[ -e $SH_PATH/.mode_for_${1}_${2} ]] && local m=1
     # (cd $SH_PATH && rm .mode_* )
@@ -67,7 +66,8 @@ cmds() {
     # elif [[ -e $SH_PATH/.mode_for_bot_$gateway ]]; then
     #   echo -n "$username"
     #   bash "$SH_PATH/bot.sh" "$text" || echo "E: $?"
-    # elif [[ -e $SH_PATH/.mode_for_gpt_$gateway ]]; then
+    elif [[ -e $SH_PATH/.mode_for_gpt_$gateway ]]; then
+      return 0
     #   echo -n "$username"
     #   bash "$SH_PATH/gpt.sh" "$text" || echo "E: $?"
     elif echo "$text" | tail -n1 | grep -q -G "^> " && echo "$text" | head -n1 | grep -q -G "^> "; then
@@ -92,6 +92,27 @@ cmds() {
       [[ -e "$SH_PATH/group_help_${2}.txt" ]] && cat "$SH_PATH/group_help_$2.txt" || echo "E: no group_help_${2}.txt"
     fi
     ;;
+  stop|sb)
+    if [[ -e "$SH_PATH/STOP" ]]; then
+      rm "$SH_PATH/STOP"
+      echo running
+    else
+      touch "$SH_PATH/STOP"
+      echo stoped
+    fi
+    ;;
+  debug)
+      echo ".debugcmd?"
+    ;;
+  debugcmd)
+    [[ -e "$SH_PATH/DEBUG" ]] && {
+      rm "$SH_PATH/DEBUG"
+      echo "debug off"
+    } || {
+      touch "$SH_PATH/DEBUG"
+      echo "debug on"
+    }
+    ;;
   ban|ban2|ub|ub2|jid|users|msgs|muc|debugxmpp|sbmode|retr|blocked|b)
     ;;
   cmd)
@@ -107,29 +128,6 @@ cmds() {
     else
       echo running
     fi
-    ;;
-  stop|sb)
-    if [[ -e "$SH_PATH/STOP" ]]; then
-      rm "$SH_PATH/STOP"
-      echo running
-    else
-      touch "$SH_PATH/STOP"
-      echo stoped
-    fi
-    ;;
-  debug)
-      echo ".debugcmd?"
-    ;;
-  debugcmd)
-    # if [[ "$2" = "cmd" ]]; then
-    [[ -e "$SH_PATH/DEBUG" ]] && {
-      rm "$SH_PATH/DEBUG"
-      echo "debug off"
-    } || {
-      touch "$SH_PATH/DEBUG"
-      echo "debug on"
-    }
-    # fi
     ;;
   ping)
     if [[ -z "$2" ]]; then
@@ -170,11 +168,6 @@ cmds() {
     shift
     bash "$SH_PATH/bdi.sh" "$@" || echo "E: $?"
     ;;
-  bot|BOT)
-    shift
-    bash "$SH_PATH/bot.sh" "$@" || echo "E: $?"
-    bash "$SH_PATH/bot.sh" "reset" &>/dev/null
-    ;;
   gpt|GPT)
     return 0
   #   shift
@@ -185,13 +178,17 @@ cmds() {
     return 0
     ;;
   gptmode)
-    return 0
-    # changeai gpt $gateway
+    # return 0
+    changeai gpt $gateway
     ;;
-  botmode)
-    exit 1
-    changeai bot $gateway
-    ;;
+  # bot|BOT)
+  #   shift
+  #   bash "$SH_PATH/bot.sh" "$@" || echo "E: $?"
+  #   bash "$SH_PATH/bot.sh" "reset" &>/dev/null
+  #   ;;
+  # botmode)
+  #   changeai bot $gateway
+  #   ;;
   aimode)
     changeai ai $gateway
     ;;
