@@ -115,7 +115,7 @@ cmds() {
       echo "debug on"
     }
     ;;
-  ban|ban2|ub|ub2|jid|users|msgs|muc|debugxmpp|sbmode|retr|blocked|b)
+  ban|ban2|ban3|ub|ub2|jid|users|msgs|muc|debugxmpp|sbmode|retr|blocked|b)
     ;;
   cmd)
     cat "$SH_PATH/group_cmd.txt"
