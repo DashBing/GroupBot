@@ -20,7 +20,7 @@ export https_proxy="http://127.0.0.1:6080"
 # GP=${GP:-$HOME/bot/note}
 # GP=${GP:-$HOME/wtfipfs/txt}
 
-$USERNAME=wtfipfs
+USERNAME=wtfipfs
 DIR=d
 
 
