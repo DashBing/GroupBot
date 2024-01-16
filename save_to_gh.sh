@@ -14,14 +14,14 @@ LP=${LP:-$HOME/tera/tmp}
 DOMAIN=$(cat $SH_PATH/DOMAIN)
 MAX_SHARE_FILE_SIZE=${MAX_SHARE_FILE_SIZE:-64000000}
 
-
-
-
-# GP=${GP:-$HOME/bot/note}
-GP=${GP:-$HOME/wtfipfs/txt}
-
 export http_proxy="http://127.0.0.1:6080"
 export https_proxy="http://127.0.0.1:6080"
+
+# GP=${GP:-$HOME/bot/note}
+# GP=${GP:-$HOME/wtfipfs/txt}
+
+$USERNAME=wtfipfs
+DIR=d
 
 
 
@@ -30,7 +30,8 @@ if [[ "$2" == md ]]; then
 else
   fe=txt
 fi
-
+GP=${GP:-$HOME/$DIR/$fe}
+[[ -e "$GP" ]] || mkdir "$GP" || exit $?
 
 if [[ $(echo "$1" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/?[\S]*(txt|md)$") -eq 1 ]]; then
   URL=$1
@@ -72,10 +73,9 @@ if [[ -n "fn" ]]; then
 # " &>/dev/null
 cd $GP
 cd ..
-{ git pull && git add . && git commit -a -m "$(dddd): commit by $USER/${host_name}/${operating_system_name}/${kernel_name}/${machine_hardware_name}" --no-edit && git push; } >/dev/null 2>&1
+{ git pull && git add . && git commit -a -m "$(date "+%Y%m%d_%H%M%S"): commit by $USER/${host_name}/${operating_system_name}/${kernel_name}/${machine_hardware_name}" --no-edit && git push; } >/dev/null 2>&1
 
-# echo https://github.com/liqsliu/wtfipfs/blob/master/txt/"$fn"
-echo https://github.com/liqsliu/wtfipfs/blob/main/txt/"$fn"
+echo https://github.com/$USERNAME/$DIR/blob/main/$fe/"$fn"
 else
 echo unknown error
 fi
