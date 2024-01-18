@@ -604,23 +604,27 @@ ${NAME}"
 $NAME"
     if [[ -z "$TEXT" ]]; then
 #      [[ $(echo "$NAME" | wc -l) -ge 3 ]] && [[ $(echo "$NAME" | grep -c -G '^$') -ge 1 ]] && echo "$NAME" | tail -n1 && echo "$NAME" | sed '/^$/,$d' && NAME=""
-      [[ $(echo "$NAME" | wc -l) -ge 3 ]] && NAME=$(echo "$NAME" | tail -n1; echo "$NAME" | sed '/^$/,$d')
-    else
-      if [[ "$NAME" == "C twitter: " ]]; then
-        TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' | sed '2s/^/\n/')
-      elif [[ "$NAME" == "C bot: " && "${1:0:16}" == "twitter to text:" ]]; then
-        TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' | sed '2s/^/\n/')
-      elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
-        TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' | sed '2s/^/\n/')
+      if [[ $(echo "$NAME" | wc -l) -ge 3 ]]; then
+        NAME=$(echo "$NAME" | tail -n1; echo "$NAME" | sed '/^$/,$d')
       else
         :
-        # if [[ -n "$(echo "$NAME" | sed '$d')" ]]; then
-        # if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
-        #   QT=$(echo "$NAME" | sed '$d')
-        # fi
       fi
+    else
+      # if [[ "$NAME" == "C twitter: " ]]; then
+      #   TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' | sed '2s/^/\n/')
+      # elif [[ "$NAME" == "C bot: " && "${1:0:16}" == "twitter to text:" ]]; then
+      #   TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' | sed '2s/^/\n/')
+      # elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
+      #   TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' | sed '2s/^/\n/')
+      # else
+      #   :
+      #   # if [[ -n "$(echo "$NAME" | sed '$d')" ]]; then
+      #   # if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
+      #   #   QT=$(echo "$NAME" | sed '$d')
+      #   # fi
+      # fi
       TEXT="$NAME$TEXT"
-      unset NAME
+      # unset NAME
     fi
     ;;
   slack.*)
