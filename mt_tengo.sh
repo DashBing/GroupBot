@@ -606,10 +606,8 @@ $NAME"
 #      [[ $(echo "$NAME" | wc -l) -ge 3 ]] && [[ $(echo "$NAME" | grep -c -G '^$') -ge 1 ]] && echo "$NAME" | tail -n1 && echo "$NAME" | sed '/^$/,$d' && NAME=""
       if [[ $(echo "$NAME" | wc -l) -ge 3 ]]; then
         NAME=$(echo "$NAME" | tail -n1; echo "$NAME" | sed '/^$/,$d')
-      else
-        :
       fi
-    else
+    # else
       # if [[ "$NAME" == "C twitter: " ]]; then
       #   TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' | sed '2s/^/\n/')
       # elif [[ "$NAME" == "C bot: " && "${1:0:16}" == "twitter to text:" ]]; then
@@ -623,7 +621,7 @@ $NAME"
       #   #   QT=$(echo "$NAME" | sed '$d')
       #   # fi
       # fi
-      TEXT="$NAME$TEXT"
+      # TEXT="$NAME$TEXT"
       # unset NAME
     fi
     ;;
