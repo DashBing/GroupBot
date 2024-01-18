@@ -607,7 +607,7 @@ $NAME"
       if [[ $(echo "$NAME" | wc -l) -ge 3 ]]; then
         NAME=$(echo "$NAME" | tail -n1; echo "$NAME" | sed '/^$/,$d')
       fi
-    # else
+    else
       # if [[ "$NAME" == "C twitter: " ]]; then
       #   TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' | sed '2s/^/\n/')
       # elif [[ "$NAME" == "C bot: " && "${1:0:16}" == "twitter to text:" ]]; then
@@ -621,8 +621,8 @@ $NAME"
       #   #   QT=$(echo "$NAME" | sed '$d')
       #   # fi
       # fi
-      # TEXT="$NAME$TEXT"
-      # unset NAME
+      TEXT="$NAME$TEXT"
+      unset NAME
     fi
     ;;
   slack.*)
@@ -660,13 +660,13 @@ $TEXT"
 # #      NAME="bot"
 #     else
 #     fi
-    if [[ "$NAME" == "C twitter: " ]]; then
-      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' )
-    elif [[ "$NAME" == "C bot: " && "${1:0:16}" == "twitter to text:" ]]; then
-      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
-    elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
-      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
-    fi
+    # if [[ "$NAME" == "C twitter: " ]]; then
+    #   TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' )
+    # elif [[ "$NAME" == "C bot: " && "${1:0:16}" == "twitter to text:" ]]; then
+    #   TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
+    # elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
+    #   TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
+    # fi
 
     if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
       TEXT="$(echo "$NAME" | sed '$d')
