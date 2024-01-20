@@ -273,8 +273,8 @@ file_to_ipfs() {
 
   flag=0
   if [[ -e "$FILE_PATH" ]]; then
-    if [[ "$(du -b "$FILE_PATH" | cut -f1)" -gt 0 ]]; then
-      if [[ "$(du -b "$FILE_PATH" | cut -f1)" -lt $MAX_SHARE_FILE_SIZE ]]; then
+    if [[ "$(du -b -- "$FILE_PATH" | cut -f1)" -gt 0 ]]; then
+      if [[ "$(du -b -- "$FILE_PATH" | cut -f1)" -lt $MAX_SHARE_FILE_SIZE ]]; then
         local hash=""
         local MAX_UPLOAD_TIME=30
 #          hash=$( bash "$SH_PATH/upload_to_ipfs.sh" https://snap1.d.tube "$FILE_PATH" || bash "$SH_PATH/upload_to_ipfs.sh" https://ipfs.infura.io:5001 "$FILE_PATH" || bash "$SH_PATH/upload_to_ipfs.sh" http://127.0.0.1:5001 "$FILE_PATH" || bash "$SH_PATH/upload_to_ipfs.sh" https://liuu.tk "$FILE_PATH" )
