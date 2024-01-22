@@ -8,7 +8,7 @@ if [[ -z "$1" ]]; then
   echo "google bard"
   echo "不支持上下文，每次提问都是新的独立的上下文。若想让bot记住上下文，请用bd命令。"
   echo ".ai \$str"
-  echo ".ai reset: 出错时使用"
+  # echo ".ai reset: 出错时使用"
   echo "--"
   echo "link: https://github.com/EvanZhouDev/bard-ai"
   echo "link: https://bard.google.com/"
