@@ -584,7 +584,13 @@ ${NAME}"
       NAME=$(echo "$NAME" | tail -n1)
     fi
 #    echo -n "$(echo "$NAME" | tail -n1)"
-    # TEXT=$(echo "$TEXT" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
+    text_en=$(echo "$TEXT" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
+    length=$(echo -n "$text_en"|wc -c)
+    if [[ $length -le 400 ]]; then
+      TEXT=$text_en
+    else
+      TEXT=$(bash "$SH_PATH/split.sh" "$TEXT")
+    fi
     ;;
   matrix.*)
   # elif [[ "$9" == "matrix" ]] ; then
