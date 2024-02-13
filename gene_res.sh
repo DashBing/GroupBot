@@ -14,11 +14,11 @@ wtf(){
 echo "$text"
 }
 
-echo "#" >> ~/t.log
-echo "$text" >> ~/t.log
+# echo "#" >> ~/t.log
+# echo "$text" >> ~/t.log
 text=$(wtf "$text")
-echo "##" >> ~/t.log
-echo "$text" >> ~/t.log
+# echo "##" >> ~/t.log
+# echo "$text" >> ~/t.log
 
 username=$(wtf "$username")
 ulength=$(echo -n "$username"|wc -c)
