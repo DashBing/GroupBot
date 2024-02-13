@@ -584,7 +584,7 @@ ${NAME}"
       NAME=$(echo "$NAME" | tail -n1)
     fi
 #    echo -n "$(echo "$NAME" | tail -n1)"
-    TEXT=$(echo "$TEXT" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
+    # TEXT=$(echo "$TEXT" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
     ;;
   matrix.*)
   # elif [[ "$9" == "matrix" ]] ; then
