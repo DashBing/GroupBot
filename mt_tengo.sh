@@ -111,14 +111,14 @@ SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 # fi
 if [[ $5 = wtfipfs_rss ]] || [[ $5 = acg ]]; then
   if [[ ${11} = "gateway1" ]]; then
-    if [[ "$2" = wtfipfs ]]; then
+    if [[ "$NAME" = wtfipfs ]]; then
       block_msg
     else
       NAME+='[rss]'
     fi
   else
     # if [[ "$2" = wtfipfs ]] || [[ "$2" = bot ]]; then
-    if [[ "$2" = wtfipfs ]]; then
+    if [[ "$NAME" = wtfipfs ]]; then
       # if [[ $5 = wtfipfs_rss ]]; then
       #   NAME=news
       # elif [[ $5 = acg ]]; then
@@ -154,7 +154,7 @@ xmpp.*)
   #   block_msg
   # elif [[ "$2" =~ *debit* ]]; then
   #   block_msg
-  if [[ "$2" =~ *debit*card* ]]; then
+  if [[ "$NAME" =~ *debit*card* ]]; then
     block_msg
   fi
   LABLE="X"
@@ -195,7 +195,7 @@ xmpp.*)
   fi
 
   # if [[ "$2" == "wtfipfs" ]] || [[ "$2" == " " ]]; then
-  if [[ "$2" == "wtfipfs" ]]; then
+  if [[ "$NAME" == "wtfipfs" ]]; then
     NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ \S+?:\*\* ')
     NAME=${NAME:2}
     LABLE=${NAME%% *}
@@ -203,7 +203,7 @@ xmpp.*)
     NAME=${NAME#* }
     # TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
     TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
-  elif [[ "$2" == "bot" ]]; then
+  elif [[ "$NAME" == "bot" ]]; then
     NAME+="[xmpp]"
     TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
   fi
@@ -221,7 +221,7 @@ xmpp.*)
 # elif [[ "$3" == "matrix.mymatrix" ]]; then
 # matrix.mymatrix)
 matrix.*)
-  # if [[ "$2" == "coybot beta" ]]; then
+  # if [[ "$NAME" == "coybot beta" ]]; then
   #   block_msg
   # fi
   LABLE="M"
@@ -372,7 +372,7 @@ chang_name_for_qt_from_matrix(){
 # elif [[ "$3" == "telegram.mytelegram" ]]; then
 # telegram.mytelegram)
 telegram.*)
-  if [[ "$2" == "Telegram" ]]; then
+  if [[ "$NAME" == "Telegram" ]]; then
     block_msg
   fi
   LABLE="G"
@@ -401,7 +401,7 @@ telegram.*)
 
   # if [[ $(echo "$TEXT" | grep -c -G "^> reply_from_telegram$" ) -eq 1 ]]; then
   if echo "$TEXT" | grep -q -G "^_reply_$"; then
-    # QT=$( python3 "$SH_PATH/get_msg.py" reply_msg "$(echo "$TEXT" | sed '/^> reply_from_telegram$/,$d')" "$2" "$5" ) || QT=""
+    # QT=$( python3 "$SH_PATH/get_msg.py" reply_msg "$(echo "$TEXT" | sed '/^> reply_from_telegram$/,$d')" "$NAME" "$5" ) || QT=""
     # QT=""
     # [[ -z "$QT" ]] && QT=$( echo "$TEXT" | sed '0,/^_reply_$/d' )
     QT=$( echo "$TEXT" | sed '0,/^_reply_$/d' |sed -e '1s/^G Matrix Telegram Bridge: //1' -e '1s/^G bot: //1' -e '1s/^G Group: /G admin: /1' -e '1s/:#0000: /: /1' -e 's/^/> /' )
@@ -447,7 +447,7 @@ discord.*)
     NAME=${NAME%#*}
   elif [[ "$3" = "discord.mydiscord2" ]]; then
     :
-  elif [[ "$2" == "Telegram Bridge" ]]; then
+  elif [[ "$NAME" == "Telegram Bridge" ]]; then
       block_msg
 #    if [[ "${TEXT:0:15}" == "Forwarded from " ]]; then
   elif [[ "${TEXT:0:31}" == "Forwarded message from channel " ]]; then
@@ -486,7 +486,7 @@ api.gpt)
   ;;
 api.simplex)
   LABLE="S"
-  if [[ "$2" == "simplexbot" ]]; then
+  if [[ "$NAME" == "simplexbot" ]]; then
     LABLE="C"
   fi
   ;;
