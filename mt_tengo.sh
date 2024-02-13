@@ -11,14 +11,10 @@ block_msg(){
   echo -n "blockthismessage"
   exit 0
 }
-orig_msg(){
-  echo -n "originalmessage"
-  exit 0
-  # echo -n "$NAME"
-  # echo -n "$SPLIT"
-  # echo -n "$TEXT"
-  # exit 0
-}
+# orig_msg(){
+#   echo -n "originalmessage"
+#   exit 0
+# }
 
 
 if [[ -z "$2" ]]; then
@@ -47,14 +43,30 @@ elif [[ "$2" == "blockthismessage" ]]; then
   block_msg
 fi
 
+md_name(){
+  if [[ -n "$NAME" ]]; then
+    # [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(echo "$NAME" | sed '/^[^>]/d'; echo )
+    [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(echo "$NAME" | sed '$d')
+    NAME=$(echo "$NAME" | tail -n1)
+    # NAME=$(echo "$NAME" | cut -d ":" -f 1)
+    # NAME=${NAME%: }
+    NAME="**${NAME% }** "
+    if [[ -n "$QT" ]]; then
+      NAME="$QT
+${NAME}"
+    fi
+  fi
+
+
+}
 
 
 
-[[ "${NAME:0:1}" == ">" ]] && orig_msg
-[[ "${NAME:0:2}" == "> " ]] && orig_msg
-[[ "${NAME:1:1}" == " " ]] && [[ "${NAME: -2}" == ": " ]] && orig_msg
-[[ "${NAME:3:1}" == " " ]] && [[ "${NAME: -4}" == ":** " ]] && orig_msg
-[[ $( echo "${NAME}" | wc -l ) -ge 3 ]] && orig_msg
+# [[ "${NAME:0:1}" == ">" ]] && orig_msg
+# [[ "${NAME:0:2}" == "> " ]] && orig_msg
+# [[ "${NAME:1:1}" == " " ]] && [[ "${NAME: -2}" == ": " ]] && orig_msg
+# [[ "${NAME:3:1}" == " " ]] && [[ "${NAME: -4}" == ":** " ]] && orig_msg
+# [[ $( echo "${NAME}" | wc -l ) -ge 3 ]] && orig_msg
 
 
 log_msg(){
@@ -549,13 +561,12 @@ if [[ -n "$4" ]] ; then
   case $8 in
   # xmpp)
   xmpp.*)
-    if [[ -n "$NAME" ]]; then
   # if [[ "$9" == "xmpp" ]] ; then
-    if [[ "$NAME" == "C twitter: " ]]; then
-      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' )
-    elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
-      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
-    fi
+    # if [[ "$NAME" == "C twitter: " ]]; then
+    #   TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' )
+    # elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
+    #   TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
+    # fi
     if [[ "$NAME" == "M rssbot: " ]] || [[ "$NAME" == "M feeds: " ]]; then
       # forbid msg from ipfsrss sent by rssbot
       # if [[ "${11}" == "gateway1" ]]; then
@@ -568,16 +579,7 @@ if [[ -n "$4" ]] ; then
       # TEXT=$(echo "$TEXT" | sed '1s/[^:]*://')
       TEXT=${TEXT#*: }
     else
-      [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(echo "$NAME" | sed '/^[^>]/d'; echo )
-      NAME=$(echo "$NAME" | tail -n1)
-      # NAME=$(echo "$NAME" | cut -d ":" -f 1)
-      # NAME=${NAME%: }
-      NAME="**${NAME% }** "
-      if [[ -n "$QT" ]]; then
-        NAME="$QT
-${NAME}"
-      fi
-    fi
+      md_name
     fi
     ;;
   api.simplex)
@@ -607,15 +609,16 @@ ${NAME}"
         block_msg
       fi
     fi
-    tmp=$NAME
-    NAME=$(echo "$NAME" | tail -n1)
-    # NAME=$(echo "$NAME" | cut -d ":" -f 1)
-    NAME=${NAME%: }
-    NAME="**${NAME}:** "
-    qt=$(echo "$tmp" | sed '$d')
-    [[ -n "$qt" ]] && NAME="$qt
-
-$NAME"
+#     tmp=$NAME
+#     NAME=$(echo "$NAME" | tail -n1)
+#     # NAME=$(echo "$NAME" | cut -d ":" -f 1)
+#     NAME=${NAME%: }
+#     NAME="**${NAME}:** "
+#     qt=$(echo "$tmp" | sed '$d')
+#     [[ -n "$qt" ]] && NAME="$qt
+#
+# $NAME"
+    md_name
     if [[ -z "$TEXT" ]]; then
 #      [[ $(echo "$NAME" | wc -l) -ge 3 ]] && [[ $(echo "$NAME" | grep -c -G '^$') -ge 1 ]] && echo "$NAME" | tail -n1 && echo "$NAME" | sed '/^$/,$d' && NAME=""
       if [[ $(echo "$NAME" | wc -l) -ge 3 ]]; then
