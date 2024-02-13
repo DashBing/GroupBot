@@ -514,6 +514,9 @@ if echo "$QT" | tail -n1 | grep -q -G "^$"; then
 fi
 
 
+if [[ -z "$NAME" ]]; then
+  :
+else
 if [[ "$LABLE" == "0" ]]; then
 # echo -n "${NAME}: "
 NAME="${NAME}: "
@@ -524,6 +527,7 @@ else
 [[ -z "$QT" ]] && NAME="$LABLE ${NAME}: " || NAME="$QT
 
 $LABLE ${NAME}: "
+fi
 fi
 
 
