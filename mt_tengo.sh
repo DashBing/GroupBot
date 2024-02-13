@@ -25,11 +25,14 @@ if [[ -z "$2" ]]; then
   case $8 in
     discord.*|irc.*)
       if [[ "${3}" == "api.gpt" ]] ; then
-        echo -n "C gpt: "
+        # echo -n "C gpt: "
+        NAME="C gpt"
       elif [[ "${3}" == "api.cmdres" ]] ; then
-        echo -n "C bot: "
+        # echo -n "C bot: "
+        NAME="C bot"
       else
-        echo -n "C fixme_need_name: "
+        # echo -n "C fixme_need_name: "
+        NAME="C fixme_need_name"
       fi
       ;;
     # telegram.*)
@@ -37,9 +40,9 @@ if [[ -z "$2" ]]; then
       :
       ;;
   esac
-  echo -n "$SPLIT"
-  echo -n "$TEXT"
-  exit 0
+  # echo -n "$SPLIT"
+  # echo -n "$TEXT"
+  # exit 0
 elif [[ "$2" == "blockthismessage" ]]; then
   block_msg
 fi
@@ -582,13 +585,14 @@ ${NAME}"
       NAME=$(echo "$NAME" | tail -n1)
     fi
 #    echo -n "$(echo "$NAME" | tail -n1)"
-    text_en=$(echo "$TEXT" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
-    length=$(echo -n "$text_en"|wc -c)
-    if [[ $length -le 400 ]]; then
-      TEXT=$text_en
-    else
-      TEXT=$(bash "$SH_PATH/split.sh" "$TEXT")
-    fi
+    # text_en=$(echo "$TEXT" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
+    # length=$(echo -n "$text_en"|wc -c)
+    # if [[ $length -le 400 ]]; then
+    #   TEXT=$text_en
+    # else
+    #   TEXT=$(bash "$SH_PATH/split.sh" "$TEXT" "$NAME")
+    # fi
+    TEXT=$(bash "$SH_PATH/split.sh" "$TEXT" "$NAME")
     ;;
   matrix.*)
   # elif [[ "$9" == "matrix" ]] ; then

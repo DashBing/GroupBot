@@ -11,14 +11,19 @@ echo "$text"
 }
 
 split(){
-
-  # local ulength=$(echo -n "$username"|wc -c)
-  # local MAX_BYTES=$[MAX_BYTES-9-ulength]
-  local MAX_BYTES=400
   local text=$1
+  local username=$2
+
+  local MAX_BYTES=400
+  local ulength=$(echo -n "$username"|wc -c)
+  local MAX_BYTES=$[MAX_BYTES-ulength]
   # text=$(wtf1 "$text")
   text_en=$(wtf "$text")
   local length=$(echo -n "$text_en"|wc -c)
+  if [[ $length -le $MAX_BYTES ]]; then
+    echo "$text_en"
+    return
+  fi
 
   # shift
   local i=0
@@ -76,8 +81,8 @@ split(){
       return $?
     }
 
-    sleep 0.5
-    if [[ $i -ge 16 ]]; then
+    # sleep 0.5
+    if [[ $i -ge 8 ]]; then
       # _send "E: msg is too long, stop sending, now $i/$n" &>> $LOG
       echo "E: msg is too long, stop sending, now $i/$n"
       return 1
