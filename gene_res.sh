@@ -1,7 +1,7 @@
 #!/bin/bash
 
 text=$1
-text="$(echo "$text" | cut -d '\' --output-delimiter='\\' -f 1- )"
+# text="$(echo "$text" | cut -d '\' --output-delimiter='\\' -f 1- )"
 
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}); pwd )}
 gateway=${2-gateway1}
