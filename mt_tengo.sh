@@ -549,6 +549,7 @@ if [[ -n "$4" ]] ; then
   case $8 in
   # xmpp)
   xmpp.*)
+    if [[ -n "$NAME" ]]; then
   # if [[ "$9" == "xmpp" ]] ; then
     if [[ "$NAME" == "C twitter: " ]]; then
       TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' )
@@ -576,6 +577,7 @@ if [[ -n "$4" ]] ; then
         NAME="$QT
 ${NAME}"
       fi
+    fi
     fi
     ;;
   api.simplex)
