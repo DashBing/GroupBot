@@ -44,7 +44,7 @@ echo "$text"
 }
 wtf(){
   local text=$1
-text="$(echo "$text" | cut -d '\' --output-delimiter='\\' -f 1- )"
+# text="$(echo "$text" | cut -d '\' --output-delimiter='\\' -f 1- )"
   text=$(echo "$text" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\r//g' -e 's/\t/\\t/g' | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
 [[ $( echo "$text" | wc -l ) -gt 1 ]] && text=$(echo "$text" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
 echo "$text"
