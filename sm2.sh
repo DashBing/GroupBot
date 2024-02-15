@@ -209,7 +209,7 @@ echo "sm.sh: the length of msg is ok: $length:${text:0:256}..." &>> $LOG
       return $?
     }
 
-    sleep 0.5
+    sleep 0.2
     username=""
     if [[ $i -ge 16 ]]; then
       echo "E: msg is too long, stop sending...$i/$n" &>> $LOG
