@@ -6,6 +6,7 @@ echo
 
 if [[ -z "$1" ]]; then
   echo "把问题翻译成英文，然后交给bard，再把回答翻译为中文。"
+  echo "用法：.ai22 \$str"
 else
 # ai "$@"
 # ai "$*"
