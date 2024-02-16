@@ -22,7 +22,7 @@ if [[ -z "$2" ]]; then
     discord.*|irc.*)
       if [[ "${3}" == "api.gpt" ]] ; then
         # echo -n "C gpt: "
-        NAME="C gpt"
+        NAME="gpt"
       elif [[ "${3}" == "api.cmdres" ]] ; then
         # echo -n "C bot: "
         NAME="C bot"
