@@ -455,7 +455,7 @@ cmds() {
     ;;
   *)
     # echo "E: unknown cmd > $*"
-    echo '?'
+    echo '你输错了命令'
     ;;
   esac
 
