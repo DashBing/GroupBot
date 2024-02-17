@@ -135,7 +135,6 @@
 #faq X we.: 喳|喳～
 #faq X we.: tweet|tweet~
 #faq X we.: 准备好了吗？|\n我准备好了，我准备好了，我准备好了……
-#faq X liqsliu_2: 6|🥳
 #faq X we.: 😂|😂
 #faq X we.: 🤣|🤣
 #faq X we.: 🤔|🤔
@@ -215,3 +214,9 @@
 #xmpp I Tox: 总结：https://paste.07f.de/?3914916842b2b6be#3747fWTqSJydGpdfVDCmvArPrVjmSA7toCSWHBYAmExA
 #win I Tox: X liqsliu_suchat: \\n\\n各位用Windows的注意两处隐私：\\nwin+i：设置-Windows更新-高级选项-传递优化-允许从其他电脑下载-关闭\\n设置-隐私和安全性-Windows权限-常规-四项全关各位用Windows的注意两处隐私：\\nwin+i：设置-Windows更新-高级选项-传递优化-允许从其他电脑下载-
 #mygpg X liqsliu: \n-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nmDMEY4N6bRYJKwYBBAHaRw8BAQdAXlB1BdaOcjJUZy92sgsPGoVKefLnTyDpqPWG\nwiaLxHS0G2xpcXNsaXUgPGxpcXNsaXVAZ21haWwuY29tPoiQBBMWCAA4BQsJCAcC\nBhUKCQgLAgQWAgMBAh4BAheAFiEEtaJiUfivYUuFeripgRow3Au7pScFAmODjaEC\nGyMACgkQgRow3Au7pScLpAD8CG782Q1sfct+ePRtAiLd8ZovZOEvn4VYHmafg8GH\nRIcA/RsxM4Ykj/2R8/kCJiH/7pKsb0xhE4nDUn57mAUetn4EuDgEY4N6bRIKKwYB\nBAGXVQEFAQEHQLAWX5laXcuGgpEkecyV5M0gbt3kGk+jNUYun/33iIB5AwEIB4h4\nBBgWCAAgFiEEtaJiUfivYUuFeripgRow3Au7pScFAmODjbQCGwwACgkQgRow3Au7\npScUsgEAyPkDpewG7x7EBG84qsEXkUkaq+Z2Z7ry4chJm2UGa/0BAN9cImvUEpek\n1Zr9r5ZBs1bR7qq7mqHytXnLk7jCKG8O\n=543w\n-----END PGP PUBLIC KEY BLOCK-----
+#xmpp X liqsliu: 总结 https://github.com/liqsliu/bot/blob/master/note/20240108_224233_xmpp.txt
+#gpg X liqsliu: openkenchain入门，转自 xmpp:chinese@conference.07f.de?join 群主\n> 1. 进F-droid客户端下一个OpenKeyChain\n> 2. 下载之后打开\n> 3. 点击 *你还没有任何密钥*处新建一个密钥\n> 4. 创建密钥\n> 5. 填入你的昵称（随便填， *不要填你的真实姓名或者任何与你的私有网络服务相关的内容，难道你想被人肉吗？*），点击下一步\n> 6. 填入你的邮箱（建议随便乱填或者填你的邮箱 *不要填你的私有邮箱地址，例如QQ，163等，难道你想被人肉吗？*），点击下一步\n> 7. 点击右上角三个点，更改密钥配置\n> 8. 点击带有锁的条目删除它，改动为RSA 4096bit\n> 9. 点击带有勋章的条目，改动为RSA  4096bit\n> 10. 保存\n> 11. 回到那个带有生成的界面，你会看到一个“custom configuration”的提示信息，这是因为OpenKeyChian默认使用的是RSA 3072bit的设置。不用管他，直接等待生成。 ⚠️ *警告：不要将你的公钥上传服务器！*\n> 12. 等一段时间\n> 13. 密钥生成完成！\n> 14. 现在退出OpenKeyChain，进入Conversation，打开右上角三个点，点击管理账号\n> 15. 长按你想要发布公钥的账号，点击发布OpenPGP公钥\n> 16. 完成
+#xmpp X liqsliu: update https://github.com/liqsliu/wtfipfs/blob/main/txt/20240116_111724_xmpp.txt.md
+#xmpp X liqsliu: update https://github.com/wtfipfs/d/blob/main/md/xmpp.txt.md
+#default T oo: tool
+#ipfs X liqsliu: \n\nT TRIfA 2B10: ipfs 网关\nhttp://[21f:5234:5548:31e5:a334:854b:5752:f4fc]/T TRIfA 2B10: ipfs 网关\nhttp://[21f:5234:5548:31e5:a334:854b:5752:f4fc]/
