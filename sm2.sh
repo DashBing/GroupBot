@@ -10,6 +10,7 @@ export LOG="$HOME/mt.log"
 [[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE=$LOG || export LOG_FILE=/dev/null
 
 LOG_FILE_E="$LOG"
+SM_LOCK="$SH_PATH/is_sending"
 
 username=$1
 text=$2
@@ -36,6 +37,19 @@ gateway=${4-gateway1}
 
 # touch /tmp/test_sm.sh
 # echo "$*" > /tmp/test_sm.sh.txt
+
+get_sm_lock(){
+  while [[ -e "$SM_LOCK" ]]
+  do
+    sleep 0.5
+  done
+  touch "$SM_LOCK"
+}
+
+release_sm_lock(){
+  [[ -e "$SM_LOCK" ]] && rm "$SM_LOCK"
+}
+
 
 wtf1(){
   local text=$1
@@ -161,14 +175,10 @@ echo "sm.sh: the length of msg is ok: $length:${text:0:256}..." &>> $LOG
   if [[ $[length%MAX_BYTES] -ne 0 ]]; then
     let n++
   fi
+  get_sm_lock
   while true
   do
     # now=$[i*MAX_BYTES]
-    # if [[ $((i*MAX_BYTES)) -ge ${#text} ]]; then
-    if [[ $now -ge ${#text} ]]; then
-      return 0
-      break
-    fi
     tmp=${text:$now:$MAX_BYTES}
     tmp0=$tmp
     local need_1=0
@@ -197,29 +207,35 @@ echo "sm.sh: the length of msg is ok: $length:${text:0:256}..." &>> $LOG
         break
       fi
     done
-    if [[ $need_1 -eq 1 ]]; then
-      let now++
-    fi
-    now=$[now+${#tmp}]
 
     let i++
     echo "send...$i/$n" &>> $LOG
 
     _send "$tmp1" || {
+      release_sm_lock
       return $?
     }
 
-    sleep 0.2
+    if [[ $need_1 -eq 1 ]]; then
+      let now++
+    fi
+    now=$[now+${#tmp}]
+    # if [[ $((i*MAX_BYTES)) -ge ${#text} ]]; then
+    if [[ $now -ge ${#text} ]]; then
+      # return 0
+      break
+    fi
+    sleep 0.1
     username=""
     if [[ $i -ge 16 ]]; then
       echo "E: msg is too long, stop sending...$i/$n" &>> $LOG
       _send "E: msg is too long, stop sending, now $i/$n" &>> $LOG
-      return 1
+      release_sm_lock
+      return 9
     fi
   done
+  release_sm_lock
 }
-
-
 
 
 
