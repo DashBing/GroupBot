@@ -94,8 +94,8 @@ list_tags() {
 print_help(){
   echo "公共记事本
 用法: .note [add|del|list|tag|help] \$tag [\$text]
-用法: .note delete \$tag [\$name: [\$text]]
-用法: .note delete \$tag [\$number(行号)]
+用法: .note delete \$tag [\$name: ][\$text]
+用法: .note delete [\$tag] [\$number(行号)]
 
 tag的格式：#非空白字符
 
