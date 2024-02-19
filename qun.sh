@@ -62,7 +62,7 @@ add() {
   # if grep -q -G "^$text\$" "$NOTE_FILE"; then
   # if grep -q -F "$text" "$NOTE_FILE"; then
   if grep -q -F "$jid" "$NOTE_FILE"; then
-    line_num=$(grep -n -F "$text" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
+    line_num=$(grep -n -F "$jid" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
     line=$(sed -n "${line_num}p" "$NOTE_FILE")
     echo "已存在: $line"
   else
