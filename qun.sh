@@ -43,6 +43,9 @@ my_decode() {
 add() {
 
   local text=$1
+  if echo "text"|get_jid | grep -q -G '^xmpp:.*?join$'; then
+    text=$(echo "$text" |sed -r 's/^(.*: )(xmpp:)([^ ]+)(\?join)($| .*$)/\1\3\5/1')
+  fi
   #if [[ $(grep -c -G "^$text\$" "$NOTE_FILE") -ge 1 ]]; then
   # if grep -q -G "^$text\$" "$NOTE_FILE"; then
   if grep -q -F "$text" "$NOTE_FILE"; then
@@ -57,21 +60,22 @@ add() {
 }
 
 del() {
-  if [[ -z "$2" ]]; then
-    local text=$1
-  else
-    local tag=$1
-    local text=$2
-  fi
+  # if [[ -z "$2" ]]; then
+  #   local text=$1
+  # else
+  #   local tag=$1
+  #   local text=$2
+  # fi
   # text=$(echo "$text" | cut -d '\' --output-delimiter='\\' -f 1-)
   # [[ $( echo "$text" | wc -l ) -gt 1 ]] && text=$(echo "$text" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
   # line_num=$(grep -n -G "^$text\$" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
   # line_num=$(grep -n -F "$text" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
-  if echo "$text"|grep -q -P '^\d+$'; then
-    line_num=$text
-  else
-    line_num=$(grep -n -G "^$tag" "$NOTE_FILE" | grep -F "$text" | cut -d ':' -f1 | head -n1)
-  fi
+  # if echo "$text"|grep -q -P '^\d+$'; then
+  #   line_num=$text
+  # else
+    # line_num=$(grep -n -G "^$tag" "$NOTE_FILE" | grep -F "$text" | cut -d ':' -f1 | head -n1)
+    line_num=$(grep -n -F "$text" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
+  # fi
   # echo num$line_num
   # read -p ok?
   if [[ -n "$line_num" ]]; then
@@ -85,33 +89,26 @@ del() {
 
 list_tags() {
   #  cat "$NOTE_FILE" | cut -d ' ' -f1 |sort -n |awk '{if($0!=line)print; line=$0}'
-  local tags=$(cat "$NOTE_FILE" | cut -d ' ' -f1 | sort -n | uniq)
-  echo $tags
+  # local tags=$(cat "$NOTE_FILE" | cut -d ' ' -f1 | sort -n | uniq)
+  # echo $tags
+  cat "$NOTE_FILE"| sed -r 's/.*: [^ ]+(( +#[^\s])+)/\1/1'| sed -r 's/ /\n/g' | sort -n | uniq
+}
 
+
+get_jid(){
+  # cat | grep -G -o ": .*"
+  cat | sed -r 's/.*: ([^ ]+)($| .*)/\1/1'
+}
+
+get_jid2(){
+  # cat | grep -G -o ": .*"
+  cat | sed -r 's/.*: ([^ ]+)($| .*)/xmpp:\1?join/1'
 }
 
 
 print_help(){
-  echo "公共记事本
+  echo "群组列表整理
 用法: .note [add|del|list|tag|help] \$tag [\$text]
-用法: .note delete \$tag [\$name: ][\$text]
-用法: .note delete [\$tag] [\$number(行号)]
-
-tag的格式：#非空白字符
-
-tag可以写在命令（add del list等）前面
-
-delete: text可以不写全。如果不设置name，text可以是任意位置的字符串片段。如果设置了name，text必须从首字母开始。留空也可以。总之，会删除第一个匹配到的记录。text可设为一串数字，会当作行号处理。name参数要包含平台名字，比如X T...
-
-del: text可以不写全，但必须从首字母开始，留空也可以。总之，会删除第一个匹配到的记录。
-
-示例：
-列出已经在使用的tag: .note tag
-查看默认tag下的记录: .note list
-添加记录到默认tag: .note add #default some text
-添加记录到默认tag: .note #default add some text
-添加记录到默认tag: .note #default some text
-添加记录到默认tag: .note some text
 
 备份: https://github.com/liqsliu/bot/blob/master/group_note.txt
 源码: https://github.com/liqsliu/bot/blob/master/note.sh"
@@ -135,7 +132,6 @@ log_msg(){
 }
 
 
-
 shorter(){
 text=$(echo "$text" | sed -r '1s/^\s*\S+\s*//' )
 }
@@ -145,7 +141,7 @@ text=$(echo "$text" | sed -r '1s/^\s*\S+\s*//' )
 # echo "$*" >> ~/tera/mt_msg.log
 log_msg note "$@" >> $LOG_FILE
 #
-NOTE_FILE="$SH_PATH/group_note.txt"
+NOTE_FILE="$SH_PATH/qun.txt"
 
 username=$1
 username=$(my_encode "$1")
@@ -155,101 +151,63 @@ text_1=$(echo "$text"|head -n1)
 cmd_1=$(echo "$text_1" | awk '{print $1}' )
 cmd_2=$(echo "$text_1" | awk '{print $2}' )
 
-echo "cmd_1: $cmd_1, cmd_2: $cmd_2" >> $LOG_FILE
-# if echo "$cmd_1" | grep -q -P "^#\S+$"; then
-if echo "$cmd_1" | grep -q -P '^#[^\s]+$'; then
-echo "cmd_1 is a tag: $tag" >> $LOG_FILE
-  tag="$cmd_1"
-  # text=$(echo " $text" | cut -d ' ' -f3-)
-  # text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
+case "${cmd_1}" in
+help)
+  print_help
+  exit 0
+  ;;
+tag)
+  du -h "$NOTE_FILE"
+  list_tags
+  exit 0
+  ;;
+list)
+  cmd=list
   shorter
-  case "${cmd_2}" in
-  list)
-    cmd=list
-    # text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
-    shorter
-    ;;
-  add)
-    cmd=add
-    # text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
-    shorter
-    ;;
-  del)
-    cmd=del
-    shorter
-    ;;
-  delete)
-    cmd=delete
-    shorter
-    ;;
-  *)
-    [[ -z "$text" ]] && cmd=list || cmd=add
-    ;;
-  esac
-
-else
-  case "${cmd_1}" in
-  help)
-    print_help
-    exit 0
-    ;;
-  tag)
-    du -h "$NOTE_FILE"
-    list_tags
-    exit 0
-    ;;
-  list)
-    cmd=list
-    shorter
-    ;;
-  add)
-    cmd=add
-    shorter
-    ;;
-  del)
-    cmd=del
-    shorter
-    ;;
-  delete)
-    cmd=delete
-    shorter
-    ;;
-  *)
-    cmd=add
-    cmd_2=""
-    ;;
-  esac
-  # if echo "$cmd_2" | grep -q -P "^#\S+$"; then
-  if echo "$cmd_2" | grep -q -P '^#[^\s]+$'; then
-    echo "cmd_2 is a tag: $tag" >> $LOG_FILE
-    tag="$cmd_2"
-    shorter
-  else
-    tag="#default"
-  fi
-fi
-echo "finally text: $text" >> $LOG_FILE
+  ;;
+add)
+  cmd=add
+  shorter
+  ;;
+del)
+  cmd=del
+  shorter
+  ;;
+delete)
+  cmd=delete
+  shorter
+  ;;
+*)
+  cmd=add
+  ;;
+esac
 text=$(my_encode "$text")
 
 [[ -z "$text" ]] && [[ "$cmd" != "list" ]] && echo '内容不能为空' && exit 0
 
 case "${cmd}" in
 list)
-  echo "$tag"
+  # echo "$tag"
   # my_decode "$(grep -G "^$tag " "$NOTE_FILE" | cut -d" " -f2- | sed 's/^/\n/g')"
   # my_decode "$(grep -n -F "$tag " "$NOTE_FILE" | cut -d" " -f2- | sed 's/^/\n/g')"
-  my_decode "$(grep -n -F "$tag " "$NOTE_FILE" | sed -r 's|:#[^ ]+ |%|1')"
+  # my_decode "$(grep -n -F "$tag " "$NOTE_FILE" | sed -r 's|:#[^ ]+ |%|1')"
+  if [[ "$cmd_2" == "jid" ]]; then
+    cat "$NOTE_FILE" | get_jid2
+  elif [[ "$cmd_2" == "jidonly" ]]; then
+    cat "$NOTE_FILE" | get_jid
+  elif [[ "$cmd_2" == "full" ]]; then
+    my_decode "$(cat "$NOTE_FILE")"
+  else
+    cat "$NOTE_FILE" | get_jid
+  fi
   ;;
 add)
-  add "$tag $username$text"
+  add "$username$text"
   ;;
 del)
-  del "$tag $username$text"
-  ;;
-delete)
-  del "$tag" "$text"
+  del "$username$text"
   ;;
 *)
-  add "$tag $username$text"
+  add "$username$text"
   ;;
 esac
