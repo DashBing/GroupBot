@@ -40,10 +40,20 @@ my_decode() {
   echo -e "$1"
 }
 
+get_jid(){
+  # cat | grep -G -o ": .*"
+  cat | sed -r 's/.*: ([^ ]+)($| .*)/\1/1'
+}
+
+get_jid2(){
+  # cat | grep -G -o ": .*"
+  cat | sed -r 's/.*: ([^ ]+)($| .*)/xmpp:\1?join/1'
+}
+
 add() {
 
   local text=$1
-  local jid=$(echo "text"|get_jid)
+  local jid=$(echo "$text"|get_jid)
 
   if echo "$jid" | grep -q -G '^xmpp:.*?join$'; then
     text=$(echo "$text" |sed -r 's/^(.*: )(xmpp:)([^ ]+)(\?join)($| .*$)/\1\3\5/1')
@@ -97,16 +107,6 @@ list_tags() {
   # echo "all tag:"
   # cat "$NOTE_FILE"| sed -r 's/.*: [^ ]+(( +#[^\s])+)/\1/1'| sed -r 's/ /\n/g' | sort -n | uniq
   cat "$NOTE_FILE"| sed -r 's/.*: [^ ]+( .*$)/\1/1'|grep -o -P '#[^\s]+' | sort -n | uniq
-}
-
-get_jid(){
-  # cat | grep -G -o ": .*"
-  cat | sed -r 's/.*: ([^ ]+)($| .*)/\1/1'
-}
-
-get_jid2(){
-  # cat | grep -G -o ": .*"
-  cat | sed -r 's/.*: ([^ ]+)($| .*)/xmpp:\1?join/1'
 }
 
 
