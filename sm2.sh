@@ -10,7 +10,7 @@ export LOG="$HOME/mt.log"
 [[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE=$LOG || export LOG_FILE=/dev/null
 
 LOG_FILE_E="$LOG"
-SM_LOCK="$SH_PATH/is_sending"
+SM_LOCK="$SH_PATH/SM_LOCK"
 
 username=$1
 text=$2
