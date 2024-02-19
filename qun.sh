@@ -54,34 +54,31 @@ get_jid2(){
 
 add() {
 
-  local text=$1
+  local username=$1
+  local text=$2
   text=$(echo "$text"|sed 's/^> //')
 
   local jid=$(echo "$text"|get_jid|head -n1)
 
-  
-  if echo "$(echo "$text" | awk '{print $2}' )" |grep -q "@"; then
-    :
+  if echo "$jid" | grep -q -G '^xmpp:.*?join$'; then
+    jid=$(echo "$jid" |sed -r 's/^(xmpp:)([^ ]+)(\?join)$/\2/1')
+  fi
+
+  if echo "$(echo "$text"| head -n1 | awk '{print $1}' )" |grep -q "@"; then
+    text=$(echo "$text" |sed -r '1s/^([^ ]+)($| .*$)/\2/1')
+    text="$jid$text"
   else
+    line_num=$(echo "$text" | grep -n -F "$jid" | cut -d ':' -f1 | head -n1)
+    text=$(echo "$text" |sed -r $line_num's/^(.*\s+)([^ ]+@[^ ]+)($|\s+.*$)/\2/1')
     text="$jid $text"
   fi
 
-  if echo "$jid" | grep -q -G '^xmpp:.*?join$'; then
-    text=$(echo "$text" |sed -r 's/^(.*: )(xmpp:)([^ ]+)(\?join)($| .*$)/\1\3\5/1')
-    jid=$(echo "$text"|get_jid|head -n1)
-  fi
-
-  #if [[ $(grep -c -G "^$text\$" "$NOTE_FILE") -ge 1 ]]; then
-  # if grep -q -G "^$text\$" "$NOTE_FILE"; then
-  # if grep -q -F "$text" "$NOTE_FILE"; then
   if grep -q -F "$jid" "$NOTE_FILE"; then
     line_num=$(grep -n -F "$jid" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
     line=$(sed -n "${line_num}p" "$NOTE_FILE")
     echo "已存在: $line"
   else
-    # echo "$text";exit 0
-    # echo "$1" >> "$NOTE_FILE" && echo "I: added: $(grep -G "^$1\$" "$NOTE_FILE")" || echo "E: $?"
-    echo "$text" >>"$NOTE_FILE" && echo "已添加: $text" || echo "E: $?"
+    echo "$username$text" >>"$NOTE_FILE" && echo "已添加: $text" || echo "E: $?"
   fi
 }
 
@@ -228,7 +225,7 @@ list)
   fi
   ;;
 add)
-  add "$username$text"
+  add "$username" "$text"
   ;;
 del)
   del "$username$text"
