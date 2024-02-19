@@ -112,10 +112,15 @@ list_tags() {
 
 print_help(){
   echo "群组列表整理
-用法: .note [add|del|list|tag|help] \$tag [\$text]
+用法:
+.note [add] \$text
+.note list
+.note tag
+.note del \$text
+.note help
 
-备份: https://github.com/liqsliu/bot/blob/master/group_note.txt
-源码: https://github.com/liqsliu/bot/blob/master/note.sh"
+备份: https://github.com/liqsliu/bot/blob/master/qun.txt
+源码: https://github.com/liqsliu/bot/blob/master/qun.sh"
 
 }
 
