@@ -94,7 +94,7 @@ list_tags() {
   #  cat "$NOTE_FILE" | cut -d ' ' -f1 |sort -n |awk '{if($0!=line)print; line=$0}'
   # local tags=$(cat "$NOTE_FILE" | cut -d ' ' -f1 | sort -n | uniq)
   # echo $tags
-  echo "all tag:"
+  # echo "all tag:"
   # cat "$NOTE_FILE"| sed -r 's/.*: [^ ]+(( +#[^\s])+)/\1/1'| sed -r 's/ /\n/g' | sort -n | uniq
   cat "$NOTE_FILE"| sed -r 's/.*: [^ ]+( .*$)/\1/1'|grep -o -P '#[^\s]+' | sort -n | uniq
 }
