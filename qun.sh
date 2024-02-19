@@ -60,20 +60,20 @@ add() {
 
   local jid=$(echo "$text"|get_jid|head -n1)
 
-  if echo "$jid" | grep -q -G '^xmpp:.*?join$'; then
-    jid=$(echo "$jid" |sed -r 's/^(xmpp:)([^ ]+)(\?join)$/\2/1')
-  fi
-
-  if echo "$(echo "$text"| head -n1 | awk '{print $1}' )" |grep -q "@"; then
-    text=$(echo "$text" |sed -r '1s/^([^ ]+)($| .*$)/\2/1')
-    text="$jid$text"
-  else
-    line_num=$(echo "$text" | grep -n -F "$jid" | cut -d ':' -f1 | head -n1)
-    text=$(echo "$text" |sed -r $line_num's/^(.*\s+)([^ ]+@[^ ]+)($|\s+.*$)/\2/1')
-    text="$jid $text"
-  fi
 
   if grep -q -F "$jid" "$NOTE_FILE"; then
+    if echo "$jid" | grep -q -G '^xmpp:.*?join$'; then
+      jid=$(echo "$jid" |sed -r 's/^(xmpp:)([^ ]+)(\?join)$/\2/1')
+    fi
+
+    if echo "$(echo "$text"| head -n1 | awk '{print $1}' )" |grep -q "@"; then
+      text=$(echo "$text" |sed -r '1s/^([^ ]+)($| .*$)/\2/1')
+      text="$jid$text"
+    else
+      line_num=$(echo "$text" | grep -n -F "$jid" | cut -d ':' -f1 | head -n1)
+      text=$(echo "$text" |sed -r $line_num's/^(.*\s+)([^ ]+@[^ ]+)($|\s+.*$)/\2/1')
+      text="$jid $text"
+    fi
     line_num=$(grep -n -F "$jid" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
     line=$(sed -n "${line_num}p" "$NOTE_FILE")
     echo "已存在: $line"
