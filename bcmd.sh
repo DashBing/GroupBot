@@ -414,6 +414,10 @@ cmds() {
     # bash "$SH_PATH/note.sh" "$username" "${text:6}" &>>~/tera/mt_msg.log
     bash "$SH_PATH/note.sh" "$username" "${text:6}$qt_text" || echo "E: $?"
     ;;
+  qun)
+    shift
+    bash "$SH_PATH/qun.sh" "$username" "${text:5}$qt_text" || echo "E: $?"
+    ;;
   faq)
     bash "$SH_PATH/faq.sh" "$text" "$username" || echo "E: $?"
     ;;
