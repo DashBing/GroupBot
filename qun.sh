@@ -43,12 +43,15 @@ my_decode() {
 add() {
 
   local text=$1
-  if echo "text"|get_jid | grep -q -G '^xmpp:.*?join$'; then
+  local jid=$(echo "text"|get_jid)
+
+  if echo "$jid" | grep -q -G '^xmpp:.*?join$'; then
     text=$(echo "$text" |sed -r 's/^(.*: )(xmpp:)([^ ]+)(\?join)($| .*$)/\1\3\5/1')
   fi
   #if [[ $(grep -c -G "^$text\$" "$NOTE_FILE") -ge 1 ]]; then
   # if grep -q -G "^$text\$" "$NOTE_FILE"; then
-  if grep -q -F "$text" "$NOTE_FILE"; then
+  # if grep -q -F "$text" "$NOTE_FILE"; then
+  if grep -q -F "$jid" "$NOTE_FILE"; then
     line_num=$(grep -n -F "$text" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
     line=$(sed -n "${line_num}p" "$NOTE_FILE")
     echo "已存在: $line"
@@ -91,9 +94,10 @@ list_tags() {
   #  cat "$NOTE_FILE" | cut -d ' ' -f1 |sort -n |awk '{if($0!=line)print; line=$0}'
   # local tags=$(cat "$NOTE_FILE" | cut -d ' ' -f1 | sort -n | uniq)
   # echo $tags
-  cat "$NOTE_FILE"| sed -r 's/.*: [^ ]+(( +#[^\s])+)/\1/1'| sed -r 's/ /\n/g' | sort -n | uniq
+  echo "all tag:"
+  # cat "$NOTE_FILE"| sed -r 's/.*: [^ ]+(( +#[^\s])+)/\1/1'| sed -r 's/ /\n/g' | sort -n | uniq
+  cat "$NOTE_FILE"| sed -r 's/.*: [^ ]+( .*$)/\1/1'|grep -o -P '#[^\s]+' | sort -n | uniq
 }
-
 
 get_jid(){
   # cat | grep -G -o ": .*"
@@ -192,12 +196,16 @@ list)
   # my_decode "$(grep -n -F "$tag " "$NOTE_FILE" | cut -d" " -f2- | sed 's/^/\n/g')"
   # my_decode "$(grep -n -F "$tag " "$NOTE_FILE" | sed -r 's|:#[^ ]+ |%|1')"
   if [[ "$cmd_2" == "jid" ]]; then
+    echo jid
     cat "$NOTE_FILE" | get_jid2
   elif [[ "$cmd_2" == "jidonly" ]]; then
+    echo jid only
     cat "$NOTE_FILE" | get_jid
   elif [[ "$cmd_2" == "full" ]]; then
+    echo full
     my_decode "$(cat "$NOTE_FILE")"
   else
+    echo jid only
     cat "$NOTE_FILE" | get_jid
   fi
   ;;
@@ -206,6 +214,9 @@ add)
   ;;
 del)
   del "$username$text"
+  ;;
+delete)
+  del "$text"
   ;;
 *)
   add "$username$text"
