@@ -87,7 +87,7 @@ cmds() {
       [[ -e "$SH_PATH/group_help.txt" ]] && cat "$SH_PATH/group_help.txt" || echo "E: no group_help.txt"
       # [[ -e "$SH_PATH/group_help_bot.txt" ]] && echo && cat "$SH_PATH/group_help_bot.txt"
       # [[ -e "$SH_PATH/group_help_rule.txt" ]] && echo && cat "$SH_PATH/group_help_rule.txt"
-      [[ -e "$SH_PATH/group_help_rule.txt" ]] && echo && echo "查看群规: .help rule"
+      [[ -e "$SH_PATH/group_help_rule.txt" ]]
     # elif [[ "$2" == "cmd" ]]; then
     #   cat "$SH_PATH/group_cmd.txt"
     else

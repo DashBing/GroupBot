@@ -8,7 +8,7 @@ I irc频道( #wtfipfs )
 M matrix群( #wtfipfs:matrix.org )
 T tox群( 2436380A97D9FE41898C2482DF9B52428EBE5E86E2427B4A3EFEDCC7E139136FB40917DAAFFF )
 D discord( https://discord.gg/G6YmQuCJFD )
-G telegram( https://t.me/wtfipfs_fucktelegram )
+G telegram( https://t.me/wtfipfs_fucktelegram ), 桥接用的 t2bot (不太稳)，后续可能会换用群主自己的。
 ...
 C bot自动回复或推送的新闻
 
@@ -25,9 +25,10 @@ C bot自动回复或推送的新闻
 ...
 
 群组管理:
-xmpp: liqsliu@...(suchat.org yax.im jabber.fr jabb3r.org...)
+xmpp: liqsliu@(suchat.org yax.im jabber.fr jabb3r.org...)
 matrix: @liqsliu:matrix.org @liqsliu:mozilla.org
 discord: liqsliu
 telegram: @liqsliu
 
+查看群规: .help rule
 本群和ipfs官方没关系。
