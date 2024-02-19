@@ -40,9 +40,11 @@ my_decode() {
   echo -e "$1"
 }
 
+
 get_jid(){
   # cat | grep -G -o ": .*"
-  cat | sed -r 's/.*: ([^ ]+)($| .*)/\1/1'
+  # cat | sed -r 's/.*: ([^ ]+)($| .*)/\1/1'
+  cat | sed -r 's/(^|\s)([^ ]+@[^ ]+)($|\s)/\2/1'
 }
 
 get_jid2(){
@@ -53,11 +55,22 @@ get_jid2(){
 add() {
 
   local text=$1
-  local jid=$(echo "$text"|get_jid)
+  text=$(echo "$text"|sed 's/^> //')
+
+  local jid=$(echo "$text"|get_jid|head -n1)
+
+  
+  if echo "$(echo "$text" | awk '{print $2}' )" |grep -q "@"; then
+    :
+  else
+    text="$jid $text"
+  fi
 
   if echo "$jid" | grep -q -G '^xmpp:.*?join$'; then
     text=$(echo "$text" |sed -r 's/^(.*: )(xmpp:)([^ ]+)(\?join)($| .*$)/\1\3\5/1')
+    jid=$(echo "$text"|get_jid|head -n1)
   fi
+
   #if [[ $(grep -c -G "^$text\$" "$NOTE_FILE") -ge 1 ]]; then
   # if grep -q -G "^$text\$" "$NOTE_FILE"; then
   # if grep -q -F "$text" "$NOTE_FILE"; then
