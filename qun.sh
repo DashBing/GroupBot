@@ -64,7 +64,7 @@ add() {
 
 del() {
   # if [[ -z "$2" ]]; then
-  #   local text=$1
+  local text=$1
   # else
   #   local tag=$1
   #   local text=$2
