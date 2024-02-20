@@ -1,6 +1,7 @@
 #!/bin/bash
 # split mag < 1024
 # just for irc
+# copy from sm2.sh
 
 wtf(){
   local text=$1
