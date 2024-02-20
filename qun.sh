@@ -49,14 +49,14 @@ get_jid(){
   # cat | grep -G -o ": .*"
   # cat | sed -r 's/.*: ([^ ]+)($| .*)/\1/1'
   # cat | sed -r 's/(^|\s)(\S+@\S+)($|\s)/\2/1'
-  cat | sed -r -e 's|^.*?: ||1' -e 's| .*$||1' | grep -o -P '\S+@\S+'
+  cat | sed -r -e 's|^.*?: ||1' -e 's| .*$||1' | grep -o -P '[^\s]+@[^\s]+'
 }
 
 get_jid2(){
   # cat | grep -G -o ": .*"
   # cat | sed -r 's/.*: ([^ ]+)($| .*)/xmpp:\1?join/1'
   # cat | sed -r 's/(^|\s)(\S+@\S+)($|\s)/xmpp:\2?join/1'
-  cat | sed -r -e 's|^.*?: ||1' -e 's| .*$||1' | grep -o -P '\S+@\S+' | sed -r 's/^(.*)$/xmpp:\1?join/1'
+  cat | sed -r -e 's|^.*?: ||1' -e 's| .*$||1' | grep -o -P '[^\s]+@[^\s]+' | sed -r 's/^(.*)$/xmpp:\1?join/1'
 }
 
 add() {
@@ -65,7 +65,7 @@ add() {
   local text=$2
   text=$(echo "$text"|sed 's/^> //')
 
-  local jid=$(echo "$text"| grep -o -P '\S+@\S+'|head -n1)
+  local jid=$(echo "$text"| grep -o -P '[^\s]+@[^\s]+'|head -n1)
 
   if [[ -z "$jid" ]]; then
     echo "没找到群地址"
@@ -187,7 +187,7 @@ log_msg(){
 
 
 shorter(){
-text=$(echo "$text" | sed -r '1s/^\s*\S+\s*//' )
+text=$(echo "$text" | sed -r '1s/^\s*[^\s]+\s*//' )
 }
 
 
@@ -254,7 +254,7 @@ list)
 
   full=$(cat "$NOTE_FILE")
   # my_decode "$(echo "$full")"
-  for tag in $(echo "$text"|grep -o -P "#\S+")
+  for tag in $(echo "$text"|grep -o -P "#[^\s]+")
   do
     full=$(echo "$full"|grep -F "$tag")
   done
