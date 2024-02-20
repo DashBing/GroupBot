@@ -136,7 +136,7 @@ del() {
   # read -p ok?
   if [[ -n "$line_num" ]]; then
     line=$(sed -n "${line_num}p" "$NOTE_FILE")
-    sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $(my_encode "$line")" || echo "E: $?"
+    sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $(my_decode "$line")" || echo "E: $?"
     # sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $text" || echo "E: $?"
   else
     echo "没找到: $text"
