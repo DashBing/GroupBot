@@ -221,3 +221,6 @@
 #default T oo: tool
 #ipfs X liqsliu: \n\nT TRIfA 2B10: ipfs 网关\nhttp://[21f:5234:5548:31e5:a334:854b:5752:f4fc]/T TRIfA 2B10: ipfs 网关\nhttp://[21f:5234:5548:31e5:a334:854b:5752:f4fc]/
 #xmpp X liqsliu: 20240219 目前xmpp中文群有一大堆都是由那些关注政治立场的左派人士建立的，他们是一个圈子。这件事是好是坏，我不想评价。我的个人看法：暴露政治立场会增加不必要的风险以及给群友增加不必要的压力，（个人）没必要，（个人）没兴趣，（群主）不应该。\n提醒一下新人：所有这些xmpp群组包括我这个群都代表不了xmpp，不喜欢某个群可以离开该群自己建立一个，这很正常。
+#xmpp X liqsliu: 如果没有发言权，建议使用gajim或cheogram客户端申请。conversations不支持xmpp原生的申请方式。也可以群内私信bot：“申请发言权”，然后等管理批准。也可以改群内名字，添加“申请发言权”，然后等管理看到。
+#xmpp X liqsliu: 至尊巨无霸汉堡: 新发现一个 c11s 系（conversations客户端及其改版，比如 blabber.im monocles chat 等等）的 xmpp 客户端的使用小妙招，在我们手动添加新的公共群聊的时候，可以输入聊天室的 jid 并在jid 后附上\"/昵称\"，例如，添加本聊天室时写成\"xmpp新手室@salas.suchat.org/习理论的鬼话\"，那么用户进入本聊天室时昵称就会被设置成“习理论的鬼话”，而非用户的默认昵称。
+#default X liqsliu: se 是
