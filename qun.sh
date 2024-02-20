@@ -76,14 +76,14 @@ add() {
     jid=${jid#xmpp:}
     jid=${jid%?join}
   fi
-  text=${text// $jid / }
   text=${text// xmpp:$jid?join / }
-  text=${text//$jid /}
+  text=${text// $jid / }
   text=${text//xmpp:$jid?join /}
-  text=${text// $jid/}
+  text=${text//$jid /}
   text=${text// xmpp:$jid?join/}
-  text=${text//$jid/}
+  text=${text// $jid/}
   text=${text//xmpp:$jid?join/}
+  text=${text//$jid/}
   # if echo "$text"| head -n1 | awk '{print $1}'|grep -q -F "@"; then
   #   :
   # else
