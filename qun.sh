@@ -49,7 +49,8 @@ get_jid(){
 
 get_jid2(){
   # cat | grep -G -o ": .*"
-  cat | sed -r 's/.*: ([^ ]+)($| .*)/xmpp:\1?join/1'
+  # cat | sed -r 's/.*: ([^ ]+)($| .*)/xmpp:\1?join/1'
+  cat | sed -r 's/(^|\s)(\S+@\S+)($|\s)/xmpp:\2?join/1'
 }
 
 add() {
@@ -70,7 +71,7 @@ add() {
       :
     else
       line_num=$(echo "$text" | grep -n -F "$jid" | cut -d ':' -f1 | head -n1)
-      text=$(echo "$text" |sed -r $line_num's/^(.*\s+)(\S+@\S+)($|\s+.*$)/\1\3/1')
+      text=$(echo "$text" |sed -r $line_num's/(^.*\s+)(\S+@\S+)($|\s+.*$)/\1\3/1')
       text="$jid $text"
     fi
     line_num=$(grep -n -F "$jid" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
