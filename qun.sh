@@ -158,7 +158,7 @@ print_help(){
   echo "群组列表整理
 用法:
 .note [add] [\$jid] [\$text(描述，可以包含#开头的tag，群jid可以放到描述里)]
-.note list [join|jid|jidonly] [\$tag]
+.note list [join|jid|jidonly|full] [\$tag]
 .note se \$text
 .note tag
 .note del \$text
