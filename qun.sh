@@ -63,26 +63,36 @@ add() {
 
   local jid=$(echo "$text"| grep -o -P '\S+@\S+'|head -n1)
 
-  if echo "$jid" | grep -q -G '^xmpp:.*?join$'; then
-    jid=$(echo "$jid" |sed -r 's/^(xmpp:)(.*)(\?join)$/\2/1')
-  fi
   if [[ -z "$jid" ]]; then
     echo "没找到群地址"
     return 0
   fi
+  if echo "$jid" | grep -q -G '^xmpp:.*?join$'; then
+  #   jid=$(echo "$jid" |sed -r 's/^(xmpp:)(.*)(\?join)$/\2/1')
+    jid=${jid#xmpp:}
+    jid=${jid%?join}
+  fi
+  text=${text// $jid / }
+  text=${text// xmpp:$jid?join / }
+  text=${text//$jid /}
+  text=${text//xmpp:$jid?join /}
+  text=${text// $jid/}
+  text=${text// xmpp:$jid?join/}
+  text=${text//$jid/}
+  text=${text//xmpp:$jid?join/}
   # if echo "$text"| head -n1 | awk '{print $1}'|grep -q -F "@"; then
   #   :
   # else
-  for line_num in $(echo "$text" | grep -n -F "$jid" | cut -d ':' -f1)
-  do
-    line=$(echo "$text"|sed -n ${line_num}p)
-    if [[ "$line" == "$jid" ]]; then
-      text=$(echo "$text" |sed ${line_num}d)
-    # elif echo "$line"| grep -q -F "$jid"; then
-    else
-      text=$(echo "$text" |sed -r -e $line_num's/(^)\S+@\S+(\s+)//g' -e $line_num's/(\s+)\S+@\S+($)//g' -e $line_num's/(\s+)\S+@\S+(\s+)/ /g')
-    fi
-  done
+  # for line_num in $(echo "$text" | grep -n -F "$jid" | cut -d ':' -f1)
+  # do
+  #   line=$(echo "$text"|sed -n ${line_num}p)
+  #   if [[ "$line" == "$jid" ]]; then
+  #     text=$(echo "$text" |sed ${line_num}d)
+  #   # elif echo "$line"| grep -q -F "$jid"; then
+  #   else
+  #     text=$(echo "$text" |sed -r -e $line_num's/(^)\S+@\S+(\s+)//g' -e $line_num's/(\s+)\S+@\S+($)//g' -e $line_num's/(\s+)\S+@\S+(\s+)/ /g')
+  #   fi
+  # done
   # text="$jid $text"
 
   # if grep -q -F "$jid" "$NOTE_FILE"; then
