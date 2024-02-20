@@ -27,7 +27,7 @@ my_encode() {
 
   local text="$1"
   text=$(echo "$text" | cut -d '\' --output-delimiter='\\' -f 1-)
-  text=$(echo "$text" | cut -d '"' --output-delimiter='\"' -f 1-)
+  # text=$(echo "$text" | cut -d '"' --output-delimiter='\"' -f 1-)
   [[ $(echo "$text" | wc -l) -gt 1 ]] && text=$(echo "$text" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
   # echo -e "$text"
   cat <<EOF
