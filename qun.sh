@@ -37,7 +37,11 @@ EOF
 }
 
 my_decode() {
-  echo -e "$1"
+  if [[ -z "$1" ]]; then
+    echo -e "$(cat)"
+  else
+    echo -e "$1"
+  fi
 }
 
 
@@ -101,7 +105,7 @@ add() {
 
     line_num=$(grep -n -F "$jid" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
     line=$(sed -n "${line_num}p" "$NOTE_FILE")
-    echo "已存在: $line"
+    echo "已存在: $line" | my_decode
   else
     echo "$username$(my_encode "$jid $text")" >>"$NOTE_FILE" && {
       echo "已添加"
