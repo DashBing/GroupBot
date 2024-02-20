@@ -68,7 +68,7 @@ add() {
       :
     else
       line_num=$(echo "$text" | grep -n -F "$jid" | cut -d ':' -f1 | head -n1)
-      text=$(echo "$text" |sed -r $line_num's/(^.*\s+)(\S+@\S+)($|\s+.*$)/\1\3/1')
+      text=$(echo "$text" |sed -r $line_num's/(^|.*)(\s*\S+@\S+\s*)($|.*)/\1\3/1')
       text="$jid $text"
     fi
 
