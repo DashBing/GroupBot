@@ -46,6 +46,8 @@ cp group_help_*.txt "$SH_PATH/"
 # [[ -e "$SH_PATH/$file_name" ]] && cp "$SH_PATH/$file_name" "$(cd $(dirname ${BASH_SOURCE[0]}); pwd )/"
 file_name=group_note.txt
 [[ -e "$SH_PATH/$file_name" ]] && cp "$SH_PATH/$file_name" "$(cd $(dirname ${BASH_SOURCE[0]}); pwd )/" || cp "$(cd $(dirname ${BASH_SOURCE[0]}); pwd )/$file_name" "$SH_PATH/"
+file_name=qun.txt
+[[ -e "$SH_PATH/$file_name" ]] && cp "$SH_PATH/$file_name" "$(cd $(dirname ${BASH_SOURCE[0]}); pwd )/" || cp "$(cd $(dirname ${BASH_SOURCE[0]}); pwd )/$file_name" "$SH_PATH/"
 
 
 
