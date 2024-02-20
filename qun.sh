@@ -243,7 +243,13 @@ list)
   done
 
   if [[ "$cmd_2" == "jid" ]]; then
-    echo jid
+    echo "for join"
+    echo "$full" | get_jid2 | grep -n ^ | sed 's|:|% |1'
+  elif [[ "$cmd_2" == "j" ]]; then
+    echo "for join"
+    echo "$full" | get_jid2 | grep -n ^ | sed 's|:|% |1'
+  elif [[ "$cmd_2" == "join" ]]; then
+    echo "for join"
     echo "$full" | get_jid2 | grep -n ^ | sed 's|:|% |1'
   elif [[ "$cmd_2" == "q" ]]; then
     echo jid only
