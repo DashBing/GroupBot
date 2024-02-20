@@ -1,0 +1,7 @@
+X liqsliu: test3@tt.com #t #11 lskdfjldsfjk
+X liqsliu: ipfs@salas.suchat.org #zh #中文 #多平台 #公开群 #发言无需申请 #有管理 话题不限 地址(地位相同，互为镜像频道):\nxmpp:ipfs@salas.suchat.org?join\nxmpp:wtfipfs@conference.conversations.im\nxmpp:wtfipfs@muc.pimux.de?join\nxmpp:wtfipfs@chat.yax.im?join\nxmpp:wtfipfs@conference.xmpp.jp?join\nadmin\nliqsliu@jabb3r.org
+X liqsliu: wtfipfs_rss@salas.suchat.org #rss #zh #中文 #公开群 #发言无需申请 #有管理 #bot RSS\n镜像 ipfsrss@chat.yax.im\nliqsliu@jabb3r.org
+X liqsliu: wtfipfs_bot@salas.suchat.org #zh #中文 #公开群 #发言无需申请 #有管理 bot测试\n镜像 wtfipfs_bot@conference.conversations.im\nliqsliu@jabb3r.org 
+X liqsliu: xmpp%E6%96%B0%E6%89%8B%E5%AE%A4@salas.suchat.org #zh #中文 #公开群 #发言无需申请 #有管理 xmpp新手群，维护了一个xmpp中文群列表\n管理 xmpp:tret9@muc.pimux.de?join
+X liqsliu: tret9@muc.pimux.de #zh #中文 #公开群 #发言无需申请 #有管理 linux 自由软件技术
+X liqsliu: testkk@t.com test\nk\nkk\njsjsjdjsj
