@@ -90,11 +90,11 @@ add() {
   fi
   del_jid "$jid"
 
+  existed=0
   jids=$(cat "$NOTE_FILE"| sed -r -e 's|^.*?: ||1' -e 's| .*$||1')
   if echo "$jids"| grep -q -F "$jid"; then
     existed=1
   fi
-  existed=0
   jid2=$(bash "$SH_PATH/urldecode.sh" "$jid")
   if [[ "$jid2" != "$jid" ]]; then
     del_jid "$jid2"
@@ -103,6 +103,7 @@ add() {
         existed=1
       fi
     fi
+    jid=$jid2
   fi
   # if echo "$text"| head -n1 | awk '{print $1}'|grep -q -F "@"; then
   #   :
