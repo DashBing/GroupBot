@@ -66,13 +66,20 @@ add() {
   if echo "$jid" | grep -q -G '^xmpp:.*?join$'; then
     jid=$(echo "$jid" |sed -r 's/^(xmpp:)(.*)(\?join)$/\2/1')
   fi
-  if echo "$text"| head -n1 | awk '{print $1}'|grep -q -F "@"; then
-    :
-  else
-    line_num=$(echo "$text" | grep -n -F "$jid" | cut -d ':' -f1 | head -n1)
-    text=$(echo "$text" |sed -r $line_num's/(^|\s+)\S+@\S+($|\s+)/ /1')
-    text="$jid $text"
-  fi
+  # if echo "$text"| head -n1 | awk '{print $1}'|grep -q -F "@"; then
+  #   :
+  # else
+  for line_num in $(echo "$text" | grep -n -F "$jid" | cut -d ':' -f1)
+  do
+    line=$(echo "$text"|sed -n ${line_num}p)
+    if [[ "$line" == "$jid"]]; then
+      text=$(echo "$text" |sed ${line_num}d)
+    # elif echo "$line"| grep -q -F "$jid"; then
+    else
+      text=$(echo "$text" |sed -r -e $line_num's/(^)\S+@\S+(\s+)//g' -e $line_num's/(\s+)\S+@\S+($)//g' -e $line_num's/(\s+)\S+@\S+(\s+)/ /g')
+    fi
+  done
+  text="$jid $text"
 
   if grep -q -F "$jid" "$NOTE_FILE"; then
 
@@ -118,7 +125,7 @@ list_tags() {
   # echo $tags
   # echo "all tag:"
   # cat "$NOTE_FILE"| sed -r 's/.*: [^ ]+(( +#[^\s])+)/\1/1'| sed -r 's/ /\n/g' | sort -n | uniq
-  cat "$NOTE_FILE"| sed -r 's/.*: [^ ]+( .*$)/\1/1'|grep -o -P '#[^\s]+' | sort -n | uniq
+  cat "$NOTE_FILE"| sed -r 's/.*: [^ ]+( .*$)/\1/1'|grep -o -P '#\S+' | sort -n | uniq
 }
 
 
