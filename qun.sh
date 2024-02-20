@@ -215,7 +215,7 @@ text=$(echo "$text" | sed -r '1s/^\s*\S+\s*//' )
 # echo "$*" >> ~/tera/mt_msg.log
 log_msg note "$@" >> $LOG_FILE
 #
-NOTE_FILE="$SH_PATH/qun.txt"
+NOTE_FILE="$SH_PATH/group_qun.txt"
 
 username=$1
 username=$(my_encode "$1")
