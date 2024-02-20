@@ -219,18 +219,27 @@ list)
   # my_decode "$(grep -G "^$tag " "$NOTE_FILE" | cut -d" " -f2- | sed 's/^/\n/g')"
   # my_decode "$(grep -n -F "$tag " "$NOTE_FILE" | cut -d" " -f2- | sed 's/^/\n/g')"
   # my_decode "$(grep -n -F "$tag " "$NOTE_FILE" | sed -r 's|:#[^ ]+ |%|1')"
+
+
+
+  full=$(cat "$NOTE_FILE")
+  for tag in $(echo "$text"|grep -o -P "#\S+")
+  do
+    full=$(echo "$full"|grep -F "$tag")
+  done
+
   if [[ "$cmd_2" == "jid" ]]; then
     echo jid
-    cat "$NOTE_FILE" | get_jid2
+    cat "$full" | get_jid2
   elif [[ "$cmd_2" == "jidonly" ]]; then
     echo jid only
-    cat "$NOTE_FILE" | get_jid
+    cat "$full" | get_jid
   elif [[ "$cmd_2" == "full" ]]; then
     echo full
-    my_decode "$(cat "$NOTE_FILE")"
+    my_decode "$(cat "$full")"
   else
     echo jid only
-    cat "$NOTE_FILE" | get_jid
+    cat "$full" | get_jid
   fi
   ;;
 add)
