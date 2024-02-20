@@ -59,8 +59,20 @@ get_jid2(){
   cat | sed -r -e 's|^.*?: ||1' -e 's| .*$||1' | grep -o -P '[^\s]+@[^\s]+' | sed -r 's/^(.*)$/xmpp:\1?join/1'
 }
 
-add() {
 
+del_jid(){
+  local jid=$1
+  text=${text// xmpp:$jid?join / }
+  text=${text// $jid / }
+  text=${text//xmpp:$jid?join /}
+  text=${text//$jid /}
+  text=${text// xmpp:$jid?join/}
+  text=${text// $jid/}
+  text=${text//xmpp:$jid?join/}
+  text=${text//$jid/}
+}
+
+add() {
   local username=$1
   local text=$2
   text=$(echo "$text"|sed 's/^> //')
@@ -76,14 +88,22 @@ add() {
     jid=${jid#xmpp:}
     jid=${jid%?join}
   fi
-  text=${text// xmpp:$jid?join / }
-  text=${text// $jid / }
-  text=${text//xmpp:$jid?join /}
-  text=${text//$jid /}
-  text=${text// xmpp:$jid?join/}
-  text=${text// $jid/}
-  text=${text//xmpp:$jid?join/}
-  text=${text//$jid/}
+  del_jid "$jid"
+
+  jids=$(cat "$NOTE_FILE"| sed -r -e 's|^.*?: ||1' -e 's| .*$||1')
+  if echo "$jids"| grep -q -F "$jid"; then
+    existed=1
+  fi
+  existed=0
+  jid2=$(bash "$SH_PATH/urldecode.sh" "$jid")
+  if [[ "$jid2" != "$jid" ]]; then
+    del_jid "$jid2"
+    if [[ "$existed" -eq 0 ]]; then
+      if echo "$jids"| grep -q -F "$jid2"; then
+        existed=1
+      fi
+    fi
+  fi
   # if echo "$text"| head -n1 | awk '{print $1}'|grep -q -F "@"; then
   #   :
   # else
@@ -100,7 +120,7 @@ add() {
   # text="$jid $text"
 
   # if grep -q -F "$jid" "$NOTE_FILE"; then
-  if cat "$NOTE_FILE"| sed -r -e 's|^.*?: ||1' -e 's| .*$||1' | grep -q -F "$jid"; then
+  if [[ "$existed" -gt 0 ]]; then
  
 
     line_num=$(grep -n -F "$jid" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
