@@ -1,0 +1,19 @@
+X liqsliu: ipfs@salas.suchat.org #zh #中文 #多平台 #公开群 #发言无需申请 #有管理 话题不限 地址(地位相同，互为镜像频道):
+xmpp:ipfs@salas.suchat.org?join
+xmpp:wtfipfs@conference.conversations.im
+xmpp:wtfipfs@muc.pimux.de?join
+xmpp:wtfipfs@chat.yax.im?join
+xmpp:wtfipfs@conference.xmpp.jp?join
+admin
+liqsliu@jabb3r.org
+X liqsliu: wtfipfs_rss@salas.suchat.org #rss #zh #中文 #公开群 #发言无需申请 #有管理 #bot RSS
+镜像 ipfsrss@chat.yax.im
+liqsliu@jabb3r.org
+X liqsliu: wtfipfs_bot@salas.suchat.org #zh #中文 #公开群 #发言无需申请 #有管理 bot测试
+镜像 wtfipfs_bot@conference.conversations.im
+liqsliu@jabb3r.org 
+X liqsliu: xmpp新手室@salas.suchat.org #zh #中文 #公开群 #发言无需申请 #有管理 xmpp新手群，维护了一个xmpp中文群列表
+管理 xmpp:tret9@muc.pimux.de?join
+X liqsliu: tret9@muc.pimux.de #zh #中文 #公开群 #发言无需申请 #有管理 linux 自由软件技术
+X liqsliu: 这就是大清朝议@conference.conversations.im #zh #中文 #公开群 #发言无需申请 这就是大清
+X liqsliu: acg@muc.pimux.de #rss #acg #zh #中文 #公开群 ACG rss
