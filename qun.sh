@@ -72,7 +72,7 @@ add() {
   for line_num in $(echo "$text" | grep -n -F "$jid" | cut -d ':' -f1)
   do
     line=$(echo "$text"|sed -n ${line_num}p)
-    if [[ "$line" == "$jid"]]; then
+    if [[ "$line" == "$jid" ]]; then
       text=$(echo "$text" |sed ${line_num}d)
     # elif echo "$line"| grep -q -F "$jid"; then
     else
