@@ -83,7 +83,7 @@ add() {
       text=$(echo "$text" |sed -r -e $line_num's/(^)\S+@\S+(\s+)//g' -e $line_num's/(\s+)\S+@\S+($)//g' -e $line_num's/(\s+)\S+@\S+(\s+)/ /g')
     fi
   done
-  text="$jid $text"
+  # text="$jid $text"
 
   if grep -q -F "$jid" "$NOTE_FILE"; then
 
@@ -91,7 +91,7 @@ add() {
     line=$(sed -n "${line_num}p" "$NOTE_FILE")
     echo "已存在: $line"
   else
-    echo "$username$(my_encode "$text")" >>"$NOTE_FILE" && {
+    echo "$username$(my_encode "$jid $text")" >>"$NOTE_FILE" && {
       echo "已添加"
       echo "jid: $jid"
       echo "描述: $text"
