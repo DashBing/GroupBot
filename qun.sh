@@ -235,7 +235,7 @@ list)
 
 
   full=$(cat "$NOTE_FILE")
-    my_decode "$(echo "$full")"
+  my_decode "$(echo "$full")"
   for tag in $(echo "$text"|grep -o -P "#\S+")
   do
     full=$(echo "$full"|grep -F "$tag")
@@ -243,19 +243,19 @@ list)
 
   if [[ "$cmd_2" == "jid" ]]; then
     echo jid
-    echo "$full" | get_jid2
+    echo "$full" | get_jid2 | get_jid | grep -n ^ | sed 's|:|% |1'
   elif [[ "$cmd_2" == "q" ]]; then
     echo jid only
-    echo "$full" | get_jid
+    echo "$full" | get_jid | get_jid | grep -n ^ | sed 's|:|% |1'
   elif [[ "$cmd_2" == "jidonly" ]]; then
     echo jid only
-    echo "$full" | get_jid
+    echo "$full" | get_jid | get_jid | grep -n ^ | sed 's|:|% |1'
   elif [[ "$cmd_2" == "full" ]]; then
     echo full
-    my_decode "$(echo "$full")"
+    my_decode "$(echo "$full" | get_jid | grep -n ^ | sed 's|:|% |1')"
   else
     echo jid only
-    echo "$full" | get_jid
+    echo "$full" | get_jid | grep -n ^ | sed 's|:|% |1'
   fi
   ;;
 se)
@@ -263,7 +263,7 @@ se)
   full=$(cat "$NOTE_FILE")
   # full=$(echo "$full"|grep -F "$tag")
   text=$(my_encode "$text")
-  my_decode "$(echo "$full"|grep -F "$text")"
+  my_decode "$(echo "$full"|grep -F "$text" | get_jid | grep -n ^ | sed 's|:|% |1')"
   ;;
 add)
   add "$username" "$text"
