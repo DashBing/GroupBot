@@ -254,8 +254,8 @@ list)
     echo full
     my_decode "$(echo "$full" | grep -n ^ | sed 's|:|% |1')"
   else
-    echo jid only
-    echo "$full" | get_jid | grep -n ^ | sed 's|:|% |1'
+    echo no name
+    echo "$full" | sed -r 's|.*?: ||1' | grep -n ^ | sed 's|:|% |1'
   fi
   ;;
 se)
