@@ -255,7 +255,7 @@ list)
     my_decode "$(echo "$full" | grep -n ^ | sed 's|:|% |1')"
   else
     echo default format
-    echo "$full" | sed -r 's|.*?: ||1' | grep -n ^ | sed -r 's|\n|\n\n|1' | sed 's|:|% |1'
+    echo "$full" | sed -r 's|.*?: ||1' | grep -n ^ | sed -r 's|^|\n|1' | sed 's|:|% |1'
   fi
   ;;
 se)
