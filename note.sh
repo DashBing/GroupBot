@@ -252,6 +252,7 @@ add)
   add "$tag $username$text"
   ;;
 se)
+  echo "search: $text"
   full=$(cat "$NOTE_FILE")
   # full=$(echo "$full"|grep -F "$tag")
   # text=$(my_encode "$text")
