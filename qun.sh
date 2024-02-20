@@ -66,6 +66,10 @@ add() {
   if echo "$jid" | grep -q -G '^xmpp:.*?join$'; then
     jid=$(echo "$jid" |sed -r 's/^(xmpp:)(.*)(\?join)$/\2/1')
   fi
+  if [[ -z "$jid" ]]; then
+    echo "没找到群地址"
+    return 0
+  fi
   # if echo "$text"| head -n1 | awk '{print $1}'|grep -q -F "@"; then
   #   :
   # else
