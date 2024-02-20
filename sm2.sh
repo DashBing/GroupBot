@@ -3,7 +3,8 @@
 
 export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 # MAX_BYTES=1371 #tox
-MAX_BYTES=1024
+# MAX_BYTES=1024
+MAX_BYTES=1300
 
 
 export LOG="$HOME/mt.log"

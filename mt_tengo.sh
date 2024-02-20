@@ -600,7 +600,7 @@ if [[ -n "$4" ]] ; then
     # else
     #   TEXT=$(bash "$SH_PATH/split.sh" "$TEXT" "$NAME")
     # fi
-    TEXT=$(bash "$SH_PATH/split.sh" "$TEXT" "$NAME")
+    TEXT=$(bash "$SH_PATH/split.sh" "$TEXT" "$NAME" 500)
     ;;
   matrix.*)
   # elif [[ "$9" == "matrix" ]] ; then

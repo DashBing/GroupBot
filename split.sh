@@ -14,7 +14,7 @@ split(){
   local text=$1
   local username=$2
 
-  local MAX_BYTES=400
+  local MAX_BYTES=${3:-500}
   local ulength=$(echo -n "$username"|wc -c)
   local MAX_BYTES=$[MAX_BYTES-ulength]
   # text=$(wtf1 "$text")
