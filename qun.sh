@@ -157,12 +157,12 @@ list_tags() {
 print_help(){
   echo "群组列表整理
 用法:
-.note [add] [\$jid] [\$text(描述，可以包含#开头的tag，群jid可以放到描述里)]
-.note list [join|jid|jidonly|full] [\$tag]
-.note se \$text
-.note tag
-.note del \$text
-.note help
+.qun [add] [\$jid] [\$text(描述，可以包含#开头的tag，群jid可以放到描述里)]
+.qun list [join|jid|jidonly|full] [\$tag]
+.qun se \$text
+.qun tag
+.qun del \$text
+.qun help
 
 备份: https://github.com/liqsliu/bot/blob/master/qun.txt
 源码: https://github.com/liqsliu/bot/blob/master/qun.sh"
