@@ -5,3 +5,4 @@ X liqsliu: xmpp新手室@salas.suchat.org #zh #中文 #公开群 #发言无需�
 X liqsliu: tret9@muc.pimux.de #zh #中文 #公开群 #发言无需申请 #有管理 linux 自由软件技术
 X liqsliu: 这就是大清朝议@conference.conversations.im #zh #中文 #公开群 #发言无需申请 这就是大清
 X liqsliu: acg@muc.pimux.de #rss #acg #zh #中文 #公开群 ACG rss
+X liqsliu: #wtfipfs#matrix.org@matrix.org #zh #中文 #多平台 #公开群 #发言无需申请 #jid公开 #无管理 话题不限 镜像:\nxmpp:#ipfs#mozilla.org@matrix.org?join\nxmpp:#wtfipfs#matrix.org@aria-net.org?join
