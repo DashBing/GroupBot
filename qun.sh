@@ -91,7 +91,10 @@ add() {
     line=$(sed -n "${line_num}p" "$NOTE_FILE")
     echo "已存在: $line"
   else
-    echo "$username$(my_encode "$text")" >>"$NOTE_FILE" && echo "已添加: $text" || echo "E: $?"
+    echo "$username$(my_encode "$text")" >>"$NOTE_FILE" && {
+      echo "已添加: jid: $jid"
+      echo "描述: $text"
+    } || echo "E: $?"
   fi
 }
 
