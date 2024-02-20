@@ -187,7 +187,7 @@ log_msg(){
 
 
 shorter(){
-text=$(echo "$text" | sed -r '1s/^\s*[^\s]+\s*//' )
+text=$(echo "$text" | sed -r '1s/^\s*\S+\s*//' )
 }
 
 
