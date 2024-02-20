@@ -93,7 +93,7 @@ list_tags() {
 
 print_help(){
   echo "公共记事本
-用法: .note [add|del|list|tag|help] \$tag [\$text]
+用法: .note [add|del|list|se|tag|help] \$tag [\$text]
 用法: .note delete \$tag [\$name: ][\$text]
 用法: .note delete [\$tag] [\$number(行号)]
 
@@ -228,10 +228,10 @@ else
     tag="#default"
   fi
 fi
-echo "finally text: $text" >> $LOG_FILE
-text=$(my_encode "$text")
 
 [[ -z "$text" ]] && [[ "$cmd" != "list" ]] && echo '内容不能为空' && exit 0
+echo "finally text: $text" >> $LOG_FILE
+text=$(my_encode "$text")
 
 case "${cmd}" in
 list)
@@ -242,6 +242,12 @@ list)
   ;;
 add)
   add "$tag $username$text"
+  ;;
+se)
+  full=$(cat "$NOTE_FILE")
+  # full=$(echo "$full"|grep -F "$tag")
+  # text=$(my_encode "$text")
+  my_decode "$(echo "$full"|grep -F "$text")"
   ;;
 del)
   del "$tag $username$text"

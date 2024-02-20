@@ -87,7 +87,7 @@ add() {
     line=$(sed -n "${line_num}p" "$NOTE_FILE")
     echo "已存在: $line"
   else
-    echo "$username$text" >>"$NOTE_FILE" && echo "已添加: $text" || echo "E: $?"
+    echo "$username$(my_encode "$text")" >>"$NOTE_FILE" && echo "已添加: $text" || echo "E: $?"
   fi
 }
 
@@ -106,13 +106,13 @@ del() {
   #   line_num=$text
   # else
     # line_num=$(grep -n -G "^$tag" "$NOTE_FILE" | grep -F "$text" | cut -d ':' -f1 | head -n1)
-    line_num=$(grep -n -F "$text" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
+    line_num=$(grep -n -F "$(my_encode "$text")" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
   # fi
   # echo num$line_num
   # read -p ok?
   if [[ -n "$line_num" ]]; then
     line=$(sed -n "${line_num}p" "$NOTE_FILE")
-    sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $line" || echo "E: $?"
+    sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $(my_encode "$line")" || echo "E: $?"
     # sed -i "${line_num}d" "$NOTE_FILE" && echo "已删除: $text" || echo "E: $?"
   else
     echo "没找到: $text"
@@ -134,6 +134,7 @@ print_help(){
 用法:
 .note [add] \$text
 .note list
+.note se \$text
 .note tag
 .note del \$text
 .note help
@@ -209,9 +210,9 @@ delete)
   cmd=add
   ;;
 esac
-text=$(my_encode "$text")
 
 [[ -z "$text" ]] && [[ "$cmd" != "list" ]] && echo '内容不能为空' && exit 0
+# text=$(my_encode "$text")
 
 case "${cmd}" in
 list)
@@ -223,6 +224,7 @@ list)
 
 
   full=$(cat "$NOTE_FILE")
+    my_decode "$(echo "$full")"
   for tag in $(echo "$text"|grep -o -P "#\S+")
   do
     full=$(echo "$full"|grep -F "$tag")
@@ -231,6 +233,9 @@ list)
   if [[ "$cmd_2" == "jid" ]]; then
     echo jid
     echo "$full" | get_jid2
+  elif [[ "$cmd_2" == "q" ]]; then
+    echo jid only
+    echo "$full" | get_jid
   elif [[ "$cmd_2" == "jidonly" ]]; then
     echo jid only
     echo "$full" | get_jid
@@ -241,6 +246,12 @@ list)
     echo jid only
     echo "$full" | get_jid
   fi
+  ;;
+se)
+  full=$(cat "$NOTE_FILE")
+  # full=$(echo "$full"|grep -F "$tag")
+  text=$(my_encode "$text")
+  my_decode "$(echo "$full"|grep -F "$text")"
   ;;
 add)
   add "$username" "$text"
