@@ -157,7 +157,7 @@ cmd_2=$(echo "$text_1" | awk '{print $2}' )
 
 echo "cmd_1: $cmd_1, cmd_2: $cmd_2" >> $LOG_FILE
 # if echo "$cmd_1" | grep -q -P "^#\S+$"; then
-if echo "$cmd_1" | grep -q -P '^#[^\s]+$'; then
+if echo "$cmd_1" | grep -q -P '^#\S+$'; then
 echo "cmd_1 is a tag: $tag" >> $LOG_FILE
   tag="$cmd_1"
   # text=$(echo " $text" | cut -d ' ' -f3-)
@@ -167,6 +167,10 @@ echo "cmd_1 is a tag: $tag" >> $LOG_FILE
   list)
     cmd=list
     # text=$(echo "$text" | sed -r  's/^\s*\S+\s*//' )
+    shorter
+    ;;
+  se)
+    cmd=se
     shorter
     ;;
   add)
@@ -202,6 +206,10 @@ else
     cmd=list
     shorter
     ;;
+  se)
+    cmd=se
+    shorter
+    ;;
   add)
     cmd=add
     shorter
@@ -220,7 +228,7 @@ else
     ;;
   esac
   # if echo "$cmd_2" | grep -q -P "^#\S+$"; then
-  if echo "$cmd_2" | grep -q -P '^#[^\s]+$'; then
+  if echo "$cmd_2" | grep -q -P '^#\S+$'; then
     echo "cmd_2 is a tag: $tag" >> $LOG_FILE
     tag="$cmd_2"
     shorter

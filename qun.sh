@@ -194,6 +194,10 @@ list)
   cmd=list
   shorter
   ;;
+se)
+  cmd=se
+  shorter
+  ;;
 add)
   cmd=add
   shorter
