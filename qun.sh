@@ -77,7 +77,7 @@ add() {
   local text=$2
   text=$(echo "$text"|sed 's/^> //')
 
-  local jid=$(echo "$text"| grep -o -P '[^\s]+@[^\s]+'|head -n1)
+  local jid=$(echo "$text"| grep -o -P '(?<=^|\s)[^\s]+@[^\s]+(?=$|\s)'|head -n1)
 
   if [[ -z "$jid" ]]; then
     echo "没找到群地址"
@@ -171,7 +171,7 @@ list_tags() {
   # echo "all tag:"
   # cat "$NOTE_FILE"| sed -r 's/.*: [^ ]+(( +#[^\s])+)/\1/1'| sed -r 's/ /\n/g' | sort -n | uniq
   # cat "$NOTE_FILE"| sed -r 's/.*: [^ ]+( .*$)/\1/1'|grep -o -P '#\S+' | sort -n | uniq
-  cat "$NOTE_FILE"| sed -r 's/.*: [^ ]+( .*$)/\1/1'|grep -o -P '#[^\s]+' | sort -n | uniq
+  cat "$NOTE_FILE"| sed -r 's/.*: [^ ]+( .*$)/\1/1'|grep -o -P '(?<=^|\s)#[^\s]+' | sort -n | uniq
 }
 
 
@@ -275,7 +275,7 @@ list)
 
   full=$(cat "$NOTE_FILE")
   # my_decode "$(echo "$full")"
-  for tag in $(echo "$text"|grep -o -P "#[^\s]+")
+  for tag in $(echo "$text"|grep -o -P "(?<=^|\s)#[^\s]+")
   do
     full=$(echo "$full"|grep -F "$tag")
   done
