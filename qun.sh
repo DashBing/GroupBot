@@ -230,16 +230,16 @@ list)
 
   if [[ "$cmd_2" == "jid" ]]; then
     echo jid
-    cat "$full" | get_jid2
+    echo "$full" | get_jid2
   elif [[ "$cmd_2" == "jidonly" ]]; then
     echo jid only
-    cat "$full" | get_jid
+    echo "$full" | get_jid
   elif [[ "$cmd_2" == "full" ]]; then
     echo full
-    my_decode "$(cat "$full")"
+    my_decode "$(echo "$full")"
   else
     echo jid only
-    cat "$full" | get_jid
+    echo "$full" | get_jid
   fi
   ;;
 add)
