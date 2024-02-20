@@ -136,7 +136,7 @@ list_tags() {
 print_help(){
   echo "群组列表整理
 用法:
-.note [add] \$text
+.note [add] [\$jid] \$text(描述，可以包含#开头的tag，群jid可以放到描述里)
 .note list
 .note se \$text
 .note tag
