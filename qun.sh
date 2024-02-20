@@ -44,7 +44,7 @@ my_decode() {
 get_jid(){
   # cat | grep -G -o ": .*"
   # cat | sed -r 's/.*: ([^ ]+)($| .*)/\1/1'
-  cat | sed -r 's/(^|\s)([^ ]+@[^ ]+)($|\s)/\2/1'
+  cat | sed -r 's/(^|\s)(\S+@\S+)($|\s)/\2/1'
 }
 
 get_jid2(){
@@ -63,15 +63,14 @@ add() {
 
   if grep -q -F "$jid" "$NOTE_FILE"; then
     if echo "$jid" | grep -q -G '^xmpp:.*?join$'; then
-      jid=$(echo "$jid" |sed -r 's/^(xmpp:)([^ ]+)(\?join)$/\2/1')
+      jid=$(echo "$jid" |sed -r 's/^(xmpp:)(.*)(\?join)$/\2/1')
     fi
 
-    if echo "$(echo "$text"| head -n1 | awk '{print $1}' )" |grep -q "@"; then
-      text=$(echo "$text" |sed -r '1s/^([^ ]+)($| .*$)/\2/1')
-      text="$jid$text"
+    if echo "$text"| head -n1 | awk '{print $1}'|grep -q -F "@"; then
+      :
     else
       line_num=$(echo "$text" | grep -n -F "$jid" | cut -d ':' -f1 | head -n1)
-      text=$(echo "$text" |sed -r $line_num's/^(.*\s+)([^ ]+@[^ ]+)($|\s+.*$)/\2/1')
+      text=$(echo "$text" |sed -r $line_num's/^(.*\s+)(\S+@\S+)($|\s+.*$)/\1\3/1')
       text="$jid $text"
     fi
     line_num=$(grep -n -F "$jid" "$NOTE_FILE" | cut -d ':' -f1 | head -n1)
