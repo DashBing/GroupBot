@@ -609,9 +609,9 @@ if [[ -n "$4" ]] ; then
       elif [[ "$NAME" == "C bot: " ]]; then
         name_re=$(echo "$TEXT" | grep -o -P ".*?: "|head -n1 )
         TEXT=${TEXT:${#name_re}}
-        TEXT=$(echo -n "$name_re"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
+        TEXT=$(echo -n "$name_re"; echo -n "💾"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
       else
-        TEXT=$(echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
+        TEXT=$(echo -n "💾 "; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
       fi
     fi
     ;;
