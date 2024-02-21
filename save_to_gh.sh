@@ -35,7 +35,10 @@ GP=${GP:-$HOME/$DIR/$fe}
 
 if [[ $(echo "$1" | grep -c -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/?[\S]*(txt|md)$") -eq 1 ]]; then
   URL=$1
-  file_path=$(bash "$SH_PATH/link_to_file.sh" "$URL" "only")
+  file_path=$(bash "$SH_PATH/link_to_file.sh" "$URL" "only") || {
+    echo "E: error url, result: $file_path"
+    exit $?
+  }
   if [[ -f "$file_path" ]]; then
     if file -i "$file_path"| grep -q "text/plain"; then
       fs=$(du -b "$file_path"|cut -f1)
@@ -76,6 +79,4 @@ cd "$DIR"
 { git pull && git add . && git commit -a -m "$(date "+%Y%m%d_%H%M%S"): commit by $USER/${host_name}/${operating_system_name}/${kernel_name}/${machine_hardware_name}" --no-edit && git push; } >/dev/null 2>&1
 
 echo https://github.com/$USERNAME/$DIR/blob/main/$fe/"$fn"
-else
-echo unknown error
 fi
