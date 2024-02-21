@@ -8,9 +8,9 @@ MAX_BYTES=1300
 
 
 export LOG="$HOME/mt.log"
+LOG_FILE_E="$LOG"
 [[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE=$LOG || export LOG_FILE=/dev/null
 
-LOG_FILE_E="$LOG"
 SM_LOCK="$SH_PATH/SM_LOCK"
 SM_LOCK2="$SH_PATH/SM_LOCK2"
 
@@ -170,11 +170,11 @@ send(){
   local length=$(echo -n "$text_en"|wc -c)
   # if [[ ${#text} -le $MAX_BYTES ]]; then
   if [[ $length -le $MAX_BYTES ]]; then
-echo "sm.sh: the length of msg is ok: $length:${text:0:256}..." &>> $LOG
+    echo "sm.sh: the length of msg is ok: $length:${text:0:256}..." &>> $LOG_FILE
     _send "$text_en"
     return $?
   fi
-  echo "sm.sh: text is too long: $length:${text:0:128}..." &>> $LOG
+  echo "sm.sh: text is too long: $length:${text:0:128}..." &>> $LOG_FILE
   # shift
   local i=0
   local now=0
@@ -216,7 +216,7 @@ echo "sm.sh: the length of msg is ok: $length:${text:0:256}..." &>> $LOG
     done
 
     let i++
-    echo "send...$i/$n" &>> $LOG
+    echo "send...$i/$n" &>> $LOG_FILE
 
     _send "$tmp1" || {
       release_sm_lock

@@ -616,13 +616,13 @@ if [[ -n "$4" ]] ; then
         if [[ -e "$SM_LOCK2" ]]; then
           tmp=$(cat "$SM_LOCK2")
           rm "$SM_LOCK2"
-          echo "iii: read tmp: $tmp" >> ~/mt.log
+          # echo "iii: read tmp: $tmp" >> ~/mt.log
           if [[ "${tmp::${#TEXT}}" == "$TEXT" ]]; then
             TEXT=$tmp
-            echo "iii: change TEXT" >> ~/mt.log
+            # echo "iii: change TEXT" >> ~/mt.log
           fi
-        else
-          echo "iii: no SM_LOCK2" >> ~/mt.log
+        # else
+          # echo "iii: no SM_LOCK2" >> ~/mt.log
         fi
         name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
         TEXT=${TEXT:${#name_re}}
