@@ -19,7 +19,7 @@ block_msg(){
 
 if [[ -z "$2" ]]; then
   case $8 in
-    discord.*|irc.*)
+    discord.*)
       if [[ "${3}" == "api.gpt" ]] ; then
         # echo -n "C gpt: "
         NAME="gpt"
@@ -29,6 +29,12 @@ if [[ -z "$2" ]]; then
       else
         # echo -n "C fixme_need_name: "
         NAME="C fixme_need_name"
+      fi
+      ;;
+    irc.*)
+      if [[ "${3}" == "api.gpt" ]] ; then
+        # echo -n "C gpt: "
+        NAME="gpt"
       fi
       ;;
     # telegram.*)
@@ -56,8 +62,6 @@ md_name(){
 ${NAME}"
     fi
   fi
-
-
 }
 
 
@@ -102,6 +106,8 @@ log_msg(){
 
 
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
+# export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
+SM_LOCK="$SH_PATH/SM_LOCK"
 
 # if [[ $3 = api.cmd ]]; then
 #   :
@@ -588,7 +594,7 @@ if [[ -n "$4" ]] ; then
   irc.*)
   # elif [[ "$9" == "irc" ]] ; then
     if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
-      QT=$(echo "$NAME" | head -n 1 | sed 's/> //' )
+      QT=$(echo "$NAME" | head -n1 | sed 's/> //' )
       TEXT="$TEXT RE: $QT"
       NAME=$(echo "$NAME" | tail -n1)
     fi
@@ -607,9 +613,17 @@ if [[ -n "$4" ]] ; then
       if [[ "$NAME" == "C gpt: " ]]; then
         :
       elif [[ "$NAME" == "C bot: " ]]; then
-        name_re=$(echo "$TEXT" | grep -o -P ".*?: "|head -n1 )
+        if [[ -e "$SM_LOCK" ]]; then
+          tmp=$(cat "$SM_LOCK")
+          if [[ "{tmp::${#TEXT}}" == "$TEXT" ]]; then
+            TEXT=$tmp
+          fi
+        fi
+        name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
         TEXT=${TEXT:${#name_re}}
         TEXT=$(echo -n "$name_re"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
+      elif [[ -n "$NAME" ]]; then
+        block_msg
       else
         TEXT=$(echo -n "💾"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
       fi

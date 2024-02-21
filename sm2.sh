@@ -44,7 +44,8 @@ get_sm_lock(){
   do
     sleep 0.5
   done
-  touch "$SM_LOCK"
+  # touch "$SM_LOCK"
+  echo "$1" > "$SM_LOCK"
 }
 
 release_sm_lock(){
@@ -176,7 +177,7 @@ echo "sm.sh: the length of msg is ok: $length:${text:0:256}..." &>> $LOG
   if [[ $[length%MAX_BYTES] -ne 0 ]]; then
     let n++
   fi
-  get_sm_lock
+  get_sm_lock "$text"
   while true
   do
     # now=$[i*MAX_BYTES]
