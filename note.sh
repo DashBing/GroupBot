@@ -246,7 +246,7 @@ list)
   echo "$tag"
   # my_decode "$(grep -G "^$tag " "$NOTE_FILE" | cut -d" " -f2- | sed 's/^/\n/g')"
   # my_decode "$(grep -n -F "$tag " "$NOTE_FILE" | cut -d" " -f2- | sed 's/^/\n/g')"
-  my_decode "$(grep -n -F "$tag " "$NOTE_FILE" | sed -r 's|:#[^ ]+ |%|1')"
+  my_decode "$(grep -n -F "$tag " "$NOTE_FILE" | sed -r 's|:#[^ ]+ |%|1' | sed 's/^/\n/')"
   ;;
 add)
   add "$tag $username$text"
