@@ -617,7 +617,7 @@ if [[ -n "$4" ]] ; then
           tmp=$(cat "$SM_LOCK2")
           rm "$SM_LOCK2"
           echo "iii: read tmp: $tmp" >> ~/mt.log
-          if [[ "{tmp::${#TEXT}}" == "$TEXT" ]]; then
+          if [[ "${tmp::${#TEXT}}" == "$TEXT" ]]; then
             TEXT=$tmp
             echo "iii: change TEXT" >> ~/mt.log
           fi
