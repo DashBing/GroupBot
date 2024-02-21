@@ -12,6 +12,7 @@ export LOG="$HOME/mt.log"
 
 LOG_FILE_E="$LOG"
 SM_LOCK="$SH_PATH/SM_LOCK"
+SM_LOCK2="$SH_PATH/SM_LOCK2"
 
 username=$1
 text=$2
@@ -42,10 +43,14 @@ gateway=${4-gateway1}
 get_sm_lock(){
   while [[ -e "$SM_LOCK" ]]
   do
-    sleep 0.5
+    sleep 0.3
   done
-  # touch "$SM_LOCK"
-  echo "$1" > "$SM_LOCK"
+  touch "$SM_LOCK"
+  while [[ -e "$SM_LOCK2" ]]
+  do
+    sleep 0.3
+  done
+  echo "$1" > "$SM_LOCK2"
 }
 
 release_sm_lock(){

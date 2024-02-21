@@ -107,7 +107,7 @@ log_msg(){
 
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 # export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
-SM_LOCK="$SH_PATH/SM_LOCK"
+SM_LOCK2="$SH_PATH/SM_LOCK2"
 
 # if [[ $3 = api.cmd ]]; then
 #   :
@@ -613,8 +613,9 @@ if [[ -n "$4" ]] ; then
       if [[ "$NAME" == "C gpt: " ]]; then
         :
       elif [[ "$NAME" == "C bot: " ]]; then
-        if [[ -e "$SM_LOCK" ]]; then
-          tmp=$(cat "$SM_LOCK")
+        if [[ -e "$SM_LOCK2" ]]; then
+          tmp=$(cat "$SM_LOCK2")
+          rm "$SM_LOCK2"
           if [[ "{tmp::${#TEXT}}" == "$TEXT" ]]; then
             TEXT=$tmp
           fi
@@ -622,7 +623,7 @@ if [[ -n "$4" ]] ; then
         name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
         TEXT=${TEXT:${#name_re}}
         TEXT=$(echo -n "$name_re"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
-      elif [[ -n "$NAME" ]]; then
+      elif [[ -z "$NAME" ]]; then
         block_msg
       else
         TEXT=$(echo -n "💾"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
