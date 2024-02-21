@@ -165,7 +165,13 @@ cmds() {
   bd|BD)
     shift
     bash "$SH_PATH/bd.sh" "$@" || echo "E: $?"
+  bd22)
+    shift
+    bash "$SH_PATH/bd22.sh" "$@" || echo "E: $?"
     ;;
+  bd2)
+    shift
+    bash "$SH_PATH/bd2.sh" "$@" || echo "E: $?"
   bdi)
     shift
     bash "$SH_PATH/bdi.sh" "$@" || echo "E: $?"
