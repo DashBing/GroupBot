@@ -600,7 +600,20 @@ if [[ -n "$4" ]] ; then
     # else
     #   TEXT=$(bash "$SH_PATH/split.sh" "$TEXT" "$NAME")
     # fi
-    TEXT=$(bash "$SH_PATH/split.sh" "$TEXT" "$NAME" 450)
+    # TEXT=$(bash "$SH_PATH/split.sh" "$TEXT" "$NAME" 450)
+    if [[ "$(echo "$TEXT" | wc -l)" -le 1 ]]; then
+      :
+    else
+      if [[ "$NAME" == "C gpt: " ]]; then
+        :
+      elif [[ "$NAME" == "C bot: " ]]; then
+        name_re=$(echo "$TEXT" | grep -o -P ".*?: "|head -n1 )
+        TEXT=${TEXT:${#name_re}}
+        TEXT=$(echo -n "$name_re"; echo "$TEXT" | curl -F "c=@-" "https://fars.ee/?u=1")
+      else
+        TEXT=$(echo "$TEXT" | curl -F "c=@-" "https://fars.ee/?u=1")
+      fi
+    fi
     ;;
   matrix.*)
   # elif [[ "$9" == "matrix" ]] ; then
