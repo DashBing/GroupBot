@@ -633,10 +633,10 @@ if [[ -n "$4" ]] ; then
       elif [[ "$NAME" == "C bot: " ]]; then
         if [[ -e "$SM_LOCK2" ]]; then
           tmp=$(cat "$SM_LOCK2")
-          rm "$SM_LOCK2"
           # echo "iii: read tmp: $tmp" >> ~/mt.log
           if [[ "${tmp::${#TEXT}}" == "$TEXT" ]]; then
             TEXT=$tmp
+            rm "$SM_LOCK2"
             # echo "iii: change TEXT" >> ~/mt.log
           fi
         # else

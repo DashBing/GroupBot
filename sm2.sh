@@ -41,14 +41,24 @@ gateway=${4-gateway1}
 # echo "$*" > /tmp/test_sm.sh.txt
 
 get_sm_lock(){
+  local m=0
   while [[ -e "$SM_LOCK" ]]
   do
+    if [[ $m -ge 30 ]]; then
+      break
+    fi
     sleep 0.3
+    let m++
   done
   touch "$SM_LOCK"
+  m=0
   while [[ -e "$SM_LOCK2" ]]
   do
-    sleep 0.3
+    if [[ $m -ge 15 ]]; then
+      break
+    fi
+    sleep 0.4
+    let m++
   done
   echo "$1" > "$SM_LOCK2"
 }
