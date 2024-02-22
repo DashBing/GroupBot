@@ -630,7 +630,7 @@ if [[ -n "$4" ]] ; then
     elif [[ "$(echo "$TEXT" | wc -l)" -le 1 ]]; then
       :
     else
-      elif [[ "$NAME" == "C bot: " ]]; then
+      if [[ "$NAME" == "C bot: " ]]; then
         if [[ -e "$SM_LOCK2" ]]; then
           tmp=$(cat "$SM_LOCK2")
           # echo "iii: read tmp: $tmp" >> ~/mt.log
