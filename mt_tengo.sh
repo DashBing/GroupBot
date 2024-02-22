@@ -627,30 +627,28 @@ if [[ -n "$4" ]] ; then
         echo -n "$name_re" >> "$gpt"
         block_msg
       fi
+    elif [[ -z "$NAME" ]]; then
+      block_msg
     elif [[ "$(echo "$TEXT" | wc -l)" -le 1 ]]; then
       :
-    else
-      if [[ "$NAME" == "C bot: " ]]; then
-        if [[ -e "$SM_LOCK2" ]]; then
-          tmp=$(cat "$SM_LOCK2")
-          # echo "iii: read tmp: $tmp" >> ~/mt.log
-          if [[ "${tmp::${#TEXT}}" == "$TEXT" ]]; then
-            TEXT=$tmp
-            rm "$SM_LOCK2"
-            # echo "iii: change TEXT" >> ~/mt.log
-          fi
-        # else
-          # echo "iii: no SM_LOCK2" >> ~/mt.log
+    elif [[ "$NAME" == "C bot: " ]]; then
+      if [[ -e "$SM_LOCK2" ]]; then
+        tmp=$(cat "$SM_LOCK2")
+        # echo "iii: read tmp: $tmp" >> ~/mt.log
+        if [[ "${tmp::${#TEXT}}" == "$TEXT" ]]; then
+          TEXT=$tmp
+          rm "$SM_LOCK2"
+          # echo "iii: change TEXT" >> ~/mt.log
         fi
-        name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
-        TEXT=${TEXT:${#name_re}}
-        TEXT=$(echo -n "$name_re"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
-      elif [[ -z "$NAME" ]]; then
-        block_msg
-      else
-        tmp=$(echo "$TEXT" | head -n1)
-        TEXT=$(echo -n "${tmp::64}"; echo -n "💾"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
+      # else
+        # echo "iii: no SM_LOCK2" >> ~/mt.log
       fi
+      name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
+      TEXT=${TEXT:${#name_re}}
+      TEXT=$(echo -n "$name_re"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
+    else
+      tmp=$(echo "$TEXT" | head -n1)
+      TEXT=$(echo -n "${tmp::64}"; echo -n " 💾"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
     fi
     ;;
   matrix.*)
