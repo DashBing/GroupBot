@@ -41,13 +41,16 @@ gateway=${4-gateway1}
 # echo "$*" > /tmp/test_sm.sh.txt
 
 get_sm_lock(){
+  if [[ "$gateway" != "gateway1" ]]; then
+    return 0
+  fi
   local m=0
   while [[ -e "$SM_LOCK" ]]
   do
-    if [[ $m -ge 20 ]]; then
+    if [[ $m -ge 10 ]]; then
       break
     fi
-    sleep 0.3
+    sleep 0.5
     let m++
   done
   # touch "$SM_LOCK"
@@ -247,7 +250,7 @@ send(){
       # return 0
       break
     fi
-    sleep 0.1
+    sleep 0.3
     username=""
     if [[ $i -ge 16 ]]; then
       echo "E: msg is too long, stop sending...$i/$n" &>> $LOG
