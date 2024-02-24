@@ -345,7 +345,7 @@ cmds() {
       fi
     fi
     ;;
-  xp)
+  xp|xmpp)
     if [[ -z "$2" ]]; then
       echo ".xp \$domain"
     else
