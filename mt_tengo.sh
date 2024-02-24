@@ -616,9 +616,9 @@ if [[ -n "$4" ]] ; then
         block_msg
       elif [[ "${TEXT: -8}" == "**[结束]**" ]]; then
         if [[ -e "$gpt" ]]; then
-          tmp=$(cat "$gpt")
+          TEXT=$(cat "$gpt"; echo "$TEXT")
           rm "$gpt"
-          name_re=$(echo "$tmp" | head -n1 | grep -o -P ".*?: " | head -n1 )
+          name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
           TEXT=${TEXT:${#name_re}}
           TEXT=$(echo -n "$name_re"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
         else
