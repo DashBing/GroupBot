@@ -1416,6 +1416,53 @@ async def just_for_me(event):
 
 
 
+#  @UB.on(events.NewMessage(incoming=True))
+#  @UB.on(events.MessageEdited(incoming=True))
+#  @exceptions_handler
+#  async def read_res(event):
+#
+#    if not no_reset.is_set():
+#      return
+#    #  if event.chat_id in id2gateway:
+#    if event.chat_id == gpt_id:
+#      pass
+#    elif event.chat_id == rss_id:
+#      msg = event.message
+#      await mt_send(msg.text, "rss2tg_bot", id2gateway[rss_id])
+#      return
+#      #  print("N: skip: %s != %s" % (event.chat_id, gpt_id))
+#    else:
+#      return
+#    #  if not no_reset.is_set():
+#    #    print("W: skiped the msg because of reset is waiting")
+#    #    return
+#    #  elif event.chat_id not in gateways:
+#    #    logger.error(f"E: not found gateway for {event.chat_id}, {gateways=}")
+#    #    return
+#    msg = event.message
+#
+#    if msg.is_reply:
+#      qid=msg.reply_to_msg_id
+#      print(f"msg id: {msg.id=} {event.id=} {qid=} {gateways=} {mtmsgsg=}")
+#      if qid not in gateways:
+#        logger.error(f"E: not found gateway for {qid=}, {gateways=} {msg.text=}")
+#        return
+#      try:
+#        #  await queues[gateways[qid]].put( (id(msg), qid, msg) )
+#        #  await queues[gateways[qid]].put( (msg.date, qid, msg) )
+#        await queues[gateways[qid]].put( (id(msg), qid, msg) )
+#        #  await queues[gateways[qid]].put( (msg.id, "test") )
+#      except Exception as e:
+#        logger.info(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
+#        #  raise e
+#      return
+#      await queues[gateways[qid]].put( (msg.id, msg, qid) )
+#      return
+
+
+
+
+
 @UB.on(events.NewMessage(incoming=True))
 @UB.on(events.MessageEdited(incoming=True))
 @exceptions_handler
@@ -1450,8 +1497,27 @@ async def read_res(event):
     try:
       #  await queues[gateways[qid]].put( (id(msg), qid, msg) )
       #  await queues[gateways[qid]].put( (msg.date, qid, msg) )
-      await queues[gateways[qid]].put( (id(msg), qid, msg) )
       #  await queues[gateways[qid]].put( (msg.id, "test") )
+      #  await queues[gateways[qid]].put( (id(msg), qid, msg) )
+      if msg.file:
+        return
+      text = msg.text
+      if not text:
+        print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
+        return
+      l = text.splitlines()
+      if l[-1] in loadings:
+        return
+      elif len(l) > 1 and f"{l[-2]}\n{l[-1]}" in loadings:
+        return
+      else:
+        #  await mt_send(f"{mtmsgs[qid][0]['username']}[思考中...]", gateway=gateway)
+        gateway = gateways[qid]
+        mtmsgs = mtmsgsg[gateway]
+        res = f"{mtmsgs[qid][0]['username']}{text}"
+        #  await mt_send(res, gateway=gateway, username="")
+        await mt_send(res, gateway=gateway)
+
     except Exception as e:
       logger.info(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
       #  raise e
@@ -1516,8 +1582,6 @@ async def tg2mt_loop(gateway="test"):
   #  line = None
   mtmsgs = mtmsgsg[gateway]
   while True:
-
-
     print(f"I: {gateway} waiting...")
     #  msg_id, msg, qid = await queue.get()
     #  msg_id, msg = await queue.get()
