@@ -310,7 +310,7 @@ cmds() {
     if [[ -z "$2" ]]; then
       echo "ip6 \$domain/\$ip"
     else
-      if [[ $(echo "$2" | grep -c -P "[0-9a-zA-Z.-]+\.[a-zA-Z]+" | head -n1) -eq 1 ]]; then
+      if echo "$2" | grep -q -P "[0-9a-zA-Z.-]+\.[a-zA-Z]+"; then
         local host=$(echo "$2" | grep -o -P "[0-9a-zA-Z.-]+\.[a-zA-Z]+" | head -n1)
         echo "$host"
         echo -n "fake cn: "
@@ -341,27 +341,30 @@ cmds() {
             fi
           } || echo "E: $?"
       else
-        echo "W: 格式不正确: $2"
+        echo "格式不正确: $2"
       fi
     fi
     ;;
   xp|xmpp)
     if [[ -z "$2" ]]; then
       echo ".xp \$domain"
-    else
-      local srv=$(dig +short srv "_xmpp-client._tcp.$2"|head -n1)
+    elif echo "$2" | grep -q -P "[0-9a-zA-Z.-]+\.[a-zA-Z]+"; then
+      local host=$(echo "$2" | grep -o -P "[0-9a-zA-Z.-]+\.[a-zA-Z]+" | head -n1)
+      local srv=$(dig +short srv "_xmpp-client._tcp.$host"|head -n1)
       echo "SRV _xmpp-client._tcp.$2:"
+      if [[ -n "$srv" ]]; then
       echo "$srv"
       echo
         srv=$(echo "$srv"|head -n1)
         srv=${srv##* }
         srv=${srv%.}
-      if [[ -n "$srv" ]]; then
         # echo "domain: $srv"
         cmds .ip $srv
       else
         echo "not found"
       fi
+    else
+      echo "格式不正确: $2"
     fi
     ;;
   ipfs)
@@ -467,7 +470,7 @@ cmds() {
     ;;
   *)
     # echo "E: unknown cmd > $*"
-    echo '你输错了命令'
+    echo "你输错了命令: $1"
     ;;
   esac
 
