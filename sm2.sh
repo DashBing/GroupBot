@@ -44,7 +44,7 @@ get_sm_lock(){
   if [[ "$gateway" != "gateway1" ]]; then
     return 0
   fi
-  return 0
+  # return 0
   local m=0
   while [[ -e "$SM_LOCK" ]]
   do
