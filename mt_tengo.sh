@@ -609,26 +609,31 @@ if [[ -n "$4" ]] ; then
     # fi
     # TEXT=$(bash "$SH_PATH/split.sh" "$TEXT" "$NAME" 450)
     if [[ "$NAME" == "C gpt: " ]]; then
-      gpt="$SH_PATH/irc_gpt_tmp"
-      if [[ "${TEXT: -8}" == "[思考中...]" ]]; then
-        name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
-        echo -n "$name_re" >> "$gpt"
-        block_msg
-      elif [[ "${TEXT: -8}" == "**[结束]**" ]]; then
-        if [[ -e "$gpt" ]]; then
-          TEXT=$(cat "$gpt"; echo "$TEXT")
-          rm "$gpt"
-          name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
-          TEXT=${TEXT:${#name_re}}
-          TEXT=$(echo -n "$name_re"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
-        else
-          block_msg
-        fi
-      elif [[ -e "$gpt" ]]; then
-        echo "$TEXT" >> "$gpt"
-        block_msg
-      else
+      # gpt="$SH_PATH/irc_gpt_tmp"
+      # if [[ "${TEXT: -8}" == "[思考中...]" ]]; then
+      #   name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
+      #   echo -n "$name_re" >> "$gpt"
+      #   block_msg
+      # elif [[ "${TEXT: -8}" == "**[结束]**" ]]; then
+      #   if [[ -e "$gpt" ]]; then
+      #     TEXT=$(cat "$gpt"; echo "$TEXT")
+      #     rm "$gpt"
+      #     name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
+      #     TEXT=${TEXT:${#name_re}}
+      #     TEXT=$(echo -n "$name_re"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
+      #   else
+      #     block_msg
+      #   fi
+      # elif [[ -e "$gpt" ]]; then
+      #   echo "$TEXT" >> "$gpt"
+      #   block_msg
+      if [[ "$(echo "$TEXT" | wc -l)" -le 1 ]]; then
         :
+      else
+        name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
+        TEXT=${TEXT:${#name_re}}
+        tmp=$(echo "$TEXT" | head -n1)
+        TEXT=$(echo -n "$name_re"; echo -n "${tmp::64} 💾"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
       fi
     elif [[ -z "$NAME" ]]; then
       block_msg
@@ -650,10 +655,11 @@ if [[ -n "$4" ]] ; then
       fi
       name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
       TEXT=${TEXT:${#name_re}}
+      tmp=$(echo "$TEXT" | head -n1)
       if [[ $is_ok -eq 0 ]]; then
-        TEXT=$(echo -n "$name_re"; echo -n "${TEXT::64} "; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
+        TEXT=$(echo -n "$name_re"; echo -n "${tmp::64} "; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
       else
-        TEXT=$(echo -n "$name_re"; echo -n "${TEXT::64} 💾"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
+        TEXT=$(echo -n "$name_re"; echo -n "${tmp::64} 💾"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
       fi
     else
       tmp=$(echo "$TEXT" | head -n1)

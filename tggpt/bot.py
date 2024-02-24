@@ -8,6 +8,8 @@ from . import *  # noqa: F403
 import logging
 from functools import wraps
 
+import os
+
 import json
 import base64
 
@@ -65,6 +67,8 @@ MT_API = "127.0.0.1:4246"
 HTTP_RES_MAX_BYTES = 15000000
 FILE_DOWNLOAD_MAX_BYTES = 64000000
 TMP_PATH=HOME+"/tera/tmp"
+
+SH_PATH='/run/user/1000/bot'
 
 gpt_chat=None
 
@@ -1516,7 +1520,12 @@ async def read_res(event):
         mtmsgs = mtmsgsg[gateway]
         res = f"{mtmsgs[qid][0]['username']}{text}"
         #  await mt_send(res, gateway=gateway, username="")
-        await mt_send(res, gateway=gateway)
+        #  await mt_send(res, gateway=gateway)
+        fn='gpt_res'
+        async with queue_lock:
+          async with aiofiles.open(f"{SH_PATH}/{fn}", mode='w') as file:
+            await file.write(res)
+          os.system(f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
 
     except Exception as e:
       logger.info(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
