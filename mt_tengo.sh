@@ -610,7 +610,11 @@ if [[ -n "$4" ]] ; then
     # TEXT=$(bash "$SH_PATH/split.sh" "$TEXT" "$NAME" 450)
     if [[ "$NAME" == "C gpt: " ]]; then
       gpt="$SH_PATH/irc_gpt_tmp"
-      if [[ "${TEXT: -8}" == "**[结束]**" ]]; then
+      if [[ "${TEXT: -8}" == "[思考中...]" ]]; then
+        name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
+        echo -n "$name_re" >> "$gpt"
+        block_msg
+      elif [[ "${TEXT: -8}" == "**[结束]**" ]]; then
         if [[ -e "$gpt" ]]; then
           tmp=$(cat "$gpt")
           rm "$gpt"
@@ -624,9 +628,7 @@ if [[ -n "$4" ]] ; then
         echo "$TEXT" >> "$gpt"
         block_msg
       else
-        name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
-        echo -n "$name_re" >> "$gpt"
-        block_msg
+        :
       fi
     elif [[ -z "$NAME" ]]; then
       block_msg
