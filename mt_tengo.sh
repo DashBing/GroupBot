@@ -107,7 +107,8 @@ log_msg(){
 
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 # export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
-SM_LOCK2="$SH_PATH/SM_LOCK2"
+# SM_LOCK2="$SH_PATH/SM_LOCK2"
+SM_LOCK2="$SH_PATH/SM_LOCK"
 
 # if [[ $3 = api.cmd ]]; then
 #   :
@@ -632,12 +633,14 @@ if [[ -n "$4" ]] ; then
     elif [[ "$(echo "$TEXT" | wc -l)" -le 1 ]]; then
       :
     elif [[ "$NAME" == "C bot: " ]]; then
+      is_ok=0
       if [[ -e "$SM_LOCK2" ]]; then
         tmp=$(cat "$SM_LOCK2")
         # echo "iii: read tmp: $tmp" >> ~/mt.log
         if [[ "${tmp::${#TEXT}}" == "$TEXT" ]]; then
           TEXT=$tmp
           rm "$SM_LOCK2"
+          is_ok=1
           # echo "iii: change TEXT" >> ~/mt.log
         fi
       # else
@@ -645,10 +648,14 @@ if [[ -n "$4" ]] ; then
       fi
       name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
       TEXT=${TEXT:${#name_re}}
-      TEXT=$(echo -n "$name_re"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
+      if [[ $is_ok -eq 0 ]]; then
+        TEXT=$(echo -n "$name_re"; echo -n "${TEXT::64} "; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
+      else
+        TEXT=$(echo -n "$name_re"; echo -n "${TEXT::64} 💾"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
+      fi
     else
       tmp=$(echo "$TEXT" | head -n1)
-      TEXT=$(echo -n "${tmp::64}"; echo -n " 💾"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
+      TEXT=$(echo -n "${tmp::64} 💾"; echo "$TEXT" | curl -m 8 -s -F "c=@-" "https://fars.ee/?u=1")
     fi
     ;;
   matrix.*)

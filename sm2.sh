@@ -44,23 +44,25 @@ get_sm_lock(){
   local m=0
   while [[ -e "$SM_LOCK" ]]
   do
-    if [[ $m -ge 30 ]]; then
+    if [[ $m -ge 20 ]]; then
       break
     fi
     sleep 0.3
     let m++
   done
-  touch "$SM_LOCK"
-  m=0
-  while [[ -e "$SM_LOCK2" ]]
-  do
-    if [[ $m -ge 15 ]]; then
-      break
-    fi
-    sleep 0.4
-    let m++
-  done
-  echo "$1" > "$SM_LOCK2"
+  # touch "$SM_LOCK"
+
+  # m=0
+  # while [[ -e "$SM_LOCK2" ]]
+  # do
+  #   if [[ $m -ge 15 ]]; then
+  #     break
+  #   fi
+  #   sleep 0.4
+  #   let m++
+  # done
+  # echo "$1" > "$SM_LOCK2"
+  echo "$1" > "$SM_LOCK"
 }
 
 release_sm_lock(){
@@ -178,12 +180,16 @@ send(){
   # text=$(wtf1 "$text")
   text_en=$(wtf "$text")
   local length=$(echo -n "$text_en"|wc -c)
+
+  get_sm_lock "$text"
   # if [[ ${#text} -le $MAX_BYTES ]]; then
   if [[ $length -le $MAX_BYTES ]]; then
     echo "sm.sh: the length of msg is ok: $length:${text:0:256}..." &>> $LOG_FILE
     _send "$text_en"
+    release_sm_lock
     return $?
   fi
+
   echo "sm.sh: text is too long: $length:${text:0:128}..." &>> $LOG_FILE
   # shift
   local i=0
@@ -192,7 +198,6 @@ send(){
   if [[ $[length%MAX_BYTES] -ne 0 ]]; then
     let n++
   fi
-  get_sm_lock "$text"
   while true
   do
     # now=$[i*MAX_BYTES]
