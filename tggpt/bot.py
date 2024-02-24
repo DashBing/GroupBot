@@ -1473,6 +1473,7 @@ async def just_for_me(event):
 async def read_res(event):
 
   if not no_reset.is_set():
+    print(f"E: no reset")
     return
   #  if event.chat_id in id2gateway:
   if event.chat_id == gpt_id:
