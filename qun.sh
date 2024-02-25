@@ -70,6 +70,7 @@ del_jid(){
   text=${text// $jid/}
   text=${text//xmpp:$jid?join/}
   text=${text//$jid/}
+  text=$(echo "$text"| sed '/^$/d')
 }
 
 add() {
