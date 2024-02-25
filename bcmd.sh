@@ -423,11 +423,11 @@ cmds() {
     # bash "$SH_PATH/note.sh" "$username" "$@" || echo "E: $?"
     # echo bash "$SH_PATH/note.sh" "$username" "${text:6}" &>>~/tera/mt_msg.log
     # bash "$SH_PATH/note.sh" "$username" "${text:6}" &>>~/tera/mt_msg.log
-    bash "$SH_PATH/note.sh" "$username" "${text:6}$qt_text" || echo "E: $?"
+    bash "$SH_PATH/note.sh" "$username" "${text:6}" || echo "E: $?"
     ;;
   qun)
     shift
-    bash "$SH_PATH/qun.sh" "$username" "${text:5}$qt_text" || echo "E: $?"
+    bash "$SH_PATH/qun.sh" "$username" "${text:5}" || echo "E: $?"
     ;;
   faq)
     bash "$SH_PATH/faq.sh" "$text" "$username" || echo "E: $?"
@@ -438,7 +438,7 @@ cmds() {
       echo ".gh \$text"
       echo ".gh \$URL"
     else
-      bash "$SH_PATH/save_to_gh.sh" "${text:4}$qt_text" || echo "E: $?"
+      bash "$SH_PATH/save_to_gh.sh" "${text:4}" || echo "E: $?"
     fi
     ;;
   ghm)
@@ -447,7 +447,7 @@ cmds() {
       echo ".ghm \$text"
       echo ".ghm \$URL"
     else
-      bash "$SH_PATH/save_to_gh.sh" "${text:5}$qt_text" md || echo "E: $?"
+      bash "$SH_PATH/save_to_gh.sh" "${text:5}" md || echo "E: $?"
     fi
     ;;
   hhsh | wtf)
@@ -511,7 +511,7 @@ username=$2
 text=$3
 res=$4
 # username=$(echo "$restmp" | jq -r ".username")
-qt_text=$5
+# qt_text=$5
 
 
 if [[ "$text" == "ping" ]]; then

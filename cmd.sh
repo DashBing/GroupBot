@@ -125,7 +125,8 @@ bcmd(){
   # #   # [[ -z "${username}" ]] && continue
   # #   [[ -z "${username}" ]] && return 0
   # fi
-  nohup bash "$SH_PATH/cmd2.sh" "$gateway" "$username" "$text" "$restmp" "$qt" 2>> $LOG 1>> $LOG_FILE &
+  # nohup bash "$SH_PATH/cmd2.sh" "$gateway" "$username" "$text" "$restmp" "$qt" 2>> $LOG 1>> $LOG_FILE &
+  nohup bash "$SH_PATH/cmd2.sh" "$gateway" "$username" "$text" "$restmp" 2>> $LOG 1>> $LOG_FILE &
 }
 
 
@@ -156,6 +157,9 @@ echo "start to check restmp: $restmp" &>> $LOG_FILE
   # continue # run cmd by python: mybots.py. but not running now
   # ########################################################
 
+    username=$(echo "$NAME" | tail -n1)
+
+    [[ "${username:0:2}" != "C " ]] && [[ "${username: -5}" != "bot: " ]] && {
     QT=$(echo "$NAME" | sed -e '/^> [^>]/!d')
     qt=$(echo "$QT" | sed -e 's/^> //')
     if [[ -n "$qt" ]]; then
@@ -165,19 +169,14 @@ $qt"
     else
       text="$TEXT"
     fi
-    username=$(echo "$NAME" | tail -n1)
-
-    [[ "${username:0:2}" != "C " ]] && [[ "${username: -5}" != "bot: " ]] && bcmd "$text" "$username" "$gateway" "$restmp"
+      # bcmd "$text" "$username" "$gateway" "$restmp"
+      nohup bash "$SH_PATH/cmd2.sh" "$gateway" "$username" "$text" "$restmp" 2>> $LOG 1>> $LOG_FILE &
+    }
 
     # continue
 
 
-    if [[ "$gateway" == "test" ]]; then
-      # echo 2 > "$SH_PATH/.BUSY"
-      if [[ -e "$SH_PATH/.BUSY" ]]; then
-        rm "$SH_PATH/.BUSY"
-      fi
-    elif [[ "$gateway" == "gateway1" ]]; then
+    if [[ "$gateway" == "gateway1" ]]; then
       URL=$(echo "$restmp" | jq -r ".Extra.file[0].URL")
       # if [[ "${username:0:2}" != "S " ]]; then
       #   # bash "$SH_PATH/run_sh.sh" "[$restmp]" msg_for_simplex.sh
@@ -196,6 +195,11 @@ $qt"
       # if [[ "${username:0:2}" != "Q " ]]; then
       #   bash "$SH_PATH/mqtt.sh" "$msg"
       # fi
+    elif [[ "$gateway" == "test" ]]; then
+      # echo 2 > "$SH_PATH/.BUSY"
+      if [[ -e "$SH_PATH/.BUSY" ]]; then
+        rm "$SH_PATH/.BUSY"
+      fi
     fi
 
   fi

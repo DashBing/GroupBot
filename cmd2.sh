@@ -51,7 +51,7 @@ out=$(bash "$SH_PATH/bcmd.sh" "$@" 2>"$SH_PATH/error") && e=$? || {
   e=$?
 # [[ -f "$SH_PATH/error" ]] && {
   [[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]] && {
-    log0
+    log0 "$@"
     # push_err "E: failed to run cmd: $text|$e|$r"
   } || {
     log2
@@ -64,7 +64,7 @@ out=$(bash "$SH_PATH/bcmd.sh" "$@" 2>"$SH_PATH/error") && e=$? || {
 if [[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]]; then
 
   if [[ -e "$SH_PATH/DEBUG" ]]; then
-    log0
+    log0 "$@"
   else
     log2
   fi
