@@ -816,6 +816,9 @@ $TEXT"
 #     fi
 
     TEXT=$(bash "$SH_PATH/text2markdown.sh" "$TEXT")
+
+    # md_name
+    if [[ -n "$NAME" ]]; then
     QT=""
     [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(bash "$SH_PATH/text2markdown.sh" "$(echo "$NAME" | sed '/^$/,$d')" && echo)
     NAME=$(bash "$SH_PATH/text2markdown.sh" "$(echo "$NAME" | tail -n1)")
@@ -827,6 +830,7 @@ $TEXT"
 # $M *$NAME*: "
     NAME="$QT
 $M *$NAME*: "
+    fi
     ;;
   zulip.*)
   # elif [[ "$9" == "zulip" ]] ; then
