@@ -536,7 +536,7 @@ echo "b0 :|$text|" >> $LOG_FILE
 text=$(cmds $text) && {
 
   [[ "$text" = "$username" ]] && exit 1
-  [[ -z "$text" ]] && exit 1
+  [[ -z "$text" ]] && exit 0
   # text=$(bash "$SH_PATH/gene_res.sh" "$text" $gateway)
 
 # echo "b2 :|$text|" >> ~/tera/mt_msg.log
