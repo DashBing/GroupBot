@@ -309,7 +309,7 @@ se)
   full=$(cat "$NOTE_FILE")
   # full=$(echo "$full"|grep -F "$tag")
   text=$(my_encode "$text")
-  my_decode "$(echo "$full"|grep -F "$text" | grep -n ^ | sed 's|:|% |1')"
+  my_decode "$(echo "$full" | grep -n ^ | grep -F "$text" | sed 's|:|% |1')"
   ;;
 add)
   add "$username" "$text"
