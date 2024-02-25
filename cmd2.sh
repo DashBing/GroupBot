@@ -56,6 +56,7 @@ out=$(bash "$SH_PATH/bcmd.sh" "$@" 2>"$SH_PATH/error") && e=$? || {
   } || {
     log2
   }
+  text=$3
   send "E: failed to run cmd: $text|$e|$r|$out" 2>> $LOG 1>> $LOG_FILE
   exit
 }
