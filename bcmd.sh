@@ -535,7 +535,7 @@ echo "b0 :|$text|" >> $LOG_FILE
 #text=$(cmds $text 2>&1)
 text=$(cmds $text) && {
 
-  [[ "$text" = "$username" ]] && exit 1
+  [[ "$text" = "$username" ]] && exit 0
   [[ -z "$text" ]] && exit 0
   # text=$(bash "$SH_PATH/gene_res.sh" "$text" $gateway)
 
