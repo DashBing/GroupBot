@@ -125,7 +125,7 @@ bcmd(){
   # #   # [[ -z "${username}" ]] && continue
   # #   [[ -z "${username}" ]] && return 0
   # fi
-  nohup bash "$SH_PATH/bcmd.sh" "$gateway" "$username" "$text" "$restmp" "$qt" 2>> $LOG 1>> $LOG_FILE &
+  nohup bash "$SH_PATH/cmd2.sh" "$gateway" "$username" "$text" "$restmp" "$qt" 2>> $LOG 1>> $LOG_FILE &
 }
 
 

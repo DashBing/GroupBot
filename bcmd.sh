@@ -505,7 +505,7 @@ send(){
 
 
 
-[[ -z "$3" ]] && exit 1
+[[ -z "$3" ]] && exit
 gateway=$1
 username=$2
 text=$3
@@ -533,74 +533,15 @@ echo "b0 :|$text|" >> $LOG_FILE
   # if [[ "${text:0:6}" == ".note " ]]; then
 #text=$(cmds $text)
 #text=$(cmds $text 2>&1)
-out=$(cmds $text 2>"$SH_PATH/error") && e=$? || {
-  e=$?
-# [[ -f "$SH_PATH/error" ]] && {
-[[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]] && {
-  set -x
-  cmds $text 2>"$SH_PATH/error" 1>"$SH_PATH/out"
-  set +x
-  out=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
-  r=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
-  echo "E: $e
-fail to run cmd
-text=$text
-error=$r
-out=$out
-" >> $LOG
-}
-  # push_err "E: failed to run cmd: $text|$e|$r"
-  send "E: failed to run cmd: $text|$e|$r|$out"
-  exit 1
-}
+text=$(cmds $text) && {
 
-if [[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]]; then
-  echo "E: $e?
-fail to run cmd
-text=$text
-out=$out" >> $LOG
-
-  [[ -e "$SH_PATH/DEBUG" ]] && {
-    set -x
-    cmds $text 2>"$SH_PATH/error" 1>"$SH_PATH/out"
-    set +x
-    out=$(cat "$SH_PATH/out") && rm "$SH_PATH/out"
-  echo "debug:
-fail to run cmd
-text=$text
-out=$out" >> $LOG
-  }
-  text_e=$(cat "$SH_PATH/error") && rm "$SH_PATH/error"
-  echo "E: $e?
-fail to run cmd
-error=$text_e" >> $LOG
-fi
-
-
-text=$out
-
-[[ -n "$text_e" ]] && text="$text
---
-E: $text_e" || {
-  [[ -z "$text" ]] && exit 0
-  [[ "$text" = "$username" ]] && exit 0
-}
-
-# text=$(echo "$text"|sed 's/\r//g')
-# text=$(echo "$text" | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
-
-# send_to_mt "$text"
-# send_to_mt "E: $text_e"
-
-
-
-echo "b1 :|$text|" >> $LOG_FILE
-
-  [[ -z "$text" ]] && exit
+  [[ "$text" = "$username" ]] && exit 1
+  [[ -z "$text" ]] && exit 1
   # text=$(bash "$SH_PATH/gene_res.sh" "$text" $gateway)
 
 # echo "b2 :|$text|" >> ~/tera/mt_msg.log
 #  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4243/api/message)
 # bash "$SH_PATH/sm.sh" bot "$text" 4240 $gateway || echo "E: $?"
-send "$text" 2>> $LOG 1>> $LOG_FILE
+  send "$text" 2>> $LOG 1>> $LOG_FILE
+}
 
