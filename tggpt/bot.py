@@ -1527,6 +1527,8 @@ async def read_res(event):
           async with aiofiles.open(f"{SH_PATH}/{fn}", mode='w') as file:
             await file.write(res)
           os.system(f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
+        gateways.pop(qid)
+        mtmsgs.pop(qid)
 
     except Exception as e:
       logger.info(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
