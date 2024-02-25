@@ -6,3 +6,4 @@ X liqsliu: 这就是大清朝议@conference.conversations.im #zh #中文 #公开
 X liqsliu: acg@muc.pimux.de #rss #acg #zh #中文 #公开群 ACG rss
 X liqsliu: #wtfipfs#matrix.org@matrix.org #zh #中文 #多平台 #公开群 #发言无需申请 #jid公开 #无管理 话题不限 镜像:\nxmpp:#ipfs#mozilla.org@matrix.org?join\nxmpp:#wtfipfs#matrix.org@aria-net.org?join
 X liqsliu: wtfipfs_bot@salas.suchat.org #zh #中文 #公开群 #发言无需申请 #有管理 #bot bot测试 镜像 wtfipfs_bot@conference.conversations.im 管理 liqsliu@jabb3r.org 
+X liqsliu: loqgsv@conference.jabb3r.de \n\n刷机经验交流聊天室，大家可以在这个聊天室讨论如何挑选刷机要用的手机型号，讨论如何刷机，以及挑选为刷机准备的电脑型号和电脑系统。\n刷机经验交流聊天室，大家可以在这个聊天室讨论如何挑选刷机要用的手机型号，讨论如何刷机，以及挑选为刷机准备的电脑型号和电脑系统。

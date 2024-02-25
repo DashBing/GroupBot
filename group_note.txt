@@ -210,7 +210,6 @@
 #privatebin I Tox: PrivateBin实例列表：https://privatebin.info/directory/
 #bv X liqsliu: \n\nhttps://www.bilibili.com/video/https://www.bilibili.com/video/
 #book X Tox: \n【编程随想】收藏的电子书清单（多个学科，含下载链接） \n\n秘钥集合\n\n B7P64IMWOCXWEYOXIMBX6HN5MHEULFS4V 博客💕\n BRSSYZTSAC6UGYTUOJ22L4GCO7QESPPBD 政治\n BNZ6DOA6W577O6GUNH7C3MY6DWC6FTDQB 心理学\n BSH7FXJFVWJTKWGSX5GTWX7PHZZ2D2M7Q 历史\n B2FRYA6AXCDW6CF4YJVFWKH2HAXOFICOX 经济\n B3WNBTAAFFAODFR6FQ3E3L5BBSJAFNBSJ 管理\n BZR4TTYHT25QWUIE6YNMAKWUGBHKSGLC6 社会学\n BMBB5YLBIJJAE5H6TP27OS7YCEUKCYHZK 文艺\n B6WWVBXPMZDI5IL4KED6AAHA5FO4UNKQF 哲学\n BMWWZALG4P56LREF47EE2WSWHZEM4E6BL 军事\n BUPSDXFA3TP7KCMLHALRHLIX2FEJEUJFE 信息技术IT\n BKKORLE67ZDUHGHVWAVSRK3N5I7BXLCED 科普\n\nhttps://github.com/programthink/books
-#default X liqsliu: g.co
 #xmpp I Tox: 总结：https://paste.07f.de/?3914916842b2b6be#3747fWTqSJydGpdfVDCmvArPrVjmSA7toCSWHBYAmExA
 #win I Tox: X liqsliu_suchat: \\n\\n各位用Windows的注意两处隐私：\\nwin+i：设置-Windows更新-高级选项-传递优化-允许从其他电脑下载-关闭\\n设置-隐私和安全性-Windows权限-常规-四项全关各位用Windows的注意两处隐私：\\nwin+i：设置-Windows更新-高级选项-传递优化-允许从其他电脑下载-
 #mygpg X liqsliu: \n-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nmDMEY4N6bRYJKwYBBAHaRw8BAQdAXlB1BdaOcjJUZy92sgsPGoVKefLnTyDpqPWG\nwiaLxHS0G2xpcXNsaXUgPGxpcXNsaXVAZ21haWwuY29tPoiQBBMWCAA4BQsJCAcC\nBhUKCQgLAgQWAgMBAh4BAheAFiEEtaJiUfivYUuFeripgRow3Au7pScFAmODjaEC\nGyMACgkQgRow3Au7pScLpAD8CG782Q1sfct+ePRtAiLd8ZovZOEvn4VYHmafg8GH\nRIcA/RsxM4Ykj/2R8/kCJiH/7pKsb0xhE4nDUn57mAUetn4EuDgEY4N6bRIKKwYB\nBAGXVQEFAQEHQLAWX5laXcuGgpEkecyV5M0gbt3kGk+jNUYun/33iIB5AwEIB4h4\nBBgWCAAgFiEEtaJiUfivYUuFeripgRow3Au7pScFAmODjbQCGwwACgkQgRow3Au7\npScUsgEAyPkDpewG7x7EBG84qsEXkUkaq+Z2Z7ry4chJm2UGa/0BAN9cImvUEpek\n1Zr9r5ZBs1bR7qq7mqHytXnLk7jCKG8O\n=543w\n-----END PGP PUBLIC KEY BLOCK-----
@@ -218,9 +217,8 @@
 #gpg X liqsliu: openkenchain入门，转自 xmpp:chinese@conference.07f.de?join 群主\n> 1. 进F-droid客户端下一个OpenKeyChain\n> 2. 下载之后打开\n> 3. 点击 *你还没有任何密钥*处新建一个密钥\n> 4. 创建密钥\n> 5. 填入你的昵称（随便填， *不要填你的真实姓名或者任何与你的私有网络服务相关的内容，难道你想被人肉吗？*），点击下一步\n> 6. 填入你的邮箱（建议随便乱填或者填你的邮箱 *不要填你的私有邮箱地址，例如QQ，163等，难道你想被人肉吗？*），点击下一步\n> 7. 点击右上角三个点，更改密钥配置\n> 8. 点击带有锁的条目删除它，改动为RSA 4096bit\n> 9. 点击带有勋章的条目，改动为RSA  4096bit\n> 10. 保存\n> 11. 回到那个带有生成的界面，你会看到一个“custom configuration”的提示信息，这是因为OpenKeyChian默认使用的是RSA 3072bit的设置。不用管他，直接等待生成。 ⚠️ *警告：不要将你的公钥上传服务器！*\n> 12. 等一段时间\n> 13. 密钥生成完成！\n> 14. 现在退出OpenKeyChain，进入Conversation，打开右上角三个点，点击管理账号\n> 15. 长按你想要发布公钥的账号，点击发布OpenPGP公钥\n> 16. 完成
 #xmpp X liqsliu: update https://github.com/liqsliu/wtfipfs/blob/main/txt/20240116_111724_xmpp.txt.md
 #xmpp X liqsliu: update https://github.com/wtfipfs/d/blob/main/md/xmpp.txt.md
-#default T oo: tool
 #ipfs X liqsliu: \n\nT TRIfA 2B10: ipfs 网关\nhttp://[21f:5234:5548:31e5:a334:854b:5752:f4fc]/T TRIfA 2B10: ipfs 网关\nhttp://[21f:5234:5548:31e5:a334:854b:5752:f4fc]/
 #xmpp X liqsliu: 20240219 目前xmpp中文群有一大堆都是由那些关注政治立场的左派人士建立的，他们是一个圈子。这件事是好是坏，我不想评价。我的个人看法：暴露政治立场会增加不必要的风险以及给群友增加不必要的压力，（个人）没必要，（个人）没兴趣，（群主）不应该。\n提醒一下新人：所有这些xmpp群组包括我这个群都代表不了xmpp，不喜欢某个群可以离开该群自己建立一个，这很正常。
 #xmpp X liqsliu: 如果没有发言权，建议使用gajim或cheogram客户端申请。conversations不支持xmpp原生的申请方式。也可以群内私信bot：“申请发言权”，然后等管理批准。也可以改群内名字，添加“申请发言权”，然后等管理看到。
 #xmpp X liqsliu: 至尊巨无霸汉堡: 新发现一个 c11s 系（conversations客户端及其改版，比如 blabber.im monocles chat 等等）的 xmpp 客户端的使用小妙招，在我们手动添加新的公共群聊的时候，可以输入聊天室的 jid 并在jid 后附上\"/昵称\"，例如，添加本聊天室时写成\"xmpp新手室@salas.suchat.org/习理论的鬼话\"，那么用户进入本聊天室时昵称就会被设置成“习理论的鬼话”，而非用户的默认昵称。
-#default X liqsliu: se 是
+#xmpp X liqsliu: xmpp服务器如果使用 conversations.im ，发送文件会泄漏自己的账户名
