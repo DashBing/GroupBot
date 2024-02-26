@@ -173,9 +173,9 @@ xmpp.*)
   #   block_msg
   # elif [[ "$2" =~ *debit* ]]; then
   #   block_msg
-  if [[ "$NAME" =~ *debit*card* ]]; then
-    block_msg
-  fi
+  # if [[ "$NAME" =~ *debit*card* ]]; then
+  #   block_msg
+  # fi
   LABLE="X"
   if echo "$TEXT" | head -n1 | grep -q -P "^>" && [[ $(echo "$TEXT" | sed '/^[^>]/,$!d' | grep -c -P "^>") -eq 0 && $(echo "$TEXT" | sed -n '/^>/!p' | sed -n '/^$/!p' | wc -l) -ge 1 ]]; then
     # QT=$( echo "$TEXT" | sed -n '/^> /p')
