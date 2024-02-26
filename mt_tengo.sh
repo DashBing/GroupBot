@@ -28,7 +28,7 @@ if [[ -z "$2" ]]; then
         NAME="C bot"
       else
         # echo -n "C fixme_need_name: "
-        NAME="C fixme_need_name"
+        NAME="fixme_need_name"
       fi
       ;;
     irc.*)
@@ -215,11 +215,12 @@ xmpp.*)
 
   # if [[ "$2" == "wtfipfs" ]] || [[ "$2" == " " ]]; then
   if [[ "$NAME" == "wtfipfs" ]]; then
-    NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ \S+?:\*\* ')
-    NAME=${NAME:2}
-    LABLE=${NAME%% *}
-    NAME=${NAME%:\*\* }
-    NAME=${NAME#* }
+    # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ \S+?:\*\* ')
+    # NAME=${NAME:2}
+    # LABLE=${NAME%% *}
+    # NAME=${NAME%:\*\* }
+    # NAME=${NAME#* }
+    NAME=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] (.+?):\*\* .*/\1/')
     # TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
     TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
   elif [[ "$NAME" == "bot" ]]; then
