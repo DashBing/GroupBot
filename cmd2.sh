@@ -46,6 +46,11 @@ log0(){
 }
 
 
+[[ -z "$3" ]] && exit
+gateway=$1
+username=$2
+text=$3
+
 # out=$(cmds $text 2>"$SH_PATH/error") && e=$? || {
 # bash "$SH_PATH/bcmd.sh" "$@" 2>> $LOG 1>> $LOG_FILE
 out=$(bash "$SH_PATH/bcmd.sh" "$@" 2>"$SH_PATH/error") && e=$? || {
