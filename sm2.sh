@@ -48,7 +48,7 @@ get_sm_lock(){
   local m=0
   while [[ -e "$SM_LOCK" ]]
   do
-    if [[ $m -ge 10 ]]; then
+    if [[ $m -ge 20 ]]; then
       break
     fi
     sleep 0.5
