@@ -844,11 +844,27 @@ $M *$NAME*: "
       TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
     fi
     ;;
-  api.tox)
-    :
-    # go to edit cmd.sh
-    ;;
+  # api.tox)
+  #   :
+  #   # go to edit cmd.sh
+  #   ;;
   # api.gpt)
+  api.cmd)
+    username=$(echo "$NAME" | tail -n1)
+
+    [[ "${username:0:2}" != "C " ]] && [[ "${username: -5}" != "bot: " ]] && {
+    QT=$(echo "$NAME" | sed -e '/^> [^>]/!d')
+    qt=$(echo "$QT" | sed -e 's/^> //')
+    if [[ -n "$qt" ]]; then
+      text="$TEXT
+
+$qt"
+    else
+      text="$TEXT"
+    fi
+    # nohup bash "$SH_PATH/cmd2.sh" "$gateway" "$username" "$text" &>/dev/null &
+    nohup bash "$SH_PATH/cmd2.sh" "${11}" "$username" "$text" &>/dev/null &
+    block_msg
   api.*)
     :
     # go to edit cmd.sh
