@@ -41,9 +41,9 @@ gateway=${4-gateway1}
 # echo "$*" > /tmp/test_sm.sh.txt
 
 get_sm_lock(){
-  if [[ "$gateway" != "gateway1" ]]; then
-    return 0
-  fi
+  # if [[ "$gateway" != "gateway1" ]]; then
+  #   return 0
+  # fi
   # return 0
   local m=0
   while [[ -e "$SM_LOCK" ]]
