@@ -220,12 +220,12 @@ xmpp.*)
     # LABLE=${NAME%% *}
     # NAME=${NAME%:\*\* }
     # NAME=${NAME#* }
-    NAME=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] (.+?):\*\* .*/\1/')
+    NAME=$( echo "$TEXT" | sed -r 's/^\*\*([a-zA-Z0-9] .+?):\*\* .*/\1/')
     # TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
     TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
   elif [[ "$NAME" == "bot" ]]; then
     # NAME+="[xmpp]"
-    NAME=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] (.+?):\*\* .*/\1/')
+    NAME=$( echo "$TEXT" | sed -r 's/^\*\*([a-zA-Z0-9] .+?):\*\* .*/\1/')
     TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
   fi
 
