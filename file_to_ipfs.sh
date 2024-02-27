@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
+export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 #DOMAIN=${DOMAIN:-liuu.tk}
 DOMAIN=$(cat $SH_PATH/DOMAIN)
 
