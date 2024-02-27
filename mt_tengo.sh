@@ -850,6 +850,7 @@ $M *$NAME*: "
   #   ;;
   # api.gpt)
   api.cmd)
+    log_msg "$@" >> ~/mt.log
     username=$(echo "$NAME" | tail -n1)
     [[ "${username:0:2}" != "C " ]] && [[ "${username: -5}" != "bot: " ]] && {
       QT=$(echo "$NAME" | sed -e '/^> [^>]/!d')
