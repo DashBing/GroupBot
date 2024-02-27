@@ -154,8 +154,6 @@ fi
 
 LABLE="C"
 
-
-
 # msgText, msgUsername, inAccount, inProtocol, inChannel
 # inGateway, inEvent, outAccount, outProtocol, outChannel
 # outGateway, outEvent
@@ -163,7 +161,7 @@ LABLE="C"
 case $3 in
 # xmpp.myxmpp|xmpp.myxmpp2)
 xmpp.*)
-  log_msg "$@" >> ~/mt.log
+  # log_msg "$@" >> ~/mt.log
   # for ipfsrss
   # if [[ "$5" = "wtfipfs_rss" ]]; then
   #   if [[ "$2" =~ liqsliu* ]]; then
