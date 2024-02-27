@@ -4,7 +4,8 @@
 export LOG_FILE=${LOG_FILE:-/dev/null}
 export LOG=${LOG:-$HOME/mt.log}
 
-SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
+# SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
+export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
 
 [[ -z "$3" ]] && exit 0

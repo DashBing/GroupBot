@@ -105,7 +105,7 @@ log_msg(){
 
 
 
-SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
+export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 # export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 # SM_LOCK2="$SH_PATH/SM_LOCK2"
 SM_LOCK2="$SH_PATH/SM_LOCK"
