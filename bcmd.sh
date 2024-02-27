@@ -4,6 +4,7 @@
 export LOG_FILE=${LOG_FILE:-/dev/null}
 export LOG=${LOG:-$HOME/mt.log}
 
+SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
 echo "bcmd start" >> $LOG_FILE
 set -f
@@ -39,7 +40,6 @@ changeai(){
     echo $1 > $SH_PATH/.mode_cur
 }
 
-SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
 cmds() {
   # cmd="$*"
