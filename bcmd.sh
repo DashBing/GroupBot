@@ -509,7 +509,7 @@ send(){
 gateway=$1
 username=$2
 text=$3
-res=$4
+# res=$4
 # username=$(echo "$restmp" | jq -r ".username")
 # qt_text=$5
 

@@ -865,6 +865,7 @@ $qt"
       nohup bash "$SH_PATH/cmd2.sh" "${11}" "$username" "$text" &>/dev/null &
     }
     block_msg
+    ;;
   api.*)
     :
     # go to edit cmd.sh
