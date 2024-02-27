@@ -163,6 +163,7 @@ LABLE="C"
 case $3 in
 # xmpp.myxmpp|xmpp.myxmpp2)
 xmpp.*)
+  log_msg "$@" >> ~/mt.log
   # for ipfsrss
   # if [[ "$5" = "wtfipfs_rss" ]]; then
   #   if [[ "$2" =~ liqsliu* ]]; then
@@ -850,7 +851,6 @@ $M *$NAME*: "
   #   ;;
   # api.gpt)
   api.cmd)
-    # log_msg "$@" >> ~/mt.log
     username=$(echo "$NAME" | tail -n1)
     [[ "${username:0:2}" != "C " ]] && [[ "${username: -5}" != "bot: " ]] && {
       QT=$(echo "$NAME" | sed -e '/^> [^>]/!d')
