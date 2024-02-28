@@ -925,6 +925,7 @@ async def mt2tg(msg):
             return
         if name.startswith("**C "):
             return
+        logger.info("got msg: %s" % msgd)
 
         #  if len(username.splitlines()) > 1:
         #    pass

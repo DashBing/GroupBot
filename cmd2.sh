@@ -9,6 +9,9 @@ export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 
 
 [[ -z "$3" ]] && exit 0
+gateway=$1
+username=$2
+text=$3
 
 
 send(){
@@ -47,10 +50,6 @@ log0(){
 }
 
 
-[[ -z "$3" ]] && exit
-gateway=$1
-username=$2
-text=$3
 
 # out=$(cmds $text 2>"$SH_PATH/error") && e=$? || {
 # bash "$SH_PATH/bcmd.sh" "$@" 2>> $LOG 1>> $LOG_FILE
