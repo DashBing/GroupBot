@@ -130,7 +130,7 @@ UB.parse_mode = 'md'
 
 
 
-HELP=".gpt $text\n--\n所有数据来自telegram机器人: https://t.me/littleb_gptBOT"
+HELP="用法: .gpt $text\n--\n所有数据来自telegram机器人: https://t.me/littleb_gptBOT"
 
 
 # https://xtxian.com/ChatGPT/prompt/%E8%A7%92%E8%89%B2%E6%89%AE%E6%BC%94/%E6%88%91%E6%83%B3%E8%AE%A9%E4%BD%A0%E5%85%85%E5%BD%93%E4%B8%AD%E6%96%87%E7%BF%BB%E8%AF%91%E5%91%98%E3%80%81%E6%8B%BC%E5%86%99%E7%BA%A0%E6%AD%A3%E5%91%98%E5%92%8C%E6%94%B9%E8%BF%9B%E5%91%98.html#%E6%88%91%E6%83%B3%E8%AE%A9%E4%BD%A0%E5%85%85%E5%BD%93%E4%B8%AD%E6%96%87%E7%BF%BB%E8%AF%91%E5%91%98%E3%80%81%E6%8B%BC%E5%86%99%E7%BA%A0%E6%AD%A3%E5%91%98%E5%92%8C%E6%94%B9%E8%BF%9B%E5%91%98
@@ -849,6 +849,7 @@ async def mt_read():
 
       async with session.get(url, timeout=0, read_bufsize=2**20*4, chunked=True) as resp:
         print("N: mt api init ok")
+        await mt_send("N: tggpt: mt read: init ok")
         line = b""
         async for data, end_of_http_chunk in resp.content.iter_chunks():
           line += data
@@ -868,10 +869,6 @@ async def mt_read():
     except Exception as e:
       logger.error(f"{e=}")
     await asyncio.sleep(3)
-
-
-
-
 
 
 
@@ -1895,12 +1892,12 @@ async def __init():
   print(f"SH_PATH: {SH_PATH}")
   print(f"DOMAIN: {DOMAIN}")
   await mt_send("gpt start")
-  await asyncio.sleep(2)
-  await mt_send("ping")
-  await asyncio.sleep(3)
-  await mt_send("ping", username="")
-  await asyncio.sleep(1)
-  await mt_send(".gpt", username="")
+  #  await asyncio.sleep(2)
+  #  await mt_send("ping")
+  #  await asyncio.sleep(3)
+  #  await mt_send("ping", username="")
+  #  await asyncio.sleep(1)
+  #  await mt_send(".gpt", username="")
 
 
 if __name__ == '__main__':
