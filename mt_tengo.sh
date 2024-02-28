@@ -97,6 +97,10 @@ log_msg(){
   # log_msg
   # log_msg "$@" >> ~/mt.log
 
+# if [[ $3 == api.gpt ]]; then
+if [[ $5 == gateway1 ]]; then
+  log_msg "$@" >> ~/mt.log
+fi
 
 #if [[ $3 = xmpp.myxmpp ]]; then
 # if [[ "$1" =~ *pong* ]]; then
@@ -173,7 +177,7 @@ xmpp.*)
   LABLE="X"
   line=$(echo "$TEXT"|head -n1)
   # if [[ "$2" == "wtfipfs" ]] || [[ "$2" == " " ]]; then
-  if [[ "$NAME" == "wtfipfs" ]] || [[ "$NAME" == "bot" ]]; then
+  if [[ "$NAME" == "wtfipfs" || "$NAME" == "bot" ]]; then
     # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ \S+?:\*\* ')
     # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ [^\s]+?:\*\* ')
     # NAME=${NAME:2}
