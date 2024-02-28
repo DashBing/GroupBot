@@ -59,6 +59,7 @@ md_name(){
     NAME="**${NAME% }** "
     if [[ -n "$QT" ]]; then
       NAME="$QT
+
 ${NAME}"
     fi
   fi
@@ -725,6 +726,7 @@ if [[ -n "$4" ]] ; then
       TEXT="$NAME$TEXT"
       unset NAME
     fi
+    newline
     ;;
   slack.*)
     # if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
