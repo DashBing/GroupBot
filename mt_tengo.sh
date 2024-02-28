@@ -175,6 +175,11 @@ xmpp.*)
     # 不要用\S, 用[^\s]
     # if echo "$line" | grep -q -P '^\*\*\w+ [^\s]+?:\*\* '; then
     # if echo "$line" | grep -q -P '^\*\*\w+ .+?:\*\* '; then
+    # if echo "$line" | grep -q -P "^>"; then
+    if [[ "${line:0:1}" == '>' ]]; then
+      QT=$( echo "$TEXT" | sed '/^[^>]/,$d')
+      line=$(echo "$TEXT"| sed '/^[^>]/,$!d' |head -n1)
+    fi
     tmp=$( echo "$line" | grep -o -P '^\*\*\w+ .+?:\*\* ')
     if [[ -n "$tmp" ]]; then
       # NAME=$( echo "$line" | grep -o -P '^\*\*\w+ .+?:\*\* ' | sed -r 's/^\*\*(.+):\*\* /\1/')
@@ -184,11 +189,13 @@ xmpp.*)
       # NAME=${NAME#* }
       # TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
       # TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
+      TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
       TEXT="${TEXT:$[${#NAME}+5]}"
     else
       NAME=""
+      unset QT
     fi
-  elif echo "$line" | grep -q -P "^>" && [[ $(echo "$TEXT" | sed '/^[^>]/,$!d' | grep -c -P "^>") -eq 0 && $(echo "$TEXT" | sed -n '/^>/!p' | sed -n '/^$/!p' | wc -l) -ge 1 ]]; then
+  elif [[ "${line:0:1}" == '>' && $(echo "$TEXT" | sed '/^[^>]/,$!d' | grep -c -P "^>") -eq 0 && $(echo "$TEXT" | sed -n '/^>/!p' | sed -n '/^$/!p' | wc -l) -ge 1 ]]; then
     # QT=$( echo "$TEXT" | sed -n '/^> /p')
     QT=$( echo "$TEXT" | sed '/^[^>]/,$d')
     H=$(echo "$QT"|head -n1)
