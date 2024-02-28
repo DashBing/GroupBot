@@ -52,8 +52,8 @@ fi
 md_name(){
   if [[ -n "$NAME" ]]; then
     # [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(echo "$NAME" | sed '/^[^>]/d'; echo )
-    [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(echo "$NAME" | sed '$d')
-    NAME=$(echo "$NAME" | tail -n1)
+    # [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(echo "$NAME" | sed '$d')
+    # NAME=$(echo "$NAME" | tail -n1)
     # NAME=$(echo "$NAME" | cut -d ":" -f 1)
     # NAME=${NAME%: }
     NAME="**${NAME% }** "
@@ -162,21 +162,28 @@ case $3 in
 # xmpp.myxmpp|xmpp.myxmpp2)
 xmpp.*)
   # log_msg "$@" >> ~/mt.log
-  # for ipfsrss
-  # if [[ "$5" = "wtfipfs_rss" ]]; then
-  #   if [[ "$2" =~ liqsliu* ]]; then
-  #   block_msg
-  #   fi
-  # fi
-  # if [[ "$2" == debitcards ]]; then
-  #   block_msg
-  # elif [[ "$2" =~ *debit* ]]; then
-  #   block_msg
-  # if [[ "$NAME" =~ *debit*card* ]]; then
-  #   block_msg
-  # fi
   LABLE="X"
-  if echo "$TEXT" | head -n1 | grep -q -P "^>" && [[ $(echo "$TEXT" | sed '/^[^>]/,$!d' | grep -c -P "^>") -eq 0 && $(echo "$TEXT" | sed -n '/^>/!p' | sed -n '/^$/!p' | wc -l) -ge 1 ]]; then
+  line=$(echo "$TEXT"|head -n1)
+  # if [[ "$2" == "wtfipfs" ]] || [[ "$2" == " " ]]; then
+  if [[ "$NAME" == "wtfipfs" ]] || [[ "$NAME" == "bot" ]]; then
+    # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ \S+?:\*\* ')
+    # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ [^\s]+?:\*\* ')
+    # NAME=${NAME:2}
+    # LABLE=${NAME%% *}
+    # NAME=${NAME%:\*\* }
+    # NAME=${NAME#* }
+    # 不要用\S, 用[^\s]
+    if echo "$line" | grep -q -P '^\*\*\w+ [^\s]+?:\*\* '; then
+      NAME=$( echo "$line" | sed -r 's/^\*\*([a-zA-Z0-9] .+?):\*\* .*/\1/')
+      LABLE="0"
+      # LABLE=${NAME%% *}
+      # NAME=${NAME#* }
+      # TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
+      TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
+    else
+      NAME=""
+    fi
+  elif echo "$line" | grep -q -P "^>" && [[ $(echo "$TEXT" | sed '/^[^>]/,$!d' | grep -c -P "^>") -eq 0 && $(echo "$TEXT" | sed -n '/^>/!p' | sed -n '/^$/!p' | wc -l) -ge 1 ]]; then
     # QT=$( echo "$TEXT" | sed -n '/^> /p')
     QT=$( echo "$TEXT" | sed '/^[^>]/,$d')
     H=$(echo "$QT"|head -n1)
@@ -207,27 +214,10 @@ xmpp.*)
       QT=$( echo "$QT" | sed -r '1s/^> \*\*([a-zA-Z0-9] .+?:)\*\* /> \1 /')
     fi
     TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
-  elif echo "$TEXT" | head -n1 | grep -q -P '^» \['; then
+  elif echo "$line" | grep -q -P '^» \['; then
     QT=$( echo "$TEXT" | sed -e '/^[^»]/,$d' -e 's/» /> /1')
     TEXT=$( echo "$TEXT" | sed '/^[^»]/,$!d')
-  fi
 
-  # if [[ "$2" == "wtfipfs" ]] || [[ "$2" == " " ]]; then
-  if [[ "$NAME" == "wtfipfs" ]]; then
-    # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ \S+?:\*\* ')
-    # NAME=${NAME:2}
-    # LABLE=${NAME%% *}
-    # NAME=${NAME%:\*\* }
-    # NAME=${NAME#* }
-    NAME=$( echo "$TEXT" | sed -r 's/^\*\*([a-zA-Z0-9] .+?):\*\* .*/\1/')
-    LABLE=${NAME%% *}
-    NAME=${NAME#* }
-    # TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
-    TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
-  elif [[ "$NAME" == "bot" ]]; then
-    # NAME+="[xmpp]"
-    NAME=$( echo "$TEXT" | sed -r 's/^\*\*([a-zA-Z0-9] .+?):\*\* .*/\1/')
-    TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
   fi
 
 # if [[ ${11} = "gateway1" ]] && { [[ $5 = wtfipfs_rss ]] || [[ $5 = acg ]]; }; then
@@ -485,42 +475,46 @@ discord.*)
   fi
 
   ;;
-irc.irc2p)
-  LABLE="2"
-  ;;
+# irc.irc2p)
+#   LABLE="2"
+#   ;;
 irc.*)
   LABLE="I"
   ;;
-api.tox)
-  LABLE="T"
-  ;;
-api.in)
-  LABLE="0"
-  ;;
+# api.tox)
+#   LABLE="T"
+#   ;;
+# api.in)
+#   LABLE="0"
+#   ;;
 api.cmd)
   LABLE="0"
   ;;
 api.cmdres)
   LABLE="0"
+  if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
+    QT=$( echo "$NAME" | sed '/^[^>]/,$!d')
+    NAME=$( echo "$NAME" | tail -n1)
+  fi
   ;;
 api.gpt)
   LABLE="C"
   ;;
-api.simplex)
-  LABLE="S"
-  if [[ "$NAME" == "simplexbot" ]]; then
-    LABLE="C"
-  fi
-  ;;
-api.tg)
-  LABLE="G"
-  ;;
+# api.simplex)
+#   LABLE="S"
+#   if [[ "$NAME" == "simplexbot" ]]; then
+#     LABLE="C"
+#   fi
+#   ;;
+# api.tg)
+#   LABLE="G"
+#   ;;
 api.*)
   LABLE="A"
   ;;
-mattermost.*)
-  LABLE="m"
-  ;;
+# mattermost.*)
+#   LABLE="m"
+#   ;;
 *)
   LABLE="R"
   ;;
@@ -546,10 +540,11 @@ else
 # [[ -z "$QT" ]] && echo -n "$LABLE ${NAME}: " || echo -n "$QT
 #
 # $LABLE ${NAME}: "
-[[ -z "$QT" ]] && NAME="$LABLE ${NAME}: " || NAME="$QT
-
-$LABLE ${NAME}: "
+NAME="$LABLE ${NAME}: "
 fi
+# [[ -n "$QT" ]] && NAME="$QT
+#
+# ${NAME}"
 fi
 
 
@@ -563,7 +558,7 @@ fi
 # echo -n "$TEXT"
 # exit 0
 
-unset QT
+# unset QT
 
 
 if [[ -n "$4" ]] ; then
@@ -597,10 +592,11 @@ if [[ -n "$4" ]] ; then
     ;;
   irc.*)
   # elif [[ "$9" == "irc" ]] ; then
-    if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
-      QT=$(echo "$NAME" | head -n1 | sed 's/> //' )
+    # if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
+    if [[ -n "$QT" ]]; then
+      QT=$(echo "$QT" | head -n1 | sed 's/> //' )
       TEXT="$TEXT RE: $QT"
-      NAME=$(echo "$NAME" | tail -n1)
+      # NAME=$(echo "$NAME" | tail -n1)
     fi
 #    echo -n "$(echo "$NAME" | tail -n1)"
     # text_en=$(echo "$TEXT" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
@@ -690,8 +686,10 @@ if [[ -n "$4" ]] ; then
     md_name
     if [[ -z "$TEXT" ]]; then
 #      [[ $(echo "$NAME" | wc -l) -ge 3 ]] && [[ $(echo "$NAME" | grep -c -G '^$') -ge 1 ]] && echo "$NAME" | tail -n1 && echo "$NAME" | sed '/^$/,$d' && NAME=""
-      if [[ $(echo "$NAME" | wc -l) -ge 3 ]]; then
-        NAME=$(echo "$NAME" | tail -n1; echo "$NAME" | sed '/^$/,$d')
+      # if [[ $(echo "$NAME" | wc -l) -ge 3 ]]; then
+        # NAME=$(echo "$NAME" | tail -n1; echo "$NAME" | sed '/^$/,$d')
+      if [[ -n "$QT" ]]; then
+        NAME=$(echo "$NAME"; echo "$QT")
       fi
     else
       # if [[ "$NAME" == "C twitter: " ]]; then
@@ -712,122 +710,49 @@ if [[ -n "$4" ]] ; then
     fi
     ;;
   slack.*)
-    if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
-      TEXT="$(echo "$NAME" | sed '$d')
+    # if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
+    if [[ -n "$QT" ]]; then
+      # TEXT="$(echo "$NAME" | sed '$d')
+      TEXT="$QT
+
 $TEXT"
 #       TEXT="$TEXT
 # $(echo "$NAME" | sed '$d')"
-      NAME=$(echo "$NAME" | tail -n1)
+      # NAME=$(echo "$NAME" | tail -n1)
     fi
     ;;
   discord.*)
-  # elif [[ "$9" == "discord" ]] ; then
-    # if [[ "${10}" == "ID:753567017822453861" ]] ; then
-    # # if [[ "${10}" == "ID:1049107401992843306" ]] ; then
-    #   # if [[ "${3}" != "api.in" ]] ; then
-    #   if [[ "${5}" == "#wtfipfs:mozilla.org" ]] ; then
-    #     block_msg
-    #   elif [[ "${5}" == "-1001503043923" ]] ; then
-    #   # elif [[ "${5}" == "-1001193563578" ]] ; then
-    #     block_msg
-    #   fi
-    # # if [[ "${10}" == "wtfipfs" ]] ; then
-    # # if [[ "${10}" == "ID:753567017822453861" ]] ; then
-    # #   if [[ "${5}" == "#wtfipfs:matrix.org" ]] ; then
-    # #     block_msg
-    # #   elif [[ "${5}" == "-1001503043923" ]] ; then
-    # #     # new wtfipfs tg group
-    # #     block_msg
-    # #   fi
-    # # elif [[ "${10}" == "wtfipfs2" ]] ; then
-    # fi
-#     if [[ "$NAME" == "C twitter: " ]]; then
-#       :
-# #      NAME="bot"
-#     else
-#     fi
-    # if [[ "$NAME" == "C twitter: " ]]; then
-    #   TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' )
-    # elif [[ "$NAME" == "C bot: " && "${1:0:16}" == "twitter to text:" ]]; then
-    #   TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
-    # elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
-    #   TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
-    # fi
+    if [[ -n "$QT" ]]; then
+      # TEXT="$(echo "$NAME" | sed '$d')
+      TEXT="$QT
 
-    if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
-      TEXT="$(echo "$NAME" | sed '$d')
 $TEXT"
 #       TEXT="$TEXT
 # $(echo "$NAME" | sed '$d')"
-      NAME=$(echo "$NAME" | tail -n1)
-    fi
+      # NAME=$(echo "$NAME" | tail -n1)
     # NAME="${NAME:0:-2}"
-    if [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
+    elif [[ -z "$NAME" ]] || [[ "$NAME" == " " ]]; then
       NAME="error"
     fi
     ;;
   telegram.*)
-  # elif [[ "$9" == "telegram" ]] ; then
-    # if [[ "${10}" == "-1001193563578" ]] ; then
-    #   block_msg
-    # fi
-
-    # if [[ "NAME" == "C twitter: " ]]; then
-    #   exit 0 # another bot
-    # fi
-    # if [[ "NAME" == "C twitter: " ]]; then
-    #   TEXT='.>)\`'
-    # elif [[ "$3" == "api.tg" && "$11" != "gateway0" ]]; then
-    #   TEXT='.>)\`'
-#     if [[ $(echo "$NAME" | wc -l) -ge 3 ]]; then
-# #      NAME=$(bash "$SH_PATH/text2markdown.sh" "$NAME" | tail -n1 | sed 's/ / */' | sed 's/: $/*: /' )
-#       last=$(echo "$NAME" | tail -n1)
-#
-#       NAME=${last%: *}
-#       P=${NAME:0:1}
-#       NAME=${NAME:2}
-#       NAME=$(bash "$SH_PATH/text2markdown.sh" "$NAME")
-#       NAME="$P *${NAME}*: "
-#
-#       qt_text=$(echo "NAME" | sed '/^> /!d' | sed 's/^> //')
-#       line1=$(echo "$qt_text" | head -n1)
-#
-#       if [[ "${line1:0:2}" == "G " || "${line1%%: *}" == "C twitter" ]]; then
-#
-#         msg_text=$(echo "${line1#*: }"; echo "$qt_text" |sed '1d')
-#         msg_text=$(echo "$msg_text" | sed -r '$s|: https://wtfipfs\.eu\.org/[a-zA-Z0-9_./?=%-]+$||')
-#
-# #        msg_sender=$(echo "NAME" | head -n1 | cut -d' ' -f3- | cut -d':' -f1 )
-#         msg_sender="${line1%%: *}"
-#         msg_sender="${line1%%:\*\* *}"
-#         msg_sender="${msg_sender#* }"
-#
-#
-#       else
-#         msg_sender="bot"
-#         if [[ $( echo "$line1" | grep -c -P '^[A-Z] .*: .*' ) -eq 1 ]]; then
-#           msg_text=$qt_text
-#         else
-#           msg_text="$P ?: $qt_text"
-#         fi
-#       fi
-#       # use user api to send msg to tg and block this TEXT to tg
-#       bash "$SH_PATH/tg.sh" settoken wtfipfs setcid "${10}" "--reply" "$msg_text" "$msg_sender" "--md" "$NAME$(bash "$SH_PATH/text2markdown.sh" "$1")"
-#       TEXT='.>)\`'
-#     else
-#       TEXT=$(bash "$SH_PATH/text2markdown.sh" "$TEXT")
-#     fi
 
     TEXT=$(bash "$SH_PATH/text2markdown.sh" "$TEXT")
 
     # md_name
     if [[ -n "$NAME" ]]; then
     QT=""
-    [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(bash "$SH_PATH/text2markdown.sh" "$(echo "$NAME" | sed '/^$/,$d')" && echo)
-    NAME=$(bash "$SH_PATH/text2markdown.sh" "$(echo "$NAME" | tail -n1)")
+    # [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(bash "$SH_PATH/text2markdown.sh" "$(echo "$NAME" | sed '/^$/,$d')" && echo)
+    if [[ -n "$QT" ]]; then
+      QT=$(bash "$SH_PATH/text2markdown.sh" "$QT" && echo)
+    fi
+    # NAME=$(bash "$SH_PATH/text2markdown.sh" "$(echo "$NAME" | tail -n1)")
+    NAME=$(bash "$SH_PATH/text2markdown.sh" "$NAME")
     # echo -n "*$(echo "$NAME" | cut -d' ' -f 2- | sed '$s|: $||')*: "
-    M=$(echo "$NAME" | cut -d' ' -f1)
-    NAME=$(echo "$NAME" | cut -d' ' -f 2-)
+    # M=$(echo "$NAME" | cut -d' ' -f1)
+    # NAME=$(echo "$NAME" | cut -d' ' -f 2-)
+    M=${NAME%% *}
+    NAME=${NAME#* }
     NAME=${NAME%: }
 #     NAME="$QT
 # $M *$NAME*: "
@@ -835,25 +760,11 @@ $TEXT"
 $M *$NAME*: "
     fi
     ;;
-  zulip.*)
-  # elif [[ "$9" == "zulip" ]] ; then
-    if [[ "$NAME" == "C twitter: " ]]; then
-      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' )
-    elif [[ "$NAME" == "C bot: " && "${1:0:16}" == "twitter to text:" ]]; then
-      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
-    elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
-      TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
-    fi
-    ;;
-  # api.tox)
-  #   :
-  #   # go to edit cmd.sh
-  #   ;;
-  # api.gpt)
   api.cmd)
-    username=$(echo "$NAME" | tail -n1)
+    # username=$(echo "$NAME" | tail -n1)
+    username="$NAME"
     [[ "${username:0:2}" != "C " ]] && [[ "${username: -5}" != "bot: " ]] && {
-      QT=$(echo "$NAME" | sed -e '/^> [^>]/!d')
+      # QT=$(echo "$NAME" | sed -e '/^> [^>]/!d')
       qt=$(echo "$QT" | sed -e 's/^> //')
       if [[ -n "$qt" ]]; then
         text="$TEXT
@@ -869,41 +780,12 @@ $qt"
     ;;
   api.*)
     :
-    # go to edit cmd.sh
-#     if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
-# #       TEXT="$(echo "$NAME" | sed '$d')
-# # $TEXT"
-#       TEXT="$TEXT
-#
-# $(echo "$NAME" | sed -e '/^> [^>]/!d' -e 's/^> //')"
-# # $(echo "$NAME" | sed -e '/^$/,$d' -e 's/^> //')"
-# # $(echo "$NAME" | sed -e '/^[^>]/,$d' -e 's/^> //')"
-#       NAME=$(echo "$NAME" | tail -n1)
-#     fi
     ;;
   esac
   # fi
 fi
 
 
-# if [[ "$9" != discord ]]; then
-# if [[ "$3" == "api.gpt" ]]; then
-#   # if [[ $(echo "$TEXT" | wc -l) -gt 1 ]]; then
-#   # if [[ "${TEXT%*\[结束\]}" == "${TEXT}" ]] && [[ "${TEXT%*\[思考中...\]}" == "${TEXT}" ]]; then
-#   # if [[ "${TEXT%*\[思考中...\]}" == "${TEXT}" ]]; then
-#   if echo "$TEXT" | head -n1 | grep -q -P "^[A-Z] \S+: "; then
-#     :
-#   else
-#       NAME=""
-#   fi
-# fi
-# fi
-
 echo -n "$NAME"
 echo -n $SPLIT
 echo -n "$TEXT"
-
-# if [[ "$6" = test ]]; then
-# echo "finally NAME:|$NAME|" >> ~/tera/mt_msg.log
-# echo "finally TEXT:|$TEXT|" >> ~/tera/mt_msg.log
-# fi
