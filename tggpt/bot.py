@@ -923,7 +923,7 @@ async def mt2tg(msg):
             return
         if name.startswith("**C "):
             return
-        logger.info("got msg: %s" % msgd)
+        #  logger.info("got msg: %s" % msgd)
 
         #  if len(username.splitlines()) > 1:
         #    pass
@@ -1127,7 +1127,7 @@ async def mt2tg(msg):
             msgd.pop("Extra")
             logger.warning("removed file info from mt api")
 
-        logger.info("mt msg: {}".format(msgd))
+        logger.info("got msg from mt: {}".format(msgd))
         #      if name == "C Telegram: ":
 
         msgd.update({"chat_id": chat_id})
@@ -1494,7 +1494,7 @@ async def read_res(event):
 
   if msg.is_reply:
     qid=msg.reply_to_msg_id
-    print(f"tg msg id: {msg.id=} {event.id=} {qid=} {gateways=} {mtmsgsg=}")
+    print(f"tg msg id: {msg.id=} {event.id=} {qid=}")
     if qid not in gateways:
       logger.error(f"E: not found gateway for {qid=}, {gateways=} {msg.text=}")
       return
@@ -1509,6 +1509,7 @@ async def read_res(event):
       if not text:
         print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
         return
+      print(f"tg msg: {text}: {msg.id=} {event.id=} {qid=} {gateways=} {mtmsgsg=}")
       l = text.splitlines()
       if l[-1] in loadings:
         return
