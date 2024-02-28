@@ -97,11 +97,11 @@ log_msg(){
   # log_msg
   # log_msg "$@" >> ~/mt.log
 
-if [[ $6 == gateway1 ]]; then
-  log_msg "$@" >> ~/mt.log
-elif [[ $3 == api.gpt ]]; then
-  log_msg "$@" >> ~/mt.log
-fi
+# if [[ $6 == gateway1 ]]; then
+#   log_msg "$@" >> ~/mt.log
+# elif [[ $3 == api.gpt ]]; then
+#   log_msg "$@" >> ~/mt.log
+# fi
 
 #if [[ $3 = xmpp.myxmpp ]]; then
 # if [[ "$1" =~ *pong* ]]; then
@@ -203,7 +203,7 @@ xmpp.*)
       # TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
       # TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
       TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
-      TEXT="${TEXT:$[${#NAME}+5]}"
+      TEXT="${TEXT:$[${#NAME}+6]}"
     else
       NAME=""
       unset QT
