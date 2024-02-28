@@ -741,15 +741,17 @@ $TEXT"
     fi
     ;;
   telegram.*)
+    # https://core.telegram.org/bots/api#markdownv2-style
 
-    # TEXT=$(bash "$SH_PATH/text2markdown.sh" "$TEXT")
+    TEXT=$(bash "$SH_PATH/text2markdown.sh" "$TEXT")
 
     # md_name
     if [[ -n "$NAME" ]]; then
     # QT=""
     # [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(bash "$SH_PATH/text2markdown.sh" "$(echo "$NAME" | sed '/^$/,$d')" && echo)
     if [[ -n "$QT" ]]; then
-      QT=$(bash "$SH_PATH/text2markdown.sh" "$QT" && echo)
+      QT=$(echo "$QT" | head -n1 | sed 's/> //' )
+      QT=$(bash "$SH_PATH/text2markdown.sh" "$QT" | sed 's/^/>/' )
     fi
     # NAME=$(bash "$SH_PATH/text2markdown.sh" "$(echo "$NAME" | tail -n1)")
     NAME=$(bash "$SH_PATH/text2markdown.sh" "$NAME")
@@ -764,6 +766,8 @@ $TEXT"
     NAME="$QT
 $M *$NAME*: "
     fi
+    [[ "${TEXT:0:3}" != '```' ]] && TEXT="
+$TEXT"
     ;;
   api.cmd)
     # username=$(echo "$NAME" | tail -n1)
