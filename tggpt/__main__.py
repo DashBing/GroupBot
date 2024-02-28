@@ -28,6 +28,7 @@ def main():
     # with UB:
     loop.run_until_complete(run())
   except KeyboardInterrupt as e:
+    logger.info("I: 手动终止")
     raise e
   except SystemExit as e:
     raise e
