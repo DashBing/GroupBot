@@ -29,7 +29,7 @@ def main():
     loop.run_until_complete(run())
   except KeyboardInterrupt as e:
     logger.info("I: 手动终止")
-    raise e
+    #  raise e
   except SystemExit as e:
     raise e
   except Exception as e:
