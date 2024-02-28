@@ -7,7 +7,7 @@ X xmpp群( ipfs@salas.suchat.org )
 I irc频道( #wtfipfs )
 M matrix群( #wtfipfs:matrix.org )
 D discord( https://discord.gg/G6YmQuCJFD )
-G telegram( https://t.me/wtfipfs_fucktelegram ), 桥接用的 t2bot (不太稳)，后续可能会换用群主自己的。
+G telegram( https://t.me/wtfipfs_fucktelegram )
 ...
 C bot自动回复或推送的新闻
 
