@@ -585,6 +585,31 @@ fi
 # unset QT
 
 
+
+get_full_text(){
+  is_ok=0
+  SM_LOCK="$SH_PATH/SM_LOCK_$6"
+  if [[ -e "$SM_LOCK" ]]; then
+    tmp=$(cat "$SM_LOCK")
+    # echo "iii: read tmp: $tmp" >> ~/mt.log
+    if [[ "${tmp::${#TEXT}}" == "$TEXT" ]]; then
+      TEXT=$tmp
+      # rm "$SM_LOCK2"
+      is_ok=1
+      # echo "iii: change TEXT" >> ~/mt.log
+      bash "$SH_PATH/sm.sh" "C cmd" "I: got full text for $8: $NAME${TEXT::64}" 4249 test
+    fi
+  # else
+    # echo "iii: no SM_LOCK2" >> ~/mt.log
+  fi
+  # if [[ $is_ok -eq 0 ]]; then
+  #   return 1
+  # else
+  #   return 0
+  # fi
+}
+
+
 if [[ -n "$4" ]] ; then
   # case $9 in
   case $8 in
@@ -661,20 +686,24 @@ if [[ -n "$4" ]] ; then
     elif [[ "$(echo "$TEXT" | wc -l)" -le 1 && $(echo -n "$NAME$TEXT"|wc -c) -le 500 ]]; then
       :
     elif [[ "$NAME" == "C bot: " ]]; then
-      is_ok=0
-      SM_LOCK="$SH_PATH/SM_LOCK_$6"
-      if [[ -e "$SM_LOCK" ]]; then
-        tmp=$(cat "$SM_LOCK")
-        # echo "iii: read tmp: $tmp" >> ~/mt.log
-        if [[ "${tmp::${#TEXT}}" == "$TEXT" ]]; then
-          TEXT=$tmp
-          # rm "$SM_LOCK2"
-          is_ok=1
-          # echo "iii: change TEXT" >> ~/mt.log
-        fi
-      # else
-        # echo "iii: no SM_LOCK2" >> ~/mt.log
-      fi
+      # is_ok=0
+      # SM_LOCK="$SH_PATH/SM_LOCK_$6"
+      # if [[ -e "$SM_LOCK" ]]; then
+      #   tmp=$(cat "$SM_LOCK")
+      #   # echo "iii: read tmp: $tmp" >> ~/mt.log
+      #   if [[ "${tmp::${#TEXT}}" == "$TEXT" ]]; then
+      #     TEXT=$tmp
+      #     # rm "$SM_LOCK2"
+      #     is_ok=1
+      #     # echo "iii: change TEXT" >> ~/mt.log
+      #   fi
+      # # else
+      #   # echo "iii: no SM_LOCK2" >> ~/mt.log
+      # fi
+      # name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
+      # TEXT=${TEXT:${#name_re}}
+      # tmp=$(echo "$TEXT" | head -n1)
+      get_full_text
       name_re=$(echo "$TEXT" | head -n1 | grep -o -P ".*?: " | head -n1 )
       TEXT=${TEXT:${#name_re}}
       tmp=$(echo "$TEXT" | head -n1)
@@ -789,6 +818,7 @@ $M *$NAME*: "
     ;;
   api.cmd)
     if [[ -n "$NAME" ]]; then
+      get_full_text
     # username=$(echo "$NAME" | tail -n1)
     username="$NAME"
     [[ "${username:0:2}" != "C " ]] && [[ "${username: -5}" != "bot: " ]] && {
