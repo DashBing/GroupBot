@@ -1328,7 +1328,7 @@ async def http(url, method="GET", return_headers=False, **kwargs):
             return html
 
 @exceptions_handler
-async def mt_send(text="null", username="gpt", gateway="test", qt=None):
+async def mt_send(text="null", username="bot", gateway="test", qt=None):
 
     # send msg to matterbridge
     url = "http://" + MT_API + "/api/message"

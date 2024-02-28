@@ -22,7 +22,7 @@ if [[ -z "$2" ]]; then
     discord.*)
       if [[ "${3}" == "api.gpt" ]] ; then
         # echo -n "C gpt: "
-        NAME="gpt"
+        NAME="bot"
       elif [[ "${3}" == "api.cmdres" ]] ; then
         # echo -n "C bot: "
         NAME="C bot"
@@ -728,18 +728,18 @@ if [[ -n "$4" ]] ; then
     fi
     newline
     ;;
-  slack.*)
-    # if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
-    if [[ -n "$QT" ]]; then
-      # TEXT="$(echo "$NAME" | sed '$d')
-      TEXT="$QT
-
-$TEXT"
-#       TEXT="$TEXT
-# $(echo "$NAME" | sed '$d')"
-      # NAME=$(echo "$NAME" | tail -n1)
-    fi
-    ;;
+#   slack.*)
+#     # if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
+#     if [[ -n "$QT" ]]; then
+#       # TEXT="$(echo "$NAME" | sed '$d')
+#       TEXT="$QT
+#
+# $TEXT"
+# #       TEXT="$TEXT
+# # $(echo "$NAME" | sed '$d')"
+#       # NAME=$(echo "$NAME" | tail -n1)
+#     fi
+#     ;;
   discord.*)
     if [[ -n "$QT" ]]; then
       # TEXT="$(echo "$NAME" | sed '$d')
