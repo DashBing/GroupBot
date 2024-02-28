@@ -437,9 +437,9 @@ telegram.*)
   #   # TEXT=$(echo "$TEXT"|sed -r '$s|: $|\n--\n|')
   #   TEXT=$(echo "$TEXT"|sed '$s|: $|\n--\n|')
   # fi
-   if [[ $8 = xmpp.myxmpp ]]; then
-    log_msg "$@" >> ~/mt.log
-   fi
+   # if [[ $8 = xmpp.myxmpp ]]; then
+   #  log_msg "$@" >> ~/mt.log
+   # fi
   ;;
 slack.*)
   LABLE="s"
@@ -741,7 +741,7 @@ $TEXT"
 
     # md_name
     if [[ -n "$NAME" ]]; then
-    QT=""
+    # QT=""
     # [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(bash "$SH_PATH/text2markdown.sh" "$(echo "$NAME" | sed '/^$/,$d')" && echo)
     if [[ -n "$QT" ]]; then
       QT=$(bash "$SH_PATH/text2markdown.sh" "$QT" && echo)
