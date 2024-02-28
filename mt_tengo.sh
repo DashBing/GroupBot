@@ -64,6 +64,13 @@ ${NAME}"
   fi
 }
 
+newline(){
+  if [[ "${TEXT:0:1}" == '>' || "${TEXT:0:3}" == '```' ]]; then
+    TEXT="
+$TEXT"
+  fi
+}
+
 
 
 # [[ "${NAME:0:1}" == ">" ]] && orig_msg
@@ -598,9 +605,7 @@ if [[ -n "$4" ]] ; then
     else
       md_name
     fi
-    ;;
-  api.simplex)
-    :
+    newline
     ;;
   irc.*)
   # elif [[ "$9" == "irc" ]] ; then
@@ -773,8 +778,7 @@ $TEXT"
     NAME="$QT
 $M *$NAME*: "
     fi
-    [[ "${TEXT:0:3}" == '```' ]] && TEXT="
-$TEXT"
+    newline
     ;;
   api.cmd)
     # username=$(echo "$NAME" | tail -n1)
