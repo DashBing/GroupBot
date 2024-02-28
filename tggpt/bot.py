@@ -910,6 +910,7 @@ async def mt2tg(msg):
 
         text = msgd["text"]
         name = msgd["username"]
+        gateway = msgd["gateway"]
         #  print(f"I: got msg: {name}: {text}")
         if not text:
           return
@@ -928,10 +929,10 @@ async def mt2tg(msg):
         #    pass
         #  # need fix
         #  if "gateway11" in MT_GATEWAY_LIST:
-        #      if msgd["gateway"] == "gateway1":
-        #          msgd["gateway"] = "gateway11"
+        #      if gateway == "gateway1":
+        #          gateway = "gateway11"
 
-        #  if msgd["gateway"] == "test":
+        #  if gateway == "test":
         #    pass
         #  else:
         #    return
@@ -941,18 +942,19 @@ async def mt2tg(msg):
         global queue
         need_clean = False
 
-        if msgd["gateway"] not in queues:
-          queues[msgd["gateway"]] = asyncio.PriorityQueue(maxsize=512)
-          mtmsgsg[msgd["gateway"]] = {}
-          asyncio.create_task(tg2mt_loop(msgd["gateway"]))
+        if gateway not in mtmsgsg:
+          mtmsgsg[gateway] = {}
+        #  if gateway not in queues:
+        #    queues[gateway] = asyncio.PriorityQueue(maxsize=512)
+          #  asyncio.create_task(tg2mt_loop(gateway))
 
         if text == "ping":
           all = 0
           for i in mtmsgsg:
             all += len(mtmsgsg[i])
-          #  await mt_send(f"pong. now tasks: {here}/{all} {mtmsgsg}", gateway=msgd["gateway"])
-          here = len(mtmsgsg[msgd["gateway"]])
-          await mt_send(f"pong. now tasks: {here}/{all}", gateway=msgd["gateway"])
+          #  await mt_send(f"pong. now tasks: {here}/{all} {mtmsgsg}", gateway=gateway)
+          here = len(mtmsgsg[gateway])
+          await mt_send(f"pong. now tasks: {here}/{all}", gateway=gateway)
           return
 
 
@@ -964,30 +966,30 @@ async def mt2tg(msg):
           cmds = text[1:].split(' ')
           cmd = cmds[0]
           length = len(cmds)
-          here = len(mtmsgsg[msgd["gateway"]])
+          here = len(mtmsgsg[gateway])
           if text == ".gptmode":
-            if msgd["gateway"] in gptmode:
-              gptmode.remove(msgd["gateway"])
-              await mt_send("gpt mode off", gateway=msgd["gateway"])
+            if gateway in gptmode:
+              gptmode.remove(gateway)
+              await mt_send("gpt mode off", gateway=gateway)
               return
             else:
-              gptmode.append(msgd["gateway"])
-              await mt_send("gpt mode on", gateway=msgd["gateway"])
+              gptmode.append(gateway)
+              await mt_send("gpt mode on", gateway=gateway)
               return
           elif text == ".gpt reset":
             if no_reset.is_set():
               no_reset.clear()
-              await mt_send(f"now tasks: {here}, waiting...", gateway=msgd["gateway"])
+              await mt_send(f"now tasks: {here}, waiting...", gateway=gateway)
               #  for g in mtmsgsg:
               #  for g in queues:
               #    await mt_send(f"clean {g}...", gateway="test")
               #    await queues[g].put((0,0,0))
               text= CLEAN
             else:
-              await mt_send("waiting reset...", gateway=msgd["gateway"])
+              await mt_send("waiting reset...", gateway=gateway)
               await no_reset.wait()
-              here = len(mtmsgsg[msgd["gateway"]])
-              await mt_send(f"reset ok, now tasks: {here}", gateway=msgd["gateway"])
+              here = len(mtmsgsg[gateway])
+              await mt_send(f"reset ok, now tasks: {here}", gateway=gateway)
               return
           #  elif text == ".gpt" or text.startswith(".gpt ") or text.startswith(".gpt\n"):
           elif cmd == "gpt":
@@ -995,15 +997,15 @@ async def mt2tg(msg):
             #  text=text[5:]
             text = ' '.join(cmds[1:])
             if not text:
-              #  await mt_send(".gpt $text", gateway=msgd["gateway"])
-              await mt_send(HELP, gateway=msgd["gateway"])
+              #  await mt_send(".gpt $text", gateway=gateway)
+              await mt_send(HELP, gateway=gateway)
               return
           #  elif text == ".se" or text.startswith(".se "):
           elif cmd == "se":
             #  need_clean = True
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send(".se $text", gateway=msgd["gateway"])
+              await mt_send(".se $text", gateway=gateway)
               return
             text="/search "+text
           #  elif text == ".img" or text.startswith(".img "):
@@ -1012,7 +1014,7 @@ async def mt2tg(msg):
             #  text=text[5:]
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send(".img $text\n--\nhttps://t.me/littleb_gptBOT", gateway=msgd["gateway"])
+              await mt_send(".img $text\n--\nhttps://t.me/littleb_gptBOT", gateway=gateway)
               return
             text="/image "+text
           #  elif text.startswith(".gtz"):
@@ -1020,7 +1022,7 @@ async def mt2tg(msg):
             #  text=text[5:]
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send("中文专用翻译", gateway=msgd["gateway"])
+              await mt_send("中文专用翻译", gateway=gateway)
               return
             #  need_clean = True
             text = f'{PROMPT_TR_ZH}“{text}”'
@@ -1029,7 +1031,7 @@ async def mt2tg(msg):
             #  text=text[4:]
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send("gpt translate", gateway=msgd["gateway"])
+              await mt_send("gpt translate", gateway=gateway)
               return
             #  need_clean = True
             text = f'{PROMPT_TR_MY}“{text}”'
@@ -1038,16 +1040,17 @@ async def mt2tg(msg):
             #  text=text[6:]
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send("gpt translate with short prompt", gateway=msgd["gateway"])
+              await mt_send("gpt translate with short prompt", gateway=gateway)
               return
             #  need_clean = True
             text = f'{PROMPT_TR_MY_S}“{text}”'
           else:
             return
 
-        elif msgd["gateway"] in gptmode:
+        elif gateway in gptmode:
           pass
         else:
+          # tilebot
 
           tmp=""
           for i in text.splitlines():
@@ -1093,8 +1096,8 @@ async def mt2tg(msg):
             #  res="%s%s" % (nick, res)
             res="%s%s" % (nick.splitlines()[-1], res)
             #  fast_reply(muc, res, msg_type)
-            #  await mt_send(res, gateway=msgd["gateway"])
-            await mt_send(res, gateway=msgd["gateway"], username="titlebot")
+            #  await mt_send(res, gateway=gateway)
+            await mt_send(res, gateway=gateway, username="titlebot")
           return
 
 
@@ -1102,11 +1105,11 @@ async def mt2tg(msg):
 
 
         chat_id = gpt_id
-        #  if msgd["gateway"] in MT_GATEWAY_LIST:
-        #      chat_id = MT_GATEWAY_LIST[msgd["gateway"]][0]
+        #  if gateway in MT_GATEWAY_LIST:
+        #      chat_id = MT_GATEWAY_LIST[gateway][0]
         #  else:
         #      # first msg is empty
-        #      logger.warning("unkonwon gateway: {}".format(msgd["gateway"]))
+        #      logger.warning("unkonwon gateway: {}".format(gateway))
         #      logger.warning("received data: {}".format(msg))
         #      return
 
@@ -1168,30 +1171,28 @@ async def mt2tg(msg):
         #  await queue.put([msg, msgd])
         if text != CLEAN:
           async with queue_lock:
-            #  queues[msgd["gateway"]] = {msg.id: [msgd, None]}
-            #  if msgd["gateway"] not in nids:
-              #  nids[msgd["gateway"]] = msg.id
-            gateways[msg.id] = msgd["gateway"]
+            #  queues[gateway] = {msg.id: [msgd, None]}
+            #  if gateway not in nids:
+              #  nids[gateway] = msg.id
+            gateways[msg.id] = gateway
             #  mtmsgs[msg.id] = [msgd,None]
-            #  if msgd["gateway"] not in mtmsgs:
-            mtmsgsg[msgd["gateway"]][msg.id] = [msgd, None]
+            #  if gateway not in mtmsgs:
+            mtmsgsg[gateway][msg.id] = [msgd, None]
         else:
           await asyncio.sleep(1)
           #  for g in queues:
           for g in mtmsgsg:
             mtmsgs = mtmsgsg[g]
-            await mt_send(f"{g}: {mtmsgs=}", gateway="test")
             mtmsgs.clear()
-            await mt_send(f"{g}: {mtmsgs=}", gateway="test")
-          await mt_send(f"{gateways=}", gateway="test")
+          await mt_send(f"cleaned: {mtmsgsg=}", gateway="test")
           gateways.clear()
-          await mt_send(f"{gateways=}", gateway="test")
-          here = len(mtmsgsg[msgd["gateway"]])
+          await mt_send(f"cleaned: {gateways=}", gateway="test")
+          here = len(mtmsgsg[gateway])
           all = 0
           for i in mtmsgsg:
             all += len(mtmsgsg[i])
           no_reset.set()
-          await mt_send(f"reset ok, now tasks: {here}/{all}", gateway=msgd["gateway"])
+          await mt_send(f"reset ok, now tasks: {here}/{all}", gateway=gateway)
         return
 
         text = name + text
@@ -1493,7 +1494,7 @@ async def read_res(event):
 
   if msg.is_reply:
     qid=msg.reply_to_msg_id
-    print(f"msg id: {msg.id=} {event.id=} {qid=} {gateways=} {mtmsgsg=}")
+    print(f"tg msg id: {msg.id=} {event.id=} {qid=} {gateways=} {mtmsgsg=}")
     if qid not in gateways:
       logger.error(f"E: not found gateway for {qid=}, {gateways=} {msg.text=}")
       return
@@ -1578,271 +1579,271 @@ async def read_res(event):
 
 
 
-async def tg2mt_loop(gateway="test"):
-  global nids, queues, mtmsgsg
-  if gateway not in queues:
-    queue = asyncio.PriorityQueue(maxsize=512)
-    queues[gateway] = queue
-  else:
-    queue = queues[gateway]
-  #  if gateway not in nids:
-  #    nids[gateway] = 0
-  #  nid = nids[gateway]
-  nid = 0
-  #  line = None
-  mtmsgs = mtmsgsg[gateway]
-  while True:
-    print(f"I: {gateway} waiting...")
-    #  msg_id, msg, qid = await queue.get()
-    #  msg_id, msg = await queue.get()
-    date, qid, msg = await queue.get()
-    #  if date == 0:
-    #    await mt_send(f"{gateway}: {mtmsgs=}", gateway="test")
-    #    await mt_send(f"{gateway}: {gateways=}", gateway="test")
-    #    mtmsgs.clear()
-    #    gateways.clear()
-    #    logger.warning(f"W: cleared mtmsgs")
-    #    #  await asyncio.sleep(2)
-    #    #  await no_reset.wait()
-    #    nid = 0
-    #    #  last = None
-    #    continue
-    logger.info(f"got msg: {qid=} {msg=}")
-    if not no_reset.is_set():
-      await no_reset.wait()
-      continue
-    #  print(f"I: got: {msg=}")
-    text = msg.text
-    #  qid=msg.reply_to_msg_id
-    if qid not in gateways:
-      continue
-    if nid == 0:
-      nid = qid
-      print(f"init nid to {nid}")
-    elif nid < min(mtmsgs.keys()):
-      nid = min(mtmsgs.keys())
-      #  last = None
-      print(f"update {nid=}")
-    else:
-      print(f"no change {nid=}")
-
-    if qid > nid:
-      #  if len(mtmsgs) > 1 and mtmsgs[qid][0]["text"] == mtmsgs[max(list(mtmsgs.keys()).remove(qid))][0]["text"]:
-      #  if len(mtmsgs) > 1 and mtmsgs[qid][0]["text"] == mtmsgs[list(mtmsgs.keys()).sort()[-2]][0]["text"]:
-      if len(mtmsgs) > 2:
-        for i in mtmsgs:
-          if mtmsgs[i][0]["text"] == mtmsgs[qid][0]["text"]:
-            async with queue_lock:
-              for q in mtmsgs.copy():
-                if q != qid:
-                  mtmsgs.pop(q)
-            if len(mtmsgs) == 1:
-              await mt_send("已清理历史任务，切换到最新任务..", gateway=gateway)
-              nid = qid
-              #  last = None
-            break
-
-    if qid == nid:
-      #  if text == LOADING or text == LOADING2:
-      if text in loadings:
-        await mt_send(f"{mtmsgs[qid][0]['username']}[思考中...]", gateway=gateway)
-        continue
-
-
-
-    if msg.file:
-      file = msg.file
-      logger.info(file)
-      if hasattr(file, "name") and file.name:
-        file_name = file.name
-      else:
-        logger.warning(f"W: file: no name: {file=}")
-        #  file_name = "%s.%s" % (int(time.time()), "jpg")
-        file_name = "%s%s" % (int(time.time()), mimetypes.guess_extension(file.mime_type))
-      res = f"\nfile name: {file_name}\nsize: {format_byte(file.size)}\ntype: {file.mime_type}"
-      if file.size > FILE_DOWNLOAD_MAX_BYTES:
-        await mt_send(f"文件过大，取消下载。${res}", gateway=gateway)
-        return
-      url = f"tmp link: https://{DOMAIN}/{file_name}"
-      path = f"{TMP_PATH}/{file_name}"
-      try:
-        async with async_open(path, 'wb') as f:
-          #  async for chunk in UB.iter_download(file):
-          async for chunk in UB.iter_download(msg):
-            await f.write(chunk)
-            if qid == nid:
-              await mt_send(f"下载中：{format_byte(f.tell())}/{format_byte(file.size)}", gateway=gateway)
-      except Exception as e:
-        logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
-        try:
-          await UB.download_media(msg, path)
-        except Exception as e:
-          logger.warning(f"W: start to download to mem: {repr(e)}", exc_info=True, stack_info=True)
-          try:
-            url = await UB.download_media(msg, bytes)
-          except Exception as e:
-            logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
-            await mt_send(f"E: failed to downlaod, error: {repr(e)}${res}", gateway=gateway)
-            return
-
-      try:
-        if isinstance(url, bytes):
-          url = "pb: %s" % await pastebin(url, filename=file_name)
-        else:
-          #  async with async_open(path, 'rb') as f:
-          with open(path, 'rb') as f:
-            url = f"pb: %s\n{url}" % await pastebin(f, filename=file_name)
-      except Exception as e:
-        logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
-        print(f"E: {repr(e)}")
-        if isinstance(url, bytes):
-          url = f"pb: E: {repr(e)}"
-        else:
-          url = f"{url}\n--\npb: E: {repr(e)}"
-
-      try:
-        if isinstance(url, bytes):
-          url = "ipfs: %s" % await ipfs_add(url, filename=file_name)
-        else:
-          #  async with async_open(path, 'rb') as f:
-          with open(path, 'rb') as f:
-            url = f"ipfs: %s\n{url}" % await ipfs_add(f, filename=file_name)
-      except Exception as e:
-        logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
-        print(f"E: {repr(e)}")
-        if isinstance(url, bytes):
-          url = f"ipfs: E: {repr(e)}"
-        else:
-          url = f"{url}\n--\nipfs: E: {repr(e)}"
-
-
-      #  while qid != min(queue.keys()):
-      #    await asyncio.sleep(2)
-      res = f"{text}\n--\n{url}\n--${res}"
-      if qid > nid:
-        mtmsgs[qid][-1] = res
-        mtmsgs[qid].append(None)
-        logger.warning(f"W: archived img: {res=}")
-        continue
-      else:
-        await mt_send(res, gateway=gateway)
-        mtmsgs.pop(nid)
-        gateways.pop(nid)
-        #  last = None
-        continue
-
-
-    elif not text:
-      print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
-      return
-
-
-    ending= None
-    #  print("< Q: %s" % queue[qid][0]['text'])
-    #  if text.endswith(LOADING):
-    #    #  print("> gpt(未结束): %s" % text)
-    #    text = text.rstrip(LOADINGS)
-    #  elif text.endswith(LOADING2):
-    #    #  print("> gpt(未结束): %s" % text)
-    #    text = text.rstrip(LOADINGS2)
-    l = text.splitlines()
-    if l[-1] in loadings:
-      if len(l) > 1 and l[-2] == "":
-        text = "\n".join(l[:-2])
-      else:
-        text = "\n".join(l[:-1])
-      if not text:
-        text = "None"
-    elif len(l) > 1 and f"{l[-2]}\n{l[-1]}" in loadings:
-      if len(l) > 2 and l[-3] == "":
-        text = "\n".join(l[:-3])
-      else:
-        text = "\n".join(l[:-2])
-      if not text:
-        text = "None"
-    else:
-      ending = "\n\n**[结束]**"
-      #  print("> gpt: %s" % text)
-
-
-
-      #  if len(text.splitlines()) > 1:
-        #  last = len(text.splitlines())-2
-        #  text = text.rstrip("\n"+text.splitlines()[-1])
-    #  urls = urlre.findall(text)
-    urls = url_md_left.findall(text)
-    if urls:
-      if not ending:
-        #  url = url[-1][0]
-        url = urls[-1]
-        print("last url: "+url)
-        if text.endswith(url):
-          text = text.rstrip(url)
-          print(f"rstriped: {text}")
-          urls.pop(-1)
-
-    if urls:
-      for url in urls:
-        #  url = url[0]
-        if f"{url})" in text:
-          if not text.endswith(f"{url})"):
-            text = text.replace(f"{url})", f"{url}) ")
-
-
-
-    if qid > nid:
-      mtmsgs[qid][1] = text
-      print(f"W: archived msg {msg.id=} {mtmsgs=}")
-      if ending:
-        mtmsgs[qid].append(None)
-      continue
-
-    #  try:
-    if mtmsgs[qid][1] is None:
-      res = text
-    else:
-      res = text[len(mtmsgs[qid][1]):]
-    #  except Exception as e:
-    #    logger.info(f"I: {e=} now: {qid=} {mtmsgs=}, {nid=}")
-    #    #  continue
-
-    if ending:
-      #  res += "\n\n**[结束]**"
-      res += ending
-      await mt_send(res, gateway=gateway, username="")
-      print(f"I: end {msg.id}")
-        #  no_reset.set()
-        #  await mt_send("reset ok", gateway=msgd["gateway"])
-      while True:
-        if not no_reset.is_set():
-          logger.info("wait for end of reset...")
-          await asyncio.sleep(1)
-          continue
-        async with queue_lock:
-          mtmsgs.pop(nid)
-          gateways.pop(nid)
-        #  last = None
-        print(f"removed {nid=}")
-        if len(mtmsgs) == 0:
-          nid = 0
-          #  gateways.clear()
-          print("I: now mtmsgs is empty")
-          break
-        nid = min(mtmsgs.keys())
-        print(f"update nid to {nid} {mtmsgs.keys()=} {mtmsgs=}")
-        if mtmsgs[nid][1] is None:
-          break
-        if mtmsgs[nid][-1] is None:
-          await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
-          print(f"will to remove {nid=} {mtmsgs=} {gateways=}")
-        else:
-          await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
-          break
-    else:
-
-      mtmsgs[qid][1] = text
-      await mt_send(res, gateway=gateway, username="")
-      print(f"I: append {msg.id}")
+#  async def tg2mt_loop(gateway="test"):
+#    global nids, queues, mtmsgsg
+#    if gateway not in queues:
+#      queue = asyncio.PriorityQueue(maxsize=512)
+#      queues[gateway] = queue
+#    else:
+#      queue = queues[gateway]
+#    #  if gateway not in nids:
+#    #    nids[gateway] = 0
+#    #  nid = nids[gateway]
+#    nid = 0
+#    #  line = None
+#    mtmsgs = mtmsgsg[gateway]
+#    while True:
+#      print(f"I: {gateway} waiting...")
+#      #  msg_id, msg, qid = await queue.get()
+#      #  msg_id, msg = await queue.get()
+#      date, qid, msg = await queue.get()
+#      #  if date == 0:
+#      #    await mt_send(f"{gateway}: {mtmsgs=}", gateway="test")
+#      #    await mt_send(f"{gateway}: {gateways=}", gateway="test")
+#      #    mtmsgs.clear()
+#      #    gateways.clear()
+#      #    logger.warning(f"W: cleared mtmsgs")
+#      #    #  await asyncio.sleep(2)
+#      #    #  await no_reset.wait()
+#      #    nid = 0
+#      #    #  last = None
+#      #    continue
+#      logger.info(f"got msg: {qid=} {msg=}")
+#      if not no_reset.is_set():
+#        await no_reset.wait()
+#        continue
+#      #  print(f"I: got: {msg=}")
+#      text = msg.text
+#      #  qid=msg.reply_to_msg_id
+#      if qid not in gateways:
+#        continue
+#      if nid == 0:
+#        nid = qid
+#        print(f"init nid to {nid}")
+#      elif nid < min(mtmsgs.keys()):
+#        nid = min(mtmsgs.keys())
+#        #  last = None
+#        print(f"update {nid=}")
+#      else:
+#        print(f"no change {nid=}")
+#
+#      if qid > nid:
+#        #  if len(mtmsgs) > 1 and mtmsgs[qid][0]["text"] == mtmsgs[max(list(mtmsgs.keys()).remove(qid))][0]["text"]:
+#        #  if len(mtmsgs) > 1 and mtmsgs[qid][0]["text"] == mtmsgs[list(mtmsgs.keys()).sort()[-2]][0]["text"]:
+#        if len(mtmsgs) > 2:
+#          for i in mtmsgs:
+#            if mtmsgs[i][0]["text"] == mtmsgs[qid][0]["text"]:
+#              async with queue_lock:
+#                for q in mtmsgs.copy():
+#                  if q != qid:
+#                    mtmsgs.pop(q)
+#              if len(mtmsgs) == 1:
+#                await mt_send("已清理历史任务，切换到最新任务..", gateway=gateway)
+#                nid = qid
+#                #  last = None
+#              break
+#
+#      if qid == nid:
+#        #  if text == LOADING or text == LOADING2:
+#        if text in loadings:
+#          await mt_send(f"{mtmsgs[qid][0]['username']}[思考中...]", gateway=gateway)
+#          continue
+#
+#
+#
+#      if msg.file:
+#        file = msg.file
+#        logger.info(file)
+#        if hasattr(file, "name") and file.name:
+#          file_name = file.name
+#        else:
+#          logger.warning(f"W: file: no name: {file=}")
+#          #  file_name = "%s.%s" % (int(time.time()), "jpg")
+#          file_name = "%s%s" % (int(time.time()), mimetypes.guess_extension(file.mime_type))
+#        res = f"\nfile name: {file_name}\nsize: {format_byte(file.size)}\ntype: {file.mime_type}"
+#        if file.size > FILE_DOWNLOAD_MAX_BYTES:
+#          await mt_send(f"文件过大，取消下载。${res}", gateway=gateway)
+#          return
+#        url = f"tmp link: https://{DOMAIN}/{file_name}"
+#        path = f"{TMP_PATH}/{file_name}"
+#        try:
+#          async with async_open(path, 'wb') as f:
+#            #  async for chunk in UB.iter_download(file):
+#            async for chunk in UB.iter_download(msg):
+#              await f.write(chunk)
+#              if qid == nid:
+#                await mt_send(f"下载中：{format_byte(f.tell())}/{format_byte(file.size)}", gateway=gateway)
+#        except Exception as e:
+#          logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
+#          try:
+#            await UB.download_media(msg, path)
+#          except Exception as e:
+#            logger.warning(f"W: start to download to mem: {repr(e)}", exc_info=True, stack_info=True)
+#            try:
+#              url = await UB.download_media(msg, bytes)
+#            except Exception as e:
+#              logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
+#              await mt_send(f"E: failed to downlaod, error: {repr(e)}${res}", gateway=gateway)
+#              return
+#
+#        try:
+#          if isinstance(url, bytes):
+#            url = "pb: %s" % await pastebin(url, filename=file_name)
+#          else:
+#            #  async with async_open(path, 'rb') as f:
+#            with open(path, 'rb') as f:
+#              url = f"pb: %s\n{url}" % await pastebin(f, filename=file_name)
+#        except Exception as e:
+#          logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
+#          print(f"E: {repr(e)}")
+#          if isinstance(url, bytes):
+#            url = f"pb: E: {repr(e)}"
+#          else:
+#            url = f"{url}\n--\npb: E: {repr(e)}"
+#
+#        try:
+#          if isinstance(url, bytes):
+#            url = "ipfs: %s" % await ipfs_add(url, filename=file_name)
+#          else:
+#            #  async with async_open(path, 'rb') as f:
+#            with open(path, 'rb') as f:
+#              url = f"ipfs: %s\n{url}" % await ipfs_add(f, filename=file_name)
+#        except Exception as e:
+#          logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
+#          print(f"E: {repr(e)}")
+#          if isinstance(url, bytes):
+#            url = f"ipfs: E: {repr(e)}"
+#          else:
+#            url = f"{url}\n--\nipfs: E: {repr(e)}"
+#
+#
+#        #  while qid != min(queue.keys()):
+#        #    await asyncio.sleep(2)
+#        res = f"{text}\n--\n{url}\n--${res}"
+#        if qid > nid:
+#          mtmsgs[qid][-1] = res
+#          mtmsgs[qid].append(None)
+#          logger.warning(f"W: archived img: {res=}")
+#          continue
+#        else:
+#          await mt_send(res, gateway=gateway)
+#          mtmsgs.pop(nid)
+#          gateways.pop(nid)
+#          #  last = None
+#          continue
+#
+#
+#      elif not text:
+#        print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
+#        return
+#
+#
+#      ending= None
+#      #  print("< Q: %s" % queue[qid][0]['text'])
+#      #  if text.endswith(LOADING):
+#      #    #  print("> gpt(未结束): %s" % text)
+#      #    text = text.rstrip(LOADINGS)
+#      #  elif text.endswith(LOADING2):
+#      #    #  print("> gpt(未结束): %s" % text)
+#      #    text = text.rstrip(LOADINGS2)
+#      l = text.splitlines()
+#      if l[-1] in loadings:
+#        if len(l) > 1 and l[-2] == "":
+#          text = "\n".join(l[:-2])
+#        else:
+#          text = "\n".join(l[:-1])
+#        if not text:
+#          text = "None"
+#      elif len(l) > 1 and f"{l[-2]}\n{l[-1]}" in loadings:
+#        if len(l) > 2 and l[-3] == "":
+#          text = "\n".join(l[:-3])
+#        else:
+#          text = "\n".join(l[:-2])
+#        if not text:
+#          text = "None"
+#      else:
+#        ending = "\n\n**[结束]**"
+#        #  print("> gpt: %s" % text)
+#
+#
+#
+#        #  if len(text.splitlines()) > 1:
+#          #  last = len(text.splitlines())-2
+#          #  text = text.rstrip("\n"+text.splitlines()[-1])
+#      #  urls = urlre.findall(text)
+#      urls = url_md_left.findall(text)
+#      if urls:
+#        if not ending:
+#          #  url = url[-1][0]
+#          url = urls[-1]
+#          print("last url: "+url)
+#          if text.endswith(url):
+#            text = text.rstrip(url)
+#            print(f"rstriped: {text}")
+#            urls.pop(-1)
+#
+#      if urls:
+#        for url in urls:
+#          #  url = url[0]
+#          if f"{url})" in text:
+#            if not text.endswith(f"{url})"):
+#              text = text.replace(f"{url})", f"{url}) ")
+#
+#
+#
+#      if qid > nid:
+#        mtmsgs[qid][1] = text
+#        print(f"W: archived msg {msg.id=} {mtmsgs=}")
+#        if ending:
+#          mtmsgs[qid].append(None)
+#        continue
+#
+#      #  try:
+#      if mtmsgs[qid][1] is None:
+#        res = text
+#      else:
+#        res = text[len(mtmsgs[qid][1]):]
+#      #  except Exception as e:
+#      #    logger.info(f"I: {e=} now: {qid=} {mtmsgs=}, {nid=}")
+#      #    #  continue
+#
+#      if ending:
+#        #  res += "\n\n**[结束]**"
+#        res += ending
+#        await mt_send(res, gateway=gateway, username="")
+#        print(f"I: end {msg.id}")
+#          #  no_reset.set()
+#          #  await mt_send("reset ok", gateway=msgd["gateway"])
+#        while True:
+#          if not no_reset.is_set():
+#            logger.info("wait for end of reset...")
+#            await asyncio.sleep(1)
+#            continue
+#          async with queue_lock:
+#            mtmsgs.pop(nid)
+#            gateways.pop(nid)
+#          #  last = None
+#          print(f"removed {nid=}")
+#          if len(mtmsgs) == 0:
+#            nid = 0
+#            #  gateways.clear()
+#            print("I: now mtmsgs is empty")
+#            break
+#          nid = min(mtmsgs.keys())
+#          print(f"update nid to {nid} {mtmsgs.keys()=} {mtmsgs=}")
+#          if mtmsgs[nid][1] is None:
+#            break
+#          if mtmsgs[nid][-1] is None:
+#            await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
+#            print(f"will to remove {nid=} {mtmsgs=} {gateways=}")
+#          else:
+#            await mt_send(mtmsgs[nid][0]['username'] + mtmsgs[nid][1], gateway=gateway)
+#            break
+#      else:
+#
+#        mtmsgs[qid][1] = text
+#        await mt_send(res, gateway=gateway, username="")
+#        print(f"I: append {msg.id}")
 
 
 

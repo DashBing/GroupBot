@@ -188,10 +188,10 @@ cmds() {
   gptr|gt|gtz|se|img|voice)
     return 0
     ;;
-  gptmode)
-    # return 0
-    changeai gpt $gateway
-    ;;
+  # gptmode)
+  #   # return 0
+  #   changeai gpt $gateway
+  #   ;;
   # bot|BOT)
   #   shift
   #   bash "$SH_PATH/bot.sh" "$@" || echo "E: $?"

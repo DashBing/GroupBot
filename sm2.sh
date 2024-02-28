@@ -11,19 +11,20 @@ export LOG="$HOME/mt.log"
 LOG_FILE_E="$LOG"
 [[ -e "$SH_PATH/DEBUG" ]] && export LOG_FILE=$LOG || export LOG_FILE=/dev/null
 
-SM_LOCK="$SH_PATH/SM_LOCK"
-SM_LOCK2="$SH_PATH/SM_LOCK2"
 
 username=$1
+[[ -z "$username" ]] && username="null"
 text=$2
+[[ -z "$text" ]] && exit 1
 # [[ "$username" == "bot" || "$username" == "ToxBot" ]] && exit 0
 #api_port=${3:-4242}
 api_port=${3:-4241}
 gateway=${4-gateway1}
-[[ -z "$username" ]] && username="null"
 
-[[ -z "$text" ]] && exit 1
 #source /tmp/init.sh
+
+SM_LOCK="$SH_PATH/SM_LOCK_$gateway"
+# SM_LOCK2="$SH_PATH/SM_LOCK2"
 
 
 # if [[ "${username:0:2}" == "C " ]]
