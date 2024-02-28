@@ -97,8 +97,9 @@ log_msg(){
   # log_msg
   # log_msg "$@" >> ~/mt.log
 
-# if [[ $3 == api.gpt ]]; then
 if [[ $6 == gateway1 ]]; then
+  log_msg "$@" >> ~/mt.log
+elif [[ $3 == api.gpt ]]; then
   log_msg "$@" >> ~/mt.log
 fi
 
