@@ -492,7 +492,7 @@ api.cmd)
   ;;
 api.cmdres)
   LABLE="0"
-  if [[ "$(echo "$NAME" | wc -l)" -ge 3 ]]; then
+  if [[ "$(echo "$NAME" | wc -l)" -ge 2 ]]; then
     QT=$( echo "$NAME" | sed '/^[^>]/,$!d')
     NAME=$( echo "$NAME" | tail -n1)
   fi
