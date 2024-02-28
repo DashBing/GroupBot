@@ -742,7 +742,7 @@ $TEXT"
     ;;
   telegram.*)
 
-    TEXT=$(bash "$SH_PATH/text2markdown.sh" "$TEXT")
+    # TEXT=$(bash "$SH_PATH/text2markdown.sh" "$TEXT")
 
     # md_name
     if [[ -n "$NAME" ]]; then
