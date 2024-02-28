@@ -773,7 +773,7 @@ $TEXT"
     NAME="$QT
 $M *$NAME*: "
     fi
-    [[ "${TEXT:0:3}" != '```' ]] && TEXT="
+    [[ "${TEXT:0:3}" == '```' ]] && TEXT="
 $TEXT"
     ;;
   api.cmd)
