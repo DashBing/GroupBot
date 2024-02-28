@@ -788,6 +788,7 @@ $M *$NAME*: "
     newline
     ;;
   api.cmd)
+    if [[ -n "$NAME" ]]; then
     # username=$(echo "$NAME" | tail -n1)
     username="$NAME"
     [[ "${username:0:2}" != "C " ]] && [[ "${username: -5}" != "bot: " ]] && {
@@ -803,6 +804,7 @@ $qt"
       # nohup bash "$SH_PATH/cmd2.sh" "$gateway" "$username" "$text" &>/dev/null &
       nohup bash "$SH_PATH/cmd2.sh" "${11}" "$username" "$text" &>/dev/null &
     }
+    fi
     block_msg
     ;;
   api.*)
