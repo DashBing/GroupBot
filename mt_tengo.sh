@@ -173,13 +173,18 @@ xmpp.*)
     # NAME=${NAME%:\*\* }
     # NAME=${NAME#* }
     # 不要用\S, 用[^\s]
-    if echo "$line" | grep -q -P '^\*\*\w+ [^\s]+?:\*\* '; then
-      NAME=$( echo "$line" | sed -r 's/^\*\*([a-zA-Z0-9] .+?):\*\* .*/\1/')
+    # if echo "$line" | grep -q -P '^\*\*\w+ [^\s]+?:\*\* '; then
+    # if echo "$line" | grep -q -P '^\*\*\w+ .+?:\*\* '; then
+    tmp=$( echo "$line" | grep -o -P '^\*\*\w+ .+?:\*\* ')
+    if [[ -n "$tmp" ]]; then
+      # NAME=$( echo "$line" | grep -o -P '^\*\*\w+ .+?:\*\* ' | sed -r 's/^\*\*(.+):\*\* /\1/')
+      NAME=$( echo "$tmp" | sed -r 's/^\*\*(.+):\*\* /\1/')
       LABLE="0"
       # LABLE=${NAME%% *}
       # NAME=${NAME#* }
       # TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
-      TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
+      # TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
+      TEXT="${TEXT:$[${#NAME}+5]}"
     else
       NAME=""
     fi
