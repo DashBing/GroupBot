@@ -207,9 +207,12 @@ xmpp.*)
       nick=$(echo "$H"|cut -d':' -f1|cut -d' ' -f2-)
       nick=${nick% wrote}
       QT=$( echo "$QT" | sed -e '1d' -e '1s/^> /> X '"${nick}"': /')
-    elif [[ "$H" =~ ^\>\ .+:$ ]] && [[ "$(echo "$QT" |wc -l)" -ge 2 ]]; then
+    fi
+    if [[ "$H" =~ ^\>\ .+:$ ]] && [[ "$(echo "$QT" |wc -l)" -ge 2 ]]; then
       # monocles
       if [[ "$H" =~ ^\>\ bot:$ ]]; then
+        QT=$( echo "$QT" | sed '1d')
+      elif [[ "$H" =~ ^\>\ wtfipfs:$ ]]; then
         QT=$( echo "$QT" | sed '1d')
       else
         # nick=$(echo "$H"|cut -d' ' -f2)
