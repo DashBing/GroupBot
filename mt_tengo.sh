@@ -818,8 +818,8 @@ $TEXT"
       tmp=$( echo "$QT" | head -n1 | grep -o -P '^\*\*\w+ .+?:\*\* ')
       if [[ -n "$tmp" ]]; then
         # NAME=$( echo "$line" | grep -o -P '^\*\*\w+ .+?:\*\* ' | sed -r 's/^\*\*(.+):\*\* /\1/')
-        NAME2=$( echo "$tmp" | sed -r 's/^\*\*(.+):\*\* /\1/')
-        QT="${QT:$[${#NAME}+6]}"
+        NAME2=$( echo "$tmp" | sed -r 's/^\*\*(.+?):\*\* /\1/')
+        QT="${QT:$[${#NAME2}+6]}"
         QT=$(bash "$SH_PATH/text2markdown.sh" "$QT")
         NAME2=$(bash "$SH_PATH/text2markdown.sh" "$NAME2")
         QT=$(echo "*$NAME2*: $QT" | sed 's/^/>/' )
