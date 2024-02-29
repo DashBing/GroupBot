@@ -162,37 +162,8 @@ xmpp.*)
   LABLE="X"
   line=$(echo "$TEXT"|head -n1)
   # if [[ "$2" == "wtfipfs" ]] || [[ "$2" == " " ]]; then
-  if [[ "$NAME" == "wtfipfs" || "$NAME" == "bot" ]]; then
-    # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ \S+?:\*\* ')
-    # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ [^\s]+?:\*\* ')
-    # NAME=${NAME:2}
-    # LABLE=${NAME%% *}
-    # NAME=${NAME%:\*\* }
-    # NAME=${NAME#* }
-    # 不要用\S, 用[^\s]
-    # if echo "$line" | grep -q -P '^\*\*\w+ [^\s]+?:\*\* '; then
-    # if echo "$line" | grep -q -P '^\*\*\w+ .+?:\*\* '; then
-    # if echo "$line" | grep -q -P "^>"; then
-    if [[ "${line:0:1}" == '>' ]]; then
-      QT=$( echo "$TEXT" | sed '/^[^>]/,$d')
-      line=$(echo "$TEXT"| sed '/^[^>]/,$!d' |head -n1)
-    fi
-    tmp=$( echo "$line" | grep -o -P '^\*\*\w+ .+?:\*\* ')
-    if [[ -n "$tmp" ]]; then
-      # NAME=$( echo "$line" | grep -o -P '^\*\*\w+ .+?:\*\* ' | sed -r 's/^\*\*(.+):\*\* /\1/')
-      NAME=$( echo "$tmp" | sed -r 's/^\*\*(.+):\*\* /\1/')
-      LABLE="0"
-      # LABLE=${NAME%% *}
-      # NAME=${NAME#* }
-      # TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
-      # TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
-      TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
-      TEXT="${TEXT:$[${#NAME}+6]}"
-    else
-      NAME=""
-      unset QT
-    fi
-  elif [[ "${line:0:1}" == '>' && $(echo "$TEXT" | sed '/^[^>]/,$!d' | grep -c -P "^>") -eq 0 && $(echo "$TEXT" | sed -n '/^>/!p' | sed -n '/^$/!p' | wc -l) -ge 1 ]]; then
+  # if [[ "$NAME" == "wtfipfs" || "$NAME" == "bot" ]]; then
+  if [[ "${line:0:1}" == '>' && $(echo "$TEXT" | sed '/^[^>]/,$!d' | grep -c -P "^>") -eq 0 && $(echo "$TEXT" | sed -n '/^>/!p' | sed -n '/^$/!p' | wc -l) -ge 1 ]]; then
     # QT=$( echo "$TEXT" | sed -n '/^> /p')
     QT=$( echo "$TEXT" | sed '/^[^>]/,$d')
     H=$(echo "$QT"|head -n1)
@@ -230,6 +201,37 @@ xmpp.*)
     QT=$( echo "$TEXT" | sed -e '/^[^»]/,$d' -e 's/» /> /1')
     TEXT=$( echo "$TEXT" | sed '/^[^»]/,$!d')
 
+  fi
+  if [[ "$NAME" == "wtfipfs"; then
+    # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ \S+?:\*\* ')
+    # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ [^\s]+?:\*\* ')
+    # NAME=${NAME:2}
+    # LABLE=${NAME%% *}
+    # NAME=${NAME%:\*\* }
+    # NAME=${NAME#* }
+    # 不要用\S, 用[^\s]
+    # if echo "$line" | grep -q -P '^\*\*\w+ [^\s]+?:\*\* '; then
+    # if echo "$line" | grep -q -P '^\*\*\w+ .+?:\*\* '; then
+    # if echo "$line" | grep -q -P "^>"; then
+    if [[ "${line:0:1}" == '>' ]]; then
+      QT=$( echo "$TEXT" | sed '/^[^>]/,$d')
+      line=$(echo "$TEXT"| sed '/^[^>]/,$!d' |head -n1)
+    fi
+    tmp=$( echo "$line" | grep -o -P '^\*\*\w+ .+?:\*\* ')
+    if [[ -n "$tmp" ]]; then
+      # NAME=$( echo "$line" | grep -o -P '^\*\*\w+ .+?:\*\* ' | sed -r 's/^\*\*(.+):\*\* /\1/')
+      NAME=$( echo "$tmp" | sed -r 's/^\*\*(.+):\*\* /\1/')
+      LABLE="0"
+      # LABLE=${NAME%% *}
+      # NAME=${NAME#* }
+      # TEXT=$( echo "$TEXT" | sed -r 's/^\*\*\w+ \S+?:\*\* //')
+      # TEXT=$( echo "$TEXT" | sed -r 's/^\*\*[a-zA-Z0-9] .+?:\*\* //')
+      TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
+      TEXT="${TEXT:$[${#NAME}+6]}"
+    else
+      NAME=""
+      unset QT
+    fi
   fi
 
 # if [[ ${11} = "gateway1" ]] && { [[ $5 = wtfipfs_rss ]] || [[ $5 = acg ]]; }; then
