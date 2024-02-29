@@ -202,7 +202,7 @@ xmpp.*)
     TEXT=$( echo "$TEXT" | sed '/^[^»]/,$!d')
 
   fi
-  if [[ "$NAME" == "wtfipfs"; then
+  if [[ "$NAME" == "wtfipfs" ]]; then
     # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ \S+?:\*\* ')
     # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ [^\s]+?:\*\* ')
     # NAME=${NAME:2}
@@ -213,9 +213,14 @@ xmpp.*)
     # if echo "$line" | grep -q -P '^\*\*\w+ [^\s]+?:\*\* '; then
     # if echo "$line" | grep -q -P '^\*\*\w+ .+?:\*\* '; then
     # if echo "$line" | grep -q -P "^>"; then
+    if [[ -z "$QT" ]]; then
     if [[ "${line:0:1}" == '>' ]]; then
       QT=$( echo "$TEXT" | sed '/^[^>]/,$d')
       line=$(echo "$TEXT"| sed '/^[^>]/,$!d' |head -n1)
+    fi
+    else
+      # line=$(echo "$TEXT"| sed '/^[^>]/,$!d' |head -n1)
+      line=$(echo "$TEXT"|head -n1)
     fi
     tmp=$( echo "$line" | grep -o -P '^\*\*\w+ .+?:\*\* ')
     if [[ -n "$tmp" ]]; then
@@ -229,8 +234,10 @@ xmpp.*)
       TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
       TEXT="${TEXT:$[${#NAME}+6]}"
     else
-      NAME=""
-      unset QT
+      NAME="fixme_no_name"
+      # if [[ -z "$QT" ]]; then
+      #   unset QT
+      # fi
     fi
   fi
 
