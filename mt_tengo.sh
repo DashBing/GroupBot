@@ -49,21 +49,6 @@ elif [[ "$2" == "blockthismessage" ]]; then
   block_msg
 fi
 
-md_name(){
-  if [[ -n "$NAME" ]]; then
-    # [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(echo "$NAME" | sed '/^[^>]/d'; echo )
-    # [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(echo "$NAME" | sed '$d')
-    # NAME=$(echo "$NAME" | tail -n1)
-    # NAME=$(echo "$NAME" | cut -d ":" -f 1)
-    # NAME=${NAME%: }
-    NAME="**${NAME% }** "
-    if [[ -n "$QT" ]]; then
-      NAME="$QT
-
-${NAME}"
-    fi
-  fi
-}
 
 newline(){
   if [[ "${TEXT:0:1}" == '>' || "${TEXT:0:3}" == '```' ]]; then
@@ -621,6 +606,7 @@ if [[ -n "$4" ]] ; then
     # elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
     #   TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
     # fi
+  if [[ -n "$NAME" ]]; then
     if [[ "$NAME" == "M rssbot: " ]] || [[ "$NAME" == "M feeds: " ]]; then
       # forbid msg from ipfsrss sent by rssbot
       # if [[ "${11}" == "gateway1" ]]; then
@@ -633,7 +619,18 @@ if [[ -n "$4" ]] ; then
       # TEXT=$(echo "$TEXT" | sed '1s/[^:]*://')
       TEXT=${TEXT#*: }
     else
-      md_name
+      # md_name
+    # [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(echo "$NAME" | sed '/^[^>]/d'; echo )
+    # [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(echo "$NAME" | sed '$d')
+    # NAME=$(echo "$NAME" | tail -n1)
+    # NAME=$(echo "$NAME" | cut -d ":" -f 1)
+    # NAME=${NAME%: }
+    NAME="**${NAME% }** "
+    if [[ -n "$QT" ]]; then
+      NAME="$QT
+${NAME}"
+    fi
+  fi
     fi
     newline
     ;;
@@ -735,7 +732,6 @@ if [[ -n "$4" ]] ; then
 #     [[ -n "$qt" ]] && NAME="$qt
 #
 # $NAME"
-    md_name
     if [[ -z "$TEXT" ]]; then
 #      [[ $(echo "$NAME" | wc -l) -ge 3 ]] && [[ $(echo "$NAME" | grep -c -G '^$') -ge 1 ]] && echo "$NAME" | tail -n1 && echo "$NAME" | sed '/^$/,$d' && NAME=""
       # if [[ $(echo "$NAME" | wc -l) -ge 3 ]]; then
@@ -744,6 +740,14 @@ if [[ -n "$4" ]] ; then
         NAME=$(echo "$NAME"; echo "$QT")
       fi
     else
+  if [[ -n "$NAME" ]]; then
+    NAME="**${NAME% }** "
+    if [[ -n "$QT" ]]; then
+      NAME="$QT
+
+${NAME}"
+    fi
+  fi
       # if [[ "$NAME" == "C twitter: " ]]; then
       #   TEXT=$(echo "$TEXT" | sed '2,$s/^/> /' | sed '2s/^/\n/')
       # elif [[ "$NAME" == "C bot: " && "${1:0:16}" == "twitter to text:" ]]; then
