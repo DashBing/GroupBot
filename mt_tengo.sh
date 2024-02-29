@@ -814,7 +814,7 @@ $TEXT"
     # QT=""
     # [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(bash "$SH_PATH/text2markdown.sh" "$(echo "$NAME" | sed '/^$/,$d')" && echo)
     if [[ -n "$QT" ]]; then
-      QT=$(echo "$QT" | head -n1 | sed 's/> //' )
+      QT=$(echo "$QT" | sed 's/> //' )
       QT=$(bash "$SH_PATH/text2markdown.sh" "$QT" | sed 's/^/>/' )
     fi
     # NAME=$(bash "$SH_PATH/text2markdown.sh" "$(echo "$NAME" | tail -n1)")
