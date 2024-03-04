@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
-DOMAIN=$(cat $SH_PATH/DOMAIN)
+DOMAIN=${SH_PATH:-$(cat "$SH_PATH/DOMAIN"))}
 LP=${LP:-${HOME}/tera/tmp}
 MAX_SHARE_FILE_SIZE=${MAX_SHARE_FILE_SIZE:-15000000}
 

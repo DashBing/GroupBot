@@ -13,7 +13,7 @@ export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 # LP=${LP:-/var/www/dav/tmp}
 LP=${LP:-$HOME/tera/tmp}
 #DOMAIN=${DOMAIN:-liuu.tk}
-DOMAIN=$(cat $SH_PATH/DOMAIN)
+export DOMAIN=${DOMAIN:-$(cat "$SH_PATH/DOMAIN"))}
 MAX_SHARE_FILE_SIZE=${MAX_SHARE_FILE_SIZE:-64000000}
 
 

@@ -13,7 +13,7 @@ help(){
 
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 # DOMAIN=${DOMAIN:-liuu.tk}
-DOMAIN=$(cat DOMAIN)
+DOMAIN=${SH_PATH:-$(cat "$SH_PATH/DOMAIN"))}
 LP=${LP:-/var/www/dav/tmp}
 MAX_SHARE_FILE_SIZE=${MAX_SHARE_FILE_SIZE:-15000000}
 

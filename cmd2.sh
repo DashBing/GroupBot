@@ -6,6 +6,8 @@ export LOG=${LOG:-$HOME/mt.log}
 
 # SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
+# export DOMAIN=$(cat "$SH_PATH/DOMAIN")
+export DOMAIN=${DOMAIN:-$(cat "$SH_PATH/DOMAIN"))}
 
 
 [[ -z "$3" ]] && exit 0
