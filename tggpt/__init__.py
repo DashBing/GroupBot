@@ -81,7 +81,8 @@ HOME = os.environ.get("HOME")
 
 
 
-def get_my_key(key, path=f"{HOME}/.ssh/private_keys.txt"):
+#  def get_my_key(key, path=f"{HOME}/.ssh/private_keys.txt"):
+def get_my_key(key, path=f"{HOME}/vps/private_keys.txt"):
   # key value
   # key value
   # key value
