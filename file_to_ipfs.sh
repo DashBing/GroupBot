@@ -2,7 +2,7 @@
 
 export SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}) || exit; pwd )}
 #DOMAIN=${DOMAIN:-liuu.tk}
-export DOMAIN=${DOMAIN:-$(cat "$SH_PATH/DOMAIN"))}
+export DOMAIN=${DOMAIN:-$(cat "$SH_PATH/DOMAIN")}
 # LP=${LP:-/var/www/dav/tmp}
 LP=${LP:-$HOME/tera/tmp}
 MAX_SHARE_FILE_SIZE=${MAX_SHARE_FILE_SIZE:-64000000}
@@ -10,7 +10,7 @@ MAX_SHARE_FILE_SIZE=${MAX_SHARE_FILE_SIZE:-64000000}
 
 export IPFS_PATH="/home/liqsliu/tera/var/ipfs"
 
-PRIVATE_KEYS_PATH="${HOME}/.ssh/private_keys.txt"
+PRIVATE_KEYS_PATH="${HOME}/vps/private_keys.txt"
 IPFS_API_KEY=$(grep IPFS_API_KEY "$PRIVATE_KEYS_PATH")
 IPFS_API_KEY=${IPFS_API_KEY#* }
 
