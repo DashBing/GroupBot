@@ -46,7 +46,7 @@ from subprocess import Popen, PIPE
 from telethon import events
 
 import aiofiles
-from aiofile import async_open
+#  from aiofile import async_open
 
 from  urltitle.urltitle import URLTitleError
 from urltitle import URLTitleReader

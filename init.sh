@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# piu  --break-system-packages telethon lottie cairosvg zstandard brotli aiofile aiofiles urltitle aiohttp
 
 
 
