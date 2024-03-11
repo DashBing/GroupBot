@@ -280,7 +280,7 @@ file_to_ipfs() {
           # hash=$(auto_to_all)
           auto_to_all || {
             # hash=$( cd ~/nft-storage-quickstart && node ntf.storage.mjs "$FILE_PATH" wtfipfs "$fn" |grep -o -P 'baf[a-z0-9]+'|head -n1 ) && real_ipfs_url="https://$hash.ipfs.nftstorage.link/"
-            hash=$( cd ~/vps/ntf.storage && node ntf.storage.mjs "$FILE_PATH" wtfipfs "$fn" |grep -o -P 'baf[a-z0-9]+'|head -n1 ) && real_ipfs_url="https://$hash.ipfs.nftstorage.link/"
+            hash=$( cd ~/vps/nft.storage && node nft.storage.mjs "$FILE_PATH" wtfipfs "$fn" |grep -o -P 'baf[a-z0-9]+'|head -n1 ) && real_ipfs_url="https://$hash.ipfs.nftstorage.link/"
           } || {
             echo "E: no open ipfs gateway" >&2
             [[ -e "$LP/$fn" ]] || cp "$FILE_PATH" "${LP}/"
@@ -296,7 +296,8 @@ file_to_ipfs() {
         # ipfs_url="https://$hash.ipfs.infura-ipfs.io/?filename=$(bash "$SH_PATH/"urldecode.sh "$fn")"
         ipfs_url="${real_ipfs_url}?filename=$(bash "$SH_PATH/urlencode.sh" "$fn")"
         # [[ -z "$hash" ]] && hash=$(ipfs add -n -Q "$FILE_PATH") && ipfs_url="https://ipfs.io/ipfs/$hash?filename=$(bash "$SH_PATH/urldecode.sh" "$fn")"
-        [[ -z "$hash" ]] && hash=$(ipfs add -n -Q "$FILE_PATH") && ipfs_url="https://ipfs.crossbell.io/ipfs/$hash?filename=$(bash "$SH_PATH/urldecode.sh" "$fn")"
+        # [[ -z "$hash" ]] && hash=$(ipfs add -n -Q "$FILE_PATH") && ipfs_url="https://ipfs.crossbell.io/ipfs/$hash?filename=$(bash "$SH_PATH/urldecode.sh" "$fn")"
+        [[ -z "$hash" ]] && hash=$(ipfs add -n -Q "$FILE_PATH") && ipfs_url="https://ipfs.crossbell.io/ipfs/$hash"
         [[ -z "$hash" ]] && echo "E: empty cid" && return 1
         #    ipfs_url="https://ipfs.io/ipfs/$hash?filename=$(bash "$SH_PATH/"urldecode.sh "$fn")"
 #        ipfs_url="https://snap1.d.tube/ipfs/$hash?filename=$(bash "$SH_PATH/"urldecode.sh "$fn")"
