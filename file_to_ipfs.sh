@@ -65,6 +65,7 @@ ipfs_hash_to_urls() {
   local path2=${path#*$hash}
   path2=${path2#/}
   ipfs_urls="以下链接内容相同，如果第一个链接打不开请用第二个。另外，某些链接可能要过几分钟才能打开 
+https://ipfs.crossbell.io/ipfs/$path
 https://snap1.d.tube/ipfs/$path
 https://cf-ipfs.com/ipfs/$path
 https://dweb.link/ipfs/$path
@@ -295,7 +296,8 @@ file_to_ipfs() {
 #        [[ -z "$hash" ]] && hash=$(ipfs add --cid-version 1 -n -Q "$FILE_PATH")
         # ipfs_url="https://$hash.ipfs.infura-ipfs.io/?filename=$(bash "$SH_PATH/"urldecode.sh "$fn")"
         ipfs_url="${real_ipfs_url}?filename=$(bash "$SH_PATH/urlencode.sh" "$fn")"
-        [[ -z "$hash" ]] && hash=$(ipfs add -n -Q "$FILE_PATH") && ipfs_url="https://ipfs.io/ipfs/$hash?filename=$(bash "$SH_PATH/urldecode.sh" "$fn")"
+        # [[ -z "$hash" ]] && hash=$(ipfs add -n -Q "$FILE_PATH") && ipfs_url="https://ipfs.io/ipfs/$hash?filename=$(bash "$SH_PATH/urldecode.sh" "$fn")"
+        [[ -z "$hash" ]] && hash=$(ipfs add -n -Q "$FILE_PATH") && ipfs_url="https://ipfs.crossbell.io/ipfs/$hash?filename=$(bash "$SH_PATH/urldecode.sh" "$fn")"
         [[ -z "$hash" ]] && echo "E: empty cid" && return 1
         #    ipfs_url="https://ipfs.io/ipfs/$hash?filename=$(bash "$SH_PATH/"urldecode.sh "$fn")"
 #        ipfs_url="https://snap1.d.tube/ipfs/$hash?filename=$(bash "$SH_PATH/"urldecode.sh "$fn")"
