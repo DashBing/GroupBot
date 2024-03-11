@@ -33,8 +33,6 @@ https://api.nft.storage/upload https://HASH_CID.ipfs.nftstorage.link/ 1 0 ${IPFS
 https://ipfs.pixura.io/api/v0/add https://ipfs.pixura.io/ipfs/HASH_CID 0 0
 "
 
-
-
 if [[ "$1" == "" ]]; then
   echo "$IPFS_GATEWAYS" | shuf | sed '/^ *$/d' | cut -d" " -f1
 elif [[ $(echo "$IPFS_GATEWAYS" | grep -c -G "^$1 ") -eq 1 ]]; then
@@ -281,7 +279,8 @@ file_to_ipfs() {
           # hash=$( bash "$SH_PATH/upload_to_ipfs.sh" https://ipfs.infura.io:5001 "$FILE_PATH" || bash "$SH_PATH/upload_to_ipfs.sh" https://snap1.d.tube "$FILE_PATH" || bash "$SH_PATH/upload_to_ipfs.sh" http://127.0.0.1:5001 "$FILE_PATH" || bash "$SH_PATH/upload_to_ipfs.sh" https://liuu.tk "$FILE_PATH" )
           # hash=$(auto_to_all)
           auto_to_all || {
-            hash=$( cd ~/nft-storage-quickstart && node ntf.storage.mjs "$FILE_PATH" wtfipfs "$fn" |grep -o -P 'baf[a-z0-9]+'|head -n1 ) && real_ipfs_url="https://$hash.ipfs.nftstorage.link/"
+            # hash=$( cd ~/nft-storage-quickstart && node ntf.storage.mjs "$FILE_PATH" wtfipfs "$fn" |grep -o -P 'baf[a-z0-9]+'|head -n1 ) && real_ipfs_url="https://$hash.ipfs.nftstorage.link/"
+            hash=$( cd ~/vps/ntf.storage && node ntf.storage.mjs "$FILE_PATH" wtfipfs "$fn" |grep -o -P 'baf[a-z0-9]+'|head -n1 ) && real_ipfs_url="https://$hash.ipfs.nftstorage.link/"
           } || {
             echo "E: no open ipfs gateway" >&2
             [[ -e "$LP/$fn" ]] || cp "$FILE_PATH" "${LP}/"
