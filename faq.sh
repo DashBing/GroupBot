@@ -35,6 +35,9 @@ get_a(){
   # faq_text=$(grep -G "^#faq " "$NOTE_FILE" | cut -d ":" -f2- | grep -G "^ $text_en|" | cut -d "|" -f2-)
   # faq_text=$(grep -G "^#faq " "$NOTE_FILE" | cut -d ":" -f2- | grep -F " $text_en|" | cut -d "|" -f2-)
   faq_text=$(grep -G "^#faq " "$NOTE_FILE" | cut -d ":" -f2- | grep -F " $text_en|")
+  if [[ -n "$debug" ]]; then
+    echo "se1: $faq_text"
+  fi
 
   local i=1
   while true
@@ -50,6 +53,9 @@ get_a(){
     fi
   done
   faq_text=$(echo "$faq_text" | cut -d "|" -f2-)
+  if [[ -n "$debug" ]]; then
+    echo "se2: $faq_text"
+  fi
   if echo "$faq_text" | grep -q -v -F '|'; then
     faq_text=$(echo "$faq_text" | grep -v -F '|')
   elif [[ $(echo "$faq_text" | wc -l) -gt 1 ]]; then
@@ -68,6 +74,9 @@ get_a(){
     done
   fi
   
+  if [[ -n "$debug" ]]; then
+    echo "se3: $faq_text"
+  fi
   if [[ -z "$faq_text" ]]; then
     return 1
   else
@@ -83,7 +92,8 @@ get_a(){
 #get_a "$*"
 
 text=$1
-username=$2
+# username=$2
+debug=$2
 
 if [[ "${text:0:4}" == ".faq" ]]; then
 #  if [[ -z "$1" || "$1" == "help" ]]; then
