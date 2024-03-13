@@ -53,26 +53,49 @@ get_a(){
   #   fi
   # done
   # faq_text=$(echo "$faq_text" | cut -d "|" -f2-)
-  if [[ -n "$debug" ]]; then
-    echo "se2: $faq_text"
-  fi
-  if echo "$faq_text" | grep -q -v -F '|'; then
-    faq_text=$(echo "$faq_text" | grep -v -F '|')
-  elif [[ $(echo "$faq_text" | wc -l) -gt 1 ]]; then
+  # if [[ -n "$debug" ]]; then
+  #   echo "se2: $faq_text"
+  # fi
+  # if echo "$faq_text" | grep -q -v -F '|'; then
+  #   faq_text=$(echo "$faq_text" | grep -v -F '|')
+  # elif [[ $(echo "$faq_text" | wc -l) -gt 1 ]]; then
+  #   while true
+  #   do
+  #     l1=$(echo "$faq_text"|sed -n 1p)
+  #     l2=$(echo "$faq_text"|sed -n 2p)
+  #     if [[ ${#l1} -lt ${#l2} ]]; then
+  #       faq_text=$(echo "$faq_text"|sed 2d)
+  #     else
+  #       faq_text=$(echo "$faq_text"|sed 1d)
+  #     fi
+  #     if [[ $(echo "$faq_text" | wc -l) -eq 1 ]]; then
+  #       break
+  #     fi
+  #   done
+  # fi
+  local i=1
+  tmp=""
+  while true
+  do
+    l1=$(echo "$faq_text"|sed -n ${i}p)
+    if [[ -z "$l1" ]]; then
+      break
+    fi
     while true
     do
-      l1=$(echo "$faq_text"|sed -n 1p)
-      l2=$(echo "$faq_text"|sed -n 2p)
-      if [[ ${#l1} -lt ${#l2} ]]; then
-        faq_text=$(echo "$faq_text"|sed 2d)
-      else
-        faq_text=$(echo "$faq_text"|sed 1d)
+      if echo "$l1" | grep -q -F '|'; then
+        if [[ "${l1::1}" == " " ]]; then
+          l1=$(echo "$l1" | cut -d "|" -f2-)
+          continue
+        fi
       fi
-      if [[ $(echo "$faq_text" | wc -l) -eq 1 ]]; then
-        break
-      fi
+      break
     done
-  fi
+    tmp="$tmp
+$l1"
+    let i++
+  done
+  faq_text=$tmp
   
   if [[ -n "$debug" ]]; then
     echo "se3: $faq_text"
