@@ -91,8 +91,13 @@ get_a(){
       fi
       break
     done
-    tmp="$tmp
+    if [[ $i -gt 1 ]]; then
+      tmp="$tmp
+--
 $l1"
+    else
+      tmp=$l1
+    fi
     let i++
   done
   faq_text=$tmp
