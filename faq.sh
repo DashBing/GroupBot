@@ -33,7 +33,41 @@ get_a(){
   local text_en=$(my_encode "$1")
   # faq_text=$(grep -G "^$text|\$" "$NOTE_FILE" | cut -d "|" -f2-)
   # faq_text=$(grep -G "^#faq " "$NOTE_FILE" | cut -d ":" -f2- | grep -G "^ $text_en|" | cut -d "|" -f2-)
-  faq_text=$(grep -G "^#faq " "$NOTE_FILE" | cut -d ":" -f2- | grep -F " $text_en|" | cut -d "|" -f2-)
+  # faq_text=$(grep -G "^#faq " "$NOTE_FILE" | cut -d ":" -f2- | grep -F " $text_en|" | cut -d "|" -f2-)
+  faq_text=$(grep -G "^#faq " "$NOTE_FILE" | cut -d ":" -f2- | grep -F " $text_en|")
+
+  local i=1
+  while true
+  do
+    l1=$(echo "$faq_text"|sed -n ${i}p)
+    if [[ -z "$l1" ]]; then
+      break
+    fi
+    if [[ "$(echo "$l1"|cut -d "|" -f1)" == "$text_en" ]]; then
+      let i++
+    else
+      faq_text=$(echo "$faq_text"|sed ${i}d)
+    fi
+  done
+  faq_text=$(echo "$faq_text" | cut -d "|" -f2-)
+  if echo "$faq_text" | grep -q -v -F '|'; then
+    faq_text=$(echo "$faq_text" | grep -v -F '|')
+  elif [[ $(echo "$faq_text" | wc -l) -gt 1 ]]; then
+    while true
+    do
+      l1=$(echo "$faq_text"|sed -n 1p)
+      l2=$(echo "$faq_text"|sed -n 2p)
+      if [[ ${#l1} -lt ${#l2} ]]; then
+        faq_text=$(echo "$faq_text"|sed 2d)
+      else
+        faq_text=$(echo "$faq_text"|sed 1d)
+      fi
+      if [[ $(echo "$faq_text" | wc -l) -eq 1 ]]; then
+        break
+      fi
+    done
+  fi
+  
   if [[ -z "$faq_text" ]]; then
     return 1
   else
