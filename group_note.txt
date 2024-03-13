@@ -222,3 +222,8 @@
 #xmpp X liqsliu: 如果没有发言权，建议使用gajim或cheogram客户端申请。conversations不支持xmpp原生的申请方式。也可以群内私信bot：“申请发言权”，然后等管理批准。也可以改群内名字，添加“申请发言权”，然后等管理看到。
 #xmpp X liqsliu: 至尊巨无霸汉堡: 新发现一个 c11s 系（conversations客户端及其改版，比如 blabber.im monocles chat 等等）的 xmpp 客户端的使用小妙招，在我们手动添加新的公共群聊的时候，可以输入聊天室的 jid 并在jid 后附上\"/昵称\"，例如，添加本聊天室时写成\"xmpp新手室@salas.suchat.org/习理论的鬼话\"，那么用户进入本聊天室时昵称就会被设置成“习理论的鬼话”，而非用户的默认昵称。
 #xmpp X liqsliu: xmpp服务器如果使用 conversations.im ，发送文件会泄漏自己的账户名
+#xmpp X liqsliu: <debug996> monocles chat 的新版本 1.7.9.1 和 cheogram 的新版本 2.13.4-1+free 已在 f-droid 里上架，均内置了完整的聊天室表单功能，这将允许安卓用户开启和关闭访客发言限制。
+#xmpp X liqsliu: conversations客户端搜群支持中文关键词，至少要3个字，关键词可以从任意位置取
+#faq X liqsliu_suchat: 封我|不用，这个群不限制新人发言，没必要封禁已删除的账号。这只会给后一个使用这个账户的人带来不必要的麻烦。
+#faq X liqsliu_suchat: 封我谢谢|不用，这个群不限制新人发言，没必要封禁已删除的账号。这只会给后一个使用这个账户的人带来不必要的麻烦。
+#faq X liqsliu_suchat: 请封禁我|不用，这个群不限制新人发言，没必要封禁已删除的账号。这只会给后一个使用这个账户的人带来不必要的麻烦。
