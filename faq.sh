@@ -130,7 +130,7 @@ if [[ "${text:0:4}" == ".faq" ]]; then
 #    echo "格式为: .faq 触发关键词|回复内容"
 #    echo "添加示例: .faq ping|pong"
     echo "添加示例: .note #faq ping|pong"
-    echo "使用(触发): ping"
+    echo "添加示例2(多个触发关键词对应同一个回复): .note #faq 你好| hi| Hi|你好"
   else
     :
     # if [[ $(echo "$text" | grep -c -P "^.faq \S+.*\|\S+.*") -eq 1 ]]; then
