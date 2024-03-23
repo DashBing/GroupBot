@@ -522,7 +522,7 @@ api.gpt)
   LABLE="C"
   ;;
 api.xmpp)
-  LABLE="C"
+  LABLE="X"
   ;;
 # api.simplex)
 #   LABLE="S"
