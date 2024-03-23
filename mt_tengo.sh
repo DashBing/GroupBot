@@ -521,6 +521,9 @@ api.cmdres)
 api.gpt)
   LABLE="C"
   ;;
+api.xmpp)
+  LABLE="C"
+  ;;
 # api.simplex)
 #   LABLE="S"
 #   if [[ "$NAME" == "simplexbot" ]]; then
