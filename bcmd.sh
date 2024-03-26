@@ -477,9 +477,9 @@ cmds() {
     fi
     ;;
   ban|ban2|ban3|ub|ub2|jid|users|msgs|muc|debugxmpp|sbmode|retr|blocked|b|xmpp)
-    if [[ "$username" != "X liqsliu: " ]]; then
-      echo "你输错了命令: $1"
-    fi
+    # if [[ "$username" != "X liqsliu: " ]]; then
+    #   echo "你输错了命令: $1"
+    # fi
     ;;
   *)
     # echo "E: unknown cmd > $*"
