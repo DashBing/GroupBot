@@ -35,9 +35,9 @@ link_to_file() {
   fn=${fn##*:}
   fn=${fn##*\?}
   fn=${fn##*=}
-  fn=${fn%-}
-  fn=${fn%-}
-  fn=${fn%-}
+  fn=${fn#-}
+  fn=${fn#-}
+  fn=${fn#-}
   [[ -z "$fn" ]] && {
     fn=$(date "+%Y%m%d_%H%M%S").html
     fe=html
