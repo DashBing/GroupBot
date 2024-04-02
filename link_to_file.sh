@@ -130,11 +130,11 @@ curl_exit: $error: $curl_res"
       if [[ "$ft" == "text/html" ]]; then
         #fe=html
         #fe=$(file --extension "${fn}" | grep -o -P "\S+$")
-        fe=$(file --extension "${fn}" | grep -o -P "[^\s/]+$")
-        ft=$(file -bi "$fn"|cut -d';' -f1)
+        fe=$(file --extension -- "${fn}" | grep -o -P "[^\s/]+$")
+        ft=$(file -bi -- "$fn"|cut -d';' -f1)
         [[ "$fe" == "???" ]] && fe=html && ft="text/html"
       else
-        fe=$(file --extension "${fn}" | grep -o -P "[^\s/]+$")
+        fe=$(file --extension -- "${fn}" | grep -o -P "[^\s/]+$")
       fi
       [[ -e "$fn" ]] && {
       mv "${fn}" "${fn}.${fe}"
@@ -145,9 +145,9 @@ curl_exit: $error: $curl_res"
     if [[ "$2" == "type" ]]; then
       #if [[ "$ft" = *text/html* ]]; then
       if [[ "$ft" == "text/html" ]]; then
-        if [[ $( file -i "$fn"| grep -c "application/gzip" ) -eq 1 ]]; then
+        if [[ $( file -i -- "$fn"| grep -c "application/gzip" ) -eq 1 ]]; then
           title=$(cat "$fn" | gzip -d -c -)
-        elif [[ $( file -i "$fn"| grep -c "text/html" ) -eq 1 ]]; then
+        elif [[ $( file -i -- "$fn"| grep -c "text/html" ) -eq 1 ]]; then
           title=$(cat "$fn")
         else
           title="<title>E: unknown file type</title>"
@@ -157,10 +157,10 @@ curl_exit: $error: $curl_res"
         title=${title%%<*}
         echo "title: $title"
         [[ "$error" -ne 0 ]] && echo "remote: $fs $ft"
-        echo "file info: $(du -b -- "$fn" | cut -f1)$fsh;$(file -i "${fn}"|cut -d":" -f2)"
+        echo "file info: $(du -b -- "$fn" | cut -f1)$fsh;$(file -i -- "${fn}"|cut -d":" -f2)"
         echo "tmp link: $my_url"
       else
-        echo "file info: $(du -b -- "$fn" | cut -f1)$fsh;$(file -i "${fn}"|cut -d":" -f2)"
+        echo "file info: $(du -b -- "$fn" | cut -f1)$fsh;$(file -i -- "${fn}"|cut -d":" -f2)"
         [[ "$error" -ne 0 ]] && echo "remote: $fs $ft"
         echo "ipfs: $(bash "$SH_PATH/file_to_ipfs.sh" "$LP/${sub_dir}${fn}")"
         echo "tmp link: $my_url"
