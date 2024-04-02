@@ -35,6 +35,9 @@ link_to_file() {
   fn=${fn##*:}
   fn=${fn##*\?}
   fn=${fn##*=}
+  fn=${fn%-}
+  fn=${fn%-}
+  fn=${fn%-}
   [[ -z "$fn" ]] && {
     fn=$(date "+%Y%m%d_%H%M%S").html
     fe=html
@@ -105,7 +108,7 @@ curl_exit: $error: $curl_res"
         if [[ "${URL:0:$((9 + ${#DOMAIN}))}" == "https://$DOMAIN/" || -n "$fe"  ]]; then
           my_url="https://$DOMAIN/${sub_dir_en}$fn_en"
         else
-          [[ "$error" -eq 0 ]] && rm -f "$fn" # don't delete file downloaded by curl -o
+          [[ "$error" -eq 0 ]] && rm -f -- "$fn" # don't delete file downloaded by curl -o
         fi
       fi
 
@@ -114,7 +117,7 @@ curl_exit: $error: $curl_res"
       if [[ -e "$fn" ]]; then
         :
       else
-        error_info=$( wget -T 60 -q "$URL" -O "$fn" 2>&1 ) && my_url="https://$DOMAIN/${sub_dir_en}$fn_en" || { error=$?; flag=64; }
+        error_info=$( wget -T 60 -q "$URL" -O -- "$fn" 2>&1 ) && my_url="https://$DOMAIN/${sub_dir_en}$fn_en" || { error=$?; flag=64; }
         if [[ "$(du -b -- "$fn" | cut -f1)" == "0" ]]; then
           echo "wget download error, empty file"
           [[ "$flag" -eq 0 ]] && flag=5
@@ -146,9 +149,9 @@ curl_exit: $error: $curl_res"
       #if [[ "$ft" = *text/html* ]]; then
       if [[ "$ft" == "text/html" ]]; then
         if [[ $( file -i -- "$fn"| grep -c "application/gzip" ) -eq 1 ]]; then
-          title=$(cat "$fn" | gzip -d -c -)
+          title=$(cat -- "$fn" | gzip -d -c -)
         elif [[ $( file -i -- "$fn"| grep -c "text/html" ) -eq 1 ]]; then
-          title=$(cat "$fn")
+          title=$(cat -- "$fn")
         else
           title="<title>E: unknown file type</title>"
         fi
