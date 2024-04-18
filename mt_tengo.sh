@@ -234,7 +234,9 @@ xmpp.*)
       TEXT=$( echo "$TEXT" | sed '/^[^>]/,$!d')
       TEXT="${TEXT:$[${#NAME}+6]}"
     else
-      NAME="fixme_no_name"
+      if [[ "$NAME" != "wtfipfs" ]]; then
+        LABLE="0"
+      fi
       # if [[ -z "$QT" ]]; then
       #   unset QT
       # fi
