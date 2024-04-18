@@ -235,7 +235,7 @@ xmpp.*)
       TEXT="${TEXT:$[${#NAME}+6]}"
     else
       LABLE="0"
-      if [[ "$NAME" != "wtfipfs" ]]; then
+      if [[ "$NAME" == "wtfipfs" ]]; then
         NAME="C xmppbot"
       fi
       # if [[ -z "$QT" ]]; then
