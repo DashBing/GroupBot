@@ -1142,7 +1142,7 @@ async def mt2tg(msg):
             text = ' '.join(cmds[1:])
             if not text:
               #  await mt_send(f".{cmd} $text", gateway=gateway)
-              await mt_send(f"\nDeepInfra\n.{cmd} $text", gateway=gateway)
+              await mt_send(f"DeepInfra\n.{cmd} $text", gateway=gateway)
             else:
               url = ai(text, provider=Provider.DeepInfra)
               #  await mt_send(url, gateway=gateway)
