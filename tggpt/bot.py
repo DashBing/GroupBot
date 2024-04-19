@@ -1133,7 +1133,7 @@ async def mt2tg(msg):
             #  text="/image "+text
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send(f"gemini 图像生成(仅支持英文)\n.{cmd} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: .di/lb/kl/you", gateway=gateway)
+              await mt_send(f"gemini 图像生成(仅支持英文)\n.{cmd} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: .di/lb/kl/you/bd/ai", gateway=gateway)
             else:
               url = ai_img(text)
               await mt_send(url, gateway=gateway)
