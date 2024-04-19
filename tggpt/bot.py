@@ -1143,7 +1143,7 @@ async def mt2tg(msg):
               #  await mt_send(f".{cmd} $text", gateway=gateway)
               await mt_send(f"https://github.com/xtekky/gpt4free\nDeepInfra\n.{cmd} $text", gateway=gateway)
             else:
-              url = ai(text, provider=g4f.Provider.DeepInfra)
+              url = ai(text, provider=Provider.DeepInfra)
               await mt_send(url, gateway=gateway)
             return
           elif cmd == "lb":
@@ -1151,7 +1151,7 @@ async def mt2tg(msg):
             if not text:
               await mt_send(f"https://github.com/xtekky/gpt4free\nLiaobots\n.{cmd} $text", gateway=gateway)
             else:
-              url = ai(text, provider=g4f.Provider.Liaobots)
+              url = ai(text, provider=Provider.Liaobots)
               await mt_send(url, gateway=gateway)
             return
           elif cmd == "you":
@@ -1159,7 +1159,7 @@ async def mt2tg(msg):
             if not text:
               await mt_send(f"https://github.com/xtekky/gpt4free\nYou\n.{cmd} $text", gateway=gateway)
             else:
-              url = ai(text, provider=g4f.Provider.You, proxy="http://127.0.0.1:6080")
+              url = ai(text, provider=Provider.You, proxy="http://127.0.0.1:6080")
               await mt_send(url, gateway=gateway)
             return
 
