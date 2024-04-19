@@ -178,7 +178,7 @@ cmds() {
     shift
     bash "$SH_PATH/bdi.sh" "$@" || echo "E: $?"
     ;;
-  img|di|lb|you)
+  img|di|lb|kl|you)
     return 0
     ;;
   gpt|GPT)

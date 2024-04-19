@@ -1155,6 +1155,14 @@ async def mt2tg(msg):
               url = ai(text, provider=Provider.Liaobots)
               await mt_send_for_long_text(url, gateway)
             return
+          elif cmd == "kl":
+            text = ' '.join(cmds[1:])
+            if not text:
+              await mt_send(f"https://github.com/xtekky/gpt4free\nKoala\n.{cmd} $text", gateway=gateway)
+            else:
+              url = ai(text, provider=Provider.Koala)
+              await mt_send_for_long_text(url, gateway)
+            return
           elif cmd == "you":
             text = ' '.join(cmds[1:])
             if not text:
