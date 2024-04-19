@@ -63,6 +63,81 @@ from collections import deque
 
 
 
+
+HOME = os.environ.get("HOME")
+def get_my_key(key, path=f"{HOME}/vps/private_keys.txt"):
+  # key value
+  # key value
+  # key value
+  path2 = "private_keys.txt"
+  if os.path.isfile(path2):
+    path = path2
+  with open(path) as f:
+    line = f.readline()
+    while line:
+      if len(line.split(' ', 1)) == 2 and line.split(' ', 1)[0] == key:
+        f.close()
+        return line.split(' ', 1)[1].rstrip('\n')
+        break
+      line = f.readline()
+  #  LOGGER.error("wtf", exc_info=True)
+  #  return None;
+  exit(1)
+
+
+#  api_id = int(get_my_key("TELEGRAM_API_ID"))
+#  BING_U = get_my_key("BING_U")
+G1PSID = get_my_key('BARD_COOKIE_KEY')
+
+from g4f.cookies import set_cookies
+
+#  set_cookies(".bing.com", {
+#    "_U": "%s" % BING_U
+#  })
+set_cookies(".google.com", {
+  "__Secure-1PSID": G1PSID
+})
+
+
+
+
+from g4f.client import Client
+
+client = Client()
+
+def gemini_img(prompt):
+  response = client.images.generate(
+    model="gemini",
+    #  prompt="a white siamese cat",
+    prompt=prompt,
+  )
+  image_url = response.data[0].url
+  #  print(image_url)
+  return image_url
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 MT_API = "127.0.0.1:4246"
 HTTP_RES_MAX_BYTES = 15000000
 FILE_DOWNLOAD_MAX_BYTES = 64000000
@@ -1012,11 +1087,18 @@ async def mt2tg(msg):
           elif cmd == "img":
             #  need_clean = True
             #  text=text[5:]
+            #  text = ' '.join(cmds[1:])
+            #  if not text:
+            #    await mt_send(".img $text\n--\nhttps://t.me/littleb_gptBOT", gateway=gateway)
+            #    return
+            #  text="/image "+text
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send(".img $text\n--\nhttps://t.me/littleb_gptBOT", gateway=gateway)
-              return
-            text="/image "+text
+              await mt_send(".img $text", gateway=gateway)
+            else:
+              url = gemini_img(text)
+              await mt_send(url, gateway=gateway)
+            return
           #  elif text.startswith(".gtz"):
           elif cmd == "gtz":
             #  text=text[5:]
