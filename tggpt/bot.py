@@ -98,26 +98,23 @@ set_cookies(".google.com", {
   "__Secure-1PSID": G1PSID
 })
 
-
-
-
 from g4f.client import Client
 
 client = Client()
 
 def gemini_img(prompt):
-  response = client.images.generate(
-    model="gemini",
-    #  prompt="a white siamese cat",
-    prompt=prompt,
-  )
-  image_url = response.data[0].url
+  try:
+    response = client.images.generate(
+      model="gemini",
+      #  prompt="a white siamese cat",
+      prompt=prompt,
+    )
+  except Exception as e:
+    image_url = f"{e=}"
+  else:
+    image_url = response.data[0].url
   #  print(image_url)
   return image_url
-
-
-
-
 
 
 
