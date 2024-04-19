@@ -1132,7 +1132,7 @@ async def mt2tg(msg):
             #  text="/image "+text
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send(f"gemini\n.{cmd} $text", gateway=gateway)
+              await mt_send(f"gemini 图像生成(仅支持英文)\n.{cmd} $text", gateway=gateway)
             else:
               url = ai_img(text)
               await mt_send(url, gateway=gateway)
@@ -1144,7 +1144,8 @@ async def mt2tg(msg):
               await mt_send(f"https://github.com/xtekky/gpt4free\nDeepInfra\n.{cmd} $text", gateway=gateway)
             else:
               url = ai(text, provider=Provider.DeepInfra)
-              await mt_send(url, gateway=gateway)
+              #  await mt_send(url, gateway=gateway)
+              await mt_send_for_long_text(url, gateway)
             return
           elif cmd == "lb":
             text = ' '.join(cmds[1:])
@@ -1152,7 +1153,7 @@ async def mt2tg(msg):
               await mt_send(f"https://github.com/xtekky/gpt4free\nLiaobots\n.{cmd} $text", gateway=gateway)
             else:
               url = ai(text, provider=Provider.Liaobots)
-              await mt_send(url, gateway=gateway)
+              await mt_send_for_long_text(url, gateway)
             return
           elif cmd == "you":
             text = ' '.join(cmds[1:])
@@ -1160,7 +1161,7 @@ async def mt2tg(msg):
               await mt_send(f"https://github.com/xtekky/gpt4free\nYou\n.{cmd} $text", gateway=gateway)
             else:
               url = ai(text, provider=Provider.You, proxy="http://127.0.0.1:6080")
-              await mt_send(url, gateway=gateway)
+              await mt_send_for_long_text(url, gateway)
             return
 
 
@@ -1583,6 +1584,12 @@ async def just_for_me(event):
 
 
 
+async def mt_send_for_long_text(text, gateway):
+  fn='gpt_res'
+  async with queue_lock:
+    async with aiofiles.open(f"{SH_PATH}/{fn}", mode='w') as file:
+      await file.write(text)
+    os.system(f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
 
 
 @UB.on(events.NewMessage(incoming=True))
@@ -1639,13 +1646,9 @@ async def read_res(event):
         gateway = gateways[qid]
         mtmsgs = mtmsgsg[gateway]
         res = f"{mtmsgs[qid][0]['username']}{text}"
+        await mt_send_for_long_text(res, gateway)
         #  await mt_send(res, gateway=gateway, username="")
         #  await mt_send(res, gateway=gateway)
-        fn='gpt_res'
-        async with queue_lock:
-          async with aiofiles.open(f"{SH_PATH}/{fn}", mode='w') as file:
-            await file.write(res)
-          os.system(f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
         gateways.pop(qid)
         mtmsgs.pop(qid)
 
@@ -1655,7 +1658,6 @@ async def read_res(event):
     return
     await queues[gateways[qid]].put( (msg.id, msg, qid) )
     return
-
 
 
     #  gateway = None
@@ -1677,6 +1679,7 @@ async def read_res(event):
   else:
     print("W: skip: got a msg without reply: is_reply: %s\nmsg: %s" % (msg.is_reply, msg.stringify()))
     return
+
 
 
   #  text = msg.raw_text
