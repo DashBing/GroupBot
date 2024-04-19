@@ -1036,6 +1036,8 @@ async def mt2tg(msg):
             return
           #  cmds = deque(text[1:].split(' '))
           cmds = text[1:].split(' ')
+          #  print(f"> I: {cmds}")
+          logger.info("got cmds: {}".format(cmds))
           cmd = cmds[0]
           length = len(cmds)
           here = len(mtmsgsg[gateway])
@@ -1428,7 +1430,7 @@ async def mt_send(text="null", username="bot", gateway="test", qt=None):
         "gateway": "{}".format(gateway)
     }
     res = await http(url, method="POST", json=data)
-    #  logger.info("sent msg to mt, res: {}".format(res))
+    logger.info("sent msg to mt, res: {}".format(res))
     return res
 
 
