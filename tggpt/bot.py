@@ -1122,6 +1122,7 @@ async def mt2tg(msg):
               return
             #  need_clean = True
             text = f'{PROMPT_TR_MY_S}“{text}”'
+
           elif cmd == "img":
             #  need_clean = True
             #  text=text[5:]
@@ -1132,7 +1133,7 @@ async def mt2tg(msg):
             #  text="/image "+text
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send(f"gemini 图像生成(仅支持英文)\n.{cmd} $text", gateway=gateway)
+              await mt_send(f"gemini 图像生成(仅支持英文)\n.{cmd} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: .di/lb/kl/you", gateway=gateway)
             else:
               url = ai_img(text)
               await mt_send(url, gateway=gateway)
@@ -1141,7 +1142,7 @@ async def mt2tg(msg):
             text = ' '.join(cmds[1:])
             if not text:
               #  await mt_send(f".{cmd} $text", gateway=gateway)
-              await mt_send(f"https://github.com/xtekky/gpt4free\nDeepInfra\n.{cmd} $text", gateway=gateway)
+              await mt_send(f"\nDeepInfra\n.{cmd} $text", gateway=gateway)
             else:
               url = ai(text, provider=Provider.DeepInfra)
               #  await mt_send(url, gateway=gateway)
@@ -1150,7 +1151,7 @@ async def mt2tg(msg):
           elif cmd == "lb":
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send(f"https://github.com/xtekky/gpt4free\nLiaobots\n.{cmd} $text", gateway=gateway)
+              await mt_send(f"Liaobots\n.{cmd} $text", gateway=gateway)
             else:
               url = ai(text, provider=Provider.Liaobots)
               await mt_send_for_long_text(url, gateway)
@@ -1158,7 +1159,7 @@ async def mt2tg(msg):
           elif cmd == "kl":
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send(f"https://github.com/xtekky/gpt4free\nKoala\n.{cmd} $text", gateway=gateway)
+              await mt_send(f"Koala\n.{cmd} $text", gateway=gateway)
             else:
               url = ai(text, provider=Provider.Koala)
               await mt_send_for_long_text(url, gateway)
@@ -1166,12 +1167,11 @@ async def mt2tg(msg):
           elif cmd == "you":
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send(f"https://github.com/xtekky/gpt4free\nYou\n.{cmd} $text", gateway=gateway)
+              await mt_send(f"You\n.{cmd} $text", gateway=gateway)
             else:
               url = ai(text, provider=Provider.You, proxy="http://127.0.0.1:6080")
               await mt_send_for_long_text(url, gateway)
             return
-
 
           else:
             return
