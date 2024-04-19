@@ -103,13 +103,13 @@ from g4f.client import Client
 
 client = Client()
 
-def ai_img(prompt, model="gemini", proxy=None):
+#  def ai_img(prompt, model="gemini", proxy=None):
+def ai_img(prompt, model="gemini"):
   try:
     response = client.images.generate(
       model=model,
       #  prompt="a white siamese cat",
       prompt=prompt,
-      proxy=proxy,
     )
   except Exception as e:
     image_url = f"{e=}"
