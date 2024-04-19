@@ -98,16 +98,18 @@ set_cookies(".google.com", {
   "__Secure-1PSID": G1PSID
 })
 
+
 from g4f.client import Client
 
 client = Client()
 
-def gemini_img(prompt):
+def ai_img(prompt, model="gemini", proxy=None):
   try:
     response = client.images.generate(
-      model="gemini",
+      model=model,
       #  prompt="a white siamese cat",
       prompt=prompt,
+      proxy=proxy,
     )
   except Exception as e:
     image_url = f"{e=}"
@@ -117,12 +119,22 @@ def gemini_img(prompt):
   return image_url
 
 
+from g4f import models, Provider
 
-
-
-
-
-
+def ai(prompt, provider=Provider.You, model=models.default, proxy=None):
+  try:
+    response = client.chat.completions.create(
+      model=model,
+      messages=[{"role": "user", "content": prompt}],
+      provider=provider,
+      proxy=proxy,
+    )
+  except Exception as e:
+    image_url = f"{e=}"
+  else:
+    image_url  = response.choices[0].message.content
+  #  print(image_url)
+  return image_url
 
 
 
@@ -1083,21 +1095,6 @@ async def mt2tg(msg):
               return
             text="/search "+text
           #  elif text == ".img" or text.startswith(".img "):
-          elif cmd == "img":
-            #  need_clean = True
-            #  text=text[5:]
-            #  text = ' '.join(cmds[1:])
-            #  if not text:
-            #    await mt_send(".img $text\n--\nhttps://t.me/littleb_gptBOT", gateway=gateway)
-            #    return
-            #  text="/image "+text
-            text = ' '.join(cmds[1:])
-            if not text:
-              await mt_send(".img $text", gateway=gateway)
-            else:
-              url = gemini_img(text)
-              await mt_send(url, gateway=gateway)
-            return
           #  elif text.startswith(".gtz"):
           elif cmd == "gtz":
             #  text=text[5:]
@@ -1125,9 +1122,50 @@ async def mt2tg(msg):
               return
             #  need_clean = True
             text = f'{PROMPT_TR_MY_S}“{text}”'
-          else:
+          elif cmd == "img":
+            #  need_clean = True
+            #  text=text[5:]
+            #  text = ' '.join(cmds[1:])
+            #  if not text:
+            #    await mt_send(".img $text\n--\nhttps://t.me/littleb_gptBOT", gateway=gateway)
+            #    return
+            #  text="/image "+text
+            text = ' '.join(cmds[1:])
+            if not text:
+              await mt_send(f"gemini\n.{cmd} $text", gateway=gateway)
+            else:
+              url = ai_img(text)
+              await mt_send(url, gateway=gateway)
+            return
+          elif cmd == "di":
+            text = ' '.join(cmds[1:])
+            if not text:
+              #  await mt_send(f".{cmd} $text", gateway=gateway)
+              await mt_send(f"https://github.com/xtekky/gpt4free\nDeepInfra\n.{cmd} $text", gateway=gateway)
+            else:
+              url = ai(text, provider=g4f.Provider.DeepInfra)
+              await mt_send(url, gateway=gateway)
+            return
+          elif cmd == "lb":
+            text = ' '.join(cmds[1:])
+            if not text:
+              await mt_send(f"https://github.com/xtekky/gpt4free\nLiaobots\n.{cmd} $text", gateway=gateway)
+            else:
+              url = ai(text, provider=g4f.Provider.Liaobots)
+              await mt_send(url, gateway=gateway)
+            return
+          elif cmd == "you":
+            text = ' '.join(cmds[1:])
+            if not text:
+              await mt_send(f"https://github.com/xtekky/gpt4free\nYou\n.{cmd} $text", gateway=gateway)
+            else:
+              url = ai(text, provider=g4f.Provider.You, proxy="http://127.0.0.1:6080")
+              await mt_send(url, gateway=gateway)
             return
 
+
+          else:
+            return
         elif gateway in gptmode:
           pass
         else:

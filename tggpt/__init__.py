@@ -75,6 +75,7 @@ loop = asyncio.get_event_loop()
 
 
 import os
+os.environ['EVENTLET_NO_GREENDNS'] = 'yes'
 
 HOME = os.environ.get("HOME")
 
