@@ -228,3 +228,5 @@
 #nostr X liqsliu: 介绍 https://nostrtips.com/
 #xmpp X liqsliu: 自带翻译的客户端\n> qy: 谢谢，我暂时用不到。不过你可以发一下下载链接，也许其他人有兴趣\n>> Qy: Thank you, I can not use it for a while. But you can send a download link, maybe everyone is interested.\nhttps://easyupload.io/c6uisf\n> https://easyupload.io/c6uisf
 #faq X liqsliu_: 科比| see you again| kobe| 24| 8| 牢大|https://youtu.be/RgKAFK5djSk
+#xmpp X liqsliu_: yax支持443端口登录，conversations支持80端口登录
+#default X liqsliu_: #翻译工具 https://translate.monocles.de/

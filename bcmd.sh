@@ -154,30 +154,6 @@ cmds() {
     shift
     bash "$SH_PATH/ai.sh" "$@" || echo "E: $?"
     ;;
-  ai2)
-    shift
-    bash "$SH_PATH/ai2.sh" "$@" || echo "E: $?"
-    ;;
-  ai22)
-    shift
-    bash "$SH_PATH/ai22.sh" "$@" || echo "E: $?"
-    ;;
-  bd|BD)
-    shift
-    bash "$SH_PATH/bd.sh" "$@" || echo "E: $?"
-    ;;
-  bd22)
-    shift
-    bash "$SH_PATH/bd22.sh" "$@" || echo "E: $?"
-    ;;
-  bd2)
-    shift
-    bash "$SH_PATH/bd2.sh" "$@" || echo "E: $?"
-    ;;
-  bdi)
-    shift
-    bash "$SH_PATH/bdi.sh" "$@" || echo "E: $?"
-    ;;
   img|di|lb|kl|you)
     return 0
     ;;
@@ -215,17 +191,6 @@ cmds() {
   google | g)
     shift
     bash "$SH_PATH/google.sh" "$@" || echo "E: $?"
-    ;;
-  is)
-    bash "$SH_PATH/is.sh" "$@" || echo "E: $?"
-    ;;
-  an | ia)
-    shift
-    bash "$SH_PATH/an.sh" "$@" || echo "E: $?"
-    ;;
-  icp)
-    shift
-    bash "$SH_PATH/icp.sh" "$@" || echo "E: $?"
     ;;
   tw)
     shift
@@ -405,17 +370,6 @@ cmds() {
     tmp=${tmp# }
     bash "$SH_PATH/tr.sh" "$tmp" || echo "E: $?"
     ;;
-  trmode)
-    [[ -e $SH_PATH/.mode_for_tr_$gateway ]] && rm $SH_PATH/.mode_for_tr_$gateway || touch $SH_PATH/.mode_for_tr_$gateway
-    [[ -e $SH_PATH/.mode_for_tr_$gateway ]] && echo "trmode on" || echo "trmode off"
-    ;;
-  trans)
-    shift
-    # bash "$SH_PATH/muxiaoguo.sh" Tn_google "$@"
-    # trans -brief "${@}"
-    # echo bash "$SH_PATH/trans.sh" "$@" &>>~/tera/mt_msg.log
-    bash "$SH_PATH/trans.sh" "$@" || echo "E: $?"
-    ;;
   # pong | xd)
   #   shift
   #   echo
@@ -485,9 +439,27 @@ cmds() {
     #   echo "你输错了命令: $1"
     # fi
     ;;
+  trmode)
+    [[ -e $SH_PATH/.mode_for_tr_$gateway ]] && rm $SH_PATH/.mode_for_tr_$gateway || touch $SH_PATH/.mode_for_tr_$gateway
+    [[ -e $SH_PATH/.mode_for_tr_$gateway ]] && echo "trmode on" || echo "trmode off"
+    ;;
+  trans)
+    shift
+    # bash "$SH_PATH/muxiaoguo.sh" Tn_google "$@"
+    # trans -brief "${@}"
+    # echo bash "$SH_PATH/trans.sh" "$@" &>>~/tera/mt_msg.log
+    bash "$SH_PATH/trans.sh" "$@" || echo "E: $?"
+    ;;
   *)
-    # echo "E: unknown cmd > $*"
-    echo "你输错了命令: $1"
+    shift
+    bash "$SH_PATH/${1}.sh" "$@"; e=$?
+    if [[ "$e" -eq 0 ]]; then
+      :
+    elif [[ "$e" -eq 127 ]]; then
+      # echo "E: unknown cmd > $*"
+      echo "你输错了命令: $1"
+    fi
+
     ;;
   esac
 
