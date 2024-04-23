@@ -6,12 +6,12 @@ target=zh
 
 tr(){
   # -H 'Content-Type: application/json' \
-curl -v -X POST 'https://translate.monocles.de/translate' \
+curl -s -X POST 'https://translate.monocles.de/translate' \
   -d "q=$*" \
   -d 'source=auto' \
   -d "target=$target" \
   -d 'fromat=json' \
-  -d 'api_key='
+  -d 'api_key=' | jq -r '.translatedText'
 }
 
 if [[ -z "$1" ]] || [[ "$1" == "help" ]]; then

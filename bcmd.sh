@@ -83,7 +83,8 @@ cmds() {
     return 0
   fi
   echo -n "$username"
-  case ${cmd:1} in
+  cmd=${cmd:1}
+  case ${cmd} in
   help|h)
     if [[ -z "$2" ]]; then
       [[ -e "$SH_PATH/group_help.txt" ]] && cat "$SH_PATH/group_help.txt" || echo "E: no group_help.txt"
@@ -452,12 +453,12 @@ cmds() {
     ;;
   *)
     shift
-    bash "$SH_PATH/${1}.sh" "$@"; e=$?
+    bash "$SH_PATH/${cmd}.sh" "$@"; e=$?
     if [[ "$e" -eq 0 ]]; then
       :
     elif [[ "$e" -eq 127 ]]; then
       # echo "E: unknown cmd > $*"
-      echo "你输错了命令: $1"
+      echo "E: 你输错了命令: $1"
     fi
 
     ;;
