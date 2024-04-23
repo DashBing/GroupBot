@@ -230,3 +230,6 @@
 #faq X liqsliu_: 科比| see you again| kobe| 24| 8| 牢大|https://youtu.be/RgKAFK5djSk
 #xmpp X liqsliu_: yax支持443端口登录，conversations支持80端口登录
 #default X liqsliu_: #翻译工具 https://translate.monocles.de/
+#faq X liqsliu_: 乒|乓
+#faq X we.: 🤩|🤩
+#faq X we.: ping|🏓

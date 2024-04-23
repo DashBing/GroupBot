@@ -13,14 +13,11 @@ set -f
 
 
 is_me(){
-
   if [[ "$username" = 'X liqsliu: ' ]]; then
     return
   else
     return 1
   fi
-
-
 }
 
 changeai(){
@@ -46,11 +43,6 @@ changeai(){
 cmds() {
   # cmd="$*"
   cmd="$1"
-  # if [[ "$cmd" == "pong" ]]; then
-  #   cmd=".pong"
-  # else
-  #   cmd=$1
-  # fi
   # if [[ "${cmd:0:1}" != "." ]] && [[ "${cmd:0:1}" != "/" ]]; then
   if [[ "${cmd:0:1}" != "." ]]; then
     if bash "$SH_PATH/faq.sh" "$text" ; then
@@ -146,10 +138,6 @@ cmds() {
       local ms=$(ping -W 5 -c 1 $host | cut -d "=" -s -f4)
       [[ -z "$ms" ]] && echo "超时" || echo "$ms"
     fi
-    ;;
-  qy)
-    # shift
-    bash "$SH_PATH/qy.sh" "$@" || echo "E: $?"
     ;;
   ai|AI)
     shift
@@ -361,16 +349,6 @@ cmds() {
     echo -n "https://managedway.dl.sourceforge.net/project/"
     echo "${2%/download}" | cut -d'/' -f5,7-
     ;;
-  tr)
-    # shift
-    # bash "$SH_PATH/muxiaoguo.sh" Tn_google "$@"
-    # trans -brief "${@}"
-    # bash "$SH_PATH/tr.sh" "$*" || echo "E: $?"
-    local tmp
-    tmp=${text#\.tr}
-    tmp=${tmp# }
-    bash "$SH_PATH/tr.sh" "$tmp" || echo "E: $?"
-    ;;
   # pong | xd)
   #   shift
   #   echo
@@ -444,13 +422,31 @@ cmds() {
     [[ -e $SH_PATH/.mode_for_tr_$gateway ]] && rm $SH_PATH/.mode_for_tr_$gateway || touch $SH_PATH/.mode_for_tr_$gateway
     [[ -e $SH_PATH/.mode_for_tr_$gateway ]] && echo "trmode on" || echo "trmode off"
     ;;
-  trans)
-    shift
-    # bash "$SH_PATH/muxiaoguo.sh" Tn_google "$@"
-    # trans -brief "${@}"
-    # echo bash "$SH_PATH/trans.sh" "$@" &>>~/tera/mt_msg.log
-    bash "$SH_PATH/trans.sh" "$@" || echo "E: $?"
+  qy)
+    # shift
+    bash "$SH_PATH/qy.sh" "$@" || echo "E: $?"
     ;;
+  # trans)
+  #   shift
+  #   # bash "$SH_PATH/muxiaoguo.sh" Tn_google "$@"
+  #   # trans -brief "${@}"
+  #   # echo bash "$SH_PATH/trans.sh" "$@" &>>~/tera/mt_msg.log
+  #   bash "$SH_PATH/trans.sh" "$@" || echo "E: $?"
+  #   ;;
+  # tr)
+  #   # shift
+  #   local tmp
+  #   tmp=${text#\.tr}
+  #   tmp=${tmp# }
+  #   bash "$SH_PATH/tr.sh" "$tmp" || echo "E: $?"
+  #   ;;
+  # mtr)
+  #   # shift
+  #   local tmp
+  #   tmp=${text#\.mtr}
+  #   tmp=${tmp# }
+  #   bash "$SH_PATH/mtr.sh" "$tmp" || echo "E: $?"
+  #   ;;
   *)
     shift
     bash "$SH_PATH/${cmd}.sh" "$@"; e=$?
@@ -458,9 +454,8 @@ cmds() {
       :
     elif [[ "$e" -eq 127 ]]; then
       # echo "E: unknown cmd > $*"
-      echo "E: 你输错了命令: $1"
+      echo "你输错了命令: .$cmd"
     fi
-
     ;;
   esac
 
@@ -483,18 +478,12 @@ fi
 
 # echo "arg: $*"
 echo "bcmd.sh arg: $*" >> $LOG_FILE
-
-
 send(){
   local text=$1
   # curl -s -XPOST -H 'Content-Type: application/json' -d "$(bash "$SH_PATH/gene_res.sh" "$1" $gateway)" http://127.0.0.1:4240/api/message
   # bash "$SH_PATH/sm.sh" "C bot" "$text" 4240 $gateway
   bash "$SH_PATH/sm.sh" "C bot" "$text" 4249 $gateway
 }
-
-
-
-
 [[ -z "$3" ]] && exit
 gateway=$1
 username=$2
@@ -502,8 +491,6 @@ text=$3
 # res=$4
 # username=$(echo "$restmp" | jq -r ".username")
 # qt_text=$5
-
-
 if [[ "$text" == "ping" ]]; then
   text=".ping"
 elif [[ "$text" == "help" ]]; then
@@ -517,22 +504,41 @@ elif echo "$text" | grep -q -P "^http(s)?://[0-9a-zA-Z.-]+\.[a-zA-Z]+(:[0-9]+)?/
   text=".type $text autocheck"
 fi
 fi
-
-
 echo "b0 :|$text|" >> $LOG_FILE
-  # if [[ "${text:0:6}" == ".note " ]]; then
-#text=$(cmds $text)
+# if [[ "${text:0:6}" == ".note " ]]; then
 #text=$(cmds $text 2>&1)
-text=$(cmds $text) && {
+echo "$text" >> $LOG
+echo "---" >> $LOG
+# if [[ $(echo "$text" | wc -l) -gt 1 ]]; then
+while true
+do
+  H=$(echo "$text"| sed -n 1p)
+  text=$(echo "$text"| sed 1d)
+  if [[ -n "$H" ]]; then
+    break
+  fi
+  if [[ -z "$text" ]]; then
+    break
+  fi
+done
+if [[ -n "$text" ]]; then
+  text="
+$text"
+fi
+# fi
 
-  [[ "$text" = "$username" ]] && exit 0
-  [[ -z "$text" ]] && exit 0
+echo $H"$text" >> $LOG
+# text=$(cmds $text) && {
+text=$(cmds $H "$text") && {
+[[ "$text" = "$username" ]] && exit 0
+[[ -z "$text" ]] && exit 0
   # text=$(bash "$SH_PATH/gene_res.sh" "$text" $gateway)
-
-# echo "b2 :|$text|" >> ~/tera/mt_msg.log
 #  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4243/api/message)
 # bash "$SH_PATH/sm.sh" bot "$text" 4240 $gateway || echo "E: $?"
   # send "$text" 2>> $LOG 1>> $LOG_FILE
-  echo "$text"
+# echo "$text" >> $LOG
+echo "$text"
+} || {
+exit "E: $?"
+echo "$text"
 }
-
