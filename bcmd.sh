@@ -532,6 +532,7 @@ text=$(cmds $text) && {
 # echo "b2 :|$text|" >> ~/tera/mt_msg.log
 #  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4243/api/message)
 # bash "$SH_PATH/sm.sh" bot "$text" 4240 $gateway || echo "E: $?"
-  send "$text" 2>> $LOG 1>> $LOG_FILE
+  # send "$text" 2>> $LOG 1>> $LOG_FILE
+  echo "$text"
 }
 

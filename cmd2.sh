@@ -76,9 +76,6 @@ if [[ -f "$SH_PATH/error" ]] && [[ -n "$(cat $SH_PATH/error)" ]]; then
   else
     log2
   fi
-#   echo "E: $e?
-# fail to run cmd
-# error=$r" >> $LOG
 fi
 
 text=$out
@@ -87,18 +84,17 @@ if [[ -n "$r" ]]; then
   text="$text
 --
 E: $r"
-else
-  [[ -z "$text" ]] && exit 0
+# else
+#   [[ -z "$text" ]] && exit 0
+fi
+if [[ -z "$text" ]]; then
+  text=None
 fi
 
 # text=$(echo "$text"|sed 's/\r//g')
 # text=$(echo "$text" | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
-
 # send_to_mt "$text"
 # send_to_mt "E: $text_e"
-
-
-
 echo "b1 :|$text|" >> $LOG_FILE
 
   # [[ -z "$text" ]] && exit
@@ -108,4 +104,3 @@ echo "b1 :|$text|" >> $LOG_FILE
 #  res=$(curl -s -XPOST -H 'Content-Type: application/json' -d "$text" http://127.0.0.1:4243/api/message)
 # bash "$SH_PATH/sm.sh" bot "$text" 4240 $gateway || echo "E: $?"
 send "$text" 2>> $LOG 1>> $LOG_FILE
-
