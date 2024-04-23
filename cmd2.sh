@@ -88,6 +88,7 @@ E: $r"
 #   [[ -z "$text" ]] && exit 0
 fi
 if [[ -z "$text" ]]; then
+  exit 0
   text=None
 fi
 
