@@ -509,27 +509,27 @@ echo "b0 :|$text|" >> $LOG_FILE
 #text=$(cmds $text 2>&1)
 echo "$text" >> $LOG
 echo "---" >> $LOG
-# if [[ $(echo "$text" | wc -l) -gt 1 ]]; then
-while true
-do
-  H=$(echo "$text"| sed -n 1p)
-  text=$(echo "$text"| sed 1d)
-  if [[ -n "$H" ]]; then
-    break
-  fi
-  if [[ -z "$text" ]]; then
-    break
-  fi
-done
-if [[ -n "$text" ]]; then
-  text="
-$text"
-fi
-# fi
 
-echo $H"$text" >> $LOG
-# text=$(cmds $text) && {
-text=$(cmds $H "$text") && {
+# if [[ $(echo "$text" | wc -l) -gt 1 ]]; then
+H=$(echo "$text"| sed -n 1p)
+H1=${H:% *}
+text=$(echo "$text"| sed 1d)
+if [[ "$H" != "$H1" ]]; then
+  if [[ -n "$text" ]]; then
+    H=$H1
+    text="${H:##* }
+$text"
+  fi
+fi
+
+if [[ -z "$text" ]]; then
+  echo $H >> $LOG
+  text=$(cmds $H) && {
+else
+  echo $H "$text" >> $LOG
+  text=$(cmds $H "$text") && {
+fi
+
 [[ "$text" = "$username" ]] && exit 0
 [[ -z "$text" ]] && exit 0
   # text=$(bash "$SH_PATH/gene_res.sh" "$text" $gateway)
