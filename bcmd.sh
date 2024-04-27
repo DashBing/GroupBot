@@ -42,7 +42,7 @@ changeai(){
 
 cmds() {
   # cmd="$*"
-  cmd="$1"
+  local cmd="$1"
   # if [[ "${cmd:0:1}" != "." ]] && [[ "${cmd:0:1}" != "/" ]]; then
   if [[ "${cmd:0:1}" != "." ]]; then
     if bash "$SH_PATH/faq.sh" "$text" ; then
@@ -512,24 +512,26 @@ echo "---" >> $LOG
 
 # if [[ $(echo "$text" | wc -l) -gt 1 ]]; then
 H=$(echo "$text"| sed -n 1p)
-H1=${H:% *}
-text=$(echo "$text"| sed 1d)
+H1=${H% *}
+ex=$(echo "$text"| sed 1d)
 if [[ "$H" != "$H1" ]]; then
-  if [[ -n "$text" ]]; then
+  if [[ -n "$ex" ]]; then
     H=$H1
-    text="${H:##* }
-$text"
+    text="${H##* }
+$ex"
   fi
 fi
 
-if [[ -z "$text" ]]; then
+e=0
+if [[ -z "$ex" ]]; then
   echo $H >> $LOG
-  text=$(cmds $H) && {
+  text=$(cmds $H) || e=$?
 else
   echo $H "$text" >> $LOG
-  text=$(cmds $H "$text") && {
+  text=$(cmds $H "$ex") || e=$?
 fi
 
+if [[ $e -eq 0 ]]; then
 [[ "$text" = "$username" ]] && exit 0
 [[ -z "$text" ]] && exit 0
   # text=$(bash "$SH_PATH/gene_res.sh" "$text" $gateway)
@@ -538,7 +540,7 @@ fi
   # send "$text" 2>> $LOG 1>> $LOG_FILE
 # echo "$text" >> $LOG
 echo "$text"
-} || {
-exit "E: $?"
+else
+exit "E: $e"
 echo "$text"
-}
+fi
