@@ -11,12 +11,18 @@ ai(){
 #echo "$*" | nc -w 1800 127.0.0.1 8888 || exit $?
 local role=${2:-user}
 local text=${1:-你好}
-curl -s --location 'http://127.0.0.1:5005/v1/chat/completions' --header 'Content-Type: application/json' --data '{
+res =$(curl -s --location 'http://127.0.0.1:5005/v1/chat/completions' --header 'Content-Type: application/json' --data '{
      "model": "gpt-3.5-turbo",
      "messages": [{"role": "'$role'", "content": "'$text'"}],
      "stream": false
-   }'  | jq -r '.choices[0].message.content'
+   }')
 
+tmp=$(echo "$res" | jq -r '.choices[0].message.content')
+if [[ "$tmp" == null ]]; then
+  echo "$res"
+else
+  echo "$tmp"
+fi
 }
 
 
