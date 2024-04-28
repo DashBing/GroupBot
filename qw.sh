@@ -5,4 +5,4 @@ if [[ -z "$1" ]]; then
   exit
 fi
 
-python3 "$SH_PATH/"qw.py "$*"
+python3 "$SH_PATH/"qw.py "$*" | sed 1d
