@@ -1088,7 +1088,7 @@ async def mt2tg(msg):
             #  need_clean = True
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send(".se $text", gateway=gateway)
+              await mt_send(".gse $text", gateway=gateway)
               return
             text="/search "+text
           #  elif text == ".img" or text.startswith(".img "):
