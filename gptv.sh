@@ -15,7 +15,7 @@ curl -s --location 'http://127.0.0.1:5005/v1/chat/completions' --header 'Content
      "model": "gpt-3.5-turbo",
      "messages": [{"role": "'$role'", "content": "'$text'"}],
      "stream": false
-   }'  | jq -r '.choices[0].message.content'
+   }'
 
 }
 

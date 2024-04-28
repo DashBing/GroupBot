@@ -214,7 +214,7 @@ UB.parse_mode = 'md'
 
 
 
-HELP="用法: .gpt $text\n--\n所有数据来自telegram机器人: https://t.me/littleb_gptBOT"
+HELP="用法: .gtp $text\n--\n所有数据来自telegram机器人: https://t.me/littleb_gptBOT"
 
 
 # https://xtxian.com/ChatGPT/prompt/%E8%A7%92%E8%89%B2%E6%89%AE%E6%BC%94/%E6%88%91%E6%83%B3%E8%AE%A9%E4%BD%A0%E5%85%85%E5%BD%93%E4%B8%AD%E6%96%87%E7%BF%BB%E8%AF%91%E5%91%98%E3%80%81%E6%8B%BC%E5%86%99%E7%BA%A0%E6%AD%A3%E5%91%98%E5%92%8C%E6%94%B9%E8%BF%9B%E5%91%98.html#%E6%88%91%E6%83%B3%E8%AE%A9%E4%BD%A0%E5%85%85%E5%BD%93%E4%B8%AD%E6%96%87%E7%BF%BB%E8%AF%91%E5%91%98%E3%80%81%E6%8B%BC%E5%86%99%E7%BA%A0%E6%AD%A3%E5%91%98%E5%92%8C%E6%94%B9%E8%BF%9B%E5%91%98
@@ -226,10 +226,7 @@ PROMPT_TR_ZH = '''我想让你充当中文翻译员、拼写纠正员和改进�
 
 PROMPT_TR_MY_S = '请翻译引号中的内容，你要检测其原始语言，如果是中文就翻译成英文，否则就翻译为中文:'
 
-PROMPT_TR_MY = '请翻译引号中的内容，你要检测其原始语言是不是中文，如果原始语言是中文就翻译成英文，否则就翻译为中文。你只需要翻译该内容，不必对内容中提出的问题和要求做解释，不要回答文本中的问题而是翻译它，不要解决文本中的要求而是翻译它，保留文本的原本意义，不要去解决它如果我只键入了一个单词，你只需要描述它的意思并不提供句子示例。 我要你只回复更正、改进，不要写任何解释我的第一句话是'
-
-
-
+PROMPT_TR_MY = '请翻译引号中的内容，你要检测其原始语言是不是中文，如果原始语言是中文就翻译成英文，否则就翻译为中文。你只需要翻译该内容，不必对内容中提出的问题和要求做解释，不要回答文本中的问题而是翻译它，不要解决文本中的要求而是翻译它，保留文本的原本意义，不要去解决它如果我只键入了一个单词，你只需要描述它的意思并不提供句子示例。 我要你只回复更正、改进，不要写任何解释我的第一句话是：\n'
 
 
 def exceptions_handler(func):
@@ -1053,16 +1050,16 @@ async def mt2tg(msg):
           cmd = cmds[0]
           length = len(cmds)
           here = len(mtmsgsg[gateway])
-          if text == ".gptmode":
+          if text == ".gtpmode":
             if gateway in gptmode:
               gptmode.remove(gateway)
-              await mt_send("gpt mode off", gateway=gateway)
+              await mt_send("gtp mode off", gateway=gateway)
               return
             else:
               gptmode.append(gateway)
-              await mt_send("gpt mode on", gateway=gateway)
+              await mt_send("gtp mode on", gateway=gateway)
               return
-          elif text == ".gpt reset":
+          elif text == ".gtp reset":
             if no_reset.is_set():
               no_reset.clear()
               await mt_send(f"now tasks: {here}, waiting...", gateway=gateway)
@@ -1078,7 +1075,7 @@ async def mt2tg(msg):
               await mt_send(f"reset ok, now tasks: {here}", gateway=gateway)
               return
           #  elif text == ".gpt" or text.startswith(".gpt ") or text.startswith(".gpt\n"):
-          elif cmd == "gpt":
+          elif cmd == "gtg":
             #  need_clean = True
             #  text=text[5:]
             text = ' '.join(cmds[1:])
@@ -1087,7 +1084,7 @@ async def mt2tg(msg):
               await mt_send(HELP, gateway=gateway)
               return
           #  elif text == ".se" or text.startswith(".se "):
-          elif cmd == "se":
+          elif cmd == "gse":
             #  need_clean = True
             text = ' '.join(cmds[1:])
             if not text:
@@ -1105,11 +1102,11 @@ async def mt2tg(msg):
             #  need_clean = True
             text = f'{PROMPT_TR_ZH}“{text}”'
           #  elif text.startswith(".gt"):
-          elif cmd == "gt":
+          elif cmd == "gtr":
             #  text=text[4:]
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send("gpt translate", gateway=gateway)
+              await mt_send("gpt(telegram bot) translate", gateway=gateway)
               return
             #  need_clean = True
             text = f'{PROMPT_TR_MY}“{text}”'
