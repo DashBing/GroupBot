@@ -27,6 +27,8 @@ if [[ -z "$1" ]]; then
   echo ".gpt -u \$username \$str"
   # echo "/GPT \$str"
   echo '--'
+  echo '.gtp \$str'
+  echo '--'
   echo "https://github.com/LanQian528/chat2api"
   echo "https://chat.openai.com/"
   # echo "只能单线程工作，并且速度较慢。但是结果可能比ai和bot命令好一点。"

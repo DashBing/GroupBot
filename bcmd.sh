@@ -146,7 +146,7 @@ cmds() {
   img|di|lb|kl|you)
     return 0
     ;;
-  gtp|gptr|gtr|gtz|gse|voice)
+  gtg|gptr|gtr|gtz|gse|voice)
     return 0
     ;;
   # gptmode)
