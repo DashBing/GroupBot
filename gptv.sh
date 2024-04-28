@@ -23,8 +23,8 @@ curl -s --location 'http://127.0.0.1:5005/v1/chat/completions' --header 'Content
 
 if [[ -z "$1" ]]; then
   echo "openai gpt3.5"
-  echo ".gt \$str"
-  echo ".gt -u \$username \$str"
+  echo ".gptv \$str"
+  echo ".gptv -u \$username \$str"
   # echo "/GPT \$str"
   echo '--'
   echo "https://github.com/LanQian528/chat2api"

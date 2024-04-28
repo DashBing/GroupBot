@@ -146,13 +146,13 @@ cmds() {
   img|di|lb|kl|you)
     return 0
     ;;
-  gpt|GPT)
+  gtp)
     return 0
   #   shift
   #   bash "$SH_PATH/gpt.sh" "$@" || echo "E: $?"
   #   bash "$SH_PATH/gpt.sh" "reset" &>/dev/null
     ;;
-  gptr|gt|gtz|se|img|voice)
+  gptr|gtr|gtz|se|img|voice)
     return 0
     ;;
   # gptmode)
