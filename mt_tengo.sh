@@ -202,7 +202,7 @@ xmpp.*)
     TEXT=$( echo "$TEXT" | sed '/^[^»]/,$!d')
 
   fi
-  if [[ "$NAME" == "wtfipfs" ]] || [[ "${NAME::2}" == "X " ]] || [[ "${NAME::2}" == "C " ]] || [[ "${NAME::2}" == ".ban " ]]; then
+  if [[ "$NAME" == "wtfipfs" ]] || [[ "${NAME::2}" == "X " ]] || [[ "${NAME::2}" == "C " ]] || [[ "${NAME::5}" == ".ban " ]]; then
     # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ \S+?:\*\* ')
     # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ [^\s]+?:\*\* ')
     # NAME=${NAME:2}
@@ -237,6 +237,8 @@ xmpp.*)
       LABLE="0"
       if [[ "$NAME" == "wtfipfs" ]]; then
         NAME="C xmppbot"
+      elif [[ "${NAME::5}" == ".ban " ]]; then
+        NAME=${NAME#.ban }
       fi
       # if [[ -z "$QT" ]]; then
       #   unset QT
