@@ -406,7 +406,7 @@ cmds() {
       nali-dig -h
     fi
     ;;
-  ban|ban2|ban3|ub|ub2|jid|users|msgs|muc|debugxmpp|sbmode|retr|blocked|b|xmpp)
+  join|ban|ban2|ban3|ub|ub2|jid|users|msgs|muc|debugxmpp|sbmode|retr|blocked|b|xmpp)
     :
     # if [[ "$username" != "X liqsliu: " ]]; then
     #   echo "你输错了命令: $1"
