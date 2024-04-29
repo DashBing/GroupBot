@@ -202,7 +202,7 @@ xmpp.*)
     TEXT=$( echo "$TEXT" | sed '/^[^»]/,$!d')
 
   fi
-  if [[ "$NAME" == "wtfipfs" ]] || [[ "${NAME::2}" == "X " ]] || [[ "${NAME::2}" == "C " ]]; then
+  if [[ "$NAME" == "wtfipfs" ]] || [[ "${NAME::2}" == "X " ]] || [[ "${NAME::2}" == "C " ]] || [[ "${NAME::2}" == ".ban " ]]; then
     # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ \S+?:\*\* ')
     # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ [^\s]+?:\*\* ')
     # NAME=${NAME:2}
