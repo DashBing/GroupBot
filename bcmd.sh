@@ -143,7 +143,7 @@ cmds() {
     shift
     bash "$SH_PATH/ai.sh" "$@" || echo "E: $?"
     ;;
-  py|img|di|lb|kl|you|hg)
+  py|img|di|lb|kl|you|hg|qw|qw2)
     return 0
     ;;
   gtg|gptr|gtr|gtz|gse|voice)
