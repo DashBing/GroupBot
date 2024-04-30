@@ -193,11 +193,10 @@ async def hg(prompt, provider=Provider.You, model=models.default, proxy=None):
 from gradio_client import Client
 
 
-qw_client = Client("https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/")
-qw2_client = Client("Qwen/Qwen1.5-110B-Chat-demo")
 
 async def qw(text):
   try:
+    qw_client = Client("https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/")
     #  result = qw_client.predict(
     result = await asyncio.to_thread(qw_client.predict,
         #  sys.argv[1],	# str  in 'Input' Textbox component
@@ -215,6 +214,8 @@ async def qw(text):
     res = f"{e=}"
   return res
 
+
+qw2_client = Client("Qwen/Qwen1.5-110B-Chat-demo")
 
 async def qw2(text):
   try:
