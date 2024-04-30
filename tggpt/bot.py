@@ -86,6 +86,29 @@ def get_my_key(key, path=f"{HOME}/vps/private_keys.txt"):
   exit(1)
 
 
+def info(text):
+  logger.info(text)
+
+def get_cmd(text):
+  cmd = text.split(' ')
+  tmp = []
+  for i in cmd:
+    if tmp:
+      ii = tmp[-1].split("\\\\")[-1]
+      if ii and ii[-1] == "\\":
+        tmp[-1] = tmp[-1][:-1] + " " + i
+      else:
+        #  if i:
+        tmp.append(i)
+    else:
+      if i:
+        tmp.append(i)
+  if tmp:
+    cmd = tmp
+    info(f"return cmd {len(cmd)}: {cmd=}")
+    return cmd
+
+
 #  api_id = int(get_my_key("TELEGRAM_API_ID"))
 #  BING_U = get_my_key("BING_U")
 G1PSID = get_my_key('BARD_COOKIE_KEY')
@@ -163,6 +186,53 @@ async def hg(prompt, provider=Provider.You, model=models.default, proxy=None):
   #  print(image_url)
   return image_url
 
+
+
+
+
+from gradio_client import Client
+
+
+qw_client = Client("https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/")
+qw2_client = Client("Qwen/Qwen1.5-110B-Chat-demo")
+
+async def qw(text):
+  try:
+    #  result = qw_client.predict(
+    result = await asyncio.to_thread(qw_client.predict,
+        #  sys.argv[1],	# str  in 'Input' Textbox component
+        text,	# str  in 'Input' Textbox component
+        #  [[sys.argv[1], sys.argv[1]]],	# Tuple[str | Dict(file: filepath, alt_text: str | None) | None, str | Dict(file: filepath, alt_text: str | None) | None]  in 'Qwen1.5-72B-Chat' Chatbot component
+        [],	# Tuple[str | Dict(file: filepath, alt_text: str | None) | None, str | Dict(file: filepath, alt_text: str | None) | None]  in 'Qwen1.5-72B-Chat' Chatbot component
+        "You are a helpful assistant.",	# str  in 'parameter_9' Textbox component
+        api_name="/model_chat"
+    )
+    #  print(result)
+    #  print(result[1][1][1])
+    #  print(result[1][0][1])
+    res = result[1][0][1]
+  except Exception as e:
+    res = f"{e=}"
+  return res
+
+
+async def qw2(text):
+  try:
+    #  result = qw2_client.predict(
+    result = await asyncio.to_thread(qw2_client.predict,
+        #  query=sys.argv[1],
+        query=text,
+        history=[],
+        system="You are a helpful assistant.",
+        api_name="/model_chat"
+    )
+    #  print(result)
+    #  print(result[1][1][1])
+    #  print(result[1][0][1])
+    res = result[1][0][1]
+  except Exception as e:
+    res = f"{e=}"
+  return res
 
 
 
@@ -1062,11 +1132,18 @@ async def mt2tg(msg):
 
 
 
+        if text.startswith(".py "):
+          text = "." + text[4:]
         if text[0:1] == ".":
           if text[1:2] == " ":
             return
           #  cmds = deque(text[1:].split(' '))
-          cmds = text[1:].split(' ')
+          #  cmds = text[1:].split(' ')
+          cmds = get_cmd(text[1:])
+          if cmds:
+            pass
+          else:
+            return
           #  print(f"> I: {cmds}")
           logger.info("got cmds: {}".format(cmds))
           cmd = cmds[0]
@@ -1199,6 +1276,22 @@ async def mt2tg(msg):
               await mt_send(f"You\n.{cmd} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: hg/di/lb/kl/you/bd/ai", gateway=gateway)
             else:
               url = await ai(text, provider=Provider.You, proxy="http://127.0.0.1:6080")
+              await mt_send_for_long_text(url, gateway)
+            return
+          elif cmd == "qw":
+            text = ' '.join(cmds[1:])
+            if not text:
+              await mt_send(f"阿里千问\n.{cmd} $text", gateway=gateway)
+            else:
+              url = await qw(text)
+              await mt_send_for_long_text(url, gateway)
+            return
+          elif cmd == "qw2":
+            text = ' '.join(cmds[1:])
+            if not text:
+              await mt_send(f"阿里千问\n.{cmd} $text", gateway=gateway)
+            else:
+              url = await qw2(text)
               await mt_send_for_long_text(url, gateway)
             return
 
