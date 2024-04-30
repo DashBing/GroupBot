@@ -99,14 +99,16 @@ set_cookies(".google.com", {
 })
 
 
+from g4f import models, Provider
 from g4f.client import Client
 
 client = Client()
 
 #  def ai_img(prompt, model="gemini", proxy=None):
-def ai_img(prompt, model="gemini"):
+async def ai_img(prompt, model="gemini"):
   try:
-    response = client.images.generate(
+    #  response = client.images.generate(
+      response = await client.images.generate(
       model=model,
       #  prompt="a white siamese cat",
       prompt=prompt,
@@ -118,12 +120,10 @@ def ai_img(prompt, model="gemini"):
   #  print(image_url)
   return image_url
 
-
-from g4f import models, Provider
-
-def ai(prompt, provider=Provider.You, model=models.default, proxy=None):
+async def ai(prompt, provider=Provider.You, model=models.default, proxy=None):
   try:
-    response = client.chat.completions.create(
+    #  response = client.chat.completions.create(
+      response = await client.chat.completions.create(
       model=model,
       messages=[{"role": "user", "content": prompt}],
       provider=provider,
@@ -135,8 +135,6 @@ def ai(prompt, provider=Provider.You, model=models.default, proxy=None):
     image_url  = response.choices[0].message.content
   #  print(image_url)
   return image_url
-
-
 
 
 
@@ -1130,10 +1128,20 @@ async def mt2tg(msg):
             #  text="/image "+text
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send(f"gemini 图像生成(仅支持英文)\n.{cmd} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: .di/lb/kl/you/bd/ai", gateway=gateway)
+              await mt_send(f"gemini 图像生成(仅支持英文)\n.{cmd} $text", gateway=gateway)
             else:
-              url = ai_img(text)
+              url = await ai_img(text)
               await mt_send(url, gateway=gateway)
+            return
+          elif cmd == "hg":
+            text = ' '.join(cmds[1:])
+            if not text:
+              #  await mt_send(f".{cmd} $text", gateway=gateway)
+              await mt_send(f"HuggingChat\n.{cmd} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: hg/di/lb/kl/you/bd/ai", gateway=gateway)
+            else:
+              url = await ai(text, provider=Provider.HuggingChat)
+              #  await mt_send(url, gateway=gateway)
+              await mt_send_for_long_text(url, gateway)
             return
           elif cmd == "di":
             text = ' '.join(cmds[1:])
@@ -1141,7 +1149,7 @@ async def mt2tg(msg):
               #  await mt_send(f".{cmd} $text", gateway=gateway)
               await mt_send(f"DeepInfra\n.{cmd} $text", gateway=gateway)
             else:
-              url = ai(text, provider=Provider.DeepInfra)
+              url = await ai(text, provider=Provider.DeepInfra)
               #  await mt_send(url, gateway=gateway)
               await mt_send_for_long_text(url, gateway)
             return
@@ -1150,7 +1158,7 @@ async def mt2tg(msg):
             if not text:
               await mt_send(f"Liaobots\n.{cmd} $text", gateway=gateway)
             else:
-              url = ai(text, provider=Provider.Liaobots)
+              url = await ai(text, provider=Provider.Liaobots)
               await mt_send_for_long_text(url, gateway)
             return
           elif cmd == "kl":
@@ -1158,15 +1166,15 @@ async def mt2tg(msg):
             if not text:
               await mt_send(f"Koala\n.{cmd} $text", gateway=gateway)
             else:
-              url = ai(text, provider=Provider.Koala)
+              url = await ai(text, provider=Provider.Koala)
               await mt_send_for_long_text(url, gateway)
             return
           elif cmd == "you":
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send(f"You\n.{cmd} $text", gateway=gateway)
+              await mt_send(f"You\n.{cmd} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: hg/di/lb/kl/you/bd/ai", gateway=gateway)
             else:
-              url = ai(text, provider=Provider.You, proxy="http://127.0.0.1:6080")
+              url = await ai(text, provider=Provider.You, proxy="http://127.0.0.1:6080")
               await mt_send_for_long_text(url, gateway)
             return
 
