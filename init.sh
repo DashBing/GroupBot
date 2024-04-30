@@ -20,6 +20,10 @@ BOTID=$(cat $SH_PATH/BOTID)
 sed -i 's/BOTID: [^ ]* /BOTID: '$BOTID' /g' group_help.txt
 sed -i 's/BOTID: [^ ]* /BOTID: '$BOTID' /g' group_help_tox.txt
 
+
+rm "$SH_PATH"/*.sh
+rm "$SH_PATH"/*.py
+
 cp *.sh "$SH_PATH"/
 rm "$SH_PATH/init.sh"
 cp *.py "$SH_PATH"/
