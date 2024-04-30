@@ -104,6 +104,8 @@ from g4f import models, Provider
 from g4f.client import Client
 
 
+client = Client()
+
 #  def ai_img(prompt, model="gemini", proxy=None):
 async def ai_img(prompt, model="gemini"):
   try:
@@ -124,7 +126,6 @@ async def ai_img(prompt, model="gemini"):
 
 async def ai(prompt, provider=Provider.You, model=models.default, proxy=None):
   try:
-      client = Client()
     #  response = client.chat.completions.create(
       #  response = await client.chat.completions.create(
       #  s = await asyncio.to_thread(run_ocr, img=res)
