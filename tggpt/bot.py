@@ -55,6 +55,7 @@ from urltitle import URLTitleReader
 from collections import deque
 
 
+import asyncio
 
 
 
@@ -80,7 +81,7 @@ def get_my_key(key, path=f"{HOME}/vps/private_keys.txt"):
         return line.split(' ', 1)[1].rstrip('\n')
         break
       line = f.readline()
-  #  LOGGER.error("wtf", exc_info=True)
+  LOGGER.error(f"wtf: no {key},  please check file: {path}", exc_info=True)
   #  return None;
   exit(1)
 
@@ -108,7 +109,8 @@ async def ai_img(prompt, model="gemini"):
   try:
       client = Client()
     #  response = client.images.generate(
-      response = await client.images.generate(
+      #  response = await client.images.generate(
+      response = await asyncio.to_thread(client.images.generate,
       model=model,
       #  prompt="a white siamese cat",
       prompt=prompt,
@@ -141,8 +143,7 @@ async def ai(prompt, provider=Provider.You, model=models.default, proxy=None):
 
 
 
-
-HF_TOKEN = get_my_key('HG_TOKEN')
+HF_TOKEN = get_my_key('HF_TOKEN')
 
 async def hg(prompt, provider=Provider.You, model=models.default, proxy=None):
   try:
@@ -160,7 +161,6 @@ async def hg(prompt, provider=Provider.You, model=models.default, proxy=None):
     image_url  = response.choices[0].message.content
   #  print(image_url)
   return image_url
-
 
 
 
@@ -1189,7 +1189,7 @@ async def mt2tg(msg):
             if not text:
               await mt_send(f"Koala\n.{cmd} $text", gateway=gateway)
             else:
-              url = await ai(text, provider=Provider.Koala)
+              url = await ai(text, provider=Provider.Koala, proxy="http://127.0.0.1:6080")
               await mt_send_for_long_text(url, gateway)
             return
           elif cmd == "you":
