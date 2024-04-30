@@ -102,11 +102,11 @@ set_cookies(".google.com", {
 from g4f import models, Provider
 from g4f.client import Client
 
-client = Client()
 
 #  def ai_img(prompt, model="gemini", proxy=None):
 async def ai_img(prompt, model="gemini"):
   try:
+      client = Client()
     #  response = client.images.generate(
       response = await client.images.generate(
       model=model,
@@ -122,8 +122,11 @@ async def ai_img(prompt, model="gemini"):
 
 async def ai(prompt, provider=Provider.You, model=models.default, proxy=None):
   try:
+      client = Client()
     #  response = client.chat.completions.create(
-      response = await client.chat.completions.create(
+      #  response = await client.chat.completions.create(
+      #  s = await asyncio.to_thread(run_ocr, img=res)
+      response = await asyncio.to_thread(client.chat.completions.create,
       model=model,
       messages=[{"role": "user", "content": prompt}],
       provider=provider,
@@ -137,6 +140,26 @@ async def ai(prompt, provider=Provider.You, model=models.default, proxy=None):
   return image_url
 
 
+
+
+HF_TOKEN = get_my_key('HG_TOKEN')
+
+async def hg(prompt, provider=Provider.You, model=models.default, proxy=None):
+  try:
+      client = Client(api_key=HF_TOKEN)
+    #  response = client.chat.completions.create(
+      response = await client.chat.completions.create(
+      model=model,
+      messages=[{"role": "user", "content": prompt}],
+      provider=provider,
+      proxy=proxy,
+    )
+  except Exception as e:
+    image_url = f"{e=}"
+  else:
+    image_url  = response.choices[0].message.content
+  #  print(image_url)
+  return image_url
 
 
 
@@ -1139,7 +1162,7 @@ async def mt2tg(msg):
               #  await mt_send(f".{cmd} $text", gateway=gateway)
               await mt_send(f"HuggingChat\n.{cmd} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: hg/di/lb/kl/you/bd/ai", gateway=gateway)
             else:
-              url = await ai(text, provider=Provider.HuggingChat)
+              url = await hg(text, provider=Provider.HuggingChat)
               #  await mt_send(url, gateway=gateway)
               await mt_send_for_long_text(url, gateway)
             return
