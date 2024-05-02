@@ -1,9 +1,7 @@
-# run
-just for me
+# GroupBot
+*A Robot For Chatting Groups in XMPP, Telegram, Matrix, Irc, Discord*
 
-----
-----
-
+## To Run
 ```
 sudo apt install colorized-logs
 pip install --user lottie cairosvg
