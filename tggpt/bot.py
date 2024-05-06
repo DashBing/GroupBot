@@ -1884,11 +1884,11 @@ async def parse_msg(event):
         res = f"{mtmsgs[qid][0]['username']}搜索结果\n{text}"
         await mt_send_for_long_text(res, gateway)
 
-        gateways.pop(qid)
-        mtmsgs.pop(qid)
         gateways[msg.id] = gateway
         mtmsgs[msg.id] = mtmsgs[qid]
         #  music_bot_state[gateway] = msg.id
+        gateways.pop(qid)
+        mtmsgs.pop(qid)
 
       elif music_bot_state[gateway] == 2:
         gateways.pop(qid)
