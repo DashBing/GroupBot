@@ -1797,7 +1797,7 @@ async def download_media(msg, gateway='test', path=f"{DOWNLOAD_PATH}/", in_memor
       print('Downloaded', current, 'out of', total,
         'bytes: {:.2%}'.format(current / total))
 
-      if last_time[gateway] - time.time() > 5:
+      if time.time() - last_time[gateway] > 5:
         #  await mt_send("{:.2%} %s/%s".format(current / total, current, total), gateway=gateway)
         asyncio.create_task(mt_send("{:.2%} {}/{} bytes".format(current / total, current, total), gateway=gateway))
         last_time[gateway] = time.time()
@@ -1911,7 +1911,9 @@ async def parse_msg(event):
       elif msg.file and music_bot_state[gateway] == 3:
         path = await download_media(msg, gateway)
         if path is not None:
-          path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
+          #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
+        #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
+          path = "https://%s/%s" % (DOMAIN, parse.urlencode(path.lstrip(DOWNLOAD_PATH)))
         res = f"{mtmsgs[qid][0]['username']}{path}\n{text}"
         await mt_send_for_long_text(res, gateway)
 
