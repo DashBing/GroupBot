@@ -1414,12 +1414,22 @@ async def mt2tg(msg):
           msg = mtmsgs[qid][1]
           info(f"尝试下载：{text} msg: {msg.buttons}")
           i = None
-          for i in msg.button[0]:
-            if i.text == text:
-              info(f"已找到：{text}")
-              await i.click()
-              i = True
-              break
+          for i in msg.buttons:
+            if type(i) is list:
+              for j in i:
+                if j.text == text:
+                  info(f"已找到：{text}")
+                  await j.click()
+                  i = True
+                  break
+              if i is True:
+                break
+            else:
+              if i.text == text:
+                info(f"已找到：{text}")
+                await i.click()
+                i = True
+                break
 
           if i is True:
             gateways.pop(qid)
