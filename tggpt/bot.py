@@ -1896,12 +1896,14 @@ async def parse_msg(event):
         return
       elif msg.file and music_bot_state[gateway] == 3:
         path = await download_media(msg)
+        if path is not None:
+          path = "%s%s" % (DOMAIN, path.lsplit(DOWNLOAD_PATH))
         res = f"{mtmsgs[qid][0]['username']}{path}\n{text}"
         await mt_send_for_long_text(res, gateway)
 
 
     except Exception as e:
-      err(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
+      err(f"E: fixme: music bot: {gateways=} {e=}")
 
     return
 
