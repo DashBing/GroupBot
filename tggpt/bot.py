@@ -1796,7 +1796,7 @@ async def download_media(msg, gateway='test', path=f"{DOWNLOAD_PATH}/", in_memor
       #  await mt_send("{:.2%} %s/%s".format(current / total, current, total), gateway=gateway)
       asyncio.create_task(mt_send("{:.2%} %s/%s".format(current / total, current, total), gateway=gateway))
 
-    path = await msg.download_media(path, callback=download_media_callback)
+    path = await msg.download_media(path, progress_callback=download_media_callback)
     if path:
       return path
     else:
