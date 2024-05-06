@@ -294,7 +294,7 @@ TMP_PATH=HOME+"/tera/tmp"
 
 SH_PATH='/run/user/1000/bot'
 
-gpt_chat=None
+#  gpt_chat=None
 
 UA = 'Chrome Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) Apple    WebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36'
 #  urlre=re.compile(r'((^|https?://|\s+)((([\dA-Za-z0-9.]+-?)+\.)+[A-Za-z]+|(\d+\.){3}\d+|(\[[\da-f]*:){7}[\da-f]*\])(:\d+)?(/[^/\s]+)*/?)')
@@ -1161,6 +1161,7 @@ async def mt2tg(msg):
 
         global queue
         need_clean = False
+        chat_id = gpt_bot
 
         if gateway not in mtmsgsg:
           mtmsgsg[gateway] = {}
@@ -1221,6 +1222,39 @@ async def mt2tg(msg):
               await mt_send(f"reset ok, now tasks: {here}", gateway=gateway)
               return
           #  elif text == ".gpt" or text.startswith(".gpt ") or text.startswith(".gpt\n"):
+          elif cmd == "music":
+            chat_id = music_bot
+            text = ' '.join(cmds[1:])
+            if not text:
+              await mt_send(f".{cmd} $text\n.{cmd} clear", gateway=gateway)
+              return
+            text="/search "+text
+            if gateway not in music_bot_state:
+              music_bot_state[gateway] = 0
+
+            if music_bot_state[gateway] == 0:
+              music_bot_state[gateway] += 1
+            else:
+              if cmds[1] == "d":
+                if len(cmds) < 3:
+                  await mt_send("需要一个数字", gateway=gateway)
+                else:
+                  #  if music_bot_state[gateway] == 2:
+                  #    msg = mt
+                  #    info(msg.buttons)
+                  #  else:
+                  #    await mt_send("顺序不对，请重试", gateway=gateway)
+                  mtmsgs = mtmsgsg[gateway]
+                  msg = mtmsgs[music_bot_state[gateway]][1]
+                  info("尝试下载：{text} msg: {msg.buttons}")
+              elif cmds[1] == "clear":
+                await clear_history()
+                music_bot_state[gateway] = 0
+                await mt_send("ok")
+              else:
+                await mt_send("有未结束任务", gateway=gateway)
+              return
+
           elif cmd == "gtg":
             #  need_clean = True
             #  text=text[5:]
@@ -1397,11 +1431,6 @@ async def mt2tg(msg):
             await mt_send(res, gateway=gateway, username="titlebot")
           return
 
-
-
-
-
-        chat_id = gpt_bot
         #  if gateway in MT_GATEWAY_LIST:
         #      chat_id = MT_GATEWAY_LIST[gateway][0]
         #  else:
@@ -1430,27 +1459,28 @@ async def mt2tg(msg):
         msgd.update({"chat_id": chat_id})
         msgd.update({"text": text})
 
-        #7    msg = [0, chat_id, text, {"reply_to":reply_to}]
-        #    await queue.put(msg)
-        #    await queue.put(msgd)
-        #  await queue.put([1, msgd])
-
-        global gpt_chat
-        if not gpt_chat:
+        #  global chat
+        #  if not chat:
+        try:
+          chat = await UB.get_input_entity(chat_id)
+        except Exception as e:
+          print(e)
           try:
-            gpt_chat = await UB.get_input_entity(chat_id)
-          except Exception as e:
-            print(e)
+            if chat_id == gpt_bot:
+              chat = await UB.get_input_entity('littleb_gptBOT')
+            else:
+              chat = await UB.get_input_entity('Music163bot')
+          except ValueError:
+            print("wtf, wrong id?")
             try:
-              gpt_chat = await UB.get_input_entity('littleb_gptBOT')
-            except ValueError:
-              print("wtf, wrong id?")
-              try:
-                gpt_chat = await UB.get_entity(chat_id)
-                print(gpt_chat.stringify())
-              except:
-                gpt_chat = await UB.get_entity('littleb_gptBOT')
-                print(gpt_chat.stringify())
+              chat = await UB.get_entity(chat_id)
+              print(chat.stringify())
+            except:
+              if chat_id == gpt_bot:
+                chat = await UB.get_entity('littleb_gptBOT')
+              else:
+                chat = await UB.get_entity('Music163bot')
+              print(chat.stringify())
         #  print(f">{chat.user_id}: {text}")
         print(f"I: send {text} to gpt")
         if text != CLEAN:
@@ -1458,12 +1488,12 @@ async def mt2tg(msg):
             logger.warning("W: wait for no_reset...")
             await no_reset.wait()
           elif need_clean is True:
-            msg = await UB.send_message(gpt_chat, CLEAN)
+            msg = await UB.send_message(chat, CLEAN)
 
         #    while len(queue.keys()) > 0:
         #      print("W: waiting to reset...")
         #      await asyncio.sleep(1)
-        msg = await UB.send_message(gpt_chat, text)
+        msg = await UB.send_message(chat, text)
         #  await queue.put({msg.id: [msgd, msg]})
         #  await queue.put([msg, msgd])
         if text != CLEAN:
@@ -1474,16 +1504,10 @@ async def mt2tg(msg):
             gateways[msg.id] = gateway
             #  mtmsgs[msg.id] = [msgd,None]
             #  if gateway not in mtmsgs:
-            mtmsgsg[gateway][msg.id] = [msgd, None]
+            #  mtmsgsg[gateway][msg.id] = [msgd, None]
+            mtmsgsg[gateway][msg.id] = [msgd]
         else:
-          await asyncio.sleep(1)
-          #  for g in queues:
-          for g in mtmsgsg:
-            mtmsgs = mtmsgsg[g]
-            mtmsgs.clear()
-          await mt_send(f"cleaned: {mtmsgsg=}", gateway="test")
-          gateways.clear()
-          await mt_send(f"cleaned: {gateways=}", gateway="test")
+          await clear_history()
           here = len(mtmsgsg[gateway])
           all = 0
           for i in mtmsgsg:
@@ -1505,6 +1529,16 @@ async def mt2tg(msg):
         #  await NB.send_message(MY_ID, info)
         await asyncio.sleep(5)
 
+
+async def clear_history():
+  await asyncio.sleep(1)
+  #  for g in queues:
+  for g in mtmsgsg:
+    mtmsgs = mtmsgsg[g]
+    mtmsgs.clear()
+  #  await mt_send(f"cleaned: {mtmsgsg=}", gateway="test")
+  gateways.clear()
+  #  await mt_send(f"cleaned: {gateways=}", gateway="test"):w
 
 
 @http_exceptions_handler
@@ -1715,72 +1749,11 @@ async def just_for_me(event):
 
 
 
-#  @UB.on(events.NewMessage(incoming=True))
-#  @UB.on(events.MessageEdited(incoming=True))
-#  @exceptions_handler
-#  async def read_res(event):
-#
-#    if not no_reset.is_set():
-#      return
-#    #  if event.chat_id in id2gateway:
-#    if event.chat_id == gpt_bot:
-#      pass
-#    elif event.chat_id == rss_bot:
-#      msg = event.message
-#      await mt_send(msg.text, "rss2tg_bot", id2gateway[rss_bot])
-#      return
-#      #  print("N: skip: %s != %s" % (event.chat_id, gpt_bot))
-#    else:
-#      return
-#    #  if not no_reset.is_set():
-#    #    print("W: skiped the msg because of reset is waiting")
-#    #    return
-#    #  elif event.chat_id not in gateways:
-#    #    logger.error(f"E: not found gateway for {event.chat_id}, {gateways=}")
-#    #    return
-#    msg = event.message
-#
-#    if msg.is_reply:
-#      qid=msg.reply_to_msg_id
-#      print(f"msg id: {msg.id=} {event.id=} {qid=} {gateways=} {mtmsgsg=}")
-#      if qid not in gateways:
-#        logger.error(f"E: not found gateway for {qid=}, {gateways=} {msg.text=}")
-#        return
-#      try:
-#        #  await queues[gateways[qid]].put( (id(msg), qid, msg) )
-#        #  await queues[gateways[qid]].put( (msg.date, qid, msg) )
-#        await queues[gateways[qid]].put( (id(msg), qid, msg) )
-#        #  await queues[gateways[qid]].put( (msg.id, "test") )
-#      except Exception as e:
-#        logger.info(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
-#        #  raise e
-#      return
-#      await queues[gateways[qid]].put( (msg.id, msg, qid) )
-#      return
+music_bot_state = {}
 
 
 
-async def mt_send_for_long_text(text, gateway):
-  fn='gpt_res'
-  async with queue_lock:
-    async with aiofiles.open(f"{SH_PATH}/{fn}", mode='w') as file:
-      await file.write(text)
-    #  os.system(f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
-    return await asyncio.to_thread(os.system, f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
-
-
-
-
-
-@UB.on(events.NewMessage(incoming=True))
-@UB.on(events.MessageEdited(incoming=True))
-@exceptions_handler
-async def read_res(event):
-
-  if not no_reset.is_set():
-    print(f"E: no reset")
-    return
-
+async def parse_msg(event):
   msg = event.message
   
   #  if event.chat_id not in id2gateway:
@@ -1789,9 +1762,41 @@ async def read_res(event):
   #  if event.chat_id in id2gateway:
   if event.chat_id == gpt_bot:
     pass
+
   elif event.chat_id == music_bot:
-    print("W: skip: got a unknown: chat_id: %s\nmsg: %s" % (event.chat_id, msg.stringify()))
+    print("I: music bot: chat_id: %s\nmsg: %s" % (event.chat_id, msg.stringify()))
+    info(msg.buttons)
+    if msg.is_reply:
+      pass
+    else:
+      return
+    qid=msg.reply_to_msg_id
+    if qid not in gateways:
+      logger.error(f"E: not found gateway for {qid=}, {gateways=} {msg.text=}")
+      return
+    try:
+      gateway = gateways[qid]
+      mtmsgs = mtmsgsg[gateway]
+      
+      if music_bot_state[gateway] == 1:
+        info(f"找到了几个音乐:{len(msg.buttons)} {msg.text}")
+        music_bot_state[gateway] += 1
+        mtmsgs[qid].append(msg)
+
+        gateways[msg.id] = gateway
+        mtmsgs[msg.id] = mtmsgs[qid]
+        music_bot_state[gateway] = msg.id
+      else:
+        pass
+
+
+      gateways.pop(qid)
+      mtmsgs.pop(qid)
+    except Exception as e:
+      logger.info(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
+
     return
+
   elif event.chat_id == rss_bot:
     await mt_send(msg.text, "rss2tg_bot", id2gateway[rss_bot])
     return
@@ -1799,12 +1804,6 @@ async def read_res(event):
   else:
     print("W: skip: got a unknown: chat_id: %s" % (event.chat_id, ))
     return
-  #  if not no_reset.is_set():
-  #    print("W: skiped the msg because of reset is waiting")
-  #    return
-  #  elif event.chat_id not in gateways:
-  #    logger.error(f"E: not found gateway for {event.chat_id}, {gateways=}")
-  #    return
 
   if msg.is_reply:
     qid=msg.reply_to_msg_id
@@ -1870,6 +1869,72 @@ async def read_res(event):
 
 
 
+
+#  @UB.on(events.NewMessage(incoming=True))
+#  @UB.on(events.MessageEdited(incoming=True))
+#  @exceptions_handler
+#  async def read_res(event):
+#
+#    if not no_reset.is_set():
+#      return
+#    #  if event.chat_id in id2gateway:
+#    if event.chat_id == gpt_bot:
+#      pass
+#    elif event.chat_id == rss_bot:
+#      msg = event.message
+#      await mt_send(msg.text, "rss2tg_bot", id2gateway[rss_bot])
+#      return
+#      #  print("N: skip: %s != %s" % (event.chat_id, gpt_bot))
+#    else:
+#      return
+#    #  if not no_reset.is_set():
+#    #    print("W: skiped the msg because of reset is waiting")
+#    #    return
+#    #  elif event.chat_id not in gateways:
+#    #    logger.error(f"E: not found gateway for {event.chat_id}, {gateways=}")
+#    #    return
+#    msg = event.message
+#
+#    if msg.is_reply:
+#      qid=msg.reply_to_msg_id
+#      print(f"msg id: {msg.id=} {event.id=} {qid=} {gateways=} {mtmsgsg=}")
+#      if qid not in gateways:
+#        logger.error(f"E: not found gateway for {qid=}, {gateways=} {msg.text=}")
+#        return
+#      try:
+#        #  await queues[gateways[qid]].put( (id(msg), qid, msg) )
+#        #  await queues[gateways[qid]].put( (msg.date, qid, msg) )
+#        await queues[gateways[qid]].put( (id(msg), qid, msg) )
+#        #  await queues[gateways[qid]].put( (msg.id, "test") )
+#      except Exception as e:
+#        logger.info(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
+#        #  raise e
+#      return
+#      await queues[gateways[qid]].put( (msg.id, msg, qid) )
+#      return
+
+
+
+async def mt_send_for_long_text(text, gateway):
+  fn='gpt_res'
+  async with queue_lock:
+    async with aiofiles.open(f"{SH_PATH}/{fn}", mode='w') as file:
+      await file.write(text)
+    #  os.system(f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
+    return await asyncio.to_thread(os.system, f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
+
+
+
+
+
+@UB.on(events.NewMessage(incoming=True))
+@UB.on(events.MessageEdited(incoming=True))
+@exceptions_handler
+async def read_res(event):
+  if not no_reset.is_set():
+    warn("no reset")
+    return
+  asyncio.create_task(parse_msg(event))
 
 
 async def my_event_handler(event):

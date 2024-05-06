@@ -1,0 +1,302 @@
+msg: Message(
+        id=17678,
+        peer_id=PeerUser(
+                user_id=1404457467
+        ),
+        date=datetime.datetime(2024, 5, 6, 7, 11, 13, tzinfo=datetime.timezone.utc),
+        message='「Romance」- 石凯\n专辑: Romance\n#网易云音乐 #flac 37.64MB 1734.42kbps\nvia @Music163bot',
+        out=False,
+        mentioned=False,
+        media_unread=False,
+        silent=False,
+        post=False,
+        from_scheduled=False,
+        legacy=False,
+        edit_hide=False,
+        pinned=False,
+        noforwards=False,
+        invert_media=False,
+        offline=False,
+        from_id=None,
+        from_boosts_applied=None,
+        saved_peer_id=None,
+        fwd_from=None,
+        via_bot_id=None,
+        via_business_bot_id=None,
+        reply_to=MessageReplyHeader(
+                reply_to_scheduled=False,
+                forum_topic=False,
+                quote=False,
+                reply_to_msg_id=17676,
+                reply_to_peer_id=None,
+                reply_from=None,
+                reply_media=None,
+                reply_to_top_id=None,
+                quote_text=None,
+                quote_entities=[
+                ],
+                quote_offset=None
+        ),
+        media=MessageMediaDocument(
+                nopremium=False,
+                spoiler=False,
+                video=False,
+                round=False,
+                voice=False,
+                document=Document(
+                        id=6179437501959113960,
+                        access_hash=-7095912533692541239,
+                        file_reference=b'\x01\x00\x00E\x0ef8\x82\x91\xd33\xc6Y\xfft\xc5\xd1\x8e\xa3\xd4}\xc7\xcf$\x9d',
+                        date=datetime.datetime(2024, 5, 5, 23, 17, 32, tzinfo=datetime.timezone.utc),
+                        mime_type='audio/x-flac',
+                        size=39470286,
+                        dc_id=5,
+                        attributes=[
+                                DocumentAttributeAudio(
+                                        duration=182,
+                                        voice=False,
+                                        title='Romance',
+                                        performer='石凯',
+                                        waveform=None
+                                ),
+                                DocumentAttributeFilename(
+                                        file_name='石凯 - Romance.flac'
+                                ),
+                        ],
+                        thumbs=[
+                                PhotoStrippedSize(
+                                        type='i',
+                                        bytes=b'\x01((\xd2\xa3\x14\x94Ph.(\xc57\xe6\xdc\x068\xf5\xa7P\x01E%\x14\x00\xbbO]\xd4\x11\xb4d\xf6\xa6d\xabm\xcd8\xb8\xdb\x8f\xe7@\x0cY2\xe3\xe9\xc5K\x82O5\x1a\xae\x0eGjs1\x034\x81\xf9\x0e*h\xa6y\x87\x81\xde\x8aa\xa9\x01`\xbds\xbb\xbeh\xdcH\xf7\xa2\x8aF\x96\x1c[+\x90I\xa7.\xc2\x99\x04\xee\xc7J(\xa0\x963z\x85\xe7;\xbbQE\x14\x15c'
+                                ),
+                                PhotoSize(
+                                        type='m',
+                                        w=320,
+                                        h=320,
+                                        size=12846
+                                ),
+                        ],
+                        video_thumbs=[
+                        ]
+                ),
+                alt_document=None,
+                ttl_seconds=None
+        ),
+        reply_markup=ReplyInlineMarkup(
+                rows=[
+                        KeyboardButtonRow(
+                                buttons=[
+                                        KeyboardButtonUrl(
+                                                text='Romance- 石凯',
+                                                url='https://music.163.com/song?id=2073858299'
+                                        ),
+                                ]
+                        ),
+                        KeyboardButtonRow(
+                                buttons=[
+                                        KeyboardButtonSwitchInline(
+                                                text='Send me to...',
+                                                query='https://music.163.com/song?id=2073858299',
+                                                same_peer=False,
+                                                peer_types=[
+                                                ]
+                                        ),
+                                ]
+                        ),
+                ]
+        ),
+        entities=[
+                MessageEntityHashtag(
+                        offset=26,
+                        length=6
+                ),
+                MessageEntityHashtag(
+                        offset=33,
+                        length=5
+                ),
+                MessageEntityMention(
+                        offset=63,
+                        length=12
+                ),
+        ],
+        views=None,
+        forwards=None,
+        replies=None,
+        edit_date=None,
+        post_author=None,
+        grouped_id=None,
+        reactions=None,
+        restriction_reason=[
+        ],
+        ttl_period=None,
+        quick_reply_shortcut_id=None
+)
+
+
+
+
+# serch
+
+W: skip: got a unknown: chat_id: 1404457467
+msg: Message(
+        id=17680,
+        peer_id=PeerUser(
+                user_id=1404457467
+        ),
+        date=datetime.datetime(2024, 5, 6, 7, 17, 58, tzinfo=datetime.timezone.utc),
+        message='搜索中...',
+        out=False,
+        mentioned=False,
+        media_unread=False,
+        silent=False,
+        post=None,
+        from_scheduled=None,
+        legacy=None,
+        edit_hide=None,
+        pinned=None,
+        noforwards=None,
+        invert_media=None,
+        offline=None,
+        from_id=PeerUser(
+                user_id=1404457467
+        ),
+        from_boosts_applied=None,
+        saved_peer_id=None,
+        fwd_from=None,
+        via_bot_id=None,
+        via_business_bot_id=None,
+        reply_to=MessageReplyHeader(
+                reply_to_scheduled=False,
+                forum_topic=False,
+                quote=False,
+                reply_to_msg_id=17679,
+                reply_to_peer_id=None,
+                reply_from=None,
+                reply_media=None,
+                reply_to_top_id=None,
+                quote_text=None,
+                quote_entities=[
+                ],
+                quote_offset=None
+        ),
+        media=None,
+        reply_markup=None,
+        entities=[
+        ],
+        views=None,
+        forwards=None,
+        replies=None,
+        edit_date=None,
+        post_author=None,
+        grouped_id=None,
+        reactions=None,
+        restriction_reason=[
+        ],
+        ttl_period=None,
+        quick_reply_shortcut_id=None
+)
+2024-05-06 15:17:58,603 [INFO] httpx [_client._send_single_request:1026]: HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/6d1d29ef-1349-4b8d-9e82-1b53368fdcc2 "HTTP/1.1 404 Not Found"
+W: skip: got a unknown: chat_id: -1001294489931
+W: skip: got a unknown: chat_id: 1404457467
+msg: Message(
+        id=17680,
+        peer_id=PeerUser(
+                user_id=1404457467
+        ),
+        date=datetime.datetime(2024, 5, 6, 7, 17, 58, tzinfo=datetime.timezone.utc),
+        message='1.「Romance」 - 石凯\n2.「romance」 - Baq5\n3.「Romance」 - Richard Clayderman\n4.「Romance」 - October\n5.「Romance」 - Bayza\n6.「Romance」 - DGTO\n7.「Romance」 - Pablo Casals/Charles Albert Baker\n8.「Romance」 - Ólafur Arnalds',
+        out=False,
+        mentioned=False,
+        media_unread=False,
+        silent=False,
+        post=False,
+        from_scheduled=False,
+        legacy=False,
+        edit_hide=True,
+        pinned=False,
+        noforwards=False,
+        invert_media=False,
+        offline=False,
+        from_id=None,
+        from_boosts_applied=None,
+        saved_peer_id=None,
+        fwd_from=None,
+        via_bot_id=None,
+        via_business_bot_id=None,
+        reply_to=MessageReplyHeader(
+                reply_to_scheduled=False,
+                forum_topic=False,
+                quote=False,
+                reply_to_msg_id=17679,
+                reply_to_peer_id=None,
+                reply_from=None,
+                reply_media=None,
+                reply_to_top_id=None,
+                quote_text=None,
+                quote_entities=[
+                ],
+                quote_offset=None
+        ),
+        media=None,
+        reply_markup=ReplyInlineMarkup(
+                rows=[
+                        KeyboardButtonRow(
+                                buttons=[
+                                        KeyboardButtonCallback(
+                                                text='1',
+                                                data=b'music 2073858299',
+                                                requires_password=False
+                                        ),
+                                        KeyboardButtonCallback(
+                                                text='2',
+                                                data=b'music 417953208',
+                                                requires_password=False
+                                        ),
+                                        KeyboardButtonCallback(
+                                                text='3',
+                                                data=b'music 562913429',
+                                                requires_password=False
+                                        ),
+                                        KeyboardButtonCallback(
+                                                text='4',
+                                                data=b'music 1470004472',
+                                                requires_password=False
+                                        ),
+                                        KeyboardButtonCallback(
+                                                text='5',
+                                                data=b'music 1390291265',
+                                                requires_password=False
+                                        ),
+                                        KeyboardButtonCallback(
+                                                text='6',
+                                                data=b'music 1927948946',
+                                                requires_password=False
+                                        ),
+                                        KeyboardButtonCallback(
+                                                text='7',
+                                                data=b'music 464740161',
+                                                requires_password=False
+                                        ),
+                                        KeyboardButtonCallback(
+                                                text='8',
+                                                data=b'music 1807757',
+                                                requires_password=False
+                                        ),
+                                ]
+                        ),
+                ]
+        ),
+        entities=[
+        ],
+        views=None,
+        forwards=None,
+        replies=None,
+        edit_date=datetime.datetime(2024, 5, 6, 7, 17, 58, tzinfo=datetime.timezone.utc),
+        post_author=None,
+        grouped_id=None,
+        reactions=None,
+        restriction_reason=[
+        ],
+        ttl_period=None,
+        quick_reply_shortcut_id=None
+)
+
