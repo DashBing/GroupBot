@@ -2,6 +2,12 @@
 
 SH_PATH=${SH_PATH:-$(cd $(dirname ${BASH_SOURCE[0]}); pwd )}
 
+wtf(){
+  local text=$(echo "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\r//g' -e 's/\t/\\t/g' | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
+  # local text=$(echo "$1" | sed -e 's/\\/\\\\/g' -e 's/\\\\n/\\n/g' -e 's/"/\\"/g' -e 's/\r//g' -e 's/\t/\\t/g' | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
+[[ $( echo "$text" | wc -l ) -gt 1 ]] && text=$(echo "$text" | awk '{printf "%s\\n", $0}' | sed "s/\\\\n$//g")
+echo "$text"
+}
 
 ai(){
 # echo -n test
@@ -11,6 +17,7 @@ ai(){
 #echo "$*" | nc -w 1800 127.0.0.1 8888 || exit $?
 local role=${2:-user}
 local text=${1:-你好}
+text=$(wtf "$text")
 curl -s --location 'http://127.0.0.1:5005/v1/chat/completions' --header 'Content-Type: application/json' --data '{
      "model": "gpt-3.5-turbo",
      "messages": [{"role": "'"$role"'", "content": "'"$text"'"}],
