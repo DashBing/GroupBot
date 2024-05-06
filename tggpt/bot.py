@@ -81,16 +81,15 @@ import asyncio
 
 
 
-gpt_id = int(get_my_key("TELEGRAM_GPT_ID"))
+gpt_bot = int(get_my_key("TELEGRAM_GPT_ID"))
 
 #  rss_id = int(get_my_key("TELEGRAM_RSS_ID"))
-rss_id = 284403259
+rss_bot = 284403259
+music_bot = 1404457467
 id2gateway = {
-    rss_id: "rss",
-    gpt_id: "gateway1",
+    rss_bot: "rss",
+    gpt_bot: "gateway1",
     }
-
-
 
 
 
@@ -107,20 +106,23 @@ def pprint(e):
 
 
 def info0(s):
-  s = s.replace("\n", " ")
-  print(f"{s}\r", end='')
+  print("%s\r" % s.replace("\n", " "), end='')
 
 def info1(s):
-  s = s.replace("\n", " ")
-  print(f"{s}", end='')
+  print("%s" % s.replace("\n", " "), end='')
 
+def info2(s):
+  print("%s" % s.replace("\n", " "))
 
 def err(text):
   logger.error(f"{text}", exc_info=True, stack_info=True)
   raise ValueError
 
-def warn(text):
-  logger.warning(f"{text}", exc_info=True, stack_info=True)
+def warn(text, more=True):
+  if more:
+    logger.warning(f"{text}", exc_info=True, stack_info=True)
+  else:
+    logger.warning(f"{text}")
 
 def info(text):
   logger.info(f"{text}")
@@ -1398,7 +1400,7 @@ async def mt2tg(msg):
 
 
 
-        chat_id = gpt_id
+        chat_id = gpt_bot
         #  if gateway in MT_GATEWAY_LIST:
         #      chat_id = MT_GATEWAY_LIST[gateway][0]
         #  else:
@@ -1660,11 +1662,11 @@ async def mt_send(text="null", username="bot", gateway="test", qt=None):
 #    #    print(event.stringify())
 #    msg = event.message
 #    text = msg.raw_text
-#    if event.chat_id != gpt_id:
+#    if event.chat_id != gpt_bot:
 #      if debug:
 #        print("<%s %s" % (event.chat_id, text))
 #      return
-#    if event.chat_id != gpt_id:
+#    if event.chat_id != gpt_bot:
 #      if debug:
 #        print(">%s %s" % (event.chat_id, text))
 #      return
@@ -1721,13 +1723,13 @@ async def just_for_me(event):
 #    if not no_reset.is_set():
 #      return
 #    #  if event.chat_id in id2gateway:
-#    if event.chat_id == gpt_id:
+#    if event.chat_id == gpt_bot:
 #      pass
-#    elif event.chat_id == rss_id:
+#    elif event.chat_id == rss_bot:
 #      msg = event.message
-#      await mt_send(msg.text, "rss2tg_bot", id2gateway[rss_id])
+#      await mt_send(msg.text, "rss2tg_bot", id2gateway[rss_bot])
 #      return
-#      #  print("N: skip: %s != %s" % (event.chat_id, gpt_id))
+#      #  print("N: skip: %s != %s" % (event.chat_id, gpt_bot))
 #    else:
 #      return
 #    #  if not no_reset.is_set():
@@ -1763,7 +1765,11 @@ async def mt_send_for_long_text(text, gateway):
   async with queue_lock:
     async with aiofiles.open(f"{SH_PATH}/{fn}", mode='w') as file:
       await file.write(text)
-    os.system(f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
+    #  os.system(f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
+    return await asyncio.to_thread(os.system, f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
+
+
+
 
 
 @UB.on(events.NewMessage(incoming=True))
@@ -1778,15 +1784,18 @@ async def read_res(event):
   msg = event.message
   
   if event.chat_id not in id2gateway:
-    print("W: skip: got a unknown: chat_id: %s\nmsg: %s" % (event.chat_id, msg.stringify()))
+    #  print("W: skip: got a unknown: chat_id: %s\nmsg: %s" % (event.chat_id, msg.stringify()))
+    print("W: skip: got a unknown: chat_id: %s" % (event.chat_id, ))
     return
   #  if event.chat_id in id2gateway:
-  if event.chat_id == gpt_id:
+  if event.chat_id == gpt_bot:
     pass
-  elif event.chat_id == rss_id:
-    await mt_send(msg.text, "rss2tg_bot", id2gateway[rss_id])
+  elif event.chat_id == music_bot:
+    print("W: skip: got a unknown: chat_id: %s\nmsg: %s" % (event.chat_id, msg.stringify()))
+  elif event.chat_id == rss_bot:
+    await mt_send(msg.text, "rss2tg_bot", id2gateway[rss_bot])
     return
-    #  print("N: skip: %s != %s" % (event.chat_id, gpt_id))
+    #  print("N: skip: %s != %s" % (event.chat_id, gpt_bot))
   else:
     return
   #  if not no_reset.is_set():
