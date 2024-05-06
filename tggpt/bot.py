@@ -1256,7 +1256,7 @@ async def mt2tg(msg):
             chat_id = music_bot
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send(f"音乐下载\n.{cmd} $text\n.{cmd} clear\n--\n当前状态: {music_bot_state[gateway]}\ntelegram bot: https://t.me/{music_bot_name}", gateway=gateway)
+              await mt_send(f"音乐下载\n.{cmd} $text\n.{cmd} clear\n--\ntelegram bot: https://t.me/{music_bot_name}", gateway=gateway)
               return
             if cmds[1] == "clear":
               await clear_history()
