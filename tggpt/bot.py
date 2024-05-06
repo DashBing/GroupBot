@@ -4,6 +4,7 @@
 
 
 #  from . import *  # noqa: F403
+from tg.telegram import DOWNLOAD_PATH
 from . import debug, WORK_DIR, PARENT_DIR, LOG_FILE, get_my_key, HOME
 #  HOME = os.environ.get("HOME")
 import logging
@@ -900,6 +901,32 @@ def tmp_save(data, ex=""):
         file.write(data)
     return name
 
+def load_str(msg, no_ast=False):
+    """str to dict"""
+    msg = msg.strip()
+    if no_ast:
+        import json
+        return json.loads(msg)
+    try:
+        return ast.literal_eval(msg)
+    except ValueError:
+        logger.warning(msg)
+        import json
+        try:
+          return json.loads(msg)
+        except Exception:
+          err(f"json: error str: {msg}")
+
+
+async def read_file(path='config.json', *args, **kwargs):
+  async with aiofiles.open(path, *args, **kwargs) as file:
+      return await file.read()
+
+async def write_file(text, path='config.json', *args, **kwargs):
+  async with aiofiles.open(path, *args, **kwargs) as file:
+      return await file.write(text)
+
+
 
 def format_byte(num):
     if not isinstance(num, (int, float)):
@@ -1384,11 +1411,21 @@ async def mt2tg(msg):
           qid = max(tmp)
           mtmsgs = mtmsgsg[gateway]
           msg = mtmsgs[qid][1]
-          info("尝试下载：{text} msg: {msg.buttons}")
+          info(f"尝试下载：{text} msg: {msg.buttons}")
+          i = None
+          for i in msg.button[0]:
+            if i.text == text:
+              info(f"已找到：{text}")
+              await i.click()
+              i = True
+              break
 
-          gateways.pop(qid)
-          mtmsgs.pop(qid)
-          music_bot_state[gateway] = 0
+          if i is True:
+            gateways.pop(qid)
+            mtmsgs.pop(qid)
+            music_bot_state[gateway] += 1
+          else:
+            info(f"没找到：{text}")
         elif gateway in gptmode:
           pass
         else:
@@ -1723,8 +1760,13 @@ async def mt_send(text="null", username="bot", gateway="test", qt=None):
 #      print("me: %s" % text)
 
 
-async def download_media(msg, in_memory=False):
-  pass
+async def download_media(msg, path=f"{DOWNLOAD_PATH}/", in_memory=False):
+#  await client.download_media(message, progress_callback=callback)
+  path = await msg.download_media(path)
+  if path:
+    return path
+  else:
+    warn(f"下载失败: {path}")
 
 @UB.on(events.NewMessage(outgoing=True))
 @exceptions_handler
@@ -1804,7 +1846,7 @@ async def parse_msg(event):
         music_bot_state[gateway] += 1
         mtmsgs[qid].append(msg)
 
-        res = f"{mtmsgs[qid][0]['username']}{text}"
+        res = f"{mtmsgs[qid][0]['username']}搜索结果\n{text}"
         await mt_send_for_long_text(res, gateway)
 
         gateways[msg.id] = gateway
@@ -1812,8 +1854,11 @@ async def parse_msg(event):
         #  music_bot_state[gateway] = msg.id
       elif music_bot_state[gateway] == 0:
         pass
-      elif msg.file:
-        pass
+      elif msg.file and music_bot_state[gateway] == 3:
+        path = await download_media(msg)
+        res = f"{mtmsgs[qid][0]['username']}{path}\n{text}"
+        await mt_send_for_long_text(res, gateway)
+
       else:
         pass
 
