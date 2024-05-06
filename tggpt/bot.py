@@ -1851,6 +1851,9 @@ async def parse_msg(event):
         print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
         return
       
+      if '正在发送中...' in text:
+        # message='大熊猫\n专辑: 火火兔儿歌\nflac 14.87MB\n命中缓存, 正在发送中...',
+        return
       if music_bot_state[gateway] == 1:
         info(f"找到了几个音乐:{len(msg.buttons)} {msg.text}")
 
