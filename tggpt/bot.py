@@ -1443,8 +1443,8 @@ async def mt2tg(msg):
                 break
 
           if i is True:
-            gateways.pop(qid)
-            mtmsgs.pop(qid)
+            #  gateways.pop(qid)
+            #  mtmsgs.pop(qid)
             music_bot_state[gateway] += 1
             #  gateways[msg.id] = gateway
             #  mtmsgs[msg.id] = mtmsgs[qid]
