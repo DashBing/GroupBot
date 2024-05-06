@@ -1435,6 +1435,7 @@ async def mt2tg(msg):
             gateways.pop(qid)
             mtmsgs.pop(qid)
             music_bot_state[gateway] += 1
+            gateways[msg.id] = gateway
           else:
             info(f"没找到：{text}")
         elif gateway in gptmode:
