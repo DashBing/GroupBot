@@ -1234,7 +1234,7 @@ async def mt2tg(msg):
               gptmode.append(gateway)
               await mt_send("gtp mode on", gateway=gateway)
               return
-          elif text == ".gtp reset":
+          elif text == ".gtg reset":
             if no_reset.is_set():
               no_reset.clear()
               await mt_send(f"now tasks: {here}, waiting...", gateway=gateway)
@@ -1254,11 +1254,17 @@ async def mt2tg(msg):
             chat_id = music_bot
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send(f".{cmd} $text\n.{cmd} clear", gateway=gateway)
+              await mt_send(f".{cmd} $text\n.{cmd} clear\n--\n{music_bot_state[gateway]}", gateway=gateway)
               return
+            if cmds[1] == "clear":
+              await clear_history()
+              #  music_bot_state[gateway] = 0
+              await mt_send("ok")
+              return
+
+            #  if gateway not in music_bot_state:
+            music_bot_state[gateway] = 1
             text="/search "+text
-            if gateway not in music_bot_state:
-              music_bot_state[gateway] = 0
 
             tmp = []
             for i in gateways:
@@ -1271,26 +1277,22 @@ async def mt2tg(msg):
               ms = mtmsgsg[gateway]
               ms.clear()
 
-            if music_bot_state[gateway] == 0:
-              music_bot_state[gateway] += 1
-            else:
-              #  if cmds[1] == "d":
-              #    if len(cmds) < 3:
-              #      await mt_send("需要一个数字", gateway=gateway)
-              #    else:
-              #      #  if music_bot_state[gateway] == 2:
-              #      #    msg = mt
-              #      #    info(msg.buttons)
-              #      #  else:
-              #      #    await mt_send("顺序不对，请重试", gateway=gateway)
-              #      await mt_send("fixme", gateway=gateway)
-              #  elif cmds[1] == "clear":
-              #    await clear_history()
-              #    music_bot_state[gateway] = 0
-              #    await mt_send("ok")
-              #  else:
-              #    await mt_send("有未结束任务", gateway=gateway)
-              return
+            #  if music_bot_state[gateway] == 0:
+            #    music_bot_state[gateway] += 1
+            #  else:
+            #    #  if cmds[1] == "d":
+            #    #    if len(cmds) < 3:
+            #    #      await mt_send("需要一个数字", gateway=gateway)
+            #    #    else:
+            #    #      #  if music_bot_state[gateway] == 2:
+            #    #      #    msg = mt
+            #    #      #    info(msg.buttons)
+            #    #      #  else:
+            #    #      #    await mt_send("顺序不对，请重试", gateway=gateway)
+            #    #      await mt_send("fixme", gateway=gateway)
+            #    #  else:
+            #    #    await mt_send("有未结束任务", gateway=gateway)
+            #    return
 
           elif cmd == "gtg":
             #  need_clean = True
