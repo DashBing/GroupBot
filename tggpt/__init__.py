@@ -57,22 +57,11 @@ else:
 
 logger=LOGGER
 
-
-import asyncio
-loop = asyncio.get_event_loop()
-
-
 #  import pyrogram
 #  from pyrogram import enums
 #
 #  from . import config
 #  CONFIG = config.CONFIG
-
-
-
-
-
-
 
 import os
 os.environ['EVENTLET_NO_GREENDNS'] = 'yes'
@@ -103,80 +92,6 @@ def get_my_key(key, path=f"{HOME}/vps/private_keys.txt"):
   exit(1)
 
 
-
-api_id = int(get_my_key("TELEGRAM_API_ID"))
-api_hash = get_my_key("TELEGRAM_API_HASH")
-gpt_id = int(get_my_key("TELEGRAM_GPT_ID"))
-#  rss_id = int(get_my_key("TELEGRAM_RSS_ID"))
-rss_id = 284403259
-id2gateway = {
-    rss_id: "rss",
-    gpt_id: "gateway1",
-    }
-
-
-MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
-
 #  exit(0)
-
-
-
-from telethon import TelegramClient
-#  client = TelegramClient('anon', api_id, api_hash)
-UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=loop)
-#  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, proxy=("socks5", '172.23.176.1', 6084), loop=loop)
-
-del api_id
-del api_hash
-#  del bot_token
-
-
-#  async def _init():
-
-
-
-
-
-
-
-async def init():
-  global MY_NAME, MY_ID, UB
-  await UB.start()
-  me = await UB.get_me()
-  #  print(me.stringify())
-  MY_ID = me.id
-  MY_NAME = me.username
-  print(f"{MY_NAME}: {MY_ID}")
-
-
-
-
-
-
-
-#loop.run_until_complete(init())
-if loop.is_running():
-  LOGGER.error("loop running...")
-else:
-  LOGGER.error("loop stoped...")
-
-if loop.is_closed():
-  LOGGER.error("loop closed, this may be a error")
-
 # __ALL__ = ["WORK_DIR", "PARENT_DIR", "CMD", "LOGGER", "debug", "OUT", "ERR", "asyncio", "config", "UB", "loop", "MY_NAME", "NB", "BOT_ID", "BOT_NAME", "UB2_ID"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

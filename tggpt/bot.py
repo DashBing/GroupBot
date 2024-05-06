@@ -60,34 +60,53 @@ import asyncio
 
 
 
+gpt_id = int(get_my_key("TELEGRAM_GPT_ID"))
+
+#  rss_id = int(get_my_key("TELEGRAM_RSS_ID"))
+rss_id = 284403259
+id2gateway = {
+    rss_id: "rss",
+    gpt_id: "gateway1",
+    }
+
 
 
 
 
 
 HOME = os.environ.get("HOME")
-def get_my_key(key, path=f"{HOME}/vps/private_keys.txt"):
-  # key value
-  # key value
-  # key value
-  path2 = "private_keys.txt"
-  if os.path.isfile(path2):
-    path = path2
-  with open(path) as f:
-    line = f.readline()
-    while line:
-      if len(line.split(' ', 1)) == 2 and line.split(' ', 1)[0] == key:
-        f.close()
-        return line.split(' ', 1)[1].rstrip('\n')
-        break
-      line = f.readline()
-  LOGGER.error(f"wtf: no {key},  please check file: {path}", exc_info=True)
-  #  return None;
-  exit(1)
 
+
+def pprint(e):
+  print('---')
+  print("||%s: %s" % (type(e), e))
+  print('---')
+  for i in dir(e):
+    print("  %s: %s: %s" % (i, type(getattr(e, i)), getattr(e, i)))
+  print('===')
+
+
+def info0(s):
+  s = s.replace("\n", " ")
+  print(f"{s}\r", end='')
+
+def info1(s):
+  s = s.replace("\n", " ")
+  print(f"{s}", end='')
+
+
+def err(text):
+  logger.error(f"{text}", exc_info=True, stack_info=True)
+  raise ValueError
+
+def warn(text):
+  logger.warning(f"{text}", exc_info=True, stack_info=True)
 
 def info(text):
-  logger.info(text)
+  logger.info(f"{text}")
+
+def dbg(text):
+  logger.debug(f"{text}")
 
 def get_cmd(text):
   cmd = text.split(' ')
@@ -107,6 +126,12 @@ def get_cmd(text):
     cmd = tmp
     info(f"return cmd {len(cmd)}: {cmd=}")
     return cmd
+
+def check_str(nick, nicks):
+  for i in nicks:
+    if i in nick:
+      return True
+  return False
 
 
 #  api_id = int(get_my_key("TELEGRAM_API_ID"))
@@ -2139,7 +2164,7 @@ async def my_event_handler(event):
 #
 #    await read_res(event)
 
-async def __init():
+async def _init():
   global SH_PATH, DOMAIN
   SH_PATH = (await read_file()).rstrip('\n')
   DOMAIN = (await read_file("DOMAIN")).rstrip('\n')
@@ -2152,6 +2177,7 @@ async def __init():
   #  await mt_send("ping", username="")
   #  await asyncio.sleep(1)
   #  await mt_send(".gpt", username="")
+  asyncio.create_task(mt_read(), name="mt_read")
 
 
 if __name__ == '__main__':
@@ -2171,7 +2197,7 @@ elif __package__ == "":
 else:
   print('{} 运行, package: {}'.format(__file__, __package__))
 # /tmp/run/user/1000/bot
-  asyncio.create_task(__init())
+  #  asyncio.create_task(_init())
 
 
 
