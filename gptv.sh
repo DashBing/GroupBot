@@ -13,7 +13,7 @@ local role=${2:-user}
 local text=${1:-你好}
 curl -s --location 'http://127.0.0.1:5005/v1/chat/completions' --header 'Content-Type: application/json' --data '{
      "model": "gpt-3.5-turbo",
-     "messages": [{"role": "'$role'", "content": "'$text'"}],
+     "messages": [{"role": "'"$role"'", "content": "'"$text"'"}],
      "stream": false
    }'
 
