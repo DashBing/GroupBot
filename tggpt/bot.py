@@ -287,6 +287,7 @@ async def qw2(text):
 
 
 MT_API = "127.0.0.1:4246"
+MT_API_RES = "127.0.0.1:4249"
 HTTP_RES_MAX_BYTES = 15000000
 FILE_DOWNLOAD_MAX_BYTES = 64000000
 TMP_PATH=HOME+"/tera/tmp"
@@ -1625,14 +1626,13 @@ async def http(url, method="GET", return_headers=False, **kwargs):
 async def mt_send(text="null", username="bot", gateway="test", qt=None):
 
     # send msg to matterbridge
-    url = "http://" + MT_API + "/api/message"
+    url = "http://" + MT_API_RES + "/api/message"
 
     #nc -l -p 5555 # https://mika-s.github.io/http/debugging/2019/04/08/debugging-http-requests.html
     #  url="http://127.0.0.1:5555/api/message"
 
 #    if not username.startswith("C "):
 #        username = "T " + username
-
 
     if qt:
         username = "{}\n\n{}".format("> " + "\n> ".join(qt.splitlines()), username)
@@ -1783,20 +1783,21 @@ async def read_res(event):
 
   msg = event.message
   
-  if event.chat_id not in id2gateway:
-    #  print("W: skip: got a unknown: chat_id: %s\nmsg: %s" % (event.chat_id, msg.stringify()))
-    print("W: skip: got a unknown: chat_id: %s" % (event.chat_id, ))
-    return
+  #  if event.chat_id not in id2gateway:
+  #    #  print("W: skip: got a unknown: chat_id: %s\nmsg: %s" % (event.chat_id, msg.stringify()))
+  #    return
   #  if event.chat_id in id2gateway:
   if event.chat_id == gpt_bot:
     pass
   elif event.chat_id == music_bot:
     print("W: skip: got a unknown: chat_id: %s\nmsg: %s" % (event.chat_id, msg.stringify()))
+    return
   elif event.chat_id == rss_bot:
     await mt_send(msg.text, "rss2tg_bot", id2gateway[rss_bot])
     return
     #  print("N: skip: %s != %s" % (event.chat_id, gpt_bot))
   else:
+    print("W: skip: got a unknown: chat_id: %s" % (event.chat_id, ))
     return
   #  if not no_reset.is_set():
   #    print("W: skiped the msg because of reset is waiting")
