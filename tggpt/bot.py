@@ -1416,14 +1416,14 @@ async def mt2tg(msg):
           else:
             return
         elif text.isnumeric() and music_bot_state[gateway] == 2:
+          mtmsgs = mtmsgsg[gateway]
           tmp = []
           for i in gateways:
             if gateways[i] == gateway:
               tmp.append(i)
           qid = max(tmp)
-          mtmsgs = mtmsgsg[gateway]
+          info(f"尝试下载：{text} {qid} msg: {msg.buttons}")
           msg = mtmsgs[qid][1]
-          info(f"尝试下载：{text} msg: {msg.buttons}")
           i = None
           for i in msg.buttons:
             if type(i) is list:
