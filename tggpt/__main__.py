@@ -21,26 +21,6 @@ logger = logging.getLogger(__name__)
 
 
 async def init():
-  global MY_NAME, MY_ID, UB
-  api_id = int(get_my_key("TELEGRAM_API_ID"))
-  api_hash = get_my_key("TELEGRAM_API_HASH")
-
-  from telethon import TelegramClient
-  #  client = TelegramClient('anon', api_id, api_hash)
-  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=loop)
-  #  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, proxy=("socks5", '172.23.176.1', 6084), loop=loop)
-  #  del api_id
-  #  del api_hash
-  #  del bot_token
-
-
-  MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
-  await UB.start()
-  me = await UB.get_me()
-  #  print(me.stringify())
-  MY_ID = me.id
-  MY_NAME = me.username
-  print(f"{MY_NAME}: {MY_ID}")
   logger.warning("init ok, loop...")
 
 
@@ -49,14 +29,13 @@ async def _amain():
   await init()
 
   from . import bot
-  await bot._init()
+  await bot.run()
   #  from .bot import mt_read
   #  asyncio.create_task(mt_read(MSG_QUEUE), name="mt_read")
 
   #  from pyrogram import idle
   #  if "idle" in locals():
   #    await idle()
-  await UB.run_until_disconnected()
 
 
 async def amain():

@@ -2164,12 +2164,34 @@ async def my_event_handler(event):
 #
 #    await read_res(event)
 
-async def _init():
+async def run():
+  global MY_NAME, MY_ID, UB
+  api_id = int(get_my_key("TELEGRAM_API_ID"))
+  api_hash = get_my_key("TELEGRAM_API_HASH")
+
+  from telethon import TelegramClient
+  #  client = TelegramClient('anon', api_id, api_hash)
+  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=loop)
+  #  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, proxy=("socks5", '172.23.176.1', 6084), loop=loop)
+  #  del api_id
+  #  del api_hash
+  #  del bot_token
+
+
+  MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
+  await UB.start()
+  me = await UB.get_me()
+  #  print(me.stringify())
+  MY_ID = me.id
+  MY_NAME = me.username
+  print(f"{MY_NAME}: {MY_ID}")
+
   global SH_PATH, DOMAIN
   SH_PATH = (await read_file()).rstrip('\n')
   DOMAIN = (await read_file("DOMAIN")).rstrip('\n')
   print(f"SH_PATH: {SH_PATH}")
   print(f"DOMAIN: {DOMAIN}")
+
   await mt_send("gpt start")
   #  await asyncio.sleep(2)
   #  await mt_send("ping")
@@ -2178,6 +2200,8 @@ async def _init():
   #  await asyncio.sleep(1)
   #  await mt_send(".gpt", username="")
   asyncio.create_task(mt_read(), name="mt_read")
+
+  await UB.run_until_disconnected()
 
 
 if __name__ == '__main__':
