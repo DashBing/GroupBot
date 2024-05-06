@@ -324,6 +324,7 @@ CLEAN = "/new_chat"
 queues = {}
 nids = {}
 queue_lock = asyncio.Lock()
+downlaod_lock = asyncio.Lock()
 
 gateways = {}
 mtmsgsg={}
@@ -1796,7 +1797,12 @@ last_time = {}
 
 async def download_media(msg, gateway='test', path=f"{DOWNLOAD_PATH}/", in_memory=False):
 #  await client.download_media(message, progress_callback=callback)
-  async with queue_lock:
+  async with downlaod_lock:
+    if msg.file and msg.file.name:
+      await mt_send(f"f\n{msg.file.name} 下载中...", gateway=gateway)
+    else:
+      await mt_send(f"下载中...", gateway=gateway)
+
     # Printing download progress
     def download_media_callback(current, total):
       print('Downloaded', current, 'out of', total,
@@ -1813,6 +1819,7 @@ async def download_media(msg, gateway='test', path=f"{DOWNLOAD_PATH}/", in_memor
       return path
     else:
       warn(f"下载失败: {path}")
+      await mt_send(f"下载失败: {path}", gateway=gateway)
 
 @UB.on(events.NewMessage(outgoing=True))
 @exceptions_handler
@@ -1900,7 +1907,7 @@ async def parse_msg(event):
         music_bot_state[gateway] += 1
         mtmsgs[qid].append(msg.buttons)
 
-        res = f"{mtmsgs[qid][0]['username']}搜索结果\n{text}"
+        res = f"{mtmsgs[qid][0]['username']}搜索结果(回复序号)\n{text}"
         await mt_send_for_long_text(res, gateway)
 
         gateways[msg.id] = gateway
@@ -1921,6 +1928,8 @@ async def parse_msg(event):
           path = "https://%s/%s" % (DOMAIN, (parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
         res = f"{mtmsgs[qid][0]['username']}{path}\n{text}"
         await mt_send_for_long_text(res, gateway)
+        if music_bot_state[gateway] == 3:
+          music_bot_state[gateway] -= 1
 
 
     except Exception as e:
