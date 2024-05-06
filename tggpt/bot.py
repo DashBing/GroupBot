@@ -83,10 +83,12 @@ import asyncio
 
 
 gpt_bot = int(get_my_key("TELEGRAM_GPT_ID"))
+gpt_bot_name = 'littleb_gptBOT'
 
 #  rss_id = int(get_my_key("TELEGRAM_RSS_ID"))
 rss_bot = 284403259
 music_bot = 1404457467
+music_bot_name = 'Music163bot'
 id2gateway = {
     rss_bot: "rss",
     gpt_bot: "gateway1",
@@ -1254,7 +1256,7 @@ async def mt2tg(msg):
             chat_id = music_bot
             text = ' '.join(cmds[1:])
             if not text:
-              await mt_send(f".{cmd} $text\n.{cmd} clear\n--\n{music_bot_state[gateway]}", gateway=gateway)
+              await mt_send(f"音乐下载\n.{cmd} $text\n.{cmd} clear\n--\n当前状态: {music_bot_state[gateway]}\ntelegram bot: https://t.me/{music_bot_name}", gateway=gateway)
               return
             if cmds[1] == "clear":
               await clear_history()
@@ -1543,9 +1545,9 @@ async def mt2tg(msg):
           print(e)
           try:
             if chat_id == gpt_bot:
-              chat = await UB.get_input_entity('littleb_gptBOT')
+              chat = await UB.get_input_entity(gpt_bot_name)
             else:
-              chat = await UB.get_input_entity('Music163bot')
+              chat = await UB.get_input_entity(music_bot_name)
           except ValueError:
             print("wtf, wrong id?")
             try:
@@ -1553,9 +1555,9 @@ async def mt2tg(msg):
               print(chat.stringify())
             except:
               if chat_id == gpt_bot:
-                chat = await UB.get_entity('littleb_gptBOT')
+                chat = await UB.get_entity(gpt_bot_name)
               else:
-                chat = await UB.get_entity('Music163bot')
+                chat = await UB.get_entity(music_bot_name)
               print(chat.stringify())
         #  print(f">{chat.user_id}: {text}")
         print(f"I: send {text} to gpt")
