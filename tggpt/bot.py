@@ -1260,25 +1260,36 @@ async def mt2tg(msg):
             if gateway not in music_bot_state:
               music_bot_state[gateway] = 0
 
+            tmp = []
+            for i in gateways:
+              if gateways[i] == gateway:
+                tmp.append(i)
+            for i in tmp:
+              gateways.pop(i)
+
+            if gateway in mtmsgsg:
+              ms = mtmsgsg[gateway]
+              ms.clear()
+
             if music_bot_state[gateway] == 0:
               music_bot_state[gateway] += 1
             else:
-              if cmds[1] == "d":
-                if len(cmds) < 3:
-                  await mt_send("需要一个数字", gateway=gateway)
-                else:
-                  #  if music_bot_state[gateway] == 2:
-                  #    msg = mt
-                  #    info(msg.buttons)
-                  #  else:
-                  #    await mt_send("顺序不对，请重试", gateway=gateway)
-                  await mt_send("fixme", gateway=gateway)
-              elif cmds[1] == "clear":
-                await clear_history()
-                music_bot_state[gateway] = 0
-                await mt_send("ok")
-              else:
-                await mt_send("有未结束任务", gateway=gateway)
+              #  if cmds[1] == "d":
+              #    if len(cmds) < 3:
+              #      await mt_send("需要一个数字", gateway=gateway)
+              #    else:
+              #      #  if music_bot_state[gateway] == 2:
+              #      #    msg = mt
+              #      #    info(msg.buttons)
+              #      #  else:
+              #      #    await mt_send("顺序不对，请重试", gateway=gateway)
+              #      await mt_send("fixme", gateway=gateway)
+              #  elif cmds[1] == "clear":
+              #    await clear_history()
+              #    music_bot_state[gateway] = 0
+              #    await mt_send("ok")
+              #  else:
+              #    await mt_send("有未结束任务", gateway=gateway)
               return
 
           elif cmd == "gtg":
@@ -1439,6 +1450,7 @@ async def mt2tg(msg):
             #  mtmsgs[msg.id] = mtmsgs[qid]
           else:
             info(f"没找到：{text}")
+          return
         elif gateway in gptmode:
           pass
         else:
@@ -1775,11 +1787,12 @@ async def mt_send(text="null", username="bot", gateway="test", qt=None):
 
 async def download_media(msg, path=f"{DOWNLOAD_PATH}/", in_memory=False):
 #  await client.download_media(message, progress_callback=callback)
-  path = await msg.download_media(path)
-  if path:
-    return path
-  else:
-    warn(f"下载失败: {path}")
+  async with queue_lock:
+    path = await msg.download_media(path)
+    if path:
+      return path
+    else:
+      warn(f"下载失败: {path}")
 
 @UB.on(events.NewMessage(outgoing=True))
 @exceptions_handler
@@ -1856,7 +1869,8 @@ async def parse_msg(event):
         # message='大熊猫\n专辑: 火火兔儿歌\nflac 14.87MB\n命中缓存, 正在发送中...',
         return
       if music_bot_state[gateway] == 0:
-        pass
+        gateways.pop(qid)
+        mtmsgs.pop(qid)
       elif music_bot_state[gateway] == 1:
         info(f"找到了几个音乐:{len(msg.buttons)} {msg.text}")
 
@@ -1866,8 +1880,8 @@ async def parse_msg(event):
         res = f"{mtmsgs[qid][0]['username']}搜索结果\n{text}"
         await mt_send_for_long_text(res, gateway)
 
-        gateways[msg.id] = gateway
-        mtmsgs[msg.id] = mtmsgs[qid]
+        #  gateways[msg.id] = gateway
+        #  mtmsgs[msg.id] = mtmsgs[qid]
         #  music_bot_state[gateway] = msg.id
 
       elif music_bot_state[gateway] == 2:
@@ -1876,13 +1890,10 @@ async def parse_msg(event):
         path = await download_media(msg)
         res = f"{mtmsgs[qid][0]['username']}{path}\n{text}"
         await mt_send_for_long_text(res, gateway)
+        #  gateways.pop(qid)
+        #  mtmsgs.pop(qid)
 
-      else:
-        pass
 
-
-      gateways.pop(qid)
-      mtmsgs.pop(qid)
     except Exception as e:
       logger.info(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
 
