@@ -4,7 +4,7 @@
 
 
 #  from . import *  # noqa: F403
-from tg.telegram import DOWNLOAD_PATH
+#  from tg.telegram import DOWNLOAD_PATH
 from . import debug, WORK_DIR, PARENT_DIR, LOG_FILE, get_my_key, HOME
 #  HOME = os.environ.get("HOME")
 import logging
