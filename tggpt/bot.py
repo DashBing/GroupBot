@@ -1435,7 +1435,8 @@ async def mt2tg(msg):
             gateways.pop(qid)
             mtmsgs.pop(qid)
             music_bot_state[gateway] += 1
-            gateways[msg.id] = gateway
+            #  gateways[msg.id] = gateway
+            #  mtmsgs[msg.id] = mtmsgs[qid]
           else:
             info(f"没找到：{text}")
         elif gateway in gptmode:
@@ -1854,9 +1855,10 @@ async def parse_msg(event):
       if '正在发送中...' in text:
         # message='大熊猫\n专辑: 火火兔儿歌\nflac 14.87MB\n命中缓存, 正在发送中...',
         return
-      if music_bot_state[gateway] == 1:
+      if music_bot_state[gateway] == 0:
+        pass
+      elif music_bot_state[gateway] == 1:
         info(f"找到了几个音乐:{len(msg.buttons)} {msg.text}")
-
 
         music_bot_state[gateway] += 1
         mtmsgs[qid].append(msg)
@@ -1867,8 +1869,9 @@ async def parse_msg(event):
         gateways[msg.id] = gateway
         mtmsgs[msg.id] = mtmsgs[qid]
         #  music_bot_state[gateway] = msg.id
-      elif music_bot_state[gateway] == 0:
-        pass
+
+      elif music_bot_state[gateway] == 2:
+        return
       elif msg.file and music_bot_state[gateway] == 3:
         path = await download_media(msg)
         res = f"{mtmsgs[qid][0]['username']}{path}\n{text}"
