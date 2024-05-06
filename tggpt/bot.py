@@ -1735,7 +1735,8 @@ async def http(url, method="GET", return_headers=False, **kwargs):
             return html
 
 @exceptions_handler
-async def mt_send(text="null", username="bot", gateway="test", qt=None):
+#  async def mt_send(text="null", username="bot", gateway="test", qt=None):
+async def mt_send(text="null", username="C bot", gateway="test", qt=None):
 
     # send msg to matterbridge
     url = "http://" + MT_API_RES + "/api/message"
@@ -1913,7 +1914,7 @@ async def parse_msg(event):
         if path is not None:
           #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
         #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
-          path = "https://%s/%s" % (DOMAIN, (parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)}))[2:])
+          path = "https://%s/%s" % (DOMAIN, (parse.urlencode({1: path.lstrip(DOWNLOAD_PATH).replace(' ', '%20')}))[2:])
         res = f"{mtmsgs[qid][0]['username']}{path}\n{text}"
         await mt_send_for_long_text(res, gateway)
 
