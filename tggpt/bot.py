@@ -1786,10 +1786,17 @@ async def mt_send(text="null", username="bot", gateway="test", qt=None):
 #      print("me: %s" % text)
 
 
-async def download_media(msg, path=f"{DOWNLOAD_PATH}/", in_memory=False):
+async def download_media(msg, gateway='test', path=f"{DOWNLOAD_PATH}/", in_memory=False):
 #  await client.download_media(message, progress_callback=callback)
   async with queue_lock:
-    path = await msg.download_media(path)
+    # Printing download progress
+    def download_media_callback(current, total):
+      print('Downloaded', current, 'out of', total,
+        'bytes: {:.2%}'.format(current / total))
+      #  await mt_send("{:.2%} %s/%s".format(current / total, current, total), gateway=gateway)
+      asyncio.create_task(mt_send("{:.2%} %s/%s".format(current / total, current, total), gateway=gateway))
+
+    path = await msg.download_media(path, callback=download_media_callback)
     if path:
       return path
     else:
@@ -1895,9 +1902,9 @@ async def parse_msg(event):
         mtmsgs.pop(qid)
         return
       elif msg.file and music_bot_state[gateway] == 3:
-        path = await download_media(msg)
+        path = await download_media(msg, gateway)
         if path is not None:
-          path = "%s%s" % (DOMAIN, path.lsplit(DOWNLOAD_PATH))
+          path = "%s%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
         res = f"{mtmsgs[qid][0]['username']}{path}\n{text}"
         await mt_send_for_long_text(res, gateway)
 
