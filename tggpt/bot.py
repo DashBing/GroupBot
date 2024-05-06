@@ -1799,7 +1799,7 @@ async def download_media(msg, gateway='test', path=f"{DOWNLOAD_PATH}/", in_memor
 #  await client.download_media(message, progress_callback=callback)
   async with downlaod_lock:
     if msg.file and msg.file.name:
-      await mt_send(f"f\n{msg.file.name} 下载中...", gateway=gateway)
+      await mt_send(f"{msg.file.name} 下载中...", gateway=gateway)
     else:
       await mt_send(f"下载中...", gateway=gateway)
 
