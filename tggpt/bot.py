@@ -326,7 +326,6 @@ If the bot doesn't respond, please /new_chat before asking.""",
 
 #  UB.parse_mode = None
 #  UB.parse_mode = 'html'
-UB.parse_mode = 'md'
 
 
 
@@ -2185,6 +2184,8 @@ async def run():
   MY_ID = me.id
   MY_NAME = me.username
   print(f"{MY_NAME}: {MY_ID}")
+
+  UB.parse_mode = 'md'
 
   global SH_PATH, DOMAIN
   SH_PATH = (await read_file()).rstrip('\n')
