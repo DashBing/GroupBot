@@ -1422,10 +1422,11 @@ async def mt2tg(msg):
             if gateways[i] == gateway:
               tmp.append(i)
           qid = max(tmp)
-          info(f"尝试下载：{text} {qid} msg: {msg.buttons}")
-          msg = mtmsgs[qid][1]
+          info(f"尝试下载：{text} {qid}")
+          bs = mtmsgs[qid][1]
+          info(f"尝试下载：{text} {qid} msg: {bs}")
           i = None
-          for i in msg.buttons:
+          for i in bs:
             if type(i) is list:
               for j in i:
                 if j.text == text:
@@ -1878,7 +1879,7 @@ async def parse_msg(event):
         info(f"找到了几个音乐:{len(msg.buttons)} {msg.text}")
 
         music_bot_state[gateway] += 1
-        mtmsgs[qid].append(msg)
+        mtmsgs[qid].append(msg.buttons)
 
         res = f"{mtmsgs[qid][0]['username']}搜索结果\n{text}"
         await mt_send_for_long_text(res, gateway)
