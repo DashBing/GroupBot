@@ -300,3 +300,8 @@ msg: Message(
         quick_reply_shortcut_id=None
 )
 
+
+
+2024-05-06 16:43:01,178 [INFO] tggpt.bot [bot.info:128]: [[<telethon.tl.custom.messagebutton.MessageButton object at 0x7f1870cc3850>, <telethon.tl.custom.messagebutton.MessageButton object at 0x7f1870ce56d0>, <telethon.tl.custom.messagebutton.MessageButton object at 0x7f1870cb5e90>, <telethon.tl.custom.messagebutton.MessageButton object at 0x7f1870cb5790>, <telethon.tl.custom.messagebutton.MessageButton object at 0x7f1870cb6410>, <telethon.tl.custom.messagebutton.MessageButton object at 0x7f1870cb49d0>, <telethon.tl.custom.messagebutton.MessageButton object at 0x7f1870cb5390>, <telethon.tl.custom.messagebutton.MessageButton object at 0x7f1870cb5f50>]]
+2024-05-06 16:43:01,181 [ERROR] tggpt.bot [bot.parse_msg:1775]: E: not found gateway for qid=17682, gateways={} msg.text='1.「Romance」 - 石凯\n2.「romance」 - Baq5\n3.「Romance」 - Richard Clayderman\n4.「Romance」 - October\n5.「Romance」 - Bayza\n6.「Bad Romance (Radio Edit)」 - Lady Gaga\n7.「Romance」 - Pablo Casals/Charles Albert Baker\n8.「Romance」 - Ólafur Arnalds'
+

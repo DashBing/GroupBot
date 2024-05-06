@@ -1244,9 +1244,7 @@ async def mt2tg(msg):
                   #    info(msg.buttons)
                   #  else:
                   #    await mt_send("顺序不对，请重试", gateway=gateway)
-                  mtmsgs = mtmsgsg[gateway]
-                  msg = mtmsgs[music_bot_state[gateway]][1]
-                  info("尝试下载：{text} msg: {msg.buttons}")
+                  await mt_send("fixme", gateway=gateway)
               elif cmds[1] == "clear":
                 await clear_history()
                 music_bot_state[gateway] = 0
@@ -1378,6 +1376,19 @@ async def mt2tg(msg):
 
           else:
             return
+        elif text.isnumeric() and music_bot_state[gateway] == 2:
+          tmp = []
+          for i in gateways:
+            if gateways[i] == gateway:
+              tmp.append(i)
+          qid = max(tmp)
+          mtmsgs = mtmsgsg[gateway]
+          msg = mtmsgs[qid][1]
+          info("尝试下载：{text} msg: {msg.buttons}")
+
+          gateways.pop(qid)
+          mtmsgs.pop(qid)
+          music_bot_state[gateway] = 0
         elif gateway in gptmode:
           pass
         else:
@@ -1539,6 +1550,10 @@ async def clear_history():
   #  await mt_send(f"cleaned: {mtmsgsg=}", gateway="test")
   gateways.clear()
   #  await mt_send(f"cleaned: {gateways=}", gateway="test"):w
+
+
+
+
 
 
 @http_exceptions_handler
@@ -1777,15 +1792,28 @@ async def parse_msg(event):
     try:
       gateway = gateways[qid]
       mtmsgs = mtmsgsg[gateway]
+      text = msg.text
+      if not text:
+        print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
+        return
       
       if music_bot_state[gateway] == 1:
         info(f"找到了几个音乐:{len(msg.buttons)} {msg.text}")
+
+
         music_bot_state[gateway] += 1
         mtmsgs[qid].append(msg)
 
+        res = f"{mtmsgs[qid][0]['username']}{text}"
+        await mt_send_for_long_text(res, gateway)
+
         gateways[msg.id] = gateway
         mtmsgs[msg.id] = mtmsgs[qid]
-        music_bot_state[gateway] = msg.id
+        #  music_bot_state[gateway] = msg.id
+      elif music_bot_state[gateway] == 0:
+        pass
+      elif msg.file:
+        pass
       else:
         pass
 
