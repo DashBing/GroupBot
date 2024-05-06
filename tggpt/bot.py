@@ -5,6 +5,22 @@
 
 from . import *  # noqa: F403
 
+global loop
+loop = asyncio.get_event_loop()
+
+#  global MY_NAME, MY_ID, UB
+api_id = int(get_my_key("TELEGRAM_API_ID"))
+api_hash = get_my_key("TELEGRAM_API_HASH")
+
+from telethon import TelegramClient
+#  client = TelegramClient('anon', api_id, api_hash)
+UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=loop)
+#  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, proxy=("socks5", '172.23.176.1', 6084), loop=loop)
+del api_id
+del api_hash
+#  del bot_token
+
+
 import logging
 from functools import wraps
 
@@ -2164,18 +2180,6 @@ async def my_event_handler(event):
 #    await read_res(event)
 
 async def run():
-  global MY_NAME, MY_ID, UB
-  api_id = int(get_my_key("TELEGRAM_API_ID"))
-  api_hash = get_my_key("TELEGRAM_API_HASH")
-
-  from telethon import TelegramClient
-  #  client = TelegramClient('anon', api_id, api_hash)
-  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=loop)
-  #  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, proxy=("socks5", '172.23.176.1', 6084), loop=loop)
-  #  del api_id
-  #  del api_hash
-  #  del bot_token
-
 
   MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
   await UB.start()
