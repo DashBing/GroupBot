@@ -3,7 +3,10 @@
 # -*- coding: UTF-8 -*-
 
 
-from . import *  # noqa: F403
+#  from . import *  # noqa: F403
+from . import debug, WORK_DIR, PARENT_DIR, LOG_FILE, get_my_key, HOME
+#  HOME = os.environ.get("HOME")
+import logging
 
 import asyncio
 
@@ -92,7 +95,6 @@ id2gateway = {
 
 
 
-HOME = os.environ.get("HOME")
 
 
 def pprint(e):
@@ -2161,8 +2163,6 @@ async def read_res(event):
 
 
 
-
-
 async def my_event_handler(event):
   #  if 'hello' in event.raw_text:
   #    await event.reply('hi!')
@@ -2210,6 +2210,78 @@ async def run():
   await UB.run_until_disconnected()
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#  async def init():
+#    logger.warning("init ok, loop...")
+
+
+async def _amain():
+  #  from . import init
+  #  await init()
+
+  #  from . import bot
+  #  await bot.run()
+  await run()
+  #  from .bot import mt_read
+  #  asyncio.create_task(mt_read(MSG_QUEUE), name="mt_read")
+
+  #  from pyrogram import idle
+  #  if "idle" in locals():
+  #    await idle()
+
+async def amain():
+  try:
+    # with UB:
+    #  loop.run_until_complete(run())
+    await _amain()
+
+    logger.info("主程序正常结束")
+  #  except KeyboardInterrupt as e:
+  #    logger.info("I: 手动终止")
+  #    #  raise e
+  #  except SystemExit as e:
+  #    raise e
+  #  except Exception as e:
+  #    logger.error("error: stop...", exc_info=True, stack_info=True)
+  #    raise e
+  finally:
+    logger.info("正在收尾...")
+    #  loop.run_until_complete(loop.shutdown_asyncgens())
+    #  loop.close()
+    logger.info("正在退出...")
+
+
+def main():
+  try:
+    asyncio.run(amain())
+  except KeyboardInterrupt as e:
+    logger.info("停止原因：用户手动终止")
+    sys.exit(1)
+  except SystemExit as e:
+    logger.warning(f"捕获到systemexit: {e=}", exc_info=True, stack_info=True)
+    sys.exit(2)
+  except Exception as e:
+    logger.error(f"出现未知异常: 正在停止运行...{e=}", exc_info=True, stack_info=True)
+    sys.exit(5)
+    raise e
+
+
 if __name__ == '__main__':
   print('{} 作为主程序运行'.format(__file__))
 #  print(data2url("test"))
@@ -2228,6 +2300,4 @@ else:
   print('{} 运行, package: {}'.format(__file__, __package__))
 # /tmp/run/user/1000/bot
   #  asyncio.create_task(_init())
-
-
 
