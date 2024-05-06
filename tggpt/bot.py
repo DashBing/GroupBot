@@ -747,6 +747,13 @@ async def read_file(path='SH_PATH', *args, **kwargs):
   async with aiofiles.open(path, *args, **kwargs) as file:
       return await file.read()
 
+async def write_file(text, path='config.json', *args, **kwargs):
+  if path[0:1] != '/':
+    path=PARENT_DIR.as_posix()+ "/" + path
+  async with aiofiles.open(path, *args, **kwargs) as file:
+      return await file.write(text)
+
+
 #async def ipfs_add(data, filename=None, url="https://ipfs.infura.io:5001/api/v0/add?cid-version=1", *args, **kwargs):
 async def ipfs_add(data, filename=None, url="https://ipfs.pixura.io/api/v0/add", *args, **kwargs):
 #    res = data2url(data, url=url, filename=filename, fieldname="file", *args, **kwargs)
@@ -919,13 +926,6 @@ def load_str(msg, no_ast=False):
           err(f"json: error str: {msg}")
 
 
-async def read_file(path='config.json', *args, **kwargs):
-  async with aiofiles.open(path, *args, **kwargs) as file:
-      return await file.read()
-
-async def write_file(text, path='config.json', *args, **kwargs):
-  async with aiofiles.open(path, *args, **kwargs) as file:
-      return await file.write(text)
 
 
 
