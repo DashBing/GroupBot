@@ -7,10 +7,9 @@ from . import *  # noqa: F403
 
 import asyncio
 
-global loop
+#  global loop
 loop = asyncio.get_event_loop()
 
-#  global MY_NAME, MY_ID, UB
 api_id = int(get_my_key("TELEGRAM_API_ID"))
 api_hash = get_my_key("TELEGRAM_API_HASH")
 
@@ -21,6 +20,7 @@ UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, a
 del api_id
 del api_hash
 #  del bot_token
+MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
 
 
 import logging
@@ -2182,8 +2182,7 @@ async def my_event_handler(event):
 #    await read_res(event)
 
 async def run():
-
-  MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
+  global MY_NAME, MY_ID, UB
   await UB.start()
   me = await UB.get_me()
   #  print(me.stringify())
