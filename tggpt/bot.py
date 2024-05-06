@@ -1913,7 +1913,7 @@ async def parse_msg(event):
         if path is not None:
           #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
         #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
-          path = "https://%s/%s" % (DOMAIN, parse.urlencode(path.lstrip(DOWNLOAD_PATH)))
+          path = "https://%s/%s" % (DOMAIN, (parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)}))[2:])
         res = f"{mtmsgs[qid][0]['username']}{path}\n{text}"
         await mt_send_for_long_text(res, gateway)
 
