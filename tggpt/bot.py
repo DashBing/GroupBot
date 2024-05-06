@@ -1848,18 +1848,15 @@ async def parse_msg(event):
 
   elif event.chat_id == music_bot:
     print("I: music bot: chat_id: %s\nmsg: %s" % (event.chat_id, msg.stringify()))
-    info(msg.buttons)
     if msg.is_reply:
       pass
     else:
       return
-    qid=msg.reply_to_msg_id
-    if qid not in gateways:
-      logger.error(f"E: not found gateway for {qid=}, {gateways=} {msg.text=}")
-      return
     try:
-      gateway = gateways[qid]
-      mtmsgs = mtmsgsg[gateway]
+      qid=msg.reply_to_msg_id
+      if qid not in gateways:
+        logger.error(f"E: not found gateway for {qid=}, {gateways=} {msg.text=}")
+        return
       text = msg.text
       if not text:
         print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
@@ -1868,10 +1865,16 @@ async def parse_msg(event):
       if '正在发送中...' in text:
         # message='大熊猫\n专辑: 火火兔儿歌\nflac 14.87MB\n命中缓存, 正在发送中...',
         return
+      if text == '搜索中...':
+        #         message='搜索中...',
+        return
+      gateway = gateways[qid]
+      mtmsgs = mtmsgsg[gateway]
       if music_bot_state[gateway] == 0:
         gateways.pop(qid)
         mtmsgs.pop(qid)
       elif music_bot_state[gateway] == 1:
+        info(msg.buttons)
         info(f"找到了几个音乐:{len(msg.buttons)} {msg.text}")
 
         music_bot_state[gateway] += 1
@@ -1895,7 +1898,7 @@ async def parse_msg(event):
 
 
     except Exception as e:
-      logger.info(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
+      err(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
 
     return
 
@@ -1942,7 +1945,7 @@ async def parse_msg(event):
         mtmsgs.pop(qid)
 
     except Exception as e:
-      logger.info(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
+      err(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
       #  raise e
     return
     await queues[gateways[qid]].put( (msg.id, msg, qid) )
