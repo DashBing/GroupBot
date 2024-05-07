@@ -1918,28 +1918,34 @@ async def parse_msg(event):
         print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
         return
       
-      if text == '正在发送中...':
-        # message='大熊猫\n专辑: 火火兔儿歌\nflac 14.87MB\n命中缓存, 正在发送中...',
-        info(text)
-        return
       if text == '等待下载中...':
         #   message='等待下载中...',
+        info(text)
+        return
+      if text == '正在获取歌曲信息...':
+        #         message='正在获取歌曲信息...',
         info(text)
         return
       if text == '搜索中...':
         #         message='搜索中...',
         info(text)
         return
+      if text == '正在发送中...':
+        # message='大熊猫\n专辑: 火火兔儿歌\nflac 14.87MB\n命中缓存, 正在发送中...',
+        info(text)
+        return
       if '中...' in text:
         #         message='搜索中...',
         warn(f"已忽略疑似临时消息: {text}", False)
         return
+
       gateway = gateways[qid]
       mtmsgs = mtmsgsg[gateway]
-      if music_bot_state[gateway] == 0:
-        gateways.pop(qid)
-        mtmsgs.pop(qid)
-      elif music_bot_state[gateway] == 1:
+      #  state = music_bot_state[gateway]
+      #  if music_bot_state[gateway] == 0:
+      #    gateways.pop(qid)
+      #    mtmsgs.pop(qid)
+      if music_bot_state[gateway] == 1:
         info(msg.buttons)
         info(f"找到了几个音乐:{len(msg.buttons)} {msg.text}")
 
@@ -1956,6 +1962,7 @@ async def parse_msg(event):
         mtmsgs.pop(qid)
 
       elif music_bot_state[gateway] == 2:
+        warn(f"不应该出现: music bot: {gateways=} {music_bot_state[gateway]}\nmsg:\n{msg.stringify()}")
         gateways.pop(qid)
         mtmsgs.pop(qid)
         return
@@ -1976,8 +1983,6 @@ async def parse_msg(event):
           music_bot_state[gateway] -= 1
       else:
         warn(f"未知状态，已忽略: music bot: {gateways=} {music_bot_state[gateway]}\nmsg:\n{msg.stringify()}")
-        gateways.pop(qid)
-        mtmsgs.pop(qid)
         return
 
 
