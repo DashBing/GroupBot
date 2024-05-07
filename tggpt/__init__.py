@@ -55,7 +55,6 @@ class NoParsingFilter(logging.Filter):
            return False
     return True
 
-LOGGER.addFilter(NoParsingFilter())
 
 
 if debug:
@@ -64,6 +63,7 @@ if debug:
   OUT = None
   ERR = None
 
+  LOGGER.addFilter(NoParsingFilter())
 
   #  OUT = logging.StreamHandler(stdout)
   #  OUT.setFormatter(FORMATTER)
