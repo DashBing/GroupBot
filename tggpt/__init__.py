@@ -23,38 +23,6 @@ logger=LOGGER
 debug = False
 debug = True
 
-class NoParsingFilter(logging.Filter):
-  def filter(self, record):
-    #  if record.name == 'tornado.access' and record.levelno == 20:
-    if record.levelno == 20:
-      if record.name == 'httpx':
-        #  pprint(record)
-        #  print("{%s}" % record.getMessage())
-        msg = record.getMessage()
-        #  if record.message == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/f6f9ef32-4cc6-470e-9bfb-957b4bc6ff5d "HTTP/1.1 404 Not Found"':
-        #  if msg == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/f6f9ef32-4cc6-470e-9bfb-957b4bc6ff5d "HTTP/1.1 404 Not Found"':
-        if msg.startswith('HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/') and msg.endswith(' "HTTP/1.1 404 Not Found"'):
-          return False
-        elif '404 Not Found' in msg and 'GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/' in msg:
-           #  logger.info(f"根据关键词找到了文本: {msg=}")
-           return False
-        elif '404 Not Found' in msg:
-           logger.info(f"根据关键词找到了文本: {msg=}")
-           return False
-        #  else:
-        #    logger.info(f"文本不对: {msg=}")
-    else:
-      return True
-      if record.levelno == 20:
-        return True
-        if record.message == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/f6f9ef32-4cc6-470e-9bfb-957b4bc6ff5d "HTTP/1.1 404 Not Found"':
-          logger.info(f"找到了文本，name不对: {record}")
-          return False
-        if '404 Not Found' in record.message:
-           logger.info(f"根据关键词找到了文本，name不对: {record}")
-           return False
-    return True
-
 
 
 if debug:
@@ -62,16 +30,6 @@ if debug:
   LOGGER.setLevel(logging.INFO)
   OUT = None
   ERR = None
-
-  #  LOGGER.addFilter(NoParsingFilter())
-
-  # https://stackoverflow.com/questions/17275334/what-is-a-correct-way-to-filter-different-loggers-using-python-logging
-  for handler in logging.root.handlers:
-    #  handler.addFilter(logging.Filter('foo'))
-    #  handler.addFilter(NoParsingFilter())
-    f = NoParsingFilter()
-    handler.addFilter(f)
-    logger.info(f"added filter to: {handler}")
 
   #  OUT = logging.StreamHandler(stdout)
   #  OUT.setFormatter(FORMATTER)

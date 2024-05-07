@@ -13,6 +13,25 @@ from telethon.tl.types import KeyboardButton, KeyboardButtonUrl
 import logging
 logger = logging.getLogger(__name__)
 
+class NoParsingFilter(logging.Filter):
+  def filter(self, record):
+    #  if record.name == 'tornado.access' and record.levelno == 20:
+    if record.levelno == 20:
+      if record.name == 'httpx':
+        #  pprint(record)
+        msg = record.getMessage()
+        if msg.startswith('HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/') and msg.endswith(' "HTTP/1.1 404 Not Found"'):
+          return False
+        elif '404 Not Found' in msg and 'GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/' in msg:
+           #  logger.info(f"根据关键词找到了文本: {msg=}")
+           return False
+        elif '404 Not Found' in msg:
+           logger.info(f"根据关键词找到了文本: {msg=}")
+           return False
+        #  else:
+        #    logger.info(f"文本不对: {msg=}")
+    return True
+
 
 import asyncio
 
@@ -1996,7 +2015,7 @@ async def parse_msg(event):
     return
     #  print("N: skip: %s != %s" % (event.chat_id, gpt_bot))
   else:
-    print("W: skip: got a unknown: chat_id: %s" % (event.chat_id, ))
+    print("W: skip unknown chat_id: %s %s" % (event.chat_id, msg.text[:64]))
     return
 
   if msg.is_reply:
@@ -2147,6 +2166,16 @@ async def my_event_handler(event):
 #    await read_res(event)
 
 async def run():
+  #  LOGGER.addFilter(NoParsingFilter())
+
+  # https://stackoverflow.com/questions/17275334/what-is-a-correct-way-to-filter-different-loggers-using-python-logging
+  for handler in logging.root.handlers:
+    #  handler.addFilter(logging.Filter('foo'))
+    #  handler.addFilter(NoParsingFilter())
+    f = NoParsingFilter()
+    handler.addFilter(f)
+    logger.info(f"added filter to: {handler}")
+
   global MY_NAME, MY_ID, UB
   await UB.start()
   me = await UB.get_me()
