@@ -399,10 +399,13 @@ def exceptions_handler(func):
 
 def _exceptions_handler(e, *args, **kwargs):
     if type(e) == KeyboardInterrupt:
+        logger.info("用户手动终止")
         raise e
     elif type(e) == SystemExit:
+        logger.warning(f"systemexit: {e=}")
         raise e
     elif type(e) == RuntimeError:
+        logger.warning(f"{e=}")
         raise e
     elif type(e) == AttributeError:
         logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
@@ -1804,12 +1807,21 @@ async def mt_send(text="null", username="C bot", gateway="test", qt=None):
 last_time = {}
 
 async def download_media(msg, gateway='test', path=f"{DOWNLOAD_PATH}/", in_memory=False):
+  res = ''
+  if msg.buttons:
+    info(msg.buttons)
+    for i in get_buttons(msg.buttons):
+      if isinstance(i, KeyboardButtonUrl):
+        info(f"add url from: {i}")
+        res += f"\n原始链接: {i.url}"
+      else:
+        info(f"ignore button: {i}")
 #  await client.download_media(message, progress_callback=callback)
   async with downlaod_lock:
     if msg.file and msg.file.name:
-      await mt_send(f"{msg.file.name} 下载中...", gateway=gateway)
+      await mt_send(f"{msg.file.name} 下载中...{res}", gateway=gateway)
     else:
-      await mt_send(f"下载中...", gateway=gateway)
+      await mt_send(f"下载中...{res}", gateway=gateway)
 
     # Printing download progress
     def download_media_callback(current, total):
