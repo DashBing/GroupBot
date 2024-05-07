@@ -1919,13 +1919,13 @@ def get_buttons(bs):
 
 async def get_entity(peer):
   if isinstance(peer, PeerUser):
-    info(f"PeerUser: {peer}")
+    #  info(f"PeerUser: {peer}")
     peer = await UB.get_input_entity(peer)
   elif isinstance(peer, PeerChat):
-    info(f"PeerChat: {peer}")
+    #  info(f"PeerChat: {peer}")
     peer = await UB.get_input_entity(peer)
   elif isinstance(peer, PeerChannel):
-    info(f"PeerChannel: {peer}")
+    #  info(f"PeerChannel: {peer}")
     peer = await UB.get_input_entity(peer)
   elif isinstance(peer, str):
     peer = await UB.get_input_entity(peer)
@@ -1960,9 +1960,11 @@ async def print_msg(event):
       peer = await get_entity(event.from_id)
       if peer is not None:
         res += "[%s %s]: " % (peer.first_name, peer.last_name)
-  res += "%s" % msg.text
+  res += "%s" % msg.text[:64]
   if msg.file:
     res += " %s" % msg.file
+    if msg.file.name:
+      res += " %s" % msg.file.name
   print(res)
 
 
