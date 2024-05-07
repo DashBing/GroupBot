@@ -18,16 +18,56 @@ LOG_FORMAT = "%(asctime)s [%(levelname)s] %(name)s [%(module)s.%(funcName)s:%(li
 FORMATTER: logging.Formatter = logging.Formatter(LOG_FORMAT)
 
 LOGGER = logging.getLogger()
+logger=LOGGER
 
 debug = False
 debug = True
 
+def pprint(e):
+  print('---')
+  print("||%s: %s" % (type(e), e))
+  print('---')
+  for i in dir(e):
+    print("  %s: %s: %s" % (i, type(getattr(e, i)), getattr(e, i)))
+  print('===')
+
+logger = logging.getLogger(__name__)
+class NoParsingFilter(logging.Filter):
+  def filter(self, record):
+    #  if record.name == 'tornado.access' and record.levelno == 20:
+    if record.name == 'httpx':
+      if record.message == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/f6f9ef32-4cc6-470e-9bfb-957b4bc6ff5d "HTTP/1.1 404 Not Found"':
+        return False
+      else:
+        logger.info(f"文本不对: {record.message}")
+    else:
+      if record.levelno == 20:
+        pprint(record)
+        return False
+        if record.message == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/f6f9ef32-4cc6-470e-9bfb-957b4bc6ff5d "HTTP/1.1 404 Not Found"':
+          logger.info(f"找到了文本，name不对: {record}")
+          return False
+        if '404 Not Found' in record.message:
+           logger.info(f"根据关键词找到了文本，name不对: {record}")
+           return False
+    return True
+
 
 if debug:
-  logging.basicConfig(format=LOG_FORMAT)
+  #  logging.basicConfig(format=LOG_FORMAT)
   LOGGER.setLevel(logging.INFO)
   OUT = None
   ERR = None
+
+#  logger.addFilter(NoParsingFilter())
+
+  OUT = logging.StreamHandler(stdout)
+  OUT.setFormatter(FORMATTER)
+  OUT.setLevel(logging.INFO)
+  #  OUT.setLevel(logging.WARNING)
+  OUT.addFilter(NoParsingFilter())
+
+  LOGGER.addHandler(OUT)
 else:
   logging.basicConfig(filename=str(LOG_FILE), filemode='w', format=LOG_FORMAT)
 
@@ -55,23 +95,7 @@ else:
 #  LOGGER.setLevel(logging.ERROR)
 
 
-logger=LOGGER
 
-class NoParsingFilter(logging.Filter):
-  def filter(self, record):
-    #  if record.name == 'tornado.access' and record.levelno == 20:
-    if record.name == 'httpx':
-      if record.message == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/f6f9ef32-4cc6-470e-9bfb-957b4bc6ff5d "HTTP/1.1 404 Not Found"':
-        return False
-      else:
-        logger.info(f"文本不对: {record.message}")
-    else:
-      if record.message == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/f6f9ef32-4cc6-470e-9bfb-957b4bc6ff5d "HTTP/1.1 404 Not Found"':
-        logger.info(f"找到了文本，name不对: {record}")
-        return False
-    return True
-
-logger.addFilter(NoParsingFilter())
 
 #  import pyrogram
 #  from pyrogram import enums
