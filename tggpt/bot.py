@@ -1943,7 +1943,8 @@ async def print_msg(event):
   res = ''
   if event.is_private:
     res += "@"
-    peer = await get_entity(event.chat_id)
+    #  peer = await get_entity(event.chat_id)
+    peer = await event.chat()
     if peer is not None:
       res += " [%s %s]" % (peer.first_name, peer.last_name)
   else:
@@ -1953,11 +1954,13 @@ async def print_msg(event):
       #  if event.is_channel:
       res += "#"
 
-    peer = await get_entity(event.chat_id)
+    #  peer = await get_entity(event.chat_id)
+    peer = await event.chat()
     if peer is not None:
       res += " %s" % peer.title
     if event.from_id:
-      peer = await get_entity(event.from_id)
+      #  peer = await get_entity(event.from_id)
+      peer = await event.get_sender()
       if peer is not None:
         res += " [%s %s]" % (peer.first_name, peer.last_name)
   res += ": %s" % msg.text[:64]
