@@ -142,20 +142,27 @@ def info2(s):
   print("%s" % s.replace("\n", " "))
 
 def err(text):
-  logger.error(f"{text}", exc_info=True, stack_info=True)
-  raise ValueError
+  asyncio.create_task(mt_send_for_long_text(f"E: {text}"))
+  logger.error(text, exc_info=True, stack_info=True)
+  #  raise ValueError
 
 def warn(text, more=True):
+  asyncio.create_task(mt_send_for_long_text(f"W: {text}"))
   if more:
-    logger.warning(f"{text}", exc_info=True, stack_info=True)
+    logger.warning(text, exc_info=True, stack_info=True)
   else:
-    logger.warning(f"{text}")
+    logger.warning(text)
 
 def info(text):
-  logger.info(f"{text}")
+  logger.info(text)
 
 def dbg(text):
-  logger.debug(f"{text}")
+  logger.debug(text)
+
+
+def log(text):
+  asyncio.create_task(mt_send_for_long_text(text))
+  logger.warning(text)
 
 def get_cmd(text):
   cmd = text.split(' ')
@@ -950,8 +957,9 @@ def load_str(msg, no_ast=False):
         import json
         try:
           return json.loads(msg)
-        except Exception:
-          err(f"json: error str: {msg}")
+        except Exception as e:
+          err(f"json: error str: {msg} line: {e.__traceback__.tb_lineno}")
+          #  raise e
 
 
 
@@ -2006,7 +2014,7 @@ async def parse_msg(event):
 
 
     except Exception as e:
-      err(f"E: fixme: music bot: {gateways=} {e=}")
+      err(f"fixme: music bot: {gateways=} {e=} line: {e.__traceback__.tb_lineno}")
 
     return
 
@@ -2017,6 +2025,7 @@ async def parse_msg(event):
   else:
     print("W: skip unknown chat_id: %s %s" % (event.chat_id, msg.text[:64]))
     return
+
 
   if msg.is_reply:
     qid=msg.reply_to_msg_id
@@ -2053,7 +2062,7 @@ async def parse_msg(event):
         mtmsgs.pop(qid)
 
     except Exception as e:
-      err(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
+      err(f"fixme: {qid=} {gateways=} {queues=} {e=} line: {e.__traceback__.tb_lineno}")
       #  raise e
     return
     await queues[gateways[qid]].put( (msg.id, msg, qid) )
@@ -2128,7 +2137,7 @@ async def parse_msg(event):
 
 
 
-async def mt_send_for_long_text(text, gateway):
+async def mt_send_for_long_text(text, gateway='test'):
   fn='gpt_res'
   async with queue_lock:
     async with aiofiles.open(f"{SH_PATH}/{fn}", mode='w') as file:
