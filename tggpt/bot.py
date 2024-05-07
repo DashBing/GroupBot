@@ -1918,13 +1918,21 @@ async def parse_msg(event):
         print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
         return
       
-      if '正在发送中...' in text:
+      if text == '正在发送中...':
         # message='大熊猫\n专辑: 火火兔儿歌\nflac 14.87MB\n命中缓存, 正在发送中...',
+        info(text)
+        return
+      if text == '等待下载中...':
+        #   message='等待下载中...',
         info(text)
         return
       if text == '搜索中...':
         #         message='搜索中...',
         info(text)
+        return
+      if '中...' in text:
+        #         message='搜索中...',
+        warn(f"已忽略疑似临时消息: {text}", False)
         return
       gateway = gateways[qid]
       mtmsgs = mtmsgsg[gateway]
