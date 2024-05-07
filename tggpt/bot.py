@@ -1960,6 +1960,9 @@ async def print_msg(event):
       peer = await get_entity(event.from_id)
       if peer is not None:
         res += "[%s %s]: " % (peer.first_name, peer.last_name)
+  res += "%s" % msg.text
+  if msg.file:
+    res += " %s" % msg.file
   print(res)
 
 
