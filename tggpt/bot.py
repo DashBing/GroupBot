@@ -1166,17 +1166,20 @@ async def mt2tg(msg):
         gateway = msgd["gateway"]
         #  print(f"I: got msg: {name}: {text}")
         if not text:
+          logger.info("I: ignore msg: no text")
           return
         if not name:
+          logger.info("I: ignore msg: no name")
           return
 
         #  if name == "C twitter: ":
         #      return
         if name.startswith("C "):
-            return
+          logger.info("I: ignore msg: C ")
+          return
         if name.startswith("**C "):
-            return
-        #  logger.info("got msg: %s" % msgd)
+          logger.info("I: ignore msg: **C ")
+          return
 
         #  if len(username.splitlines()) > 1:
         #    pass
@@ -1189,7 +1192,7 @@ async def mt2tg(msg):
         #    pass
         #  else:
         #    return
-
+        info("msg of mt_read: %s" % msgd)
 
 
         global queue
