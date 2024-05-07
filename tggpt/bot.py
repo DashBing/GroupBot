@@ -11,6 +11,23 @@ from telethon.tl.types import KeyboardButton, KeyboardButtonUrl
 #  HOME = os.environ.get("HOME")
 
 import logging
+logger = logging.getLogger(__name__)
+class NoParsingFilter(logging.Filter):
+  def filter(self, record):
+    #  if record.name == 'tornado.access' and record.levelno == 20:
+    if record.name == 'httpx':
+      if record.message == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/f6f9ef32-4cc6-470e-9bfb-957b4bc6ff5d "HTTP/1.1 404 Not Found"':
+        return False
+      else:
+        logger.info(f"文本不对: {record.message}")
+    else:
+      if record.message == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/f6f9ef32-4cc6-470e-9bfb-957b4bc6ff5d "HTTP/1.1 404 Not Found"':
+        logger.info(f"找到了文本，name不对: {record}")
+        return False
+    return True
+
+logger.addFilter(NoParsingFilter())
+
 
 import asyncio
 
@@ -313,8 +330,6 @@ urlre=re.compile(r'(^|\n|\s+)(https?://((([\dA-Za-z0-9.]+-?)+\.)+(?!https?)[A-Za
 url_md_left=re.compile(r'\[[^\]]+\]\([^\)]+')
 
 qre = re.compile(r'^(>( .+)?)$', re.M)
-
-logger = logging.getLogger(__name__)
 
 
 gptmode=[]
@@ -2265,12 +2280,4 @@ else:
   print('{} 运行, package: {}'.format(__file__, __package__))
 # /tmp/run/user/1000/bot
   #  asyncio.create_task(_init())
-
-
-class NoParsingFilter(logging.Filter):
-  def filter(self, record):
-    if record.name == 'tornado.access' and record.levelno == 20:
-      return False
-    return True
-
 
