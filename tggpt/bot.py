@@ -4,9 +4,12 @@
 
 
 #  from . import *  # noqa: F403
-#  from tg.telegram import DOWNLOAD_PATH
 from . import debug, WORK_DIR, PARENT_DIR, LOG_FILE, get_my_key, HOME
+#  from tg.telegram import DOWNLOAD_PATH
+from telethon.tl.types import KeyboardButton, KeyboardButtonUrl
+
 #  HOME = os.environ.get("HOME")
+
 import logging
 
 import asyncio
@@ -1861,6 +1864,16 @@ async def just_for_me(event):
 
 
 
+def get_buttons(bs):
+  tmp = []
+  for i in bs:
+    if type(i) is list:
+      tmp += i
+    else:
+      tmp.append(i)
+  return tmp
+
+
 music_bot_state = {}
 
 
@@ -1892,9 +1905,11 @@ async def parse_msg(event):
       
       if '正在发送中...' in text:
         # message='大熊猫\n专辑: 火火兔儿歌\nflac 14.87MB\n命中缓存, 正在发送中...',
+        info(text)
         return
       if text == '搜索中...':
         #         message='搜索中...',
+        info(text)
         return
       gateway = gateways[qid]
       mtmsgs = mtmsgsg[gateway]
@@ -1928,9 +1943,18 @@ async def parse_msg(event):
         #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
           path = "https://%s/%s" % (DOMAIN, (parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
         res = f"{mtmsgs[qid][0]['username']}{path}\n{text}"
+        if msg.buttons:
+          for i in get_buttons(msg.buttons):
+            if isinstance(i, KeyboardButtonUrl):
+              res += f"\n原始链接: {i.url}"
         await mt_send_for_long_text(res, gateway)
         if music_bot_state[gateway] == 3:
           music_bot_state[gateway] -= 1
+      else:
+        warn(f"未知状态，已忽略: music bot: {gateways=} {music_bot_state[gateway]}\nmsg:\n{msg.stringify()}")
+        gateways.pop(qid)
+        mtmsgs.pop(qid)
+        return
 
 
     except Exception as e:

@@ -305,3 +305,145 @@ msg: Message(
 2024-05-06 16:43:01,178 [INFO] tggpt.bot [bot.info:128]: [[<telethon.tl.custom.messagebutton.MessageButton object at 0x7f1870cc3850>, <telethon.tl.custom.messagebutton.MessageButton object at 0x7f1870ce56d0>, <telethon.tl.custom.messagebutton.MessageButton object at 0x7f1870cb5e90>, <telethon.tl.custom.messagebutton.MessageButton object at 0x7f1870cb5790>, <telethon.tl.custom.messagebutton.MessageButton object at 0x7f1870cb6410>, <telethon.tl.custom.messagebutton.MessageButton object at 0x7f1870cb49d0>, <telethon.tl.custom.messagebutton.MessageButton object at 0x7f1870cb5390>, <telethon.tl.custom.messagebutton.MessageButton object at 0x7f1870cb5f50>]]
 2024-05-06 16:43:01,181 [ERROR] tggpt.bot [bot.parse_msg:1775]: E: not found gateway for qid=17682, gateways={} msg.text='1.「Romance」 - 石凯\n2.「romance」 - Baq5\n3.「Romance」 - Richard Clayderman\n4.「Romance」 - October\n5.「Romance」 - Bayza\n6.「Bad Romance (Radio Edit)」 - Lady Gaga\n7.「Romance」 - Pablo Casals/Charles Albert Baker\n8.「Romance」 - Ólafur Arnalds'
 
+
+
+
+
+
+
+file msg:
+
+I: music bot: chat_id: 1404457467
+msg: Message(
+        id=17836,
+        peer_id=PeerUser(
+                user_id=1404457467
+        ),
+        date=datetime.datetime(2024, 5, 7, 1, 21, 3, tzinfo=datetime.timezone.utc),
+        message='「暗里着迷(中文dj版)」- DJ阿诺\n专辑: 走在冷风中\n#网易云音乐 #flac 35.94MB 1014.33kbps\nvia @Music163bot',
+        out=False,
+        mentioned=False,
+        media_unread=False,
+        silent=False,
+        post=False,
+        from_scheduled=False,
+        legacy=False,
+        edit_hide=False,
+        pinned=False,
+        noforwards=False,
+        invert_media=False,
+        offline=False,
+        from_id=None,
+        from_boosts_applied=None,
+        saved_peer_id=None,
+        fwd_from=None,
+        via_bot_id=None,
+        via_business_bot_id=None,
+        reply_to=MessageReplyHeader(
+                reply_to_scheduled=False,
+                forum_topic=False,
+                quote=False,
+                reply_to_msg_id=17834,
+                reply_to_peer_id=None,
+                reply_from=None,
+                reply_media=None,
+                reply_to_top_id=None,
+                quote_text=None,
+                quote_entities=[
+                ],
+                quote_offset=None
+        ),
+        media=MessageMediaDocument(
+                nopremium=False,
+                spoiler=False,
+                video=False,
+                round=False,
+                voice=False,
+                document=Document(
+                        id=6183835011599306223,
+                        access_hash=7522590536470051616,
+                        file_reference=b'\x01\x00\x00E\xacf9\x81\xff}\xe6\xee\x1c}b\xd4xo\xe1\x80\xdaZ\xfc\x0f\x07',
+                        date=datetime.datetime(2024, 5, 7, 1, 21, 3, tzinfo=datetime.timezone.utc),
+                        mime_type='audio/x-flac',
+                        size=37687116,
+                        dc_id=5,
+                        attributes=[
+                                DocumentAttributeAudio(
+                                        duration=296,
+                                        voice=False,
+                                        title='暗里着迷(中文dj版)',
+                                        performer='DJ阿诺',
+                                        waveform=None
+                                ),
+                                DocumentAttributeFilename(
+                                        file_name='DJ阿诺 - 暗里着迷(中文dj版).flac'
+                                ),
+                        ],
+                        thumbs=[
+                                PhotoStrippedSize(
+                                        type='i',
+                                        bytes=b"\x01((\xaa\xce\xc4\xf7&\x94e\x95\x89\xed\xda\x93+\x90;R\xc9  \x80\x00\x1d\x80\xa5pH\x85\x98\x1e\x94\x83\xa5 \x0cz\x02@\xf4\xa3\xbd0%\x90\xc7\xb0\x04\xc6{\xd1Q\x8e\xfcsE\x03\x96\xa5\xc1\x1e\xc7\r \x1bA\xa8\x95\xe1\x13\xc8\x1c\x02\xa5~S\xcf\x14\\\xdc\x86b\xa0p;\xd41\xae\xf0[\xd2\x90\x1a\x11\x14\x8a%\x8c\x01\x93\xd4\xd5y\xccip\x84F6\x81\xca\xfe4\xec\xee@\xc3\xa8\xea).\x07\xc9\xe6\x0e\xa3\xbd$2\xab0gf\x03h'\x81E#;\x11\x82h\xaa$|p\x16\x94\x89\x01\x00u\xa7;\xaa\x00\xa9\xd0QE!\x91,\x8c\x8f\xbc\x1e}*\xe2:\xc9\x13\x01\xd0\xd1E\x0c\x11O\x93\xc6\x06h\xa2\x8a\x00"
+                                ),
+                                PhotoSize(
+                                        type='m',
+                                        w=320,
+                                        h=320,
+                                        size=19649
+                                ),
+                        ],
+                        video_thumbs=[
+                        ]
+                ),
+                alt_document=None,
+                ttl_seconds=None
+        ),
+        reply_markup=ReplyInlineMarkup(
+                rows=[
+                        KeyboardButtonRow(
+                                buttons=[
+                                        KeyboardButtonUrl(
+                                                text='暗里着迷(中文dj版)- DJ阿诺',
+                                                url='https://music.163.com/song?id=1911311091'
+                                        ),
+                                ]
+                        ),
+                        KeyboardButtonRow(
+                                buttons=[
+                                        KeyboardButtonSwitchInline(
+                                                text='Send me to...',
+                                                query='https://music.163.com/song?id=1911311091',
+                                                same_peer=False,
+                                                peer_types=[
+                                                ]
+                                        ),
+                                ]
+                        ),
+                ]
+        ),
+        entities=[
+                MessageEntityHashtag(
+                        offset=30,
+                        length=6
+                ),
+                MessageEntityHashtag(
+                        offset=37,
+                        length=5
+                ),
+                MessageEntityMention(
+                        offset=67,
+                        length=12
+                ),
+        ],
+        views=None,
+        forwards=None,
+        replies=None,
+        edit_date=None,
+        post_author=None,
+        grouped_id=None,
+        reactions=None,
+        restriction_reason=[
+        ],
+        ttl_period=None,
+        quick_reply_shortcut_id=None
+)
+
