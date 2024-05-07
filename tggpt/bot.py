@@ -1963,7 +1963,10 @@ async def print_msg(event):
       peer = await event.get_sender()
       if peer is not None:
         res += " [%s %s]" % (peer.first_name, peer.last_name)
-  res += ": %s" % msg.text[:64]
+  if msg.text:
+    res += ": %s" % msg.text.splitlines()[0][:64]
+  else:
+    res += ": "
   if msg.file:
     res += " %s" % msg.file
     if msg.file.name:
