@@ -63,7 +63,15 @@ if debug:
   OUT = None
   ERR = None
 
-  LOGGER.addFilter(NoParsingFilter())
+  #  LOGGER.addFilter(NoParsingFilter())
+
+  # https://stackoverflow.com/questions/17275334/what-is-a-correct-way-to-filter-different-loggers-using-python-logging
+  for handler in logging.root.handlers:
+    #  handler.addFilter(logging.Filter('foo'))
+    #  handler.addFilter(NoParsingFilter())
+    f = NoParsingFilter()
+    handler.addFilter(f)
+    logger.info(f"added filter to: {handler}")
 
   #  OUT = logging.StreamHandler(stdout)
   #  OUT.setFormatter(FORMATTER)
