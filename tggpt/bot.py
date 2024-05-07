@@ -2165,85 +2165,48 @@ async def my_event_handler(event):
 #
 #    await read_res(event)
 
-async def run():
-  #  LOGGER.addFilter(NoParsingFilter())
-
-  # https://stackoverflow.com/questions/17275334/what-is-a-correct-way-to-filter-different-loggers-using-python-logging
-  for handler in logging.root.handlers:
-    #  handler.addFilter(logging.Filter('foo'))
-    #  handler.addFilter(NoParsingFilter())
-    f = NoParsingFilter()
-    handler.addFilter(f)
-    logger.info(f"added filter to: {handler}")
-
-  global MY_NAME, MY_ID, UB
-  UB.start()
-  me = await UB.get_me()
-  #  print(me.stringify())
-  MY_ID = me.id
-  MY_NAME = me.username
-  print(f"{MY_NAME}: {MY_ID}")
-
-  UB.parse_mode = 'md'
-
-  global SH_PATH, DOMAIN
-  SH_PATH = (await read_file()).rstrip('\n')
-  DOMAIN = (await read_file("DOMAIN")).rstrip('\n')
-  print(f"SH_PATH: {SH_PATH}")
-  print(f"DOMAIN: {DOMAIN}")
-
-  await mt_send("gpt start")
-  #  await asyncio.sleep(2)
-  #  await mt_send("ping")
-  #  await asyncio.sleep(3)
-  #  await mt_send("ping", username="")
-  #  await asyncio.sleep(1)
-  #  await mt_send(".gpt", username="")
-  asyncio.create_task(mt_read(), name="mt_read")
-
-  await UB.run_until_disconnected()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#  async def init():
-#    logger.warning("init ok, loop...")
-
-
-async def _amain():
-  #  from . import init
-  #  await init()
-
-  #  from . import bot
-  #  await bot.run()
-  await run()
-  #  from .bot import mt_read
-  #  asyncio.create_task(mt_read(MSG_QUEUE), name="mt_read")
-
-  #  from pyrogram import idle
-  #  if "idle" in locals():
-  #    await idle()
 
 async def amain():
   try:
     # with UB:
     #  loop.run_until_complete(run())
-    await _amain()
+
+    #  LOGGER.addFilter(NoParsingFilter())
+
+    # https://stackoverflow.com/questions/17275334/what-is-a-correct-way-to-filter-different-loggers-using-python-logging
+    for handler in logging.root.handlers:
+      #  handler.addFilter(logging.Filter('foo'))
+      #  handler.addFilter(NoParsingFilter())
+      f = NoParsingFilter()
+      handler.addFilter(f)
+      logger.info(f"added filter to: {handler}")
+
+    global MY_NAME, MY_ID, UB
+    #  await UB.start()
+    me = await UB.get_me()
+    #  print(me.stringify())
+    MY_ID = me.id
+    MY_NAME = me.username
+    print(f"{MY_NAME}: {MY_ID}")
+
+    UB.parse_mode = 'md'
+
+    global SH_PATH, DOMAIN
+    SH_PATH = (await read_file()).rstrip('\n')
+    DOMAIN = (await read_file("DOMAIN")).rstrip('\n')
+    print(f"SH_PATH: {SH_PATH}")
+    print(f"DOMAIN: {DOMAIN}")
+
+    await mt_send("gpt start")
+    #  await asyncio.sleep(2)
+    #  await mt_send("ping")
+    #  await asyncio.sleep(3)
+    #  await mt_send("ping", username="")
+    #  await asyncio.sleep(1)
+    #  await mt_send(".gpt", username="")
+    asyncio.create_task(mt_read(), name="mt_read")
+
+    await UB.run_until_disconnected()
 
     logger.info("主程序正常结束")
   #  except KeyboardInterrupt as e:
@@ -2263,7 +2226,9 @@ async def amain():
 
 def main():
   try:
-    asyncio.run(amain())
+    #  asyncio.run(amain())
+    with UB:
+      UB.loop.run_until_complete(amain())
   except KeyboardInterrupt as e:
     logger.info("停止原因：用户手动终止")
     sys.exit(1)
