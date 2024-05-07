@@ -6,7 +6,7 @@
 #  from . import *  # noqa: F403
 from . import debug, WORK_DIR, PARENT_DIR, LOG_FILE, get_my_key, HOME, LOGGER
 #  from tg.telegram import DOWNLOAD_PATH
-from telethon.tl.types import KeyboardButton, KeyboardButtonUrl
+from telethon.tl.types import KeyboardButton, KeyboardButtonUrl, PeerUser, PeerChannel, PeerChat
 
 #  HOME = os.environ.get("HOME")
 
@@ -354,6 +354,8 @@ queues = {}
 nids = {}
 queue_lock = asyncio.Lock()
 downlaod_lock = asyncio.Lock()
+
+rss_lock = asyncio.Lock()
 
 gateways = {}
 mtmsgsg={}
@@ -1915,6 +1917,52 @@ def get_buttons(bs):
       tmp.append(i)
   return tmp
 
+async def get_entity(peer):
+  if isinstance(peer, PeerUser):
+    info(f"PeerUser: {peer}")
+    peer = await UB.get_input_entity(peer)
+  elif isinstance(peer, PeerChat):
+    info(f"PeerChat: {peer}")
+    peer = await UB.get_input_entity(peer)
+  elif isinstance(peer, PeerChannel):
+    info(f"PeerChannel: {peer}")
+    peer = await UB.get_input_entity(peer)
+  elif isinstance(peer, str):
+    peer = await UB.get_input_entity(peer)
+  else:
+    peer = await UB.get_input_entity(peer)
+  if peer:
+    entity = await UB.get_entity(peer)
+    return entity
+  return
+
+
+
+async def print_msg(event):
+  msg = event.message
+  res = ''
+  if event.is_private:
+    res += "@ "
+    peer = await get_entity(event.chat_id)
+    if peer is not None:
+      res += "[%s %s]: " % (peer.first_name, peer.last_name)
+  else:
+    if event.is_group:
+      res += "> "
+    else:
+      #  if event.is_channel:
+      res += "# "
+
+    peer = await get_entity(event.chat_id)
+    if peer is not None:
+      res += "%s " % peer.title
+    if event.from_id:
+      peer = await get_entity(event.from_id)
+      if peer is not None:
+        res += "[%s %s]: " % (peer.first_name, peer.last_name)
+  print(res)
+
+
 
 music_bot_state = {}
 
@@ -2019,11 +2067,15 @@ async def parse_msg(event):
     return
 
   elif event.chat_id == rss_bot:
-    await mt_send(msg.text, "rss2tg_bot", id2gateway[rss_bot])
+    async with rss_lock:
+      #  await mt_send(msg.text, "C rss2tg_bot", id2gateway[rss_bot])
+      await mt_send_for_long_text(msg.text, id2gateway[rss_bot])
+      await asyncio.sleep(5)
     return
     #  print("N: skip: %s != %s" % (event.chat_id, gpt_bot))
   else:
-    print("W: skip unknown chat_id: %s %s" % (event.chat_id, msg.text[:64]))
+    #  print("W: skip unknown chat_id: %s %s" % (event.chat_id, msg.text[:64]))
+    await print_msg(event)
     return
 
 
@@ -2135,8 +2187,6 @@ async def parse_msg(event):
 #      await queues[gateways[qid]].put( (msg.id, msg, qid) )
 #      return
 
-
-
 async def mt_send_for_long_text(text, gateway='test'):
   fn='gpt_res'
   async with queue_lock:
@@ -2144,7 +2194,6 @@ async def mt_send_for_long_text(text, gateway='test'):
       await file.write(text)
     #  os.system(f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
     return await asyncio.to_thread(os.system, f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
-
 
 @UB.on(events.NewMessage(incoming=True))
 @UB.on(events.MessageEdited(incoming=True))
