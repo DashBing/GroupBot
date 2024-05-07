@@ -1807,33 +1807,33 @@ async def mt_send(text="null", username="C bot", gateway="test", qt=None):
 last_time = {}
 
 async def download_media(msg, gateway='test', path=f"{DOWNLOAD_PATH}/", in_memory=False):
-  res = ''
-  if msg.buttons:
-    info(msg.buttons)
-    for i in get_buttons(msg.buttons):
-      if isinstance(i.button, KeyboardButtonUrl):
-        info(f"add url from: {i}")
-        res += f"\n原始链接: {i.url}"
-      else:
-        info(f"ignore button: {i}")
 #  await client.download_media(message, progress_callback=callback)
   async with downlaod_lock:
+
     if msg.file and msg.file.name:
-      await mt_send(f"{msg.file.name} 下载中...{res}", gateway=gateway)
+      res = f"{msg.file.name}"
     else:
-      await mt_send(f"下载中...{res}", gateway=gateway)
+      res = ''
+    if msg.buttons:
+      info(msg.buttons)
+      for i in get_buttons(msg.buttons):
+        if isinstance(i.button, KeyboardButtonUrl):
+          info(f"add url from: {i}")
+          res += f" {i.url}"
+        else:
+          info(f"ignore button: {i}")
+    await mt_send(f"{res} 下载中...", gateway=gateway)
+    last_time[gateway] = time.time()
 
     # Printing download progress
     def download_media_callback(current, total):
       print('Downloaded', current, 'out of', total,
         'bytes: {:.2%}'.format(current / total))
-
       if time.time() - last_time[gateway] > 5:
         #  await mt_send("{:.2%} %s/%s".format(current / total, current, total), gateway=gateway)
         asyncio.create_task(mt_send("{:.2%} {}/{} bytes".format(current / total, current, total), gateway=gateway))
         last_time[gateway] = time.time()
 
-    last_time[gateway] = time.time()
     path = await msg.download_media(path, progress_callback=download_media_callback)
     if path:
       return path
