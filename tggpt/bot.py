@@ -1104,10 +1104,13 @@ async def mt_read():
         line = b""
         async for data, end_of_http_chunk in resp.content.iter_chunks():
           line += data
+          info(f"read bytes: {len(data)}")
           if end_of_http_chunk:
+            info(f"read end: {len(line)}")
             # # print(buffer)
             # await send_mt_msg_to_queue(buffer, queue)
-            await mt2tg(line)
+            #  await mt2tg(line)
+            asyncio.create_task(mt2tg(line))
             line = b""
 
     except ClientPayloadError:
@@ -1120,10 +1123,6 @@ async def mt_read():
     except Exception as e:
       logger.error(f"{e=}")
     await asyncio.sleep(3)
-
-
-
-
 
 
 #  @exceptions_handler
@@ -1239,7 +1238,6 @@ async def mt2tg(msg):
               return
           elif text == ".gtg reset":
             if no_reset.is_set():
-              no_reset.clear()
               await mt_send(f"now tasks: {here}, waiting...", gateway=gateway)
               #  for g in mtmsgsg:
               #  for g in queues:
@@ -1247,7 +1245,7 @@ async def mt2tg(msg):
               #    await queues[g].put((0,0,0))
               text= CLEAN
             else:
-              await mt_send("waiting reset...", gateway=gateway)
+              await mt_send("waiting...", gateway=gateway)
               await no_reset.wait()
               here = len(mtmsgsg[gateway])
               await mt_send(f"reset ok, now tasks: {here}", gateway=gateway)
@@ -1563,11 +1561,8 @@ async def mt2tg(msg):
         #  print(f">{chat.user_id}: {text}")
         print(f"I: send {text} to gpt")
         if text != CLEAN:
-          if not no_reset.is_set():
-            logger.warning("W: wait for no_reset...")
-            await no_reset.wait()
-          elif need_clean is True:
-            msg = await UB.send_message(chat, CLEAN)
+          if need_clean is True:
+            await UB.send_message(chat, CLEAN)
 
         #    while len(queue.keys()) > 0:
         #      print("W: waiting to reset...")
@@ -1576,22 +1571,21 @@ async def mt2tg(msg):
         #  await queue.put({msg.id: [msgd, msg]})
         #  await queue.put([msg, msgd])
         if text != CLEAN:
-          async with queue_lock:
-            #  queues[gateway] = {msg.id: [msgd, None]}
-            #  if gateway not in nids:
-              #  nids[gateway] = msg.id
-            gateways[msg.id] = gateway
-            #  mtmsgs[msg.id] = [msgd,None]
-            #  if gateway not in mtmsgs:
-            #  mtmsgsg[gateway][msg.id] = [msgd, None]
-            mtmsgsg[gateway][msg.id] = [msgd]
+          #  async with queue_lock:
+          #  queues[gateway] = {msg.id: [msgd, None]}
+          #  if gateway not in nids:
+            #  nids[gateway] = msg.id
+          gateways[msg.id] = gateway
+          #  mtmsgs[msg.id] = [msgd,None]
+          #  if gateway not in mtmsgs:
+          #  mtmsgsg[gateway][msg.id] = [msgd, None]
+          mtmsgsg[gateway][msg.id] = [msgd]
         else:
           await clear_history()
           here = len(mtmsgsg[gateway])
           all = 0
           for i in mtmsgsg:
             all += len(mtmsgsg[i])
-          no_reset.set()
           await mt_send(f"reset ok, now tasks: {here}/{all}", gateway=gateway)
         return
 
@@ -1608,9 +1602,14 @@ async def mt2tg(msg):
         #  await NB.send_message(MY_ID, info)
         await asyncio.sleep(5)
 
-
 async def clear_history():
-  await asyncio.sleep(1)
+  if not no_reset.is_set():
+    warn("wait for no_reset...")
+    await no_reset.wait()
+    return
+
+  no_reset.clear()
+  #  await asyncio.sleep(1)
   #  for g in queues:
   for g in mtmsgsg:
     mtmsgs = mtmsgsg[g]
@@ -1618,6 +1617,8 @@ async def clear_history():
   #  await mt_send(f"cleaned: {mtmsgsg=}", gateway="test")
   gateways.clear()
   #  await mt_send(f"cleaned: {gateways=}", gateway="test"):w
+  no_reset.set()
+  info("reset ok")
 
 
 
@@ -1762,8 +1763,9 @@ async def mt_send(text="null", username="C bot", gateway="test", qt=None):
         "username": "{}".format(username),
         "gateway": "{}".format(gateway)
     }
-    res = await http(url, method="POST", json=data)
-    logger.info("sent msg to mt, res: {}".format(res))
+    async with queue_lock:
+      res = await http(url, method="POST", json=data)
+    logger.info("res of mt_send: {}".format(res))
     return res
 
 
@@ -1860,7 +1862,6 @@ async def just_for_me(event):
 
 
 music_bot_state = {}
-
 
 
 async def parse_msg(event):
@@ -2064,15 +2065,12 @@ async def mt_send_for_long_text(text, gateway):
     return await asyncio.to_thread(os.system, f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
 
 
-
-
-
 @UB.on(events.NewMessage(incoming=True))
 @UB.on(events.MessageEdited(incoming=True))
 @exceptions_handler
 async def read_res(event):
   if not no_reset.is_set():
-    warn("no reset")
+    warn("waiting: no reset")
     return
   asyncio.create_task(parse_msg(event))
 
