@@ -2177,7 +2177,7 @@ async def run():
     logger.info(f"added filter to: {handler}")
 
   global MY_NAME, MY_ID, UB
-  await UB.start()
+  UB.start()
   me = await UB.get_me()
   #  print(me.stringify())
   MY_ID = me.id
