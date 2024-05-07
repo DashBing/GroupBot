@@ -1918,19 +1918,19 @@ def get_buttons(bs):
   return tmp
 
 async def get_entity(peer):
-  if isinstance(peer, PeerUser):
-    #  info(f"PeerUser: {peer}")
-    peer = await UB.get_input_entity(peer)
-  elif isinstance(peer, PeerChat):
-    #  info(f"PeerChat: {peer}")
-    peer = await UB.get_input_entity(peer)
-  elif isinstance(peer, PeerChannel):
-    #  info(f"PeerChannel: {peer}")
-    peer = await UB.get_input_entity(peer)
-  elif isinstance(peer, str):
-    peer = await UB.get_input_entity(peer)
-  else:
-    peer = await UB.get_input_entity(peer)
+  #  if isinstance(peer, PeerUser):
+  #    #  info(f"PeerUser: {peer}")
+  #    peer = await UB.get_input_entity(peer)
+  #  elif isinstance(peer, PeerChat):
+  #    #  info(f"PeerChat: {peer}")
+  #    peer = await UB.get_input_entity(peer)
+  #  elif isinstance(peer, PeerChannel):
+  #    #  info(f"PeerChannel: {peer}")
+  #    peer = await UB.get_input_entity(peer)
+  #  elif isinstance(peer, str):
+  #    peer = await UB.get_input_entity(peer)
+  #  else:
+  peer = await UB.get_input_entity(peer)
   if peer:
     entity = await UB.get_entity(peer)
     return entity
@@ -1942,25 +1942,25 @@ async def print_msg(event):
   msg = event.message
   res = ''
   if event.is_private:
-    res += "@ "
+    res += "@"
     peer = await get_entity(event.chat_id)
     if peer is not None:
-      res += "[%s %s]: " % (peer.first_name, peer.last_name)
+      res += " [%s %s]" % (peer.first_name, peer.last_name)
   else:
     if event.is_group:
-      res += "> "
+      res += ">"
     else:
       #  if event.is_channel:
-      res += "# "
+      res += "#"
 
     peer = await get_entity(event.chat_id)
     if peer is not None:
-      res += "%s " % peer.title
+      res += " %s" % peer.title
     if event.from_id:
       peer = await get_entity(event.from_id)
       if peer is not None:
-        res += "[%s %s]: " % (peer.first_name, peer.last_name)
-  res += "%s" % msg.text[:64]
+        res += " [%s %s]" % (peer.first_name, peer.last_name)
+  res += ": %s" % msg.text[:64]
   if msg.file:
     res += " %s" % msg.file
     if msg.file.name:
