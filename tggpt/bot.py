@@ -11,7 +11,7 @@ from telethon.tl.types import KeyboardButton, KeyboardButtonUrl
 #  HOME = os.environ.get("HOME")
 
 import logging
-
+logger = logging.getLogger(__name__)
 
 import asyncio
 

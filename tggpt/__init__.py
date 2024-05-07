@@ -31,7 +31,6 @@ def pprint(e):
     print("  %s: %s: %s" % (i, type(getattr(e, i)), getattr(e, i)))
   print('===')
 
-logger = logging.getLogger(__name__)
 class NoParsingFilter(logging.Filter):
   def filter(self, record):
     #  if record.name == 'tornado.access' and record.levelno == 20:
@@ -43,8 +42,11 @@ class NoParsingFilter(logging.Filter):
         #  if record.message == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/f6f9ef32-4cc6-470e-9bfb-957b4bc6ff5d "HTTP/1.1 404 Not Found"':
         if msg == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/f6f9ef32-4cc6-470e-9bfb-957b4bc6ff5d "HTTP/1.1 404 Not Found"':
           return False
+        elif '404 Not Found' in msg:
+           logger.info(f"根据关键词找到了文本: {msg=}")
+           return False
         else:
-          logger.info(f"文本不对: {msg}")
+          logger.info(f"文本不对: {msg=}")
     else:
       return True
       if record.levelno == 20:
