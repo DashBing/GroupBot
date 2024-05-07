@@ -2266,3 +2266,11 @@ else:
 # /tmp/run/user/1000/bot
   #  asyncio.create_task(_init())
 
+
+class NoParsingFilter(logging.Filter):
+  def filter(self, record):
+    if record.name == 'tornado.access' and record.levelno == 20:
+      return False
+    return True
+
+
