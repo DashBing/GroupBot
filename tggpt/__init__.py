@@ -36,14 +36,15 @@ class NoParsingFilter(logging.Filter):
   def filter(self, record):
     #  if record.name == 'tornado.access' and record.levelno == 20:
     if record.name == 'httpx':
+      pprint(record)
+      return False
       if record.message == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/f6f9ef32-4cc6-470e-9bfb-957b4bc6ff5d "HTTP/1.1 404 Not Found"':
         return False
       else:
         logger.info(f"文本不对: {record.message}")
     else:
       if record.levelno == 20:
-        pprint(record)
-        return False
+        return True
         if record.message == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/f6f9ef32-4cc6-470e-9bfb-957b4bc6ff5d "HTTP/1.1 404 Not Found"':
           logger.info(f"找到了文本，name不对: {record}")
           return False
