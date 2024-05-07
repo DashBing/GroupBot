@@ -1169,476 +1169,487 @@ async def mt_read():
 
 @exceptions_handler
 async def mt2tg(msg):
+  '''
+  #       Data sent: 'GET /api/stream HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n'
+  #      Data received: 'HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nDate: Wed, 19 Jan 2022 02:03:29 GMT\r\nTransfer-Encoding: chunked\r\n\r\nd5\r\n{"text":"","channel":"","username":"","userid":"","avatar":"","account":"","event":"api_connected","protocol":"","gateway":"","parent_id":"","timestamp":"2022-01-19T10:03:29.666861315+08:00","id":"","Extra":null}\n\r\n'
+  2024-05-07 17:26:25,343 [INFO] tggpt.bot [bot.info:157]: msg of mt_read: {'text': 'ping', 'channel': 'bebat', 'username': 'X liqsliu_: ', 'userid': 'bebat@muc.pimux.de/liqsliu_', 'avatar': 'https://wtfipfs.eu.org/0789fa8d/bebat_muc_pimux_de_liqsliu_.png', 'account': 'xmpp.pimux', 'event': '', 'protocol': 'xmpp', 'gateway': 'test', 'parent_id': '', 'timestamp': '2024-05-07T17:26:25.22885781+08:00', 'id': '', 'Extra': None}
+  2024-05-07 17:26:25,778 [INFO] tggpt.bot [bot.mt_send:1806]: res of mt_send: {"text":"pong. now tasks: 0/0","channel":"api","username":"C bot","userid":"","avatar":"","account":"api.cmdres","event":"","protocol":"api","gateway":"test","parent_id":"","timestamp":"2024-05-07T17:26:25.367596549+08:00","id":"","Extra":null}
+  '''
+  try:
     try:
-        try:
-            msg = msg.decode()
-#       Data sent: 'GET /api/stream HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n'
-#      Data received: 'HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nDate: Wed, 19 Jan 2022 02:03:29 GMT\r\nTransfer-Encoding: chunked\r\n\r\nd5\r\n{"text":"","channel":"","username":"","userid":"","avatar":"","account":"","event":"api_connected","protocol":"","gateway":"","parent_id":"","timestamp":"2022-01-19T10:03:29.666861315+08:00","id":"","Extra":null}\n\r\n'
-            if not msg or msg.startswith("HTTP/1.1"):
-              logger.info("I: ignore init msg")
-              return
-
-#        msg.replace(',"Extra":null}','}',1)
-#        msgd=ast.literal_eval(msg.splitlines()[1])
-#            msgd = json.loads(msg.splitlines()[1])
-#            print(msg)
-            msgd = json.loads(msg)
-        except json.decoder.JSONDecodeError:
-            logger.error("fail to decode msg from mt")
-            print("################")
-            print(msg)
-            print("################")
-            #  info = "E: {}\n==\n{}\n==\n{}".format(sys.exc_info()[1], traceback.format_exc(), sys.exc_info())
-            #  logger.error(info)
-            logger.error("E: failed to decode msg from mt...", exc_info=True, stack_info=True)
-            return
-
-        text = msgd["text"]
-        name = msgd["username"]
-        gateway = msgd["gateway"]
-        #  print(f"I: got msg: {name}: {text}")
-        if not text:
-          logger.info("I: ignore msg: no text")
-          return
-        if not name:
-          logger.info("I: ignore msg: no name")
+        msg = msg.decode()
+        if not msg or msg.startswith("HTTP/1.1"):
+          logger.info("I: ignore init msg")
           return
 
-        #  if name == "C twitter: ":
-        #      return
-        if name.startswith("C "):
-          logger.info("I: ignore msg: C ")
-          return
-        if name.startswith("**C "):
-          logger.info("I: ignore msg: **C ")
-          return
-
-        #  if len(username.splitlines()) > 1:
-        #    pass
-        #  # need fix
-        #  if "gateway11" in MT_GATEWAY_LIST:
-        #      if gateway == "gateway1":
-        #          gateway = "gateway11"
-
-        #  if gateway == "test":
-        #    pass
-        #  else:
-        #    return
-        info("msg of mt_read: %s" % msgd)
-
-
-        global queue
-        need_clean = False
-        chat_id = gpt_bot
-
-        if gateway not in mtmsgsg:
-          mtmsgsg[gateway] = {}
-        #  if gateway not in queues:
-        #    queues[gateway] = asyncio.PriorityQueue(maxsize=512)
-          #  asyncio.create_task(tg2mt_loop(gateway))
-
-        if text == "ping":
-          all = 0
-          for i in mtmsgsg:
-            all += len(mtmsgsg[i])
-          #  await mt_send(f"pong. now tasks: {here}/{all} {mtmsgsg}", gateway=gateway)
-          here = len(mtmsgsg[gateway])
-          await mt_send(f"pong. now tasks: {here}/{all}", gateway=gateway)
-          return
-
-
-
-        if text.startswith(".py "):
-          text = "." + text[4:]
-        if text[0:1] == ".":
-          if text[1:2] == " ":
-            return
-          #  cmds = deque(text[1:].split(' '))
-          #  cmds = text[1:].split(' ')
-          cmds = get_cmd(text[1:])
-          if cmds:
-            pass
-          else:
-            return
-          #  print(f"> I: {cmds}")
-          logger.info("got cmds: {}".format(cmds))
-          cmd = cmds[0]
-          length = len(cmds)
-          here = len(mtmsgsg[gateway])
-          if text == ".gtpmode":
-            if gateway in gptmode:
-              gptmode.remove(gateway)
-              await mt_send("gtp mode off", gateway=gateway)
-              return
-            else:
-              gptmode.append(gateway)
-              await mt_send("gtp mode on", gateway=gateway)
-              return
-          elif text == ".gtg reset":
-            if no_reset.is_set():
-              await mt_send(f"now tasks: {here}, waiting...", gateway=gateway)
-              #  for g in mtmsgsg:
-              #  for g in queues:
-              #    await mt_send(f"clean {g}...", gateway="test")
-              #    await queues[g].put((0,0,0))
-              text= CLEAN
-            else:
-              await mt_send("waiting...", gateway=gateway)
-              await no_reset.wait()
-              here = len(mtmsgsg[gateway])
-              await mt_send(f"reset ok, now tasks: {here}", gateway=gateway)
-              return
-          #  elif text == ".gpt" or text.startswith(".gpt ") or text.startswith(".gpt\n"):
-          elif cmd == "music":
-            chat_id = music_bot
-            text = ' '.join(cmds[1:])
-            if not text:
-              await mt_send(f"音乐下载\n.{cmd} $text\n.{cmd} clear\n--\ntelegram bot: https://t.me/{music_bot_name}", gateway=gateway)
-              return
-            if cmds[1] == "clear":
-              await clear_history()
-              #  music_bot_state[gateway] = 0
-              await mt_send("ok")
-              return
-
-            #  if gateway not in music_bot_state:
-            music_bot_state[gateway] = 1
-            text="/search "+text
-
-            tmp = []
-            for i in gateways:
-              if gateways[i] == gateway:
-                tmp.append(i)
-            for i in tmp:
-              gateways.pop(i)
-
-            if gateway in mtmsgsg:
-              ms = mtmsgsg[gateway]
-              ms.clear()
-
-            #  if music_bot_state[gateway] == 0:
-            #    music_bot_state[gateway] += 1
-            #  else:
-            #    #  if cmds[1] == "d":
-            #    #    if len(cmds) < 3:
-            #    #      await mt_send("需要一个数字", gateway=gateway)
-            #    #    else:
-            #    #      #  if music_bot_state[gateway] == 2:
-            #    #      #    msg = mt
-            #    #      #    info(msg.buttons)
-            #    #      #  else:
-            #    #      #    await mt_send("顺序不对，请重试", gateway=gateway)
-            #    #      await mt_send("fixme", gateway=gateway)
-            #    #  else:
-            #    #    await mt_send("有未结束任务", gateway=gateway)
-            #    return
-
-          elif cmd == "gtg":
-            #  need_clean = True
-            #  text=text[5:]
-            text = ' '.join(cmds[1:])
-            if not text:
-              #  await mt_send(".gpt $text", gateway=gateway)
-              await mt_send(HELP, gateway=gateway)
-              return
-          #  elif text == ".se" or text.startswith(".se "):
-          elif cmd == "gse":
-            #  need_clean = True
-            text = ' '.join(cmds[1:])
-            if not text:
-              await mt_send(".gse $text", gateway=gateway)
-              return
-            text="/search "+text
-          #  elif text == ".img" or text.startswith(".img "):
-          #  elif text.startswith(".gtz"):
-          elif cmd == "gtz":
-            #  text=text[5:]
-            text = ' '.join(cmds[1:])
-            if not text:
-              await mt_send("中文专用翻译", gateway=gateway)
-              return
-            #  need_clean = True
-            text = f'{PROMPT_TR_ZH}“{text}”'
-          #  elif text.startswith(".gt"):
-          elif cmd == "gtr":
-            #  text=text[4:]
-            text = ' '.join(cmds[1:])
-            if not text:
-              await mt_send("gpt(telegram bot) translate", gateway=gateway)
-              return
-            #  need_clean = True
-            text = f'{PROMPT_TR_MY}“{text}”'
-          #  elif text.startswith(".gptr"):
-          elif cmd == "gptr":
-            #  text=text[6:]
-            text = ' '.join(cmds[1:])
-            if not text:
-              await mt_send("gpt translate with short prompt", gateway=gateway)
-              return
-            #  need_clean = True
-            text = f'{PROMPT_TR_MY_S}“{text}”'
-
-          elif cmd == "img":
-            #  need_clean = True
-            #  text=text[5:]
-            #  text = ' '.join(cmds[1:])
-            #  if not text:
-            #    await mt_send(".img $text\n--\nhttps://t.me/littleb_gptBOT", gateway=gateway)
-            #    return
-            #  text="/image "+text
-            text = ' '.join(cmds[1:])
-            if not text:
-              await mt_send(f"gemini 图像生成(仅支持英文)\n.{cmd} $text", gateway=gateway)
-            else:
-              url = await ai_img(text)
-              await mt_send(url, gateway=gateway)
-            return
-          elif cmd == "hg":
-            text = ' '.join(cmds[1:])
-            if not text:
-              #  await mt_send(f".{cmd} $text", gateway=gateway)
-              await mt_send(f"HuggingChat\n.{cmd} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: hg/di/lb/kl/you/bd/ai", gateway=gateway)
-            else:
-              url = await hg(text, provider=Provider.HuggingChat)
-              #  await mt_send(url, gateway=gateway)
-              await mt_send_for_long_text(url, gateway)
-            return
-          elif cmd == "di":
-            text = ' '.join(cmds[1:])
-            if not text:
-              #  await mt_send(f".{cmd} $text", gateway=gateway)
-              await mt_send(f"DeepInfra\n.{cmd} $text", gateway=gateway)
-            else:
-              url = await ai(text, provider=Provider.DeepInfra)
-              #  await mt_send(url, gateway=gateway)
-              await mt_send_for_long_text(url, gateway)
-            return
-          elif cmd == "lb":
-            text = ' '.join(cmds[1:])
-            if not text:
-              await mt_send(f"Liaobots\n.{cmd} $text", gateway=gateway)
-            else:
-              url = await ai(text, provider=Provider.Liaobots)
-              await mt_send_for_long_text(url, gateway)
-            return
-          elif cmd == "kl":
-            text = ' '.join(cmds[1:])
-            if not text:
-              await mt_send(f"Koala\n.{cmd} $text", gateway=gateway)
-            else:
-              url = await ai(text, provider=Provider.Koala, proxy="http://127.0.0.1:6080")
-              await mt_send_for_long_text(url, gateway)
-            return
-          elif cmd == "you":
-            text = ' '.join(cmds[1:])
-            if not text:
-              await mt_send(f"You\n.{cmd} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: hg/di/lb/kl/you/bd/ai", gateway=gateway)
-            else:
-              url = await ai(text, provider=Provider.You, proxy="http://127.0.0.1:6080")
-              await mt_send_for_long_text(url, gateway)
-            return
-          elif cmd == "qw":
-            text = ' '.join(cmds[1:])
-            if not text:
-              await mt_send(f"阿里千问\n.{cmd} $text", gateway=gateway)
-            else:
-              url = await qw(text)
-              await mt_send_for_long_text(url, gateway)
-            return
-          elif cmd == "qw2":
-            text = ' '.join(cmds[1:])
-            if not text:
-              await mt_send(f"阿里千问\n.{cmd} $text", gateway=gateway)
-            else:
-              url = await qw2(text)
-              await mt_send_for_long_text(url, gateway)
-            return
-
-          else:
-            return
-        elif text.isnumeric() and music_bot_state[gateway] == 2:
-          mtmsgs = mtmsgsg[gateway]
-          tmp = []
-          for i in gateways:
-            if gateways[i] == gateway:
-              tmp.append(i)
-          qid = max(tmp)
-          info(f"尝试下载：{text} {qid}")
-          bs = mtmsgs[qid][1]
-          info(f"尝试下载：{text} {qid} msg: {bs}")
-          i = None
-          for i in bs:
-            if type(i) is list:
-              for j in i:
-                if j.text == text:
-                  info(f"已找到：{text}")
-                  await j.click()
-                  i = True
-                  break
-              if i is True:
-                break
-            else:
-              if i.text == text:
-                info(f"已找到：{text}")
-                await i.click()
-                i = True
-                break
-
-          if i is True:
-            #  gateways.pop(qid)
-            #  mtmsgs.pop(qid)
-            music_bot_state[gateway] += 1
-            #  gateways[msg.id] = gateway
-            #  mtmsgs[msg.id] = mtmsgs[qid]
-          else:
-            info(f"没找到：{text}")
-          return
-        elif gateway in gptmode:
-          pass
-        else:
-          # tilebot
-
-          tmp=""
-          for i in text.splitlines():
-            if not i.startswith("> ") and  i != ">":
-              tmp += i+"\n"
-          #  text = tmp
-          #  qre.sub()
-          #  text = qre.sub("", text)
-          #  urls=urlre.findall(text)
-          #  urls=urlre.findall(qre.sub("", text))
-          urls=urlre.findall(qre.sub("", tmp))
-          res=None
-          #  M=' 🔗 '
-          #  M='- '
-          #  M=' ⤷ '
-          for url in urls:
-            #  url=url[0]
-            url=url[1]
-            if url.startswith("https://t.me/"):
-              return
-            if url.startswith("https://conversations.im/j/"):
-              return
-            if url.startswith("https://icq.im"):
-              return
-            if not res:
-              if len(urls) == 1:
-                res="%s" % await get_title(url)
-                break
-              res="[ %s urls ]" % len(urls)
-            res+="\n\n> %s\n%s" % (url, await get_title(url))
-          if res is not None:
-            #  if len(urls) > 1:
-            #    res="[ %s urls ]\n%s%s" % (len(urls), M, res)
-            #  if rnick:
-            #    nick=rnick+': '
-            #  elif nick == "bot":
-            #    nick=''
-            #    #  nick="\n> %s" % text
-            #  else:
-            #    nick='X %s: ' % nick
-            nick = msgd['username']
-            #  res="**C titlebot:** %s%s" % (nick, res)
-            #  res="%s%s" % (nick, res)
-            res="%s%s" % (nick.splitlines()[-1], res)
-            #  fast_reply(muc, res, msg_type)
-            #  await mt_send(res, gateway=gateway)
-            await mt_send(res, gateway=gateway, username="titlebot")
-          return
-
-        #  if gateway in MT_GATEWAY_LIST:
-        #      chat_id = MT_GATEWAY_LIST[gateway][0]
-        #  else:
-        #      # first msg is empty
-        #      logger.warning("unkonwon gateway: {}".format(gateway))
-        #      logger.warning("received data: {}".format(msg))
-        #      return
-
-        if msgd["Extra"]:
-            # file
-            #,"id":"","Extra":{"file":[{"Name":"proxy-image.jpg","Data":"/9j/4AAQSkZJRgABAQAAAQABAAD/4gIoSUNDX1BST0ZJTEUAAQEAA ... 6P9ZgOT6tI33Ff5p/MAOfNnzPzQAN4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAAAGQAAYAkAAGTGAAAAAAAAwsAAHLAAAK//9k=","Comment":"","URL":"https://liuu.tk/ddb833ad/proxy_image.jpg","Size":0,"Avatar":false,"SHA":"ddb833ad"}]}}\n\r\n'
-            for file in msgd["Extra"]["file"]:
-                if text:
-                    if text == file["Name"]:
-                        text = ""
-                    else:
-                        text += "\n\n"
-                text += "[{}]({})".format(file["Name"], file["URL"])
-        else:
-            msgd.pop("Extra")
-            logger.warning("removed file info from mt api")
-
-        logger.info("got msg from mt: {}".format(msgd))
-        #      if name == "C Telegram: ":
-
-        msgd.update({"chat_id": chat_id})
-        msgd.update({"text": text})
-
-        #  global chat
-        #  if not chat:
-        try:
-          chat = await UB.get_input_entity(chat_id)
-        except Exception as e:
-          print(e)
-          try:
-            if chat_id == gpt_bot:
-              chat = await UB.get_input_entity(gpt_bot_name)
-            else:
-              chat = await UB.get_input_entity(music_bot_name)
-          except ValueError:
-            print("wtf, wrong id?")
-            try:
-              chat = await UB.get_entity(chat_id)
-              print(chat.stringify())
-            except:
-              if chat_id == gpt_bot:
-                chat = await UB.get_entity(gpt_bot_name)
-              else:
-                chat = await UB.get_entity(music_bot_name)
-              print(chat.stringify())
-        #  print(f">{chat.user_id}: {text}")
-        print(f"I: send {text} to gpt")
-        if text != CLEAN:
-          if need_clean is True:
-            await UB.send_message(chat, CLEAN)
-
-        #    while len(queue.keys()) > 0:
-        #      print("W: waiting to reset...")
-        #      await asyncio.sleep(1)
-        msg = await UB.send_message(chat, text)
-        #  await queue.put({msg.id: [msgd, msg]})
-        #  await queue.put([msg, msgd])
-        if text != CLEAN:
-          #  async with queue_lock:
-          #  queues[gateway] = {msg.id: [msgd, None]}
-          #  if gateway not in nids:
-            #  nids[gateway] = msg.id
-          gateways[msg.id] = gateway
-          #  mtmsgs[msg.id] = [msgd,None]
-          #  if gateway not in mtmsgs:
-          #  mtmsgsg[gateway][msg.id] = [msgd, None]
-          mtmsgsg[gateway][msg.id] = [msgd]
-        else:
-          await clear_history()
-          here = len(mtmsgsg[gateway])
-          all = 0
-          for i in mtmsgsg:
-            all += len(mtmsgsg[i])
-          await mt_send(f"reset ok, now tasks: {here}/{all}", gateway=gateway)
+        msgd = json.loads(msg)
+    except json.decoder.JSONDecodeError:
+        logger.error("fail to decode msg from mt")
+        print("################")
+        print(msg)
+        print("################")
+        #  info = "E: {}\n==\n{}\n==\n{}".format(sys.exc_info()[1], traceback.format_exc(), sys.exc_info())
+        #  logger.error(info)
+        logger.error("E: failed to decode msg from mt...", exc_info=True, stack_info=True)
         return
 
-        text = name + text
-        #    await NB.send_message(chat_id, text, reply_to=reply_to)
-        #    return [0, chat_id, text, {"reply_to":reply_to}]
-        msg = [0, chat_id, text, {"reply_to": reply_to}]
-#    await queue.put(msg)
+    account = msgd["account"]
+    if account == "api.cmdres":
+      logger.info("I: ignore msg from cmdres")
+      return
+    name = msgd["username"]
+    text = msgd["text"]
+    name = msgd["username"]
+    gateway = msgd["gateway"]
+    #  print(f"I: got msg: {name}: {text}")
+    if not text:
+      logger.info("I: ignore msg: no text")
+      return
+    if not name:
+      logger.info("I: ignore msg: no name")
+      return
 
-    except:
-        #  info = "E: " + str(sys.exc_info()[1]) + "\n==\n" + traceback.format_exc() + "\n==\n" + str(sys.exc_info())
-        #  logger.error(info)
-        logger.error("error: msg from mt to tg: ", exc_info=True, stack_info=True)
-        #  await NB.send_message(MY_ID, info)
-        await asyncio.sleep(5)
+    #  if name == "C twitter: ":
+    #      return
+    if name.startswith("C "):
+      logger.info("I: ignore msg: C ")
+      return
+    if name.startswith("**C "):
+      logger.info("I: ignore msg: **C ")
+      return
+
+    #  if len(username.splitlines()) > 1:
+    #    pass
+    #  # need fix
+    #  if "gateway11" in MT_GATEWAY_LIST:
+    #      if gateway == "gateway1":
+    #          gateway = "gateway11"
+
+    #  if gateway == "test":
+    #    pass
+    #  else:
+    #    return
+    info("msg of mt_read: %s" % msgd)
+
+
+    global queue
+    need_clean = False
+    chat_id = gpt_bot
+
+    if gateway not in mtmsgsg:
+      mtmsgsg[gateway] = {}
+    #  if gateway not in queues:
+    #    queues[gateway] = asyncio.PriorityQueue(maxsize=512)
+      #  asyncio.create_task(tg2mt_loop(gateway))
+
+    if text == "ping":
+      all = 0
+      for i in mtmsgsg:
+        all += len(mtmsgsg[i])
+      #  await mt_send(f"pong. now tasks: {here}/{all} {mtmsgsg}", gateway=gateway)
+      here = len(mtmsgsg[gateway])
+      await mt_send(f"pong. now tasks: {here}/{all}", gateway=gateway)
+      return
+
+
+
+    if text.startswith(".py "):
+      text = "." + text[4:]
+    if text[0:1] == ".":
+      if text[1:2] == " ":
+        return
+      #  cmds = deque(text[1:].split(' '))
+      #  cmds = text[1:].split(' ')
+      cmds = get_cmd(text[1:])
+      if cmds:
+        pass
+      else:
+        return
+      #  print(f"> I: {cmds}")
+      logger.info("got cmds: {}".format(cmds))
+      cmd = cmds[0]
+      length = len(cmds)
+      here = len(mtmsgsg[gateway])
+      if text == ".gtpmode":
+        if gateway in gptmode:
+          gptmode.remove(gateway)
+          await mt_send("gtp mode off", gateway=gateway)
+          return
+        else:
+          gptmode.append(gateway)
+          await mt_send("gtp mode on", gateway=gateway)
+          return
+      elif text == ".gtg reset":
+        if no_reset.is_set():
+          await mt_send(f"now tasks: {here}, waiting...", gateway=gateway)
+          #  for g in mtmsgsg:
+          #  for g in queues:
+          #    await mt_send(f"clean {g}...", gateway="test")
+          #    await queues[g].put((0,0,0))
+          text= CLEAN
+        else:
+          await mt_send("waiting...", gateway=gateway)
+          await no_reset.wait()
+          here = len(mtmsgsg[gateway])
+          await mt_send(f"reset ok, now tasks: {here}", gateway=gateway)
+          return
+      #  elif text == ".gpt" or text.startswith(".gpt ") or text.startswith(".gpt\n"):
+      elif cmd == "music":
+        chat_id = music_bot
+        text = ' '.join(cmds[1:])
+        if not text:
+          await mt_send(f"音乐下载\n.{cmd} $text\n.{cmd} clear\n--\ntelegram bot: https://t.me/{music_bot_name}", gateway=gateway)
+          return
+        if cmds[1] == "clear":
+          await clear_history()
+          #  music_bot_state[gateway] = 0
+          await mt_send("ok")
+          return
+
+        #  if gateway not in music_bot_state:
+        music_bot_state[gateway] = 1
+        text="/search "+text
+
+        tmp = []
+        for i in gateways:
+          if gateways[i] == gateway:
+            tmp.append(i)
+        for i in tmp:
+          gateways.pop(i)
+
+        if gateway in mtmsgsg:
+          ms = mtmsgsg[gateway]
+          ms.clear()
+
+        #  if music_bot_state[gateway] == 0:
+        #    music_bot_state[gateway] += 1
+        #  else:
+        #    #  if cmds[1] == "d":
+        #    #    if len(cmds) < 3:
+        #    #      await mt_send("需要一个数字", gateway=gateway)
+        #    #    else:
+        #    #      #  if music_bot_state[gateway] == 2:
+        #    #      #    msg = mt
+        #    #      #    info(msg.buttons)
+        #    #      #  else:
+        #    #      #    await mt_send("顺序不对，请重试", gateway=gateway)
+        #    #      await mt_send("fixme", gateway=gateway)
+        #    #  else:
+        #    #    await mt_send("有未结束任务", gateway=gateway)
+        #    return
+
+      elif cmd == "gtg":
+        #  need_clean = True
+        #  text=text[5:]
+        text = ' '.join(cmds[1:])
+        if not text:
+          #  await mt_send(".gpt $text", gateway=gateway)
+          await mt_send(HELP, gateway=gateway)
+          return
+      #  elif text == ".se" or text.startswith(".se "):
+      elif cmd == "gse":
+        #  need_clean = True
+        text = ' '.join(cmds[1:])
+        if not text:
+          await mt_send(".gse $text", gateway=gateway)
+          return
+        text="/search "+text
+      #  elif text == ".img" or text.startswith(".img "):
+      #  elif text.startswith(".gtz"):
+      elif cmd == "gtz":
+        #  text=text[5:]
+        text = ' '.join(cmds[1:])
+        if not text:
+          await mt_send("中文专用翻译", gateway=gateway)
+          return
+        #  need_clean = True
+        text = f'{PROMPT_TR_ZH}“{text}”'
+      #  elif text.startswith(".gt"):
+      elif cmd == "gtr":
+        #  text=text[4:]
+        text = ' '.join(cmds[1:])
+        if not text:
+          await mt_send("gpt(telegram bot) translate", gateway=gateway)
+          return
+        #  need_clean = True
+        text = f'{PROMPT_TR_MY}“{text}”'
+      #  elif text.startswith(".gptr"):
+      elif cmd == "gptr":
+        #  text=text[6:]
+        text = ' '.join(cmds[1:])
+        if not text:
+          await mt_send("gpt translate with short prompt", gateway=gateway)
+          return
+        #  need_clean = True
+        text = f'{PROMPT_TR_MY_S}“{text}”'
+
+      elif cmd == "img":
+        #  need_clean = True
+        #  text=text[5:]
+        #  text = ' '.join(cmds[1:])
+        #  if not text:
+        #    await mt_send(".img $text\n--\nhttps://t.me/littleb_gptBOT", gateway=gateway)
+        #    return
+        #  text="/image "+text
+        text = ' '.join(cmds[1:])
+        if not text:
+          await mt_send(f"gemini 图像生成(仅支持英文)\n.{cmd} $text", gateway=gateway)
+        else:
+          url = await ai_img(text)
+          await mt_send(url, gateway=gateway)
+        return
+      elif cmd == "hg":
+        text = ' '.join(cmds[1:])
+        if not text:
+          #  await mt_send(f".{cmd} $text", gateway=gateway)
+          await mt_send(f"HuggingChat\n.{cmd} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: hg/di/lb/kl/you/bd/ai", gateway=gateway)
+        else:
+          url = await hg(text, provider=Provider.HuggingChat)
+          #  await mt_send(url, gateway=gateway)
+          await mt_send_for_long_text(url, gateway)
+        return
+      elif cmd == "di":
+        text = ' '.join(cmds[1:])
+        if not text:
+          #  await mt_send(f".{cmd} $text", gateway=gateway)
+          await mt_send(f"DeepInfra\n.{cmd} $text", gateway=gateway)
+        else:
+          url = await ai(text, provider=Provider.DeepInfra)
+          #  await mt_send(url, gateway=gateway)
+          await mt_send_for_long_text(url, gateway)
+        return
+      elif cmd == "lb":
+        text = ' '.join(cmds[1:])
+        if not text:
+          await mt_send(f"Liaobots\n.{cmd} $text", gateway=gateway)
+        else:
+          url = await ai(text, provider=Provider.Liaobots)
+          await mt_send_for_long_text(url, gateway)
+        return
+      elif cmd == "kl":
+        text = ' '.join(cmds[1:])
+        if not text:
+          await mt_send(f"Koala\n.{cmd} $text", gateway=gateway)
+        else:
+          url = await ai(text, provider=Provider.Koala, proxy="http://127.0.0.1:6080")
+          await mt_send_for_long_text(url, gateway)
+        return
+      elif cmd == "you":
+        text = ' '.join(cmds[1:])
+        if not text:
+          await mt_send(f"You\n.{cmd} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: hg/di/lb/kl/you/bd/ai", gateway=gateway)
+        else:
+          url = await ai(text, provider=Provider.You, proxy="http://127.0.0.1:6080")
+          await mt_send_for_long_text(url, gateway)
+        return
+      elif cmd == "qw":
+        text = ' '.join(cmds[1:])
+        if not text:
+          await mt_send(f"阿里千问\n.{cmd} $text", gateway=gateway)
+        else:
+          url = await qw(text)
+          await mt_send_for_long_text(url, gateway)
+        return
+      elif cmd == "qw2":
+        text = ' '.join(cmds[1:])
+        if not text:
+          await mt_send(f"阿里千问\n.{cmd} $text", gateway=gateway)
+        else:
+          url = await qw2(text)
+          await mt_send_for_long_text(url, gateway)
+        return
+
+      else:
+        return
+    elif text.isnumeric() and music_bot_state[gateway] == 2:
+      mtmsgs = mtmsgsg[gateway]
+      tmp = []
+      for i in gateways:
+        if gateways[i] == gateway:
+          tmp.append(i)
+      qid = max(tmp)
+      info(f"尝试下载：{text} {qid}")
+      bs = mtmsgs[qid][1]
+      info(f"尝试下载：{text} {qid} msg: {bs}")
+      i = None
+      for i in bs:
+        if type(i) is list:
+          for j in i:
+            if j.text == text:
+              info(f"已找到：{text}")
+              await j.click()
+              i = True
+              break
+          if i is True:
+            break
+        else:
+          if i.text == text:
+            info(f"已找到：{text}")
+            await i.click()
+            i = True
+            break
+
+      if i is True:
+        #  gateways.pop(qid)
+        #  mtmsgs.pop(qid)
+        music_bot_state[gateway] += 1
+        #  gateways[msg.id] = gateway
+        #  mtmsgs[msg.id] = mtmsgs[qid]
+      else:
+        info(f"没找到：{text}")
+      return
+    elif gateway in gptmode:
+      pass
+    else:
+      # tilebot
+
+      tmp=""
+      for i in text.splitlines():
+        if not i.startswith("> ") and  i != ">":
+          tmp += i+"\n"
+      #  text = tmp
+      #  qre.sub()
+      #  text = qre.sub("", text)
+      #  urls=urlre.findall(text)
+      #  urls=urlre.findall(qre.sub("", text))
+      urls=urlre.findall(qre.sub("", tmp))
+      res=None
+      #  M=' 🔗 '
+      #  M='- '
+      #  M=' ⤷ '
+      for url in urls:
+        #  url=url[0]
+        url=url[1]
+        if url.startswith("https://t.me/"):
+          return
+        if url.startswith("https://conversations.im/j/"):
+          return
+        if url.startswith("https://icq.im"):
+          return
+        if not res:
+          if len(urls) == 1:
+            res="%s" % await get_title(url)
+            break
+          res="[ %s urls ]" % len(urls)
+        res+="\n\n> %s\n%s" % (url, await get_title(url))
+      if res is not None:
+        #  if len(urls) > 1:
+        #    res="[ %s urls ]\n%s%s" % (len(urls), M, res)
+        #  if rnick:
+        #    nick=rnick+': '
+        #  elif nick == "bot":
+        #    nick=''
+        #    #  nick="\n> %s" % text
+        #  else:
+        #    nick='X %s: ' % nick
+        nick = msgd['username']
+        #  res="**C titlebot:** %s%s" % (nick, res)
+        #  res="%s%s" % (nick, res)
+        res="%s%s" % (nick.splitlines()[-1], res)
+        #  fast_reply(muc, res, msg_type)
+        #  await mt_send(res, gateway=gateway)
+        await mt_send(res, gateway=gateway, username="titlebot")
+      return
+
+    #  if gateway in MT_GATEWAY_LIST:
+    #      chat_id = MT_GATEWAY_LIST[gateway][0]
+    #  else:
+    #      # first msg is empty
+    #      logger.warning("unkonwon gateway: {}".format(gateway))
+    #      logger.warning("received data: {}".format(msg))
+    #      return
+
+    if msgd["Extra"]:
+        # file
+        #,"id":"","Extra":{"file":[{"Name":"proxy-image.jpg","Data":"/9j/4AAQSkZJRgABAQAAAQABAAD/4gIoSUNDX1BST0ZJTEUAAQEAA ... 6P9ZgOT6tI33Ff5p/MAOfNnzPzQAN4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAAAGQAAYAkAAGTGAAAAAAAAwsAAHLAAAK//9k=","Comment":"","URL":"https://liuu.tk/ddb833ad/proxy_image.jpg","Size":0,"Avatar":false,"SHA":"ddb833ad"}]}}\n\r\n'
+        for file in msgd["Extra"]["file"]:
+            if text:
+                if text == file["Name"]:
+                    text = ""
+                else:
+                    text += "\n\n"
+            text += "[{}]({})".format(file["Name"], file["URL"])
+    else:
+        msgd.pop("Extra")
+        logger.warning("removed file info from mt api")
+
+    logger.info("got msg from mt: {}".format(msgd))
+    #      if name == "C Telegram: ":
+
+    msgd.update({"chat_id": chat_id})
+    msgd.update({"text": text})
+
+    #  global chat
+    #  if not chat:
+    try:
+      chat = await UB.get_input_entity(chat_id)
+    except Exception as e:
+      print(e)
+      try:
+        if chat_id == gpt_bot:
+          chat = await UB.get_input_entity(gpt_bot_name)
+        else:
+          chat = await UB.get_input_entity(music_bot_name)
+      except ValueError:
+        print("wtf, wrong id?")
+        try:
+          chat = await UB.get_entity(chat_id)
+          print(chat.stringify())
+        except:
+          if chat_id == gpt_bot:
+            chat = await UB.get_entity(gpt_bot_name)
+          else:
+            chat = await UB.get_entity(music_bot_name)
+          print(chat.stringify())
+    #  print(f">{chat.user_id}: {text}")
+    print(f"I: send {text} to gpt")
+    if text != CLEAN:
+      if need_clean is True:
+        await UB.send_message(chat, CLEAN)
+
+    #    while len(queue.keys()) > 0:
+    #      print("W: waiting to reset...")
+    #      await asyncio.sleep(1)
+    msg = await UB.send_message(chat, text)
+    #  await queue.put({msg.id: [msgd, msg]})
+    #  await queue.put([msg, msgd])
+    if text != CLEAN:
+      #  async with queue_lock:
+      #  queues[gateway] = {msg.id: [msgd, None]}
+      #  if gateway not in nids:
+        #  nids[gateway] = msg.id
+      gateways[msg.id] = gateway
+      #  mtmsgs[msg.id] = [msgd,None]
+      #  if gateway not in mtmsgs:
+      #  mtmsgsg[gateway][msg.id] = [msgd, None]
+      mtmsgsg[gateway][msg.id] = [msgd]
+    else:
+      await clear_history()
+      here = len(mtmsgsg[gateway])
+      all = 0
+      for i in mtmsgsg:
+        all += len(mtmsgsg[i])
+      await mt_send(f"reset ok, now tasks: {here}/{all}", gateway=gateway)
+    return
+
+    #  text = name + text
+    #  #    await NB.send_message(chat_id, text, reply_to=reply_to)
+    #  #    return [0, chat_id, text, {"reply_to":reply_to}]
+    #  msg = [0, chat_id, text, {"reply_to": reply_to}]
+    #  await queue.put(msg)
+
+  except:
+    #  info = "E: " + str(sys.exc_info()[1]) + "\n==\n" + traceback.format_exc() + "\n==\n" + str(sys.exc_info())
+    #  logger.error(info)
+    logger.error("error: msg from mt to tg: ", exc_info=True, stack_info=True)
+    #  await NB.send_message(MY_ID, info)
+    await asyncio.sleep(5)
+
+
+
+
+
+
 
 async def clear_history():
   if not no_reset.is_set():
