@@ -40,13 +40,17 @@ class NoParsingFilter(logging.Filter):
         #  print("{%s}" % record.getMessage())
         msg = record.getMessage()
         #  if record.message == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/f6f9ef32-4cc6-470e-9bfb-957b4bc6ff5d "HTTP/1.1 404 Not Found"':
-        if msg == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/f6f9ef32-4cc6-470e-9bfb-957b4bc6ff5d "HTTP/1.1 404 Not Found"':
+        #  if msg == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/f6f9ef32-4cc6-470e-9bfb-957b4bc6ff5d "HTTP/1.1 404 Not Found"':
+        if msg == 'HTTP Request: GET https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/fecfbb2c-5fea-4f90-8b1c-0bafb57fd001 "HTTP/1.1 404 Not Found"':
           return False
+        elif '404 Not Found' in msg and 'https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/heartbeat/fecfbb2c-5fea-4f90-8b1c-0bafb57fd001' in msg:
+           #  logger.info(f"根据关键词找到了文本: {msg=}")
+           return False
         elif '404 Not Found' in msg:
            logger.info(f"根据关键词找到了文本: {msg=}")
            return False
-        else:
-          logger.info(f"文本不对: {msg=}")
+        #  else:
+        #    logger.info(f"文本不对: {msg=}")
     else:
       return True
       if record.levelno == 20:
