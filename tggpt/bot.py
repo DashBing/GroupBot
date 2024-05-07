@@ -1944,7 +1944,7 @@ async def print_msg(event):
   if event.is_private:
     res += "@"
     #  peer = await get_entity(event.chat_id)
-    peer = await event.chat()
+    peer = await event.get_chat()
     if peer is not None:
       res += " [%s %s]" % (peer.first_name, peer.last_name)
   else:
@@ -1955,7 +1955,7 @@ async def print_msg(event):
       res += "#"
 
     #  peer = await get_entity(event.chat_id)
-    peer = await event.chat()
+    peer = await event.get_chat()
     if peer is not None:
       res += " %s" % peer.title
     if event.from_id:
