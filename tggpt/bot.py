@@ -1811,7 +1811,7 @@ async def download_media(msg, gateway='test', path=f"{DOWNLOAD_PATH}/", in_memor
   if msg.buttons:
     info(msg.buttons)
     for i in get_buttons(msg.buttons):
-      if isinstance(i, KeyboardButtonUrl):
+      if isinstance(i.button, KeyboardButtonUrl):
         info(f"add url from: {i}")
         res += f"\n原始链接: {i.url}"
       else:
@@ -1968,7 +1968,8 @@ async def parse_msg(event):
         res = f"{mtmsgs[qid][0]['username']}{path}\n{text}"
         if msg.buttons:
           for i in get_buttons(msg.buttons):
-            if isinstance(i, KeyboardButtonUrl):
+            #  if isinstance(i, KeyboardButtonUrl):
+            if isinstance(i.button, KeyboardButtonUrl):
               res += f"\n原始链接: {i.url}"
         await mt_send_for_long_text(res, gateway)
         if music_bot_state[gateway] == 3:
