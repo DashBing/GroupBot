@@ -2426,14 +2426,16 @@ async def load_config():
 
     for i in config:
       if type(config[i]) is list:
-        config[i] = set(config[i])
+        if config[i]:
+          if (config[i][0]) is str:
+            config[i] = set(config[i])
 
     globals().update(config)
 
     info("loaded config\n%s" % json.dumps(config, indent='  '))
     return True
   except Exception as e:
-    warn("配置文件有问题: config.json {e=}")
+    warn(f"配置文件有问题: config.json {e=}")
     raise e
 
 
