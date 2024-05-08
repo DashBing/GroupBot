@@ -440,7 +440,13 @@ def exceptions_handler(func):
 
 
 def _exceptions_handler(e, *args, **kwargs):
-  res = f'内部错误: {e=} line: {e.__traceback__.tb_next.tb_lineno}'
+  #  res = f'内部错误: {e=} line: {e.__traceback__.tb_next.tb_lineno}'
+  tb = e.__traceback__
+  lineno = "%s" % tb.tb_lineno
+  while tb.tb_next is not None:
+    lineno += " %s" % tb.tb_next.tb_lineno
+    tb = tb.tb_next
+  res = f'内部错误: {e=} line: {lineno}'
   try:
     #  res = f'{e=} line: {e.__traceback__.tb_next.tb_next.tb_lineno}'
     raise e
