@@ -805,6 +805,9 @@ async def read_file(path='SH_PATH', *args, **kwargs):
   if path[0:1] != '/':
     path = PARENT_DIR / path
     path = path.as_posix()
+  if not os.path.exists(path):
+    warn(f"文件不存在: {path}")
+    return
   async with aiofiles.open(path, *args, **kwargs) as file:
       return await file.read()
 
