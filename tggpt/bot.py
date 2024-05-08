@@ -2467,6 +2467,10 @@ async def send(text, jid=None, client=None):
       )
     # None is for "default language"
     msg.body[None] = text
+
+  if msg.type_ == aioxmpp.MessageType.GROUPCHAT:
+    if '/' in msg.to:
+      msg.to = msg.to.split('/', 1)[0]
   if client is None:
     client = XB
   #  return await client.send(msg)
