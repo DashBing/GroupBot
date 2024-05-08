@@ -2848,7 +2848,7 @@ async def join(jid=None, nick=None):
     nick = 'bot'
   client = XB
 
-  #  mucsv = client.summon(aioxmpp.MUCClient)
+  mucsv = client.summon(aioxmpp.MUCClient)
   J = JID.fromstr(jid)
 
   #  client.stream.register_iq_request_handler(
@@ -2958,7 +2958,7 @@ async def xmppbot():
       info(f"join all groups...\n%s" % my_groups)
       #  await join()
       global mucsv
-      mucsv = client.summon(aioxmpp.MUCClient)
+      #  mucsv = client.summon(aioxmpp.MUCClient)
       ms = my_groups
       while True:
         tmp = []
