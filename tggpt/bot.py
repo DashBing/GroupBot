@@ -2535,6 +2535,7 @@ async def sendg(text, jid=None, room=None, client=None):
 
 
 
+@exceptions_handler
 async def login(client=None):
   if client is None:
     client = XB
