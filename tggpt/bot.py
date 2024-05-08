@@ -2413,26 +2413,34 @@ async def load_config():
     warn("配置文件有问题: config.json")
     return
   try:
-    config["sync_groups_all"].append(set(config["public_groups"]))
-    config["sync_groups_all"].append(set(config["bot_groups"]))
+    config["sync_groups_all"].append(config["public_groups"])
+    config["sync_groups_all"].append(config["bot_groups"])
 
     config["public_groups"] = config["public_groups"] + config["rss_groups"] + config["bot_groups"] + config["extra_groups"]
 
     config["my_groups"] = config["my_groups"] + config["public_groups"] + config["bot_groups"]
 
     
+
     jid = get_my_key("JID")
     config['ME'] = jid
+
+    info("loaded config\n%s" % json.dumps(config, indent='  '))
 
     for i in config:
       if type(config[i]) is list:
         if config[i]:
           if (config[i][0]) is str:
             config[i] = set(config[i])
+          elif (config[i][0]) is list:
+            tmp = []
+            for j in config[i]:
+              tmp.append(set(j))
+            config[i] = tmp
+
 
     globals().update(config)
 
-    info("loaded config\n%s" % json.dumps(config, indent='  '))
     return True
   except Exception as e:
     warn(f"配置文件有问题: config.json {e=}")
