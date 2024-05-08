@@ -1194,7 +1194,7 @@ async def load_config():
     warn(f"配置文件有问题: config.json {e=}")
     raise e
 
-asyncio.run(load_config())
+#  asyncio.run(load_config())
 
 
 
@@ -2411,7 +2411,7 @@ async def parse_xmpp_msg(msg):
   if text is None:
     return
   if text == "ping":
-    await send("pong")
+    await send("pong", ME)
 
   #  pprint(msg)
   return
@@ -2442,7 +2442,7 @@ async def _send(msg, client=None, room=None):
     warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
   return False
 
-async def send(text='hi', jid=ME, client=None):
+async def send(text='hi', jid, client=None):
   recipient_jid = JID.fromstr(jid)
   msg = aioxmpp.Message(
       to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
@@ -2455,7 +2455,7 @@ async def send(text='hi', jid=ME, client=None):
   #  return await client.send(msg)
   return await _send(msg, client)
 
-async def sendg(text='hi', jid=test_group, client=None, room=None):
+async def sendg(text='hi', jid, client=None, room=None):
   recipient_jid = JID.fromstr(jid)
   msg = aioxmpp.Message(
       to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
@@ -2712,10 +2712,10 @@ async def xmppbot():
         aioxmpp.make_security_layer(password)
     )
     logger.info(f"已导入新账户: {jid} password: {password[:4]}...")
-    #  if await load_config():
-    if await login():
-      info(f"join all groups...\n%s" % my_groups)
-      #  await join()
+    if await load_config():
+      if await login():
+        info(f"join all groups...\n%s" % my_groups)
+        #  await join()
 
 async def amain():
   try:
