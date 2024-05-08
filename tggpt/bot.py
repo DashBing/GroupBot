@@ -2801,7 +2801,7 @@ async def amain():
 
 
     global MY_NAME, MY_ID, UB
-    #  await UB.start()
+    await UB.start()
     me = await UB.get_me()
     #  print(me.stringify())
     MY_ID = me.id
@@ -2846,10 +2846,8 @@ async def amain():
     logger.info("正在退出...")
 
 
-
 def main():
   try:
-    #  asyncio.run(amain())
 
 
     api_id = int(get_my_key("TELEGRAM_API_ID"))
@@ -2884,8 +2882,9 @@ def main():
 
 
 
-    with UB:
-      UB.loop.run_until_complete(amain())
+    #  with UB:
+    #    UB.loop.run_until_complete(amain())
+    asyncio.run(amain())
 
   except KeyboardInterrupt as e:
     logger.info("停止原因：用户手动终止")
