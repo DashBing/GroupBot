@@ -2442,7 +2442,7 @@ async def _send(msg, client=None, room=None):
     warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
   return False
 
-async def send(text='hi', jid, client=None):
+async def send(text, jid, client=None):
   recipient_jid = JID.fromstr(jid)
   msg = aioxmpp.Message(
       to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
@@ -2455,7 +2455,7 @@ async def send(text='hi', jid, client=None):
   #  return await client.send(msg)
   return await _send(msg, client)
 
-async def sendg(text='hi', jid, client=None, room=None):
+async def sendg(text, jid, client=None, room=None):
   recipient_jid = JID.fromstr(jid)
   msg = aioxmpp.Message(
       to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
