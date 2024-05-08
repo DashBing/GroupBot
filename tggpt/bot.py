@@ -1026,19 +1026,18 @@ async def get_title(url):
 
 
 
-async def other_init():
-  info("开始初始化其他组件")
-  res = await asyncio.to_thread(_other_init)
-  info(res)
-#  allright.set()
-  if res is True:
-    pass
-
-@exceptions_handler
-def _other_init():
-  global allright_task
-  allright_task -= 1
-  return True
+#  async def other_init():
+#    info("开始初始化其他组件")
+#    res = await asyncio.to_thread(_other_init)
+#    info(res)
+#  #  allright.set()
+#    if res is True:
+#      global allright_task
+#      allright_task -= 1
+#
+#  @exceptions_handler
+#  def _other_init():
+#    return True
 
 
 #  global G1PSID
@@ -1174,8 +1173,6 @@ async def qw2(text):
   except Exception as e:
     res = f"{e=}"
   return res
-
-
 
 
 
@@ -2992,8 +2989,8 @@ async def amain():
     global allright_task
     allright_task += 1
     asyncio.create_task(xmppbot(), name="xmppbot")
-    allright_task += 1
-    asyncio.create_task(other_init())
+    #  allright_task += 1
+    #  asyncio.create_task(other_init())
 
     # with UB:
     #  loop.run_until_complete(run())
