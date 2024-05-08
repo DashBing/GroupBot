@@ -206,51 +206,6 @@ def generand(N=4, M=None, *, no_uppercase=False):
   return ''.join(random.choice(l) for x in range(N))
 
 
-async def load_config():
-  path = PARENT_DIR / "config.json"
-  config = await read_file(path.as_posix())
-  config = load_str(config)
-
-  info("config\n%s" % json.dumps(config, indent='  '))
-  
-  if config is None:
-    warn("配置文件有问题: config.json")
-    return
-  try:
-    config["sync_groups_all"].append(config["public_groups"])
-    config["sync_groups_all"].append(config["bot_groups"])
-
-    config["public_groups"] = config["public_groups"] + config["rss_groups"] + config["bot_groups"] + config["extra_groups"]
-
-    config["my_groups"] = config["my_groups"] + config["public_groups"]
-
-    
-
-    jid = get_my_key("JID")
-    config['ME'] = jid
-
-    info("loaded config\n%s" % json.dumps(config, indent='  '))
-
-    for i in config:
-      if type(config[i]) is list:
-        if config[i]:
-          if (config[i][0]) is str:
-            config[i] = set(config[i])
-          elif (config[i][0]) is list:
-            tmp = []
-            for j in config[i]:
-              tmp.append(set(j))
-            config[i] = tmp
-
-
-    globals().update(config)
-
-    return True
-  except Exception as e:
-    warn(f"配置文件有问题: config.json {e=}")
-    raise e
-
-
 #  api_id = int(get_my_key("TELEGRAM_API_ID"))
 #  BING_U = get_my_key("BING_U")
 G1PSID = get_my_key('BARD_COOKIE_KEY')
@@ -1195,6 +1150,51 @@ async def get_title(url):
 
 
 
+async def load_config():
+  path = PARENT_DIR / "config.json"
+  config = await read_file(path.as_posix())
+  config = load_str(config)
+
+  info("config\n%s" % json.dumps(config, indent='  '))
+  
+  if config is None:
+    warn("配置文件有问题: config.json")
+    return
+  try:
+    config["sync_groups_all"].append(config["public_groups"])
+    config["sync_groups_all"].append(config["bot_groups"])
+
+    config["public_groups"] = config["public_groups"] + config["rss_groups"] + config["bot_groups"] + config["extra_groups"]
+
+    config["my_groups"] = config["my_groups"] + config["public_groups"]
+
+    
+
+    jid = get_my_key("JID")
+    config['ME'] = jid
+
+    info("loaded config\n%s" % json.dumps(config, indent='  '))
+
+    for i in config:
+      if type(config[i]) is list:
+        if config[i]:
+          if (config[i][0]) is str:
+            config[i] = set(config[i])
+          elif (config[i][0]) is list:
+            tmp = []
+            for j in config[i]:
+              tmp.append(set(j))
+            config[i] = tmp
+
+
+    globals().update(config)
+
+    return True
+  except Exception as e:
+    warn(f"配置文件有问题: config.json {e=}")
+    raise e
+
+asyncio.run(load_config())
 
 
 
@@ -2712,10 +2712,10 @@ async def xmppbot():
         aioxmpp.make_security_layer(password)
     )
     logger.info(f"已导入新账户: {jid} password: {password[:4]}...")
-    if await load_config():
-      if await login():
-        info(f"join all groups...\n%s" % my_groups)
-        #  await join()
+    #  if await load_config():
+    if await login():
+      info(f"join all groups...\n%s" % my_groups)
+      #  await join()
 
 async def amain():
   try:
