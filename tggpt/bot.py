@@ -2414,7 +2414,7 @@ async def parse_xmpp_msg(msg):
     #  await send("pong", ME)
     reply = msg.make_reply()
     reply.body[None] = "pong"
-    await _send(reply, client)
+    await send(reply)
 
   #  pprint(msg)
   return
@@ -2430,7 +2430,8 @@ async def _send(msg, client=None, room=None):
   elif room:
     res = room.send_message(msg)
   else:
-    return False
+    client = XB
+    #  return False
   #  if isawaitable(res):
   if asyncio.iscoroutine(res):
     #  dbg(f"client send: {res=}")
@@ -2445,22 +2446,36 @@ async def _send(msg, client=None, room=None):
     warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
   return False
 
-async def send(text, jid, client=None):
+async def send(text, jid=None, client=None):
   info(f"send: {jid} {text}")
-  recipient_jid = JID.fromstr(jid)
-  msg = aioxmpp.Message(
-      to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
-      type_=aioxmpp.MessageType.CHAT,
-  )
-  # None is for "default language"
-  msg.body[None] = text
+  #  if type(text) is str:
+  if isinstance(text, aioxmpp.Message):
+    msg = text
+  else:
+    if jid is None:
+      jid = ME
+    recipient_jid = JID.fromstr(jid)
+    if jid in my_groups:
+      msg = aioxmpp.Message(
+          to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
+          type_=aioxmpp.MessageType.GROUPCHAT,
+      )
+    else:
+      msg = aioxmpp.Message(
+          to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
+          type_=aioxmpp.MessageType.CHAT,
+      )
+    # None is for "default language"
+    msg.body[None] = text
   if client is None:
     client = XB
   #  return await client.send(msg)
   return await _send(msg, client)
 
-async def sendg(text, jid, client=None, room=None):
+async def sendg(text, jid=None, room=None, client=None):
   info(f"send group msg: {jid} {text}")
+  if jid is None:
+    jid = test_group
   recipient_jid = JID.fromstr(jid)
   msg = aioxmpp.Message(
       to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
