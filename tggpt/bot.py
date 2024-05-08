@@ -2418,7 +2418,7 @@ async def load_config():
 
     config["public_groups"] = config["public_groups"] + config["rss_groups"] + config["bot_groups"] + config["extra_groups"]
 
-    config["my_groups"] = config["my_groups"] + config["public_groups"] + config["bot_groups"]
+    config["my_groups"] = config["my_groups"] + config["public_groups"]
 
     
 
@@ -2456,7 +2456,39 @@ async def login(client=None):
     #  steam = await i.connected().__aenter__()
     steam = await asyncio.wait_for(client.connected().__aenter__(), timeout=30)
     info(f"登录成功：{jid}")
+
+    vs = client.summon(aioxmpp.vcard.VCardService)
+    vc = await vs.get_vcard(None)
+    if vc.get_photo_mime_type() is None:
+    #  if True:
+      fn = "photo.png"
+      #  fn = 'tx.jpg'
+      data = await read_file(fn, 'rb')
+      #  vc.set_photo_data('image/jpeg', data)
+      vc.set_photo_data('image/png', data)
+      await vs.set_vcard(vc)
+      await asyncio.sleep(1)
+      vc = await vs.get_vcard(None)
+      if vc.get_photo_mime_type() is not None:
+        info(f"头像设置成功: {jid} {fn}")
+        #  logger.warning(f"修改头像需要重新登录才能生效：{jid}")
+        #  await stop(client)
+        #  if await login(client, True):
+        #    #  n = fn.split("@", 1)[1].split('_', 1)[1].rsplit('.', 1)[0]
+        #    #  mynicks.add((jid, n))
+        #    info(f"头像设置成功: {jid} {fn}")
+        #    return True
+        #  else:
+        #    return False
+      else:
+        logger.warning(f"头像设置失败：{jid}")
+    else:
+      logger.info(f"无需设置头像：{jid}")
+
+
+
     await regisger_handler(client)
+
   except TimeoutError as e:
     warn(f"登录失败(超时)：{jid}, {e=}")
     await stop(client)
