@@ -2411,7 +2411,10 @@ async def parse_xmpp_msg(msg):
   if text is None:
     return
   if text == "ping":
-    await send("pong", ME)
+    #  await send("pong", ME)
+    reply = msg.make_reply()
+    reply.body[None] = "pong"
+    await _send(reply, client)
 
   #  pprint(msg)
   return
