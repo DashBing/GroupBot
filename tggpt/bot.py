@@ -2413,6 +2413,7 @@ async def parse_xmpp_msg(msg):
   if text == "ping":
     #  await send("pong", ME)
     if msg.type_ == MessageType.GROUPCHAT:
+      pprint(msg.to)
       await sendg("pong")
       await sendg("pong", get_jid(msg.to).split('/', 1)[0])
     elif msg.type_ == MessageType.CHAT:
