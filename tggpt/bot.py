@@ -2848,7 +2848,7 @@ async def join(jid=None, nick=None):
     nick = 'bot'
   client = XB
 
-  #  mc = client.summon(aioxmpp.MUCClient)
+  #  mucsv = client.summon(aioxmpp.MUCClient)
   J = JID.fromstr(jid)
 
   #  client.stream.register_iq_request_handler(
@@ -2875,7 +2875,7 @@ async def join(jid=None, nick=None):
     sum_try = 0
     while True:
       try:
-        room, fut = mc.join(J, nick=nick, autorejoin=True)
+        room, fut = mucsv.join(J, nick=nick, autorejoin=True)
         #  if fut is not None and room.muc_joined is False:
         if room.muc_joined is False:
           logger.info(f"等待进群: {get_jid(client.local_jid)} {jid}")
@@ -2954,11 +2954,11 @@ async def xmppbot():
   )
   logger.info(f"已导入新账户: {myjid} password: {password[:4]}...")
   if await load_config():
-    global mc
     if await login():
       info(f"join all groups...\n%s" % my_groups)
       #  await join()
-      mc = client.summon(aioxmpp.MUCClient)
+      global mucsv
+      mucsv = client.summon(aioxmpp.MUCClient)
       ms = my_groups
       while True:
         tmp = []
