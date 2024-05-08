@@ -2719,6 +2719,8 @@ async def xmppbot():
       if await login():
         info(f"join all groups...\n%s" % my_groups)
         #  await join()
+        for i in my_groups:
+          await join(i)
 
 async def amain():
   try:
