@@ -1028,6 +1028,7 @@ async def get_title(url):
 
 
 async def other_init():
+  info("开始初始化其他组件")
   res = await asyncio.to_thread(_other_init)
   info(res)
 #  allright.set()
@@ -1037,7 +1038,6 @@ async def other_init():
 
 @exceptions_handler
 def _other_init():
-
   global G1PSID
   #  BING_U = get_my_key("BING_U")
   G1PSID = get_my_key('BARD_COOKIE_KEY')
@@ -2943,6 +2943,7 @@ async def join(jid=None, nick=None):
 
 @exceptions_handler
 async def xmppbot():
+  info("开始登录xmpp")
   global XB, myjid
   myjid = get_my_key("JID")
   password = get_my_key("JID_PASS")
@@ -3067,7 +3068,7 @@ async def amain():
       while True:
         if allright_task > 0:
           info(f"等待初始化完成")
-          await asyncio.sleep(5)
+          await asyncio.sleep(3)
           continue
         allright.set()
         break
