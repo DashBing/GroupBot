@@ -2447,7 +2447,7 @@ async def _send(msg, client=None, room=None):
   return False
 
 async def send(text, jid=None, client=None):
-  info(f"send: {jid} {text}")
+  info(f"send: {jid=} {text=}")
   #  if type(text) is str:
   if isinstance(text, aioxmpp.Message):
     msg = text
@@ -2471,6 +2471,7 @@ async def send(text, jid=None, client=None):
   if msg.type_ == aioxmpp.MessageType.GROUPCHAT:
     if '/' in msg.to:
       msg.to = msg.to.split('/', 1)[0]
+  info(f"send: {msg=}")
   if client is None:
     client = XB
   #  return await client.send(msg)
