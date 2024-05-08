@@ -2703,8 +2703,7 @@ async def join(jid=test_group, nick=None):
 
 
 async def xmppbot():
-    global loop, XB
-    loop = asyncio.get_event_loop()
+    global XB
     jid = get_my_key("JID")
     password = get_my_key("JID_PASS")
     #  jid = aioxmpp.JID.fromstr(jid)
@@ -2720,6 +2719,8 @@ async def xmppbot():
 
 async def amain():
   try:
+    global loop
+    loop = asyncio.get_event_loop()
     asyncio.create_task(xmppbot(), name="xmppbot")
     # with UB:
     #  loop.run_until_complete(run())
@@ -2774,7 +2775,8 @@ async def amain():
   #    raise e
   finally:
     logger.info("正在收尾...")
-    loop.run_until_complete(stop())
+    await stop()
+    #  loop.run_until_complete(stop())
     #  loop.run_until_complete(loop.shutdown_asyncgens())
     #  loop.close()
     logger.info("正在退出...")
