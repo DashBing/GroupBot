@@ -2424,6 +2424,7 @@ async def parse_xmpp_msg(msg):
           reply.to = JID.fromstr(get_jid(reply.to))
           info(f"fixed: {type(reply)} {reply=}")
       info(f"reply2: {reply=}")
+      await send(reply)
     elif msg.type_ == MessageType.CHAT:
       reply = msg.make_reply()
       reply.body[None] = "pong"
