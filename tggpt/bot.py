@@ -2457,6 +2457,7 @@ async def send(text, jid, client=None):
   return await _send(msg, client)
 
 async def sendg(text, jid, client=None, room=None):
+  info(f"send group msg: {jid} {text}")
   recipient_jid = JID.fromstr(jid)
   msg = aioxmpp.Message(
       to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
