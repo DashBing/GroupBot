@@ -4,6 +4,7 @@
 
 
 #  from . import *  # noqa: F403
+from enum import auto
 from . import debug, WORK_DIR, PARENT_DIR, LOG_FILE, get_my_key, HOME, LOGGER
 #  from tg.telegram import DOWNLOAD_PATH
 from telethon.tl.types import KeyboardButton, KeyboardButtonUrl, PeerUser, PeerChannel, PeerChat, User, Channel, Chat
@@ -207,131 +208,6 @@ def generand(N=4, M=None, *, no_uppercase=False):
 
 
 #  api_id = int(get_my_key("TELEGRAM_API_ID"))
-#  BING_U = get_my_key("BING_U")
-G1PSID = get_my_key('BARD_COOKIE_KEY')
-
-from g4f.cookies import set_cookies
-
-#  set_cookies(".bing.com", {
-#    "_U": "%s" % BING_U
-#  })
-set_cookies(".google.com", {
-  "__Secure-1PSID": G1PSID
-})
-
-
-from g4f import models, Provider
-from g4f.client import Client
-
-
-client = Client()
-
-#  def ai_img(prompt, model="gemini", proxy=None):
-async def ai_img(prompt, model="gemini"):
-  try:
-    #  response = client.images.generate(
-      #  response = await client.images.generate(
-      response = await asyncio.to_thread(client.images.generate,
-      model=model,
-      #  prompt="a white siamese cat",
-      prompt=prompt,
-    )
-  except Exception as e:
-    image_url = f"{e=}"
-  else:
-    image_url = response.data[0].url
-  #  print(image_url)
-  return image_url
-
-async def ai(prompt, provider=Provider.You, model=models.default, proxy=None):
-  try:
-    #  response = client.chat.completions.create(
-      #  response = await client.chat.completions.create(
-      #  s = await asyncio.to_thread(run_ocr, img=res)
-      response = await asyncio.to_thread(client.chat.completions.create,
-      model=model,
-      messages=[{"role": "user", "content": prompt}],
-      provider=provider,
-      proxy=proxy,
-    )
-  except Exception as e:
-    image_url = f"{e=}"
-  else:
-    image_url  = response.choices[0].message.content
-  #  print(image_url)
-  return image_url
-
-
-
-HF_TOKEN = get_my_key('HF_TOKEN')
-
-async def hg(prompt, provider=Provider.You, model=models.default, proxy=None):
-  try:
-      client = Client(api_key=HF_TOKEN)
-    #  response = client.chat.completions.create(
-      response = await client.chat.completions.create(
-      model=model,
-      messages=[{"role": "user", "content": prompt}],
-      provider=provider,
-      proxy=proxy,
-    )
-  except Exception as e:
-    image_url = f"{e=}"
-  else:
-    image_url  = response.choices[0].message.content
-  #  print(image_url)
-  return image_url
-
-
-
-
-
-from gradio_client import Client
-
-
-qw_client = Client("https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/")
-#  qw2_client = Client("Qwen/Qwen1.5-110B-Chat-demo")
-
-async def qw(text):
-  try:
-    #  result = qw_client.predict(
-    result = await asyncio.to_thread(qw_client.predict,
-        #  sys.argv[1],	# str  in 'Input' Textbox component
-        text,	# str  in 'Input' Textbox component
-        #  [[sys.argv[1], sys.argv[1]]],	# Tuple[str | Dict(file: filepath, alt_text: str | None) | None, str | Dict(file: filepath, alt_text: str | None) | None]  in 'Qwen1.5-72B-Chat' Chatbot component
-        [],	# Tuple[str | Dict(file: filepath, alt_text: str | None) | None, str | Dict(file: filepath, alt_text: str | None) | None]  in 'Qwen1.5-72B-Chat' Chatbot component
-        "You are a helpful assistant.",	# str  in 'parameter_9' Textbox component
-        api_name="/model_chat"
-    )
-    #  print(result)
-    #  print(result[1][1][1])
-    #  print(result[1][0][1])
-    res = result[1][0][1]
-  except Exception as e:
-    res = f"{e=}"
-  return res
-
-
-
-async def qw2(text):
-  try:
-    #  result = qw2_client.predict(
-    result = await asyncio.to_thread(qw2_client.predict,
-        #  query=sys.argv[1],
-        query=text,
-        history=[],
-        system="You are a helpful assistant.",
-        api_name="/model_chat"
-    )
-    #  print(result)
-    #  print(result[1][1][1])
-    #  print(result[1][0][1])
-    res = result[1][0][1]
-  except Exception as e:
-    res = f"{e=}"
-  return res
-
-
 
 
 
@@ -380,8 +256,10 @@ mtmsgsg={}
 
 
 
-no_reset = asyncio.Event()
-no_reset.set()
+allright = asyncio.Event()
+#  allright.set()
+
+allright_task = 0
 
 LOADING="思考你发送的内容..."
 LOADING2="Thinking about what you sent..."
@@ -1149,6 +1027,149 @@ async def get_title(url):
 
 
 
+async def other_init():
+  global allright_task
+  res = await asyncio.to_thread(_other_init)
+  info(res)
+#  allright.set()
+  if res is True:
+    allright_task -= 1
+
+@exceptions_handler
+def _other_init():
+
+  global G1PSID
+  #  BING_U = get_my_key("BING_U")
+  G1PSID = get_my_key('BARD_COOKIE_KEY')
+
+  from g4f.cookies import set_cookies
+
+  #  set_cookies(".bing.com", {
+  #    "_U": "%s" % BING_U
+  #  })
+  set_cookies(".google.com", {
+    "__Secure-1PSID": G1PSID
+  })
+
+  from g4f import models, Provider
+  from g4f.client import Client
+
+
+  global g4fclient
+  g4fclient = Client()
+
+  from gradio_client import Client, HF_TOKEN
+
+  HF_TOKEN = get_my_key('HF_TOKEN')
+
+  global qw_client, qw2_client
+  qw_client = Client("https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/")
+  qw2_client = Client("Qwen/Qwen1.5-110B-Chat-demo")
+
+  return True
+
+
+
+#  def ai_img(prompt, model="gemini", proxy=None):
+async def ai_img(prompt, model="gemini"):
+  try:
+    #  response = client.images.generate(
+      #  response = await client.images.generate(
+      response = await asyncio.to_thread(g4fclient.images.generate,
+      model=model,
+      #  prompt="a white siamese cat",
+      prompt=prompt,
+    )
+  except Exception as e:
+    image_url = f"{e=}"
+  else:
+    image_url = response.data[0].url
+  #  print(image_url)
+  return image_url
+
+async def ai(prompt, provider=Provider.You, model=models.default, proxy=None):
+  try:
+    #  response = client.chat.completions.create(
+      #  response = await client.chat.completions.create(
+      #  s = await asyncio.to_thread(run_ocr, img=res)
+      response = await asyncio.to_thread(g4fclient.chat.completions.create,
+      model=model,
+      messages=[{"role": "user", "content": prompt}],
+      provider=provider,
+      proxy=proxy,
+    )
+  except Exception as e:
+    image_url = f"{e=}"
+  else:
+    image_url  = response.choices[0].message.content
+  #  print(image_url)
+  return image_url
+
+
+
+
+async def hg(prompt, provider=Provider.You, model=models.default, proxy=None):
+  try:
+      client = Client(api_key=HF_TOKEN)
+    #  response = client.chat.completions.create(
+      response = await g4fclient.chat.completions.create(
+      model=model,
+      messages=[{"role": "user", "content": prompt}],
+      provider=provider,
+      proxy=proxy,
+    )
+  except Exception as e:
+    image_url = f"{e=}"
+  else:
+    image_url  = response.choices[0].message.content
+  #  print(image_url)
+  return image_url
+
+
+
+async def qw(text):
+  try:
+    #  result = qw_client.predict(
+    result = await asyncio.to_thread(qw_client.predict,
+        #  sys.argv[1],	# str  in 'Input' Textbox component
+        text,	# str  in 'Input' Textbox component
+        #  [[sys.argv[1], sys.argv[1]]],	# Tuple[str | Dict(file: filepath, alt_text: str | None) | None, str | Dict(file: filepath, alt_text: str | None) | None]  in 'Qwen1.5-72B-Chat' Chatbot component
+        [],	# Tuple[str | Dict(file: filepath, alt_text: str | None) | None, str | Dict(file: filepath, alt_text: str | None) | None]  in 'Qwen1.5-72B-Chat' Chatbot component
+        "You are a helpful assistant.",	# str  in 'parameter_9' Textbox component
+        api_name="/model_chat"
+    )
+    #  print(result)
+    #  print(result[1][1][1])
+    #  print(result[1][0][1])
+    res = result[1][0][1]
+  except Exception as e:
+    res = f"{e=}"
+  return res
+
+
+
+async def qw2(text):
+  try:
+    #  result = qw2_client.predict(
+    result = await asyncio.to_thread(qw2_client.predict,
+        #  query=sys.argv[1],
+        query=text,
+        history=[],
+        system="You are a helpful assistant.",
+        api_name="/model_chat"
+    )
+    #  print(result)
+    #  print(result[1][1][1])
+    #  print(result[1][0][1])
+    res = result[1][0][1]
+  except Exception as e:
+    res = f"{e=}"
+  return res
+
+
+
+
+
 
 async def load_config():
   path = PARENT_DIR / "config.json"
@@ -1362,7 +1383,7 @@ async def mt2tg(msg):
           await mt_send("gtp mode on", gateway=gateway)
           return
       elif text == ".gtg reset":
-        if no_reset.is_set():
+        if allright.is_set():
           await mt_send(f"now tasks: {here}, waiting...", gateway=gateway)
           #  for g in mtmsgsg:
           #  for g in queues:
@@ -1371,7 +1392,7 @@ async def mt2tg(msg):
           text= CLEAN
         else:
           await mt_send("waiting...", gateway=gateway)
-          await no_reset.wait()
+          await allright.wait()
           here = len(mtmsgsg[gateway])
           await mt_send(f"reset ok, now tasks: {here}", gateway=gateway)
           return
@@ -1734,12 +1755,12 @@ async def mt2tg(msg):
 
 
 async def clear_history():
-  if not no_reset.is_set():
-    warn("wait for no_reset...")
-    await no_reset.wait()
+  if not allright.is_set():
+    warn("wait for allright...")
+    await allright.wait()
     return
 
-  no_reset.clear()
+  allright.clear()
   #  await asyncio.sleep(1)
   #  for g in queues:
   for g in mtmsgsg:
@@ -1748,7 +1769,7 @@ async def clear_history():
   #  await mt_send(f"cleaned: {mtmsgsg=}", gateway="test")
   gateways.clear()
   #  await mt_send(f"cleaned: {gateways=}", gateway="test"):w
-  no_reset.set()
+  allright.set()
   info("reset ok")
 
 
@@ -2255,7 +2276,7 @@ async def parse_out_msg(event):
 #  @exceptions_handler
 #  async def read_res(event):
 #
-#    if not no_reset.is_set():
+#    if not allright.is_set():
 #      return
 #    #  if event.chat_id in id2gateway:
 #    if event.chat_id == gpt_bot:
@@ -2267,7 +2288,7 @@ async def parse_out_msg(event):
 #      #  print("N: skip: %s != %s" % (event.chat_id, gpt_bot))
 #    else:
 #      return
-#    #  if not no_reset.is_set():
+#    #  if not allright.is_set():
 #    #    print("W: skiped the msg because of reset is waiting")
 #    #    return
 #    #  elif event.chat_id not in gateways:
@@ -2394,6 +2415,9 @@ async def regisger_handler(client):
 
 #  def gmsg(msg, member, source, **kwargs):
 def msg_in(msg):
+  if not allright.is_set():
+    info("skip msg: allright is not ok")
+    return
   asyncio.create_task(parse_xmpp_msg(msg))
   #  return
   #  info("\n>>> msg: %s\n" % msg)
@@ -2650,14 +2674,168 @@ def run_ocr(img):
 
 
 def jbypass(msg):
-  #  asyncio.create_task(_bypass(msg))
-  logger.warn(f"无法进群: {msg}")
+  #  logger.warn(f"无法进群: {msg}")
+  asyncio.create_task(_bypass(msg))
+
+async def _bypass(msg):
+  """
+  body: <class 'aioxmpp.structs.LanguageMap'>: {<aioxmpp.structs.LanguageTag.fromstr('en')>: 'Your subscription request and/or messages to kvpxdg0u68wq4tae@conference.conversations.im have been blocked. To unblock your subscription request, visit https://xmpp.conversations.im/captcha/8977672564368233645'}
+
+  https://xmpp.conversations.im/captcha/12941499225798303289/image
+  --
+	curl 'https://suchat.org:5443/captcha/7412684044252318043/image' \
+		-H 'Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8' \
+		-H 'Accept-Language: zh-CN,zh-TW;q=0.9,zh;q=0.8,en-US;q=0.7,en;q=0.6' \
+		-H 'Connection: keep-alive' \
+		-H 'Referer: https://suchat.org:5443/captcha/7412684044252318043' \
+		-H 'Sec-Fetch-Dest: image' \
+		-H 'Sec-Fetch-Mode: no-cors' \
+		-H 'Sec-Fetch-Site: same-origin' \
+		-H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' \
+		-H 'sec-ch-ua: "Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"' \
+		-H 'sec-ch-ua-mobile: ?0' \
+		-H 'sec-ch-ua-platform: "Windows"'
+  ==
+
+	curl 'https://suchat.org:5443/captcha/13773455620261259216' \
+		-H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7' \
+		-H 'Accept-Language: zh-CN,zh-TW;q=0.9,zh;q=0.8,en-US;q=0.7,en;q=0.6' \
+		-H 'Cache-Control: max-age=0' \
+		-H 'Connection: keep-alive' \
+		-H 'Content-Type: application/x-www-form-urlencoded' \
+		-H 'Origin: https://suchat.org:5443' \
+		-H 'Referer: https://suchat.org:5443/captcha/13773455620261259216' \
+		-H 'Sec-Fetch-Dest: document' \
+		-H 'Sec-Fetch-Mode: navigate' \
+		-H 'Sec-Fetch-Site: same-origin' \
+		-H 'Sec-Fetch-User: ?1' \
+		-H 'Upgrade-Insecure-Requests: 1' \
+		-H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' \
+		-H 'sec-ch-ua: "Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"' \
+		-H 'sec-ch-ua-mobile: ?0' \
+		-H 'sec-ch-ua-platform: "Windows"' \
+		--data-raw 'id=13773455620261259216&key=427617&enter=OK'
+
+	--
+	<?xml
+	version='1.0'?>
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
+			<head>
+					<meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+			</head>
+			<body>
+					<p>验证码有效。</p>
+			</body>
+	</html>
+
+  --
+  e=XMPPAuthError("{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized ('The CAPTCHA verification has failed')")
+
+  """
+  #  pprint(request)
+  #  pprint(request.xep0004_data)
+  #  pprint(request.xso_serialise_to_sax())
+  #  pprint(request.body)
+  #  pprint(request.body.get(aioxmpp.structs.LanguageTag.fromstr('en')))
+  #  pprint(request.body.get(aioxmpp.structs.LanguageTag.fromstr('zh')))
+
+  #  pprint(msg.body.any())
+  #  return
+  if msg.body.get(aioxmpp.structs.LanguageTag.fromstr('zh')):
+    text = msg.body.get(aioxmpp.structs.LanguageTag.fromstr('zh'))
+  elif msg.body.get(aioxmpp.structs.LanguageTag.fromstr('en')):
+    text = msg.body.get(aioxmpp.structs.LanguageTag.fromstr('en'))
+  else:
+    text = msg.body.any()
+
+  jid = get_jid(msg.from_)
+  myid = get_jid(msg.to)
+
+  if text:
+    tmp = []
+    for u in urlre.findall(text):
+      tmp.append(u[1])
+    if tmp == []:
+      warn("需要验证才能入群，但无法输入验证码，没找到URL: {myid} {jid} {text}")
+      return
+    else:
+      info(f"需要验证才能入群: {myid} {jid} {text} {tmp}")
+  else:
+    info(f"fixme: 这个群需要验证才能进吗？那就程序有bug: {myid} {jid} {text}")
+    return
+
+  u = None
+  for u in tmp:
+    #  if jid.split('@', 1)[1] in u:
+    if msg.from_.domain in u:
+      break
+    u = None
+  if u is None:
+    info(f"没找到合适的，随便选第一个作为验证码地址: {jid} {tmp}")
+    u = tmp[0]
+  info(f"验证码地址: {u}")
+  #  info(f"验证码地址: {u=}")
+  headers = {
+      #  'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+      'Accept': 'image/jpeg,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+      'Accept-Language': 'zh-CN,zh-TW;q=0.9,zh;q=0.8,en-US;q=0.7,en;q=0.6',
+      'Connection': 'keep-alive',
+    }
+
+  #  res = await http(f"{u}")
+  res = await http(f"{u}", headers=headers, proxy="http://127.0.0.1:6080")
+  print(res)
+  headers['Referer'] = u
+  iu = f"{u}/image"
+  res = await http(f"{iu}", headers=headers, proxy="http://127.0.0.1:6080")
+  #  res = await http("https://fars.ee/eUVh.jpg")
+  info(f"image size: {len(res)} {iu}")
+  #  print("===")
+  #  s = ocr.classification(res)
+  s = await asyncio.to_thread(run_ocr, img=res)
+  if s:
+    await asyncio.sleep(3)
+		#  -H 'Origin: https://suchat.org:5443' \
+		#  --data-raw 'id=13773455620261259216&key=427617&enter=OK'
+    data = {
+        "id": "%s" % u.rsplit('/', 1)[1],
+        "key": f"{s}",
+        "enter": "OK",
+        }
+    headers.pop('Referer')
+    headers['Origin'] = "%s//%s" % (u.split('//', 1)[0], u.split('//', 1)[1].split('/', 1)[0])
+    headers['Accept'] = 'application/json,application/xhtml+xml,application/xml,text/html;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    info(f"headers: {headers}")
+    info(f"data: {data}")
+    res = await http(f"{u}", "POST", headers=headers, data=data, proxy="http://127.0.0.1:6080")
+    info(res)
+    #  while True:
+    #    info(f"等待进群结果: {myid} {jid}")
+    #    await asyncio.sleep(3)
+    #    if jid in muc_now:
+    #      if myid in muc_now[jid]:
+    #        break
+  else:
+    #  pprint(s)
+    info(f"识别验证码失败: {myid} {jid} {s}")
+
+#  client.stream.register_iq_request_handler(
+#      aioxmpp.IQType.GET,
+#      aioxmpp.disco.xso.InfoQuery,
+#      request_handler,
+#  )
 
 
-test_group = 'ipfs@salas.suchat.org'
+
+#  test_group = 'ipfs@salas.suchat.org'
+rooms = {}
+auto_input = False
 
 @exceptions_handler
-async def join(jid=test_group, nick=None):
+async def join(jid=None, nick=None):
+  if jid is None:
+    jid = test_group
   if nick is None:
     #  if "wtf" in myjid:
     #    nick = 'bot'
@@ -2666,7 +2844,7 @@ async def join(jid=test_group, nick=None):
     nick = 'bot'
   client = XB
 
-  mc = client.summon(aioxmpp.MUCClient)
+  #  mc = client.summon(aioxmpp.MUCClient)
   J = JID.fromstr(jid)
 
   #  client.stream.register_iq_request_handler(
@@ -2677,13 +2855,16 @@ async def join(jid=test_group, nick=None):
   #    )
   #  except KeyError as e:
   #    pass
-  client.stream.register_message_callback(
-  #  stream.message_handler(client.stream,
-      aioxmpp.MessageType.NORMAL,
-      J,
-  #      #  None,
-      jbypass,
-  )
+
+  if auto_input:
+    client.stream.register_message_callback(
+    #  stream.message_handler(client.stream,
+        aioxmpp.MessageType.NORMAL,
+        J,
+    #      #  None,
+        jbypass,
+    )
+
   myid = get_jid(client.local_jid)
   #  client.stream.on_message_received.connect(bypass)
   try:
@@ -2697,7 +2878,9 @@ async def join(jid=test_group, nick=None):
 
           await fut
           logger.info(f"进群成功: {myid} {jid}")
-
+        else:
+          pass
+        rooms[jid] = room
         return room
       
       except TimeoutError as e:
@@ -2722,6 +2905,8 @@ async def join(jid=test_group, nick=None):
         #  if e.args == ("{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized ('The CAPTCHA verification has failed')", ):
         if e.args:
           if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized ('The CAPTCHA verification has failed')" or e.args[0].startswith("{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized"):
+            if auto_input is False:
+              return False
             info(f"进群失败, 验证码不正确，准备重试: {myid} {jid} {e=}")
           else:
             if e.args[0] == '{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden':
@@ -2741,51 +2926,64 @@ async def join(jid=test_group, nick=None):
       if sum_try > 3:
         info(f"进群失败(重试次数达到最大值): {myid} {jid}")
         return False
-      await asyncio.sleep(2)
+      await asyncio.sleep(1)
 
   finally:
-    client.stream.unregister_message_callback(
-        aioxmpp.MessageType.NORMAL,
-        J,
-    )
+    if auto_input:
+      client.stream.unregister_message_callback(
+          aioxmpp.MessageType.NORMAL,
+          J,
+      )
   return False
 
 
 @exceptions_handler
 async def xmppbot():
-    global XB, myjid
-    myjid = get_my_key("JID")
-    password = get_my_key("JID_PASS")
-    #  jid = aioxmpp.JID.fromstr(jid)
-    XB = aioxmpp.PresenceManagedClient(
-        JID.fromstr(myjid),
-        aioxmpp.make_security_layer(password)
-    )
-    logger.info(f"已导入新账户: {myjid} password: {password[:4]}...")
-    if await load_config():
-      if await login():
-        info(f"join all groups...\n%s" % my_groups)
-        #  await join()
-        ms = my_groups
-        while True:
-          tmp = []
-          for i in ms:
-            if await join(i):
-              continue
-            tmp.append(i)
-          if tmp:
-            info(f"无法进入的群组: {tmp}")
-            await mt_send_for_long_text(f"无法进入的群组: {tmp}")
-            ms = tmp
-            await asyncio.sleep(5)
-          else:
-            break
+  global XB, myjid
+  myjid = get_my_key("JID")
+  password = get_my_key("JID_PASS")
+  #  jid = aioxmpp.JID.fromstr(jid)
+  XB = aioxmpp.PresenceManagedClient(
+      JID.fromstr(myjid),
+      aioxmpp.make_security_layer(password)
+  )
+  logger.info(f"已导入新账户: {myjid} password: {password[:4]}...")
+  if await load_config():
+    global mc
+    mc = client.summon(aioxmpp.MUCClient)
+    if await login():
+      info(f"join all groups...\n%s" % my_groups)
+      #  await join()
+      ms = my_groups
+      while True:
+        tmp = []
+        for i in ms:
+          if await join(i):
+            continue
+          tmp.append(i)
+        if tmp:
+          info(f"无法进入的群组: {tmp}")
+          await mt_send_for_long_text(f"无法进入的群组: {tmp}")
+          ms = tmp
+          await asyncio.sleep(5)
+        else:
+          break
 
+  global allright_task
+  allright_task -= 1
+
+
+
+@exceptions_handler
 async def amain():
   try:
     global loop
     loop = asyncio.get_event_loop()
+    global allright_task
+    allright_task += 1
     asyncio.create_task(xmppbot(), name="xmppbot")
+    allright_task += 1
+    asyncio.create_task(other_init())
 
     # with UB:
     #  loop.run_until_complete(run())
@@ -2825,14 +3023,18 @@ async def amain():
     @UB.on(events.NewMessage(incoming=True))
     @UB.on(events.MessageEdited(incoming=True))
     async def _(event):
-      if not no_reset.is_set():
-        warn("waiting: no reset")
+      if not allright.is_set():
+        info("skip msg: allright is not ok")
         return
       asyncio.create_task(parse_msg(event))
 
     @UB.on(events.NewMessage(outgoing=True))
     async def _(event):
+      if not allright.is_set():
+        info("skip msg: allright is not ok")
+        return
       asyncio.create_task(parse_out_msg(event))
+
     #  await UB.start()
     async with UB:
       me = await UB.get_me()
@@ -2858,6 +3060,14 @@ async def amain():
       #  await mt_send(".gpt", username="")
       asyncio.create_task(mt_read(), name="mt_read")
 
+      while True:
+        if allright_task > 0:
+          info(f"等待初始化完成")
+          await asyncio.sleep(5)
+          continue
+        allright.set()
+        break
+      info(f"初始化完成")
 
       await UB.run_until_disconnected()
 
@@ -2887,7 +3097,6 @@ def main():
     #  with UB:
     #    UB.loop.run_until_complete(amain())
     asyncio.run(amain())
-
   except KeyboardInterrupt as e:
     logger.info("停止原因：用户手动终止")
     sys.exit(1)
