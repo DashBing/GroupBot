@@ -2834,7 +2834,7 @@ async def amain():
     async def _(event):
       asyncio.create_task(parse_out_msg(event))
     #  await UB.start()
-    with UB:
+    async with UB:
       me = await UB.get_me()
       #  print(me.stringify())
       MY_ID = me.id
