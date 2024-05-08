@@ -1026,57 +1026,46 @@ async def get_title(url):
 
 
 
-
 async def other_init():
   info("开始初始化其他组件")
   res = await asyncio.to_thread(_other_init)
   info(res)
 #  allright.set()
   if res is True:
-    global allright_task
-    allright_task -= 1
+    pass
 
 @exceptions_handler
 def _other_init():
-  global G1PSID
-  #  BING_U = get_my_key("BING_U")
-  G1PSID = get_my_key('BARD_COOKIE_KEY')
-
-  from g4f.cookies import set_cookies
-
-  #  set_cookies(".bing.com", {
-  #    "_U": "%s" % BING_U
-  #  })
-  set_cookies(".google.com", {
-    "__Secure-1PSID": G1PSID
-  })
-
-
-
-  global g4fclient
-  g4fclient = Client_g4f()
-
-
-  global HF_TOKEN
-  from gradio_client import Client, HF_TOKEN
-
-  HF_TOKEN = get_my_key('HF_TOKEN')
-
-  global qw_client, qw2_client
-  qw_client = Client("https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/")
-  qw2_client = Client("Qwen/Qwen1.5-110B-Chat-demo")
-
+  global allright_task
+  allright_task -= 1
   return True
 
 
+#  global G1PSID
+#  BING_U = get_my_key("BING_U")
+G1PSID = get_my_key('BARD_COOKIE_KEY')
+
+from g4f.cookies import set_cookies
+
+#  set_cookies(".bing.com", {
+#    "_U": "%s" % BING_U
+#  })
+set_cookies(".google.com", {
+  "__Secure-1PSID": G1PSID
+})
 
 
 from g4f import models, Provider
 from g4f.client import Client as Client_g4f
 
+g4fclient = None
+
 #  def ai_img(prompt, model="gemini", proxy=None):
 async def ai_img(prompt, model="gemini"):
   try:
+    global g4fclient
+    if g4fclient is None:
+      g4fclient = Client_g4f()
     #  response = client.images.generate(
       #  response = await client.images.generate(
       response = await asyncio.to_thread(g4fclient.images.generate,
@@ -1093,6 +1082,9 @@ async def ai_img(prompt, model="gemini"):
 
 async def ai(prompt, provider=Provider.You, model=models.default, proxy=None):
   try:
+    global g4fclient
+    if g4fclient is None:
+      g4fclient = Client_g4f()
     #  response = client.chat.completions.create(
       #  response = await client.chat.completions.create(
       #  s = await asyncio.to_thread(run_ocr, img=res)
@@ -1111,12 +1103,19 @@ async def ai(prompt, provider=Provider.You, model=models.default, proxy=None):
 
 
 
+from gradio_client import Client, HF_TOKEN
+
+HF_TOKEN = get_my_key('HF_TOKEN')
+
+hgclient = None
 
 async def hg(prompt, provider=Provider.You, model=models.default, proxy=None):
   try:
-      client = Client(api_key=HF_TOKEN)
+    global hgclient
+    if hgclient is None:
+      hgclient = Client(api_key=HF_TOKEN)
     #  response = client.chat.completions.create(
-      response = await g4fclient.chat.completions.create(
+    response = await hgclient.chat.completions.create(
       model=model,
       messages=[{"role": "user", "content": prompt}],
       provider=provider,
@@ -1130,9 +1129,14 @@ async def hg(prompt, provider=Provider.You, model=models.default, proxy=None):
   return image_url
 
 
+qw_client = None
+qw2_client = None
 
 async def qw(text):
   try:
+    global qw_client
+    if qw_client is None:
+      qw_client = Client("https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/")
     #  result = qw_client.predict(
     result = await asyncio.to_thread(qw_client.predict,
         #  sys.argv[1],	# str  in 'Input' Textbox component
@@ -1150,10 +1154,11 @@ async def qw(text):
     res = f"{e=}"
   return res
 
-
-
 async def qw2(text):
   try:
+    global qw2_client
+    if qw2_client is None:
+      qw2_client = Client("Qwen/Qwen1.5-110B-Chat-demo")
     #  result = qw2_client.predict(
     result = await asyncio.to_thread(qw2_client.predict,
         #  query=sys.argv[1],
@@ -3067,7 +3072,7 @@ async def amain():
 
       while True:
         if allright_task > 0:
-          info(f"等待初始化完成")
+          info(f"等待初始化完成，剩余任务数：{allright_task}")
           await asyncio.sleep(3)
           continue
         allright.set()
