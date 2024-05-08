@@ -35,19 +35,7 @@ class NoParsingFilter(logging.Filter):
 
 import asyncio
 
-#  global loop
-loop = asyncio.get_event_loop()
 
-api_id = int(get_my_key("TELEGRAM_API_ID"))
-api_hash = get_my_key("TELEGRAM_API_HASH")
-
-from telethon import TelegramClient
-#  client = TelegramClient('anon', api_id, api_hash)
-UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=loop)
-#  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, proxy=("socks5", '172.23.176.1', 6084), loop=loop)
-del api_id
-del api_hash
-#  del bot_token
 MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
 
 
@@ -102,6 +90,23 @@ from collections import deque
 
 
 import asyncio
+
+
+
+
+from os.path import isdir
+import aiofiles, aioxmpp, aiohttp
+
+import asyncio, logging, json, ast, getpass, random, string, re
+import sys, os
+#  from time import time, sleep
+#  from time import time
+#  from asyncio import sleep
+from collections import deque
+
+#  import aioxmpp
+from aioxmpp import stream, ibr, protocol, node, dispatcher, connector, JID, im, errors, MessageType
+from inspect import isawaitable
 
 
 
@@ -188,6 +193,16 @@ def check_str(nick, nicks):
     if i in nick:
       return True
   return False
+
+def generand(N=4, M=None, *, no_uppercase=False):
+  #  return ''.join(random.choice(string.ascii_lowercase+ string.digits) for x in range(N))
+  if no_uppercase:
+    l = string.ascii_lowercase + string.digits
+  else:
+    l = string.ascii_letters + string.digits
+  if M is not None:
+    N = random.randint(N, M)
+  return ''.join(random.choice(l) for x in range(N))
 
 
 #  api_id = int(get_my_key("TELEGRAM_API_ID"))
@@ -625,18 +640,6 @@ def byte2num(b):
     else:
         logger.warning("type error")
 
-def load_str(msg, no_ast=False):
-    """str to dict"""
-    msg = msg.strip()
-    if no_ast:
-        import json
-        return json.loads(msg)
-    try:
-        return ast.literal_eval(msg)
-    except ValueError:
-        logger.warning(msg)
-        import json
-        return json.loads(msg)
 
 
 # https://stackoverflow.com/a/9807138
@@ -766,7 +769,8 @@ def read_file_1line(path='/SH_PATH'):
   #  #  f = p + "/SH_PATH"
   #  f = p + "/" + path
   if path[0:1] != '/':
-    path=PARENT_DIR.as_posix()+ "/" + path
+    path = PARENT_DIR / path
+    path = path.as_posix()
 
   with open(path) as f:
       line = f.readline()
@@ -780,15 +784,59 @@ def read_file_1line(path='/SH_PATH'):
 
 async def read_file(path='SH_PATH', *args, **kwargs):
   if path[0:1] != '/':
-    path=PARENT_DIR.as_posix()+ "/" + path
+    path = PARENT_DIR / path
+    path = path.as_posix()
   async with aiofiles.open(path, *args, **kwargs) as file:
       return await file.read()
 
 async def write_file(text, path='config.json', *args, **kwargs):
   if path[0:1] != '/':
-    path=PARENT_DIR.as_posix()+ "/" + path
+    path = PARENT_DIR / path
+    path = path.as_posix()
   async with aiofiles.open(path, *args, **kwargs) as file:
       return await file.write(text)
+
+async def my_split(path, is_str=False):
+  if is_str:
+    text = path
+  else:
+    if os.path.exists(path):
+      text = await read_file(path)
+      logger.info(f"{path}: {text[:64]}...")
+    else:
+      warn(f"文件不存在: {path}")
+      return []
+
+  if text:
+    pass
+  else:
+    warn(f"error text: {text=} {path=} {is_str=}")
+    return []
+  if text[-1] == '\n':
+    text = text[:-1]
+  if not text:
+    warn(f"empty file: {path}")
+    return []
+
+  l = text.splitlines()
+  tmp = []
+  for i in l:
+    if i:
+      if i.strip(' ').strip('\t'):
+        tmp.append(i.lstrip(' ').lstrip('\t'))
+  l = tmp
+
+  tmp = []
+  for i in l:
+    if i.startswith("#"):
+      tmp.append(i)
+    elif i.startswith("/* "):
+      tmp.append(i)
+    elif i.startswith("// "):
+      tmp.append(i)
+  for i in tmp:
+    l.remove(i)
+  return l
 
 
 #async def ipfs_add(data, filename=None, url="https://ipfs.infura.io:5001/api/v0/add?cid-version=1", *args, **kwargs):
@@ -962,7 +1010,6 @@ def load_str(msg, no_ast=False):
         except Exception as e:
           err(f"json: error str: {msg} line: {e.__traceback__.tb_lineno}")
           #  raise e
-
 
 
 
@@ -2245,9 +2292,325 @@ async def my_event_handler(event):
 #
 #    await read_res(event)
 
+def get_jid(i, full=False):
+  if full:
+    return f"{i.localpart}@{i.domain}/{i.resource}"
+  else:
+    return f"{i.localpart}@{i.domain}"
+
+async def stop(client=None):
+  if client is None:
+    for i in clients:
+      i.stop()
+    for i in clients:
+      await stop(i)
+    return True
+  jid = get_jid(client.local_jid)
+  if client.running:
+    logger.info(f"开始断开账户: {jid}")
+    client.stop()
+    while True:
+      if client.running:
+        logger.info(f"等待断开账户: {jid}")
+      else:
+        logger.info(f"已断开: {jid}")
+        break
+      await asyncio.sleep(1)
+  else:
+    logger.info(f"已离线: {jid}")
+
+async def regisger_handler(client):
+#  class FooService(aioxmpp.service.Service):
+#    feature = aioxmpp.disco.register_feature(
+#      "some:namespace"
+#    )
+#
+#    #  @aioxmpp.service.depsignal(aioxmpp.DiscoServer, "on_info_changed")
+#    #  def handle_on_info_changed(self):
+#    #    pass
+#
+#    #@aioxmpp.dispatcher.message_handler(aioxmpp.MessageType.CHAT, None)
+#    @aioxmpp.service.depsignal(aioxmpp.MUCClient, "on_message")
+
+
+#  @aioxmpp.dispatcher.message_handler(aioxmpp.MessageType.GROUPCHAT, None)
+#  async def gmsg_in(msg):
+#    info("\n>> group msg: %s\n" % msg)
+
+  #  # obtain an instance of the service (we’ll discuss services later)
+  message_dispatcher = client.summon(
+     #  aioxmpp.dispatcher.SimpleMessageDispatcher
+     dispatcher.SimpleMessageDispatcher
+  )
+  # register a message callback here
+  message_dispatcher.register_callback(
+      aioxmpp.MessageType.CHAT,
+      None,
+      msg_in,
+  )
+  message_dispatcher.register_callback(
+      aioxmpp.MessageType.GROUPCHAT,
+      None,
+      msg_in,
+  )
+  #  message_dispatcher.register_callback(
+  #      aioxmpp.MessageType.NORMAL,
+  #      None,
+  #      msg_in,
+  #  )
+
+  #  MUC = i.summon(aioxmpp.MUCClient)
+  #  MUC.on_message.connect(gmsg)
+  #  i.stream.register_message_callback(aioxmpp.MessageType.GROUPCHAT, None, gmsg_in)
+  #  i.stream.register_message_callback(aioxmpp.MessageType.CHAT, None, msg_in)
+
+#  def gmsg(msg, member, source, **kwargs):
+def msg_in(msg):
+  #  return
+  #  info("\n>>> msg: %s\n" % msg)
+  asyncio.create_task(run_cmd(msg))
+
+
+async def run_cmd(msg):
+  pprint(msg)
+  if msg.type_ == MessageType.NORMAL:
+    info("normal msg")
+  return
+  print(">>>> %s << %s" % (msg.body, msg))
+  src = msg.from_
+  text = msg.body
+
+async def load_config():
+  path = PARENT_DIR / "config.json"
+  config = await read_file(path.as_posix())
+  config = load_str(config)
+
+  info("config\n%s" % json.dumps(config, indent='  '))
+  
+  if config is None:
+    warn("配置文件有问题: config.json")
+    return
+  try:
+    config["sync_groups_all"].append(set(config["public_groups"]))
+    config["sync_groups_all"].append(set(config["bot_groups"]))
+
+    config["public_groups"] = config["public_groups"] + config["rss_groups"] + config["bot_groups"] + config["extra_groups"]
+
+    config["my_groups"] = config["my_groups"] + config["public_groups"] + config["bot_groups"]
+
+    
+    jid = get_my_key("JID")
+    config['ME'] = jid
+
+    for i in config:
+      if type(config[i]) == list:
+        config[i] = set(config[i])
+
+    globals().update(config)
+
+    info("loaded config\n%s" % json.dumps(config, indent='  '))
+    return True
+  except Exception as e:
+    warn("配置文件有问题: config.json {e=}")
+    raise e
+
+
+async def login(client=None):
+  if client is None:
+    client = XB
+  jid = get_jid(client.local_jid)
+  logger.info(f"登录中: {jid}")
+  try:
+    #  steam = await i.connected().__aenter__()
+    steam = await asyncio.wait_for(client.connected().__aenter__(), timeout=30)
+    info(f"登录成功：{jid}")
+    await regisger_handler(client)
+  except TimeoutError as e:
+    warn(f"登录失败(超时)：{jid}, {e=}")
+    await stop(client)
+    return False
+  except Exception as e:
+    warn(f"登录失败：{jid}, {e=}")
+    await stop(client)
+    return False
+
+  return True
+
+
+
+
+ocr_ok = None
+
+def ocr_init():
+  global ocr_ok
+  ocr_ok = []
+  info("开始初始化ocr")
+  #  if 'liqsliu' not in HOME:
+  if os.path.exists("%s/ddddocr" % HOME):
+    sys.path.append("%s/ddddocr" % HOME)
+    import ddddocr
+    ocr = ddddocr.DdddOcr()
+    def f(img):
+      info("正在运行识别程序：ddddocr")
+      return ocr.classification(img)
+    ocr_ok.append(f)
+  if os.path.exists("%s/ddddocr" % HOME):
+    sys.path.append("%s/muggle/muggle-ocr-1.0.3" % HOME)
+    import muggle_ocr
+    sdk = muggle_ocr.SDK(model_type=muggle_ocr.ModelType.Captcha)
+    def f(img):
+      info("正在运行识别程序：muggle_ocr")
+      return sdk.predict(image_bytes=img)
+    ocr_ok.append(f)
+  if ocr_ok is None:
+    info("没找到orc程序，将会无法识别验证码")
+    return False
+
+def run_ocr(img):
+  if ocr_ok is None:
+    if ocr_init() is False:
+      return
+  elif ocr_ok == []:
+    for _ in range(5):
+      info("等待orc初始化")
+      time.sleep(5)
+      if ocr_ok:
+        break
+    if ocr_ok == []:
+      info("等待orc初始化超时")
+      return
+  f = None
+  try:
+    while True:
+      f = random.choice(ocr_ok)
+    #  for f in ocr_ok:
+      s = f(img)
+      if s:
+        info(f" 识别结果: {s}")
+        return s
+      else:
+        info(f" 识别失败: {s}")
+  except Exception as e:
+    warn(f"识别程序出现错误 {f=} {e=}")
+
+
+
+def jbypass(msg):
+  #  asyncio.create_task(_bypass(msg))
+  logger.warn(f"无法进群: {msg}")
+
+
+test_group = 'ipfs@salas.suchat.org'
+
+async def join(jid=test_group, nick=None):
+  if nick is None:
+    nick = 'liqsliu_bot'
+  client = XB
+
+  mc = client.summon(aioxmpp.MUCClient)
+  J = JID.fromstr(jid)
+
+  #  client.stream.register_iq_request_handler(
+  #  try:
+  #    client.stream.unregister_message_callback(
+  #        aioxmpp.MessageType.NORMAL,
+  #        None,
+  #    )
+  #  except KeyError as e:
+  #    pass
+  client.stream.register_message_callback(
+  #  stream.message_handler(client.stream,
+      aioxmpp.MessageType.NORMAL,
+      J,
+  #      #  None,
+      jbypass,
+  )
+  myid = get_jid(client.local_jid)
+  #  client.stream.on_message_received.connect(bypass)
+  try:
+    sum_try = 0
+    while True:
+      try:
+        room, fut = mc.join(J, nick=nick, autorejoin=True)
+        #  if fut is not None and room.muc_joined is False:
+        if room.muc_joined is False:
+          logger.info(f"等待进群: {get_jid(client.local_jid)} {jid}")
+
+          await fut
+          logger.info(f"进群成功: {myid} {jid}")
+
+        return room
+      
+      except TimeoutError as e:
+        #  logger.warning(f"进群超时(废弃): {jid} {muc} {e=}")
+        warn(f"进群超时(废弃){sum_try}: {myid} {jid} {nick} {e=}")
+      except errors.XMPPCancelError as e:
+        # XMPPCancelError("{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')")
+        if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')":
+          info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
+          return False
+        elif e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}conflict ('That nickname is already in use by another occupant')":
+          if '_' in nick:
+            nick = f"{nick}%s" % generand(1)
+          else:
+            nick = f"{nick}_%s" % generand(1)
+          logger.warning(f"群名字冲突{sum_try}: {myid} {jid} {nick} {e=}")
+        else:
+          info(f"进群失败{e.args}: {myid} {jid} {e=}")
+          return False
+      except errors.XMPPAuthError as e:
+        #  pprint(e.args)
+        #  if e.args == ("{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized ('The CAPTCHA verification has failed')", ):
+        if e.args:
+          if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized ('The CAPTCHA verification has failed')":
+            info(f"进群失败, 验证码不正确，准备重试: {myid} {jid} {e=}")
+          else:
+            if e.args[0] == '{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden':
+              info(f"进群失败，被ban了(forbiden): {myid} {jid} {e=}")
+            elif e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden ('You have been banned from this room')":
+              info(f"进群失败，被ban了: {myid} {jid} {e=}")
+            else:
+              info(f"进群失败{e.args}: {myid} {jid} {e=}")
+            return False
+        else:
+          info(f"进群失败(无权限): {myid} {jid} {e=}")
+          return False
+      except Exception as e:
+        info(f"进群失败: {myid} {jid} {e=}")
+        return False
+      sum_try += 1
+      if sum_try > 3:
+        info(f"进群失败(重试次数达到最大值): {myid} {jid}")
+        return False
+      await asyncio.sleep(2)
+
+  finally:
+    client.stream.unregister_message_callback(
+        aioxmpp.MessageType.NORMAL,
+        J,
+    )
+  return False
+
+
+async def xmppbot():
+    global loop, XB
+    loop = asyncio.get_event_loop()
+    jid = get_my_key("JID")
+    password = get_my_key("JID_PASS")
+    #  jid = aioxmpp.JID.fromstr(jid)
+    XB = aioxmpp.PresenceManagedClient(
+        JID.fromstr(jid),
+        aioxmpp.make_security_layer(password)
+    )
+    logger.info(f"已导入新账户: {jid} password: {password[:4]}...")
+    if await load_config():
+      if await login():
+        info(f"join all groups...\n%s" % my_groups)
+        #  await join()
 
 async def amain():
   try:
+    asyncio.create_task(xmppbot(), name="xmppbot")
     # with UB:
     #  loop.run_until_complete(run())
 
@@ -2277,7 +2640,7 @@ async def amain():
     print(f"SH_PATH: {SH_PATH}")
     print(f"DOMAIN: {DOMAIN}")
 
-    await mt_send("gpt start")
+    #  await mt_send("gpt start")
     #  await asyncio.sleep(2)
     #  await mt_send("ping")
     #  await asyncio.sleep(3)
@@ -2285,6 +2648,8 @@ async def amain():
     #  await asyncio.sleep(1)
     #  await mt_send(".gpt", username="")
     asyncio.create_task(mt_read(), name="mt_read")
+
+
 
     await UB.run_until_disconnected()
 
@@ -2307,8 +2672,28 @@ async def amain():
 def main():
   try:
     #  asyncio.run(amain())
+
+    api_id = int(get_my_key("TELEGRAM_API_ID"))
+    api_hash = get_my_key("TELEGRAM_API_HASH")
+
+    from telethon import TelegramClient
+    #  client = TelegramClient('anon', api_id, api_hash)
+    #  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, proxy=("socks5", '172.23.176.1', 6084), loop=loop)
+
+
+    global UB
+    #  global loop
+    #  loop = asyncio.get_event_loop()
+    #  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=loop)
+    UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash)
+
+
+    #  del api_id
+    #  del api_hash
+    #  del bot_token
     with UB:
       UB.loop.run_until_complete(amain())
+
   except KeyboardInterrupt as e:
     logger.info("停止原因：用户手动终止")
     sys.exit(1)
