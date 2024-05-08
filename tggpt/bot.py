@@ -1028,11 +1028,11 @@ async def get_title(url):
 
 
 async def other_init():
-  global allright_task
   res = await asyncio.to_thread(_other_init)
   info(res)
 #  allright.set()
   if res is True:
+    global allright_task
     allright_task -= 1
 
 @exceptions_handler
@@ -1073,7 +1073,6 @@ def _other_init():
 
 from g4f import models, Provider
 from g4f.client import Client as Client_g4f
-
 
 #  def ai_img(prompt, model="gemini", proxy=None):
 async def ai_img(prompt, model="gemini"):
@@ -2979,7 +2978,7 @@ async def xmppbot():
 
 
 
-@exceptions_handler
+#  @exceptions_handler
 async def amain():
   try:
     global loop
