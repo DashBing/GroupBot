@@ -2413,6 +2413,7 @@ async def parse_xmpp_msg(msg):
   if text == "ping":
     #  await send("pong", ME)
     if msg.type_ == MessageType.GROUPCHAT:
+      await sendg("pong")
       await sendg("pong", get_jid(msg.to).split('/', 1)[0])
     elif msg.type_ == MessageType.CHAT:
       reply = msg.make_reply()
@@ -2442,6 +2443,7 @@ async def _send(msg, client=None, room=None):
     res = room.send_message(msg)
   else:
     client = XB
+    res = client.send(msg)
     #  return False
   #  if isawaitable(res):
   if asyncio.iscoroutine(res):
