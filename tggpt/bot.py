@@ -2458,20 +2458,21 @@ async def send(text, jid=None, client=None):
     if jid in my_groups:
       msg = aioxmpp.Message(
           to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
-          type_=aioxmpp.MessageType.GROUPCHAT,
+          type_=MessageType.GROUPCHAT,
       )
     else:
       msg = aioxmpp.Message(
           to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
-          type_=aioxmpp.MessageType.CHAT,
+          type_=MessageType.CHAT,
       )
     # None is for "default language"
     msg.body[None] = text
 
-  if msg.type_ == aioxmpp.MessageType.GROUPCHAT:
+  if msg.type_ == MessageType.GROUPCHAT:
     if '/' in msg.to:
       msg.to = msg.to.split('/', 1)[0]
-  info(f"send: {msg=}")
+      info(f"fixed: {type(msg)} {msg=}")
+  info(f"send: {type(msg)} {msg=}")
   if client is None:
     client = XB
   #  return await client.send(msg)
