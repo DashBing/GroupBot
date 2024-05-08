@@ -88,13 +88,14 @@ def get_my_key(key, path=f"{HOME}/vps/private_keys.txt"):
   if os.path.isfile(path2):
     path = path2
   with open(path) as f:
-    line = f.readline()
-    while line:
-      if len(line.split(' ', 1)) == 2 and line.split(' ', 1)[0] == key:
-        f.close()
-        return line.split(' ', 1)[1].rstrip('\n')
-        break
+    while True:
       line = f.readline()
+      if line:
+        if ' ' in line and line.split(' ', 1)[0] == key:
+          #  f.close()
+          return line.split(' ', 1)[1].rstrip('\n')
+      else:
+        return
   LOGGER.error("wtf", exc_info=True)
   #  return None;
   exit(1)
