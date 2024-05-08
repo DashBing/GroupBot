@@ -2322,11 +2322,10 @@ def get_jid(i, full=False):
 
 async def stop(client=None):
   if client is None:
-    for i in clients:
-      i.stop()
-    for i in clients:
-      await stop(i)
-    return True
+    if 'XB' in globals():
+      client = XB
+    else:
+      return
   jid = get_jid(client.local_jid)
   if client.running:
     logger.info(f"开始断开账户: {jid}")
@@ -2729,6 +2728,7 @@ async def amain():
   #    raise e
   finally:
     logger.info("正在收尾...")
+    loop.run_until_complete(stop())
     #  loop.run_until_complete(loop.shutdown_asyncgens())
     #  loop.close()
     logger.info("正在退出...")
