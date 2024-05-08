@@ -2461,7 +2461,8 @@ async def login(client=None):
     vc = await vs.get_vcard(None)
     if vc.get_photo_mime_type() is None:
     #  if True:
-      fn = "photo.png"
+      fn = WORK_DIR / "photo.png"
+      fn = fn.as_posix()
       #  fn = 'tx.jpg'
       data = await read_file(fn, 'rb')
       #  vc.set_photo_data('image/jpeg', data)
