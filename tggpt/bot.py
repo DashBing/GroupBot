@@ -2425,7 +2425,7 @@ async def load_config():
     config['ME'] = jid
 
     for i in config:
-      if type(config[i]) == list:
+      if type(config[i]) is list:
         config[i] = set(config[i])
 
     globals().update(config)
