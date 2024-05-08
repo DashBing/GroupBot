@@ -1170,8 +1170,8 @@ async def load_config():
 
     
 
-    jid = get_my_key("JID")
-    config['ME'] = jid
+    #  jid = get_my_key("JID")
+    #  config['ME'] = jid
 
     info("loaded config\n%s" % json.dumps(config, indent='  '))
 
@@ -2705,12 +2705,12 @@ async def join(jid=test_group, nick=None):
 
 
 async def xmppbot():
-    global XB
-    jid = get_my_key("JID")
+    global XB, myjid
+    myjid = get_my_key("JID")
     password = get_my_key("JID_PASS")
     #  jid = aioxmpp.JID.fromstr(jid)
     XB = aioxmpp.PresenceManagedClient(
-        JID.fromstr(jid),
+        JID.fromstr(myjid),
         aioxmpp.make_security_layer(password)
     )
     logger.info(f"已导入新账户: {jid} password: {password[:4]}...")
