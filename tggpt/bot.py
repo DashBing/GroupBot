@@ -206,6 +206,51 @@ def generand(N=4, M=None, *, no_uppercase=False):
   return ''.join(random.choice(l) for x in range(N))
 
 
+async def load_config():
+  path = PARENT_DIR / "config.json"
+  config = await read_file(path.as_posix())
+  config = load_str(config)
+
+  info("config\n%s" % json.dumps(config, indent='  '))
+  
+  if config is None:
+    warn("配置文件有问题: config.json")
+    return
+  try:
+    config["sync_groups_all"].append(config["public_groups"])
+    config["sync_groups_all"].append(config["bot_groups"])
+
+    config["public_groups"] = config["public_groups"] + config["rss_groups"] + config["bot_groups"] + config["extra_groups"]
+
+    config["my_groups"] = config["my_groups"] + config["public_groups"]
+
+    
+
+    jid = get_my_key("JID")
+    config['ME'] = jid
+
+    info("loaded config\n%s" % json.dumps(config, indent='  '))
+
+    for i in config:
+      if type(config[i]) is list:
+        if config[i]:
+          if (config[i][0]) is str:
+            config[i] = set(config[i])
+          elif (config[i][0]) is list:
+            tmp = []
+            for j in config[i]:
+              tmp.append(set(j))
+            config[i] = tmp
+
+
+    globals().update(config)
+
+    return True
+  except Exception as e:
+    warn(f"配置文件有问题: config.json {e=}")
+    raise e
+
+
 #  api_id = int(get_my_key("TELEGRAM_API_ID"))
 #  BING_U = get_my_key("BING_U")
 G1PSID = get_my_key('BARD_COOKIE_KEY')
@@ -2365,49 +2410,78 @@ async def parse_xmpp_msg(msg):
   src = msg.from_
   text = msg.body
 
-async def load_config():
-  path = PARENT_DIR / "config.json"
-  config = await read_file(path.as_posix())
-  config = load_str(config)
-
-  info("config\n%s" % json.dumps(config, indent='  '))
-  
-  if config is None:
-    warn("配置文件有问题: config.json")
-    return
-  try:
-    config["sync_groups_all"].append(config["public_groups"])
-    config["sync_groups_all"].append(config["bot_groups"])
-
-    config["public_groups"] = config["public_groups"] + config["rss_groups"] + config["bot_groups"] + config["extra_groups"]
-
-    config["my_groups"] = config["my_groups"] + config["public_groups"]
-
-    
-
-    jid = get_my_key("JID")
-    config['ME'] = jid
-
-    info("loaded config\n%s" % json.dumps(config, indent='  '))
-
-    for i in config:
-      if type(config[i]) is list:
-        if config[i]:
-          if (config[i][0]) is str:
-            config[i] = set(config[i])
-          elif (config[i][0]) is list:
-            tmp = []
-            for j in config[i]:
-              tmp.append(set(j))
-            config[i] = tmp
 
 
-    globals().update(config)
+async def _send(msg, client=None, room=None):
+  if client is not None:
+    res = client.send(msg)
+  elif room:
+    res = room.send_message(msg)
+  else:
+    return False
+  #  if isawaitable(res):
+  if asyncio.iscoroutine(res):
+    #  dbg(f"client send: {res=}")
+    res = await res
+    if res is None:
+      dbg(f"send msg: finally: {res=}")
+      return True
+    else:
+      info(f"send msg: finally: {res=}")
+      return False
+  else:
+    warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
+  return False
 
-    return True
-  except Exception as e:
-    warn(f"配置文件有问题: config.json {e=}")
-    raise e
+async def send(text='hi', jid=ME, client=None):
+  recipient_jid = JID.fromstr(jid)
+  msg = aioxmpp.Message(
+      to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
+      type_=aioxmpp.MessageType.CHAT,
+  )
+  # None is for "default language"
+  msg.body[None] = text
+  if client is None:
+    client = XB
+  #  return await client.send(msg)
+  return await _send(msg, client)
+
+async def sendg(text='hi', jid=test_group, client=None, room=None):
+  recipient_jid = JID.fromstr(jid)
+  msg = aioxmpp.Message(
+      to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
+      type_=aioxmpp.MessageType.GROUPCHAT,
+  )
+  # None is for "default language"
+  msg.body[None] = text
+
+  if room is not None:
+    return await _send(msg, room=room)
+
+  if client is None:
+    client = XB
+  #  return await client.send(msg)
+  if client is not None:
+    return await _send(msg, client)
+    #  res = room.send_message(msg)
+    #  # https://docs.zombofant.net/aioxmpp/devel/api/public/muc.html?highlight=room#aioxmpp.muc.Room.send_message
+    #  if asyncio.iscoroutine(res):
+    #    res = await res
+    #    if res is None:
+    #      dbg(f"room send: finally: {res=}")
+    #      return True
+    #    else:
+    #      info(f"room send: finally: {res=}")
+    #      return False
+    #  else:
+    #    info(f"room send res is not coroutine: {res=}")
+    #    return False
+  else:
+    warn(f"need client or room")
+    return False
+
+
+
 
 
 async def login(client=None):
