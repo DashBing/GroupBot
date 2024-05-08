@@ -2704,6 +2704,7 @@ async def join(jid=test_group, nick=None):
   return False
 
 
+@exceptions_handler
 async def xmppbot():
     global XB, myjid
     myjid = get_my_key("JID")
@@ -2713,7 +2714,7 @@ async def xmppbot():
         JID.fromstr(myjid),
         aioxmpp.make_security_layer(password)
     )
-    logger.info(f"已导入新账户: {jid} password: {password[:4]}...")
+    logger.info(f"已导入新账户: {myjid} password: {password[:4]}...")
     if await load_config():
       if await login():
         info(f"join all groups...\n%s" % my_groups)
