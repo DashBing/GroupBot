@@ -2592,9 +2592,10 @@ async def __send(text, jid=None, client=None):
 
   if msg.type_ == MessageType.GROUPCHAT:
     if msg.to.resource is not None:
-      msg.to.resource = None
+      #  msg.to.resource = None
     #  if '/' in get_jid(msg.to, True):
-    #    msg.to = JID.fromstr(get_jid(msg.to))
+      #  msg.to = JID.fromstr(get_jid(msg.to))
+      msg.to = msg.to.replace(resource=None)
       info(f"已修正群地址错误: {msg=}")
 
   #  info(f"send: {type(msg)} {msg=}")
