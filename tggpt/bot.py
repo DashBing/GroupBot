@@ -2786,6 +2786,7 @@ async def amain():
     global loop
     loop = asyncio.get_event_loop()
     asyncio.create_task(xmppbot(), name="xmppbot")
+
     # with UB:
     #  loop.run_until_complete(run())
 
@@ -2801,53 +2802,6 @@ async def amain():
 
 
     global MY_NAME, MY_ID, UB
-    await UB.start()
-    me = await UB.get_me()
-    #  print(me.stringify())
-    MY_ID = me.id
-    MY_NAME = me.username
-    print(f"{MY_NAME}: {MY_ID}")
-
-    UB.parse_mode = 'md'
-
-    global SH_PATH, DOMAIN
-    SH_PATH = (await read_file()).rstrip('\n')
-    DOMAIN = (await read_file("DOMAIN")).rstrip('\n')
-    print(f"SH_PATH: {SH_PATH}")
-    print(f"DOMAIN: {DOMAIN}")
-
-    #  await mt_send("gpt start")
-    #  await asyncio.sleep(2)
-    #  await mt_send("ping")
-    #  await asyncio.sleep(3)
-    #  await mt_send("ping", username="")
-    #  await asyncio.sleep(1)
-    #  await mt_send(".gpt", username="")
-    asyncio.create_task(mt_read(), name="mt_read")
-
-
-    await UB.run_until_disconnected()
-
-    logger.info("主程序正常结束")
-  #  except KeyboardInterrupt as e:
-  #    logger.info("I: 手动终止")
-  #    #  raise e
-  #  except SystemExit as e:
-  #    raise e
-  #  except Exception as e:
-  #    logger.error("error: stop...", exc_info=True, stack_info=True)
-  #    raise e
-  finally:
-    logger.info("正在收尾...")
-    await stop()
-    #  loop.run_until_complete(stop())
-    #  loop.run_until_complete(loop.shutdown_asyncgens())
-    #  loop.close()
-    logger.info("正在退出...")
-
-
-def main():
-  try:
 
 
     api_id = int(get_my_key("TELEGRAM_API_ID"))
@@ -2867,6 +2821,7 @@ def main():
     del api_hash
     #  del bot_token
 
+
     @UB.on(events.NewMessage(incoming=True))
     @UB.on(events.MessageEdited(incoming=True))
     async def _(event):
@@ -2878,6 +2833,56 @@ def main():
     @UB.on(events.NewMessage(outgoing=True))
     async def _(event):
       asyncio.create_task(parse_out_msg(event))
+    #  await UB.start()
+    with UB:
+      me = await UB.get_me()
+      #  print(me.stringify())
+      MY_ID = me.id
+      MY_NAME = me.username
+      print(f"{MY_NAME}: {MY_ID}")
+
+      UB.parse_mode = 'md'
+
+      global SH_PATH, DOMAIN
+      SH_PATH = (await read_file()).rstrip('\n')
+      DOMAIN = (await read_file("DOMAIN")).rstrip('\n')
+      print(f"SH_PATH: {SH_PATH}")
+      print(f"DOMAIN: {DOMAIN}")
+
+      #  await mt_send("gpt start")
+      #  await asyncio.sleep(2)
+      #  await mt_send("ping")
+      #  await asyncio.sleep(3)
+      #  await mt_send("ping", username="")
+      #  await asyncio.sleep(1)
+      #  await mt_send(".gpt", username="")
+      asyncio.create_task(mt_read(), name="mt_read")
+
+
+      await UB.run_until_disconnected()
+
+    logger.info("主程序正常结束")
+  #  except KeyboardInterrupt as e:
+  #    logger.info("I: 手动终止")
+  #    #  raise e
+  #  except SystemExit as e:
+  #    raise e
+  #  except Exception as e:
+  #    logger.error("error: stop...", exc_info=True, stack_info=True)
+  #    raise e
+  finally:
+    logger.info("正在收尾...")
+    await stop()
+    #  loop.run_until_complete(stop())
+    #  loop.run_until_complete(loop.shutdown_asyncgens())
+    #  loop.close()
+    logger.info("正在退出...")
+
+
+
+
+def main():
+  try:
 
 
 
