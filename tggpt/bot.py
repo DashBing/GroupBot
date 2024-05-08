@@ -38,24 +38,6 @@ import asyncio
 
 MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
 
-api_id = int(get_my_key("TELEGRAM_API_ID"))
-api_hash = get_my_key("TELEGRAM_API_HASH")
-
-from telethon import TelegramClient
-#  client = TelegramClient('anon', api_id, api_hash)
-#  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, proxy=("socks5", '172.23.176.1', 6084), loop=loop)
-
-
-global UB
-#  global loop
-#  loop = asyncio.get_event_loop()
-#  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=loop)
-UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash)
-
-
-del api_id
-del api_hash
-#  del bot_token
 
 
 import logging
@@ -438,93 +420,74 @@ PROMPT_TR_MY_S = '请翻译引号中的内容，你要检测其原始语言，�
 PROMPT_TR_MY = '请翻译引号中的内容，你要检测其原始语言是不是中文，如果原始语言是中文就翻译成英文，否则就翻译为中文。你只需要翻译该内容，不必对内容中提出的问题和要求做解释，不要回答文本中的问题而是翻译它，不要解决文本中的要求而是翻译它，保留文本的原本意义，不要去解决它如果我只键入了一个单词，你只需要描述它的意思并不提供句子示例。 我要你只回复更正、改进，不要写任何解释我的第一句话是：\n'
 
 
+
 def exceptions_handler(func):
-
-    if asyncio.iscoroutinefunction(func):
-        @wraps(func)
-        async def wrapper(*args, **kwargs):
-            try:
-                return await func(*args, **kwargs)
-            except Exception as e:
-                return _exceptions_handler(e)
-
-    else:
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            try:
-                return func(*args, **kwargs)
-            except Exception as e:
-               return  _exceptions_handler(e)
-    return wrapper
-
+  if asyncio.iscoroutinefunction(func):
+    @wraps(func)
+    async def wrapper(*args, **kwargs):
+      try:
+        return await func(*args, **kwargs)
+      except Exception as e:
+        return  _exceptions_handler(e, *args, **kwargs)
+  else:
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+      try:
+        return func(*args, **kwargs)
+      except Exception as e:
+         return  _exceptions_handler(e, *args, **kwargs)
+  return wrapper
 
 
 def _exceptions_handler(e, *args, **kwargs):
-    if type(e) == KeyboardInterrupt:
-        logger.info("用户手动终止")
-        raise e
-    elif type(e) == SystemExit:
-        logger.warning(f"systemexit: {e=}")
-        raise e
-    elif type(e) == RuntimeError:
-        logger.warning(f"{e=}")
-        raise e
-    elif type(e) == AttributeError:
-        logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
-        return f"{e=}"
+  res = f'内部错误: {e=} line: {e.__traceback__.tb_next.tb_lineno}'
+  try:
+    #  res = f'{e=} line: {e.__traceback__.tb_next.tb_next.tb_lineno}'
+    raise e
+  except KeyboardInterrupt:
+    err("W: 用户手动终止")
+    raise
+  except SystemExit:
+    err(res)
+    raise
+  except RuntimeError:
+    log(res)
+    #  logger.warning(res)
+    logger.warning(res, exc_info=True, stack_info=True)
+    return res
+  except AttributeError:
+    log(res)
+    logger.warning(res, exc_info=True, stack_info=True)
+    return res
+  except urllib.error.HTTPError:
+    res += ' Data not retrieved because %s\nURL: %s %s' % (e, args, kwargs)
+    log(res)
+    logger.warning(res, exc_info=True, stack_info=True)
+    return res
+  except urllib.error.URLErrorrror:
+    if isinstance(e.reason, socket.timeout):
+      res += ' socket timed out: urllib.error.URLErrorrror'
     else:
-        # logger.error(f"error: {exc=}", exc_info=True, stack_info=True)
-        logger.warning(f"E: {repr(e)}", exc_info=True, stack_info=True)
-        return f"{e=}"
+      res += ' some other error happened'
+    log(res)
+    logger.warning(res, exc_info=True, stack_info=True)
+    return res
+  except socket.timeout:
+    res += ' socket timed out'
+    log(res)
+    logger.warning(res, exc_info=True, stack_info=True)
+    return res
+  except UnicodeDecodeError:
+    log(res)
+    logger.warning(res, exc_info=True, stack_info=True)
+    return res
+  except Exception:
+    #  logger.error(f"W: {repr(e)} line: {e.__traceback__.tb_lineno}", exc_info=True, stack_info=True)
+    #  print(f"W: {repr(e)} line: {e.__traceback__.tb_next.tb_next.tb_lineno}")
+    log(res)
+    logger.warning(res, exc_info=True, stack_info=True)
+    return res
 
-
-def http_exceptions_handler(func):
-
-    @wraps(func)
-    async def wrapper(*args, **kwargs):
-        try:
-            return await func(*args, **kwargs)
-        except KeyboardInterrupt:
-            raise
-        except urllib.error.HTTPError as error:
-            logging.error('Data not retrieved because %s\nURL: %s %s', error, args, kwargs)
-            info = "E: {}".format(sys.exc_info())
-            logger.error(info)
-            return info
-        except urllib.error.URLError as error:
-            if isinstance(error.reason, socket.timeout):
-#                logging.error('socket timed out - URL %s', url)
-                logging.error('socket timed out')
-                info = "E: {}".format(sys.exc_info())
-    #            await NB.send_message(MY_ID, info)
-                logger.error(info)
-            else:
-                logging.error('some other error happened')
-                info = "E: {}".format(sys.exc_info())
-                logger.error(info)
-        #  except urllib.error.URLError:
-        #      logger.warning("can not send")
-        #      info = "E: {}".format(sys.exc_info())
-        #      logger.error(info)
-            return info
-        except socket.timeout:
-            info = "E: {}".format(sys.exc_info())
-            logger.error(info)
-            return info
-        except UnicodeDecodeError as e:
-            info = "E: {}".format(sys.exc_info())
-            logger.error(info)
-            return info
-        except Exception as e:
-            info = "E: {}".format(sys.exc_info())
-            info = f"http exception: {e=}"
-            logger.error(info, exc_info=True)
-            @exceptions_handler
-            async def _():
-                raise e
-            return await _()
-
-    return wrapper
 
 # https://www.utf8-chartable.de/unicode-utf8-table.pl
 chr_list = ["\u200b"]
@@ -726,7 +689,6 @@ pb_list = {
         "fars": ["https://fars.ee/?u=1", "c"]
         }
 #async def pastebin(data="test", filename=None, url="https://fars.ee/?u=1", fieldname="c", extra={}, **kwargs):
-#  @http_exceptions_handler
 @exceptions_handler
 async def pastebin(data="test", filename=None, url=pb_list["fars"][0], fieldname="c", extra={}, ce=None, use=None, **kwargs):
     if not data:
@@ -1204,7 +1166,7 @@ async def mt_read():
 
       async with session.get(url, timeout=0, read_bufsize=2**20*4, chunked=True) as resp:
         print("N: mt api init ok")
-        await mt_send("N: tggpt: mt read: init ok")
+        #  await mt_send("N: tggpt: mt read: init ok")
         line = b""
         async for data, end_of_http_chunk in resp.content.iter_chunks():
           line += data
@@ -1743,7 +1705,7 @@ async def clear_history():
 
 
 
-@http_exceptions_handler
+@exceptions_handler
 async def http(url, method="GET", return_headers=False, **kwargs):
     await init_aiohttp_session()
 
@@ -1950,41 +1912,6 @@ async def download_media(msg, gateway='test', path=f"{DOWNLOAD_PATH}/", in_memor
       warn(f"下载失败: {path}")
       await mt_send(f"下载失败: {path}", gateway=gateway)
 
-@UB.on(events.NewMessage(outgoing=True))
-@exceptions_handler
-async def just_for_me(event):
-  if event.chat_id == MY_ID:
-    msg = event.message
-    text = msg.text
-    if not text:
-      return
-    if text == 'id':
-      await UB.send_message('me', "id @name https://t.me/name")
-      return
-    if text.startswith("id "):
-      url = text.split(' ')[1]
-      if url.startswith("https://t.me/"):
-        username = url.split('/')[3]
-      elif url.startswith("@"):
-        username = url[1:]
-      else:
-        await UB.send_message('me', "error url")
-        return
-
-      e = await UB.get_entity(username)
-      if e:
-        await UB.send_message('me', f"{e.stringify()}")
-        await UB.send_message('me', "peer id: %s" % await UB.get_peer_id(e))
-      else:
-        await UB.send_message('me', "not fount entity")
-        e = await UB.get_input_entity(username)
-        if e:
-          await UB.send_message('me', f"{e.stringify()}")
-          await UB.send_message('me', "peer id: %s" % await UB.get_peer_id(e))
-        else:
-          await UB.send_message('me', "not fount input entity")
-
-
 
 
 
@@ -2058,6 +1985,7 @@ async def print_msg(event):
 music_bot_state = {}
 
 
+@exceptions_handler
 async def parse_msg(event):
   msg = event.message
   
@@ -2074,86 +2002,86 @@ async def parse_msg(event):
       pass
     else:
       return
-    try:
-      qid=msg.reply_to_msg_id
-      if qid not in gateways:
-        logger.error(f"E: not found gateway for {qid=}, {gateways=} {msg.text=}")
-        return
-      text = msg.text
-      if not text:
-        print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
-        return
-      
-      if text == '等待下载中...':
-        #   message='等待下载中...',
-        info(text)
-        return
-      if text == '正在获取歌曲信息...':
-        #         message='正在获取歌曲信息...',
-        info(text)
-        return
-      if text == '搜索中...':
-        #         message='搜索中...',
-        info(text)
-        return
-      if text == '正在发送中...':
-        # message='大熊猫\n专辑: 火火兔儿歌\nflac 14.87MB\n命中缓存, 正在发送中...',
-        info(text)
-        return
-      if '中...' in text:
-        #         message='搜索中...',
-        warn(f"已忽略疑似临时消息: {text}", False)
-        return
+    #  try:
+    qid=msg.reply_to_msg_id
+    if qid not in gateways:
+      logger.error(f"E: not found gateway for {qid=}, {gateways=} {msg.text=}")
+      return
+    text = msg.text
+    if not text:
+      print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
+      return
+    
+    if text == '等待下载中...':
+      #   message='等待下载中...',
+      info(text)
+      return
+    if text == '正在获取歌曲信息...':
+      #         message='正在获取歌曲信息...',
+      info(text)
+      return
+    if text == '搜索中...':
+      #         message='搜索中...',
+      info(text)
+      return
+    if text == '正在发送中...':
+      # message='大熊猫\n专辑: 火火兔儿歌\nflac 14.87MB\n命中缓存, 正在发送中...',
+      info(text)
+      return
+    if '中...' in text:
+      #         message='搜索中...',
+      warn(f"已忽略疑似临时消息: {text}", False)
+      return
 
-      gateway = gateways[qid]
-      mtmsgs = mtmsgsg[gateway]
-      #  state = music_bot_state[gateway]
-      #  if music_bot_state[gateway] == 0:
-      #    gateways.pop(qid)
-      #    mtmsgs.pop(qid)
-      if music_bot_state[gateway] == 1:
-        info(msg.buttons)
-        info(f"找到了几个音乐:{len(msg.buttons)} {msg.text}")
+    gateway = gateways[qid]
+    mtmsgs = mtmsgsg[gateway]
+    #  state = music_bot_state[gateway]
+    #  if music_bot_state[gateway] == 0:
+    #    gateways.pop(qid)
+    #    mtmsgs.pop(qid)
+    if music_bot_state[gateway] == 1:
+      info(msg.buttons)
+      info(f"找到了几个音乐:{len(msg.buttons)} {msg.text}")
 
-        music_bot_state[gateway] += 1
-        mtmsgs[qid].append(msg.buttons)
+      music_bot_state[gateway] += 1
+      mtmsgs[qid].append(msg.buttons)
 
-        res = f"{mtmsgs[qid][0]['username']}搜索结果(回复序号)\n{text}"
-        await mt_send_for_long_text(res, gateway)
+      res = f"{mtmsgs[qid][0]['username']}搜索结果(回复序号)\n{text}"
+      await mt_send_for_long_text(res, gateway)
 
-        gateways[msg.id] = gateway
-        mtmsgs[msg.id] = mtmsgs[qid]
-        #  music_bot_state[gateway] = msg.id
-        gateways.pop(qid)
-        mtmsgs.pop(qid)
+      gateways[msg.id] = gateway
+      mtmsgs[msg.id] = mtmsgs[qid]
+      #  music_bot_state[gateway] = msg.id
+      gateways.pop(qid)
+      mtmsgs.pop(qid)
 
-      elif music_bot_state[gateway] == 2:
-        warn(f"不应该出现: music bot: {gateways=} {music_bot_state[gateway]}\nmsg:\n{msg.stringify()}")
-        gateways.pop(qid)
-        mtmsgs.pop(qid)
-        return
-      elif msg.file and music_bot_state[gateway] == 3:
-        path = await download_media(msg, gateway)
-        if path is not None:
-          #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
-        #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
-          path = "https://%s/%s" % (DOMAIN, (parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
-        res = f"{mtmsgs[qid][0]['username']}{path}\n{text}"
-        if msg.buttons:
-          for i in get_buttons(msg.buttons):
-            #  if isinstance(i, KeyboardButtonUrl):
-            if isinstance(i.button, KeyboardButtonUrl):
-              res += f"\n原始链接: {i.url}"
-        await mt_send_for_long_text(res, gateway)
-        if music_bot_state[gateway] == 3:
-          music_bot_state[gateway] -= 1
-      else:
-        warn(f"未知状态，已忽略: music bot: {gateways=} {music_bot_state[gateway]}\nmsg:\n{msg.stringify()}")
-        return
+    elif music_bot_state[gateway] == 2:
+      warn(f"不应该出现: music bot: {gateways=} {music_bot_state[gateway]}\nmsg:\n{msg.stringify()}")
+      gateways.pop(qid)
+      mtmsgs.pop(qid)
+      return
+    elif msg.file and music_bot_state[gateway] == 3:
+      path = await download_media(msg, gateway)
+      if path is not None:
+        #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
+      #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
+        path = "https://%s/%s" % (DOMAIN, (parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
+      res = f"{mtmsgs[qid][0]['username']}{path}\n{text}"
+      if msg.buttons:
+        for i in get_buttons(msg.buttons):
+          #  if isinstance(i, KeyboardButtonUrl):
+          if isinstance(i.button, KeyboardButtonUrl):
+            res += f"\n原始链接: {i.url}"
+      await mt_send_for_long_text(res, gateway)
+      if music_bot_state[gateway] == 3:
+        music_bot_state[gateway] -= 1
+    else:
+      warn(f"未知状态，已忽略: music bot: {gateways=} {music_bot_state[gateway]}\nmsg:\n{msg.stringify()}")
+      return
 
 
-    except Exception as e:
-      err(f"fixme: music bot: {gateways=} {e=} line: {e.__traceback__.tb_lineno}")
+    #  except Exception as e:
+    #    err(f"fixme: music bot: {gateways=} {e=} line: {e.__traceback__.tb_lineno}")
 
     return
 
@@ -2176,36 +2104,35 @@ async def parse_msg(event):
     if qid not in gateways:
       logger.error(f"E: not found gateway for {qid=}, {gateways=} {msg.text=}")
       return
-    try:
-      #  await queues[gateways[qid]].put( (id(msg), qid, msg) )
-      #  await queues[gateways[qid]].put( (msg.date, qid, msg) )
-      #  await queues[gateways[qid]].put( (msg.id, "test") )
-      #  await queues[gateways[qid]].put( (id(msg), qid, msg) )
-      if msg.file:
-        return
-      text = msg.text
-      if not text:
-        print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
-        return
-      print(f"tg msg: {text}: {msg.id=} {event.id=} {qid=} {gateways=} {mtmsgsg=}")
-      l = text.splitlines()
-      if l[-1] in loadings:
-        return
-      elif len(l) > 1 and f"{l[-2]}\n{l[-1]}" in loadings:
-        return
-      else:
-        #  await mt_send(f"{mtmsgs[qid][0]['username']}[思考中...]", gateway=gateway)
-        gateway = gateways[qid]
-        mtmsgs = mtmsgsg[gateway]
-        res = f"{mtmsgs[qid][0]['username']}{text}"
-        await mt_send_for_long_text(res, gateway)
-        #  await mt_send(res, gateway=gateway, username="")
-        #  await mt_send(res, gateway=gateway)
-        gateways.pop(qid)
-        mtmsgs.pop(qid)
+    #  await queues[gateways[qid]].put( (id(msg), qid, msg) )
+    #  await queues[gateways[qid]].put( (msg.date, qid, msg) )
+    #  await queues[gateways[qid]].put( (msg.id, "test") )
+    #  await queues[gateways[qid]].put( (id(msg), qid, msg) )
+    if msg.file:
+      return
+    text = msg.text
+    if not text:
+      print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
+      return
+    print(f"tg msg: {text}: {msg.id=} {event.id=} {qid=} {gateways=} {mtmsgsg=}")
+    l = text.splitlines()
+    if l[-1] in loadings:
+      return
+    elif len(l) > 1 and f"{l[-2]}\n{l[-1]}" in loadings:
+      return
+    else:
+      #  await mt_send(f"{mtmsgs[qid][0]['username']}[思考中...]", gateway=gateway)
+      gateway = gateways[qid]
+      mtmsgs = mtmsgsg[gateway]
+      res = f"{mtmsgs[qid][0]['username']}{text}"
+      await mt_send_for_long_text(res, gateway)
+      #  await mt_send(res, gateway=gateway, username="")
+      #  await mt_send(res, gateway=gateway)
+      gateways.pop(qid)
+      mtmsgs.pop(qid)
 
-    except Exception as e:
-      err(f"fixme: {qid=} {gateways=} {queues=} {e=} line: {e.__traceback__.tb_lineno}")
+    #  except Exception as e:
+    #    err(f"fixme: {qid=} {gateways=} {queues=} {e=} line: {e.__traceback__.tb_lineno}")
       #  raise e
     return
     await queues[gateways[qid]].put( (msg.id, msg, qid) )
@@ -2232,6 +2159,39 @@ async def parse_msg(event):
     print("W: skip: got a msg without reply: is_reply: %s\nmsg: %s" % (msg.is_reply, msg.stringify()))
     return
 
+
+@exceptions_handler
+async def parse_out_msg(event):
+  if event.chat_id == MY_ID:
+    msg = event.message
+    text = msg.text
+    if not text:
+      return
+    if text == 'id':
+      await UB.send_message('me', "id @name https://t.me/name")
+      return
+    if text.startswith("id "):
+      url = text.split(' ')[1]
+      if url.startswith("https://t.me/"):
+        username = url.split('/')[3]
+      elif url.startswith("@"):
+        username = url[1:]
+      else:
+        await UB.send_message('me', "error url")
+        return
+
+      e = await UB.get_entity(username)
+      if e:
+        await UB.send_message('me', f"{e.stringify()}")
+        await UB.send_message('me', "peer id: %s" % await UB.get_peer_id(e))
+      else:
+        await UB.send_message('me', "not fount entity")
+        e = await UB.get_input_entity(username)
+        if e:
+          await UB.send_message('me', f"{e.stringify()}")
+          await UB.send_message('me', "peer id: %s" % await UB.get_peer_id(e))
+        else:
+          await UB.send_message('me', "not fount input entity")
 
 
 
@@ -2286,14 +2246,6 @@ async def mt_send_for_long_text(text, gateway='test'):
     #  os.system(f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
     return await asyncio.to_thread(os.system, f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
 
-@UB.on(events.NewMessage(incoming=True))
-@UB.on(events.MessageEdited(incoming=True))
-@exceptions_handler
-async def read_res(event):
-  if not no_reset.is_set():
-    warn("waiting: no reset")
-    return
-  asyncio.create_task(parse_msg(event))
 
 
 async def my_event_handler(event):
@@ -2387,12 +2339,13 @@ async def regisger_handler(client):
 
 #  def gmsg(msg, member, source, **kwargs):
 def msg_in(msg):
+  asyncio.create_task(parse_xmpp_msg(msg))
   #  return
   #  info("\n>>> msg: %s\n" % msg)
-  asyncio.create_task(run_cmd(msg))
 
 
-async def run_cmd(msg):
+@exceptions_handler
+async def parse_xmpp_msg(msg):
   if msg.type_ == MessageType.NORMAL:
     info("normal msg")
   print("%s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
@@ -2688,6 +2641,7 @@ async def amain():
       handler.addFilter(f)
       logger.info(f"added filter to: {handler}")
 
+
     global MY_NAME, MY_ID, UB
     #  await UB.start()
     me = await UB.get_me()
@@ -2714,7 +2668,6 @@ async def amain():
     asyncio.create_task(mt_read(), name="mt_read")
 
 
-
     await UB.run_until_disconnected()
 
     logger.info("主程序正常结束")
@@ -2734,9 +2687,43 @@ async def amain():
     logger.info("正在退出...")
 
 
+
 def main():
   try:
     #  asyncio.run(amain())
+
+
+    api_id = int(get_my_key("TELEGRAM_API_ID"))
+    api_hash = get_my_key("TELEGRAM_API_HASH")
+
+    from telethon import TelegramClient
+    #  client = TelegramClient('anon', api_id, api_hash)
+    #  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, proxy=("socks5", '172.23.176.1', 6084), loop=loop)
+
+    global UB
+    #  global loop
+    #  loop = asyncio.get_event_loop()
+    #  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=loop)
+    UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash)
+
+    del api_id
+    del api_hash
+    #  del bot_token
+
+    @UB.on(events.NewMessage(incoming=True))
+    @UB.on(events.MessageEdited(incoming=True))
+    async def _(event):
+      if not no_reset.is_set():
+        warn("waiting: no reset")
+        return
+      asyncio.create_task(parse_msg(event))
+
+    @UB.on(events.NewMessage(outgoing=True))
+    async def _(event):
+      asyncio.create_task(parse_out_msg(event))
+
+
+
 
     with UB:
       UB.loop.run_until_complete(amain())
