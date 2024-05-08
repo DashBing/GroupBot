@@ -2340,10 +2340,10 @@ async def stop(client=None):
     while True:
       if client.running:
         logger.info(f"等待断开账户: {jid}")
+        await asyncio.sleep(0.5)
       else:
         logger.info(f"已断开: {jid}")
         break
-      await asyncio.sleep(1)
   else:
     logger.info(f"已离线: {jid}")
 
