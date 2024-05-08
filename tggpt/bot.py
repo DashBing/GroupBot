@@ -2416,12 +2416,13 @@ async def parse_xmpp_msg(msg):
       await sendg("pong1", get_jid(msg.to).split('/', 1)[0])
     reply = msg.make_reply()
     reply.body[None] = "pong2"
-    msg = reply
+
     info(f"reply: {reply=}")
-    if msg.type_ == MessageType.GROUPCHAT:
-      if '/' in get_jid(msg.to):
-        msg.to = JID.fromstr(get_jid(msg.to).split('/', 1)[0])
-        info(f"fixed: {type(msg)} {msg=}")
+    if reply.type_ == MessageType.GROUPCHAT:
+      if '/' in get_jid(reply.to):
+        reply.to = JID.fromstr(get_jid(reply.to).split('/', 1)[0])
+        info(f"fixed: {type(reply)} {reply=}")
+    info(f"reply2: {reply=}")
     await send(reply)
 
   #  pprint(msg)
