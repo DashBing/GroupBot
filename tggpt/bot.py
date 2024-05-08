@@ -2404,6 +2404,15 @@ async def parse_xmpp_msg(msg):
   if msg.type_ == MessageType.NORMAL:
     info("normal msg")
   print("%s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
+  text = None
+  for i in msg.body:
+    text = msg.body[i]
+    break
+  if text is None:
+    return
+  if text == "ping":
+    await send("pong")
+
   #  pprint(msg)
   return
   print(">>>> %s << %s" % (msg.body, msg))
