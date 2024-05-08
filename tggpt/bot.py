@@ -2955,10 +2955,10 @@ async def xmppbot():
   logger.info(f"已导入新账户: {myjid} password: {password[:4]}...")
   if await load_config():
     global mc
-    mc = client.summon(aioxmpp.MUCClient)
     if await login():
       info(f"join all groups...\n%s" % my_groups)
       #  await join()
+      mc = client.summon(aioxmpp.MUCClient)
       ms = my_groups
       while True:
         tmp = []
