@@ -1103,7 +1103,7 @@ async def ai(prompt, provider=Provider.You, model=models.default, proxy=None):
 
 
 
-import gradio_client.Client
+from gradio_client import Client as Client_hg
 
 HF_TOKEN = get_my_key('HF_TOKEN')
 
@@ -1113,7 +1113,7 @@ async def hg(prompt, provider=Provider.You, model=models.default, proxy=None):
   try:
     global hgclient
     if hgclient is None:
-      hgclient = gradio_client.Client(api_key=HF_TOKEN)
+      hgclient = Client_hg(api_key=HF_TOKEN)
     #  response = client.chat.completions.create(
     response = await hgclient.chat.completions.create(
       model=model,
@@ -1136,7 +1136,7 @@ async def qw(text):
   try:
     global qw_client
     if qw_client is None:
-      qw_client = gradio_client.Client("https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/")
+      qw_client = Client_hg("https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/")
     #  result = qw_client.predict(
     result = await asyncio.to_thread(qw_client.predict,
         #  sys.argv[1],	# str  in 'Input' Textbox component
@@ -1158,7 +1158,7 @@ async def qw2(text):
   try:
     global qw2_client
     if qw2_client is None:
-      qw2_client = gradio_client.Client("Qwen/Qwen1.5-110B-Chat-demo")
+      qw2_client = Client_hg("Qwen/Qwen1.5-110B-Chat-demo")
     #  result = qw2_client.predict(
     result = await asyncio.to_thread(qw2_client.predict,
         #  query=sys.argv[1],
