@@ -2417,13 +2417,7 @@ async def parse_xmpp_msg(msg):
       #  await sendg("pong1")
       #  await sendg("pong2", get_jid(msg.from_))
       reply = msg.make_reply()
-      reply.body[None] = "pong3"
-      info(f"reply: {reply=}")
-      if reply.type_ == MessageType.GROUPCHAT:
-        if '/' in get_jid(reply.to, True):
-          reply.to = JID.fromstr(get_jid(reply.to))
-          info(f"fixed: {type(reply)} {reply=}")
-      info(f"reply2: {reply=}")
+      reply.body[None] = "pong"
       await send(reply)
     elif msg.type_ == MessageType.CHAT:
       reply = msg.make_reply()
@@ -2466,13 +2460,13 @@ async def _send(msg, client=None, room=None):
 async def send(text, jid=None, client=None):
   #  if type(text) is str:
   if isinstance(text, aioxmpp.Message):
-    info(f"send1: {jid=} {text=}")
+    #  info(f"send1: {jid=} {text=}")
     msg = text
   elif isinstance(text, aioxmpp.stanza.Message):
-    info(f"send2: {jid=} {text=}")
+    #  info(f"send2: {jid=} {text=}")
     msg = text
   else:
-    info(f"send: {jid=} {text=}")
+    #  info(f"send: {jid=} {text=}")
     if jid is None:
       jid = ME
     recipient_jid = JID.fromstr(jid)
@@ -2489,7 +2483,12 @@ async def send(text, jid=None, client=None):
     # None is for "default language"
     msg.body[None] = text
 
-  info(f"send: {type(msg)} {msg=}")
+  if msg.type_ == MessageType.GROUPCHAT:
+    if '/' in get_jid(msg.to, True):
+      msg.to = JID.fromstr(get_jid(msg.to))
+      info(f"已修正群地址错误: {msg=}")
+
+  #  info(f"send: {type(msg)} {msg=}")
   if client is None:
     client = XB
   #  return await client.send(msg)
