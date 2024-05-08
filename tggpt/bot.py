@@ -2655,9 +2655,10 @@ def jbypass(msg):
 
 test_group = 'ipfs@salas.suchat.org'
 
+@exceptions_handler
 async def join(jid=test_group, nick=None):
   if nick is None:
-    #  if "wtf" in botjid:
+    #  if "wtf" in myjid:
     #    nick = 'bot'
     #  else:
     #    nick = 'liqsliu_bot'
