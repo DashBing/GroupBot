@@ -1051,13 +1051,13 @@ def _other_init():
     "__Secure-1PSID": G1PSID
   })
 
-  from g4f import models, Provider
-  from g4f.client import Client
 
 
   global g4fclient
-  g4fclient = Client()
+  g4fclient = Client_g4f()
 
+
+  global HF_TOKEN
   from gradio_client import Client, HF_TOKEN
 
   HF_TOKEN = get_my_key('HF_TOKEN')
@@ -1068,6 +1068,11 @@ def _other_init():
 
   return True
 
+
+
+
+from g4f import models, Provider
+from g4f.client import Client as Client_g4f
 
 
 #  def ai_img(prompt, model="gemini", proxy=None):
