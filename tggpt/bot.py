@@ -2708,7 +2708,7 @@ async def join(jid=test_group, nick=None):
         if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')":
           info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
           return False
-        elif e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}conflict ('That nickname is already in use by another occupant')":
+        elif e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}conflict ('That nickname is already in use by another occupant')" or e.args[0] == '{urn:ietf:params:xml:ns:xmpp-stanzas}conflict' or '{urn:ietf:params:xml:ns:xmpp-stanzas}conflict' in e.args[0]:
           if '_' in nick:
             nick = f"{nick}%s" % generand(1)
           else:

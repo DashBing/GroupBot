@@ -447,3 +447,17 @@ msg: Message(
         quick_reply_shortcut_id=None
 )
 
+
+
+
+
+
+MessageType.GROUPCHAT bebat@muc.pimux.de/liqsliu wtfipfs@pimux.de/ywyhB7k0EY3z {}
+2024-05-08 18:49:35,539 [INFO] tggpt.bot [bot.info:163]: 进群失败('{urn:ietf:params:xml:ns:xmpp-stanzas}conflict',): wtfipfs@pimux.de nagonuqo@chat.yax.im e=XMPPCancelError('{urn:ietf:params:xml:ns:xmpp-stanzas}conflict')
+2024-05-08 18:49:35,541 [INFO] tggpt.bot [bot.join:2696]: 等待进群: wtfipfs@pimux.de wtfipfs@salas.suchat.org
+MessageType.GROUPCHAT bebat@muc.pimux.de/bot wtfipfs@pimux.de/ywyhB7k0EY3z {<aioxmpp.structs.LanguageTag.fromstr('en')>: 'pong'}
+2024-05-08 18:49:35,859 [INFO] tggpt.bot [bot.info:163]: 进群失败("{urn:ietf:params:xml:ns:xmpp-stanzas}conflict ('That nickname is registered by another person')",): wtfipfs@pimux.de wtfipfs@salas.suchat.org e=XMPPCancelError("{urn:ietf:params:xml:ns:xmpp-stanzas}conflict ('That nickname is registered by another person')")
+2024-05-08 18:49:35,860 [INFO] tggpt.bot [bot.join:2696]: 等待进群: wtfipfs@pimux.de ipfs@salas.suchat.org
+2024-05-08 18:49:36,021 [WARNING] aioxmpp.StanzaStream [stream._process_incoming_iq:1012]: unhandleable IQ request: from=JID(localpart='wtfipfs', domain='conversations.im', resource='profanity.kSh4'), type_=<IQType.GET: 'get'>, payload=<aioxmpp.pubsub.xso.Request object at 0x7f5128625f00>
+2024-05-08 18:49:36,181 [INFO] tggpt.bot [bot.info:163]: 进群失败("{urn:ietf:params:xml:ns:xmpp-stanzas}conflict ('That nickname is registered by another person')",): wtfipfs@pimux.de ipfs@salas.suchat.org e=XMPPCancelError("{urn:ietf:params:xml:ns:xmpp-stanzas}conflict ('That nickname is registered by another person')")
+
