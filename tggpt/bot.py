@@ -2590,10 +2590,10 @@ async def __send(text, jid=None, client=None):
     # None is for "default language"
     msg.body[None] = text
 
-  #  if msg.type_ == MessageType.GROUPCHAT:
-  #    if '/' in get_jid(msg.to, True):
-  #      msg.to = JID.fromstr(get_jid(msg.to))
-  #      info(f"已修正群地址错误: {msg=}")
+  if msg.type_ == MessageType.GROUPCHAT:
+    if '/' in get_jid(msg.to, True):
+      msg.to = JID.fromstr(get_jid(msg.to))
+      info(f"已修正群地址错误: {msg=}")
 
   #  info(f"send: {type(msg)} {msg=}")
   if client is None:
