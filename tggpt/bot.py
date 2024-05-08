@@ -2447,11 +2447,15 @@ async def _send(msg, client=None, room=None):
   return False
 
 async def send(text, jid=None, client=None):
-  info(f"send: {jid=} {text=}")
   #  if type(text) is str:
   if isinstance(text, aioxmpp.Message):
+    info(f"send1: {jid=} {text=}")
+    msg = text
+  elif isinstance(text, aioxmpp.stanza.Message):
+    info(f"send2: {jid=} {text=}")
     msg = text
   else:
+    info(f"send: {jid=} {text=}")
     if jid is None:
       jid = ME
     recipient_jid = JID.fromstr(jid)
