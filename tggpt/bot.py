@@ -2774,7 +2774,8 @@ async def xmppbot():
               continue
             tmp.append(i)
           if tmp:
-            info("无法进入的群组: {tmp}")
+            info(f"无法进入的群组: {tmp}")
+            await mt_send_for_long_text(f"无法进入的群组: {tmp}")
             ms = tmp
             await asyncio.sleep(5)
           else:
