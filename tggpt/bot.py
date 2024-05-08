@@ -2705,7 +2705,7 @@ async def join(jid=test_group, nick=None):
         warn(f"进群超时(废弃){sum_try}: {myid} {jid} {nick} {e=}")
       except errors.XMPPCancelError as e:
         # XMPPCancelError("{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')")
-        if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')":
+        if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')" or e.args[0].startswith("{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found"):
           info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
           return False
         elif e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}conflict ('That nickname is already in use by another occupant')" or e.args[0] == '{urn:ietf:params:xml:ns:xmpp-stanzas}conflict' or '{urn:ietf:params:xml:ns:xmpp-stanzas}conflict' in e.args[0]:
@@ -2721,12 +2721,12 @@ async def join(jid=test_group, nick=None):
         #  pprint(e.args)
         #  if e.args == ("{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized ('The CAPTCHA verification has failed')", ):
         if e.args:
-          if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized ('The CAPTCHA verification has failed')":
+          if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized ('The CAPTCHA verification has failed')" or e.args[0].startswith("{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized"):
             info(f"进群失败, 验证码不正确，准备重试: {myid} {jid} {e=}")
           else:
             if e.args[0] == '{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden':
               info(f"进群失败，被ban了(forbiden): {myid} {jid} {e=}")
-            elif e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden ('You have been banned from this room')":
+            elif e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden ('You have been banned from this room')" or e.args[0].startswith("{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden"):
               info(f"进群失败，被ban了: {myid} {jid} {e=}")
             else:
               info(f"进群失败{e.args}: {myid} {jid} {e=}")
