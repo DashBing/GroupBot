@@ -2657,7 +2657,10 @@ test_group = 'ipfs@salas.suchat.org'
 
 async def join(jid=test_group, nick=None):
   if nick is None:
-    nick = 'liqsliu_bot'
+    if "wtf" in botjid:
+      nick = 'bot'
+    else:
+      nick = 'liqsliu_bot'
   client = XB
 
   mc = client.summon(aioxmpp.MUCClient)
