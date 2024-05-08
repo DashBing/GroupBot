@@ -2394,9 +2394,10 @@ def msg_in(msg):
 
 
 async def run_cmd(msg):
-  pprint(msg)
   if msg.type_ == MessageType.NORMAL:
     info("normal msg")
+  print("%s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
+  #  pprint(msg)
   return
   print(">>>> %s << %s" % (msg.body, msg))
   src = msg.from_
@@ -2485,7 +2486,6 @@ async def login(client=None):
         logger.warning(f"头像设置失败：{jid}")
     else:
       logger.info(f"无需设置头像：{jid}")
-
 
 
     await regisger_handler(client)
