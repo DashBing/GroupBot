@@ -2413,9 +2413,9 @@ async def parse_xmpp_msg(msg):
   if text == "ping":
     #  await send("pong", ME)
     if msg.type_ == MessageType.GROUPCHAT:
-      pprint(msg.from_)
-      await sendg("pong1")
-      await sendg("pong2", get_jid(msg.from_))
+      #  pprint(msg.from_)
+      #  await sendg("pong1")
+      #  await sendg("pong2", get_jid(msg.from_))
       reply = msg.make_reply()
       reply.body[None] = "pong3"
       info(f"reply: {reply=}")
