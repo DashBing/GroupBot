@@ -1103,7 +1103,7 @@ async def ai(prompt, provider=Provider.You, model=models.default, proxy=None):
 
 
 
-from gradio_client import Client, HF_TOKEN
+import gradio_client.Client
 
 HF_TOKEN = get_my_key('HF_TOKEN')
 
@@ -1113,7 +1113,7 @@ async def hg(prompt, provider=Provider.You, model=models.default, proxy=None):
   try:
     global hgclient
     if hgclient is None:
-      hgclient = Client(api_key=HF_TOKEN)
+      hgclient = gradio_client.Client(api_key=HF_TOKEN)
     #  response = client.chat.completions.create(
     response = await hgclient.chat.completions.create(
       model=model,
