@@ -2766,8 +2766,19 @@ async def xmppbot():
       if await login():
         info(f"join all groups...\n%s" % my_groups)
         #  await join()
-        for i in my_groups:
-          await join(i)
+        ms = my_groups
+        while True:
+          tmp = []
+          for i in ms:
+            if await join(i):
+              continue
+            tmp.append(i)
+          if tmp:
+            info("无法进入的群组: {tmp}")
+            ms = tmp
+            await asyncio.sleep(5)
+          else:
+            break
 
 async def amain():
   try:
