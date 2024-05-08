@@ -2443,6 +2443,7 @@ async def _send(msg, client=None, room=None):
   return False
 
 async def send(text, jid, client=None):
+  info(f"send: {jid} {text}")
   recipient_jid = JID.fromstr(jid)
   msg = aioxmpp.Message(
       to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
