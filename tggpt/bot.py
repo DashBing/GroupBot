@@ -205,7 +205,7 @@ def generand(N=4, M=None, *, no_uppercase=False):
 
 msg_max_length=500
 
-def split_text(text):
+def split_long_text(text):
   texts = []
   if len(text.encode()) > msg_max_length:
     ls = text.splitlines()
@@ -2496,7 +2496,6 @@ def msg_in(msg):
   #  return
   #  info("\n>>> msg: %s\n" % msg)
 
-
 @exceptions_handler
 async def parse_xmpp_msg(msg):
   if msg.type_ == MessageType.NORMAL:
@@ -2531,7 +2530,6 @@ async def parse_xmpp_msg(msg):
   text = msg.body
 
 
-
 async def _send(msg, client=None, room=None):
   if client is not None:
     res = client.send(msg)
@@ -2558,7 +2556,7 @@ async def _send(msg, client=None, room=None):
 
 async def send(text, jid=None, client=None):
   if type(text) is str:
-    for i in split_text(text):
+    for i in split_long_text(text):
       if await __send(i, jid, client) is not True:
         return False
     return True
@@ -2592,10 +2590,10 @@ async def __send(text, jid=None, client=None):
     # None is for "default language"
     msg.body[None] = text
 
-  if msg.type_ == MessageType.GROUPCHAT:
-    if '/' in get_jid(msg.to, True):
-      msg.to = JID.fromstr(get_jid(msg.to))
-      info(f"已修正群地址错误: {msg=}")
+  #  if msg.type_ == MessageType.GROUPCHAT:
+  #    if '/' in get_jid(msg.to, True):
+  #      msg.to = JID.fromstr(get_jid(msg.to))
+  #      info(f"已修正群地址错误: {msg=}")
 
   #  info(f"send: {type(msg)} {msg=}")
   if client is None:
