@@ -2387,7 +2387,7 @@ async def mt_send_for_long_text(text, gateway="test", *args, **kwargs):
     need_delete = True
 
   async with queue_lock:
-    for i in split_text(text):
+    for i in split_long_text(text):
       #  if await send(i, *args, **kwargs) is not True:
       if await mt_send(i, gateway=gateway, *args, **kwargs) is not True:
         break
