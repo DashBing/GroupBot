@@ -2414,6 +2414,12 @@ async def parse_xmpp_msg(msg):
     #  await send("pong", ME)
     reply = msg.make_reply()
     reply.body[None] = "pong"
+    msg = reply
+    info(f"reply: {reply=}")
+    if msg.type_ == MessageType.GROUPCHAT:
+      if '/' in msg.to:
+        msg.to = msg.to.split('/', 1)[0]
+        info(f"fixed: {type(msg)} {msg=}")
     await send(reply)
 
   #  pprint(msg)
@@ -2472,10 +2478,6 @@ async def send(text, jid=None, client=None):
     # None is for "default language"
     msg.body[None] = text
 
-  if msg.type_ == MessageType.GROUPCHAT:
-    if '/' in msg.to:
-      msg.to = msg.to.split('/', 1)[0]
-      info(f"fixed: {type(msg)} {msg=}")
   info(f"send: {type(msg)} {msg=}")
   if client is None:
     client = XB
