@@ -1136,7 +1136,7 @@ async def qw(text):
   try:
     global qw_client
     if qw_client is None:
-      qw_client = Client("https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/")
+      qw_client = gradio_client.Client("https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/")
     #  result = qw_client.predict(
     result = await asyncio.to_thread(qw_client.predict,
         #  sys.argv[1],	# str  in 'Input' Textbox component
@@ -1158,7 +1158,7 @@ async def qw2(text):
   try:
     global qw2_client
     if qw2_client is None:
-      qw2_client = Client("Qwen/Qwen1.5-110B-Chat-demo")
+      qw2_client = gradio_client.Client("Qwen/Qwen1.5-110B-Chat-demo")
     #  result = qw2_client.predict(
     result = await asyncio.to_thread(qw2_client.predict,
         #  query=sys.argv[1],
