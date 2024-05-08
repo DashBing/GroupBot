@@ -6,7 +6,7 @@
 #  from . import *  # noqa: F403
 from . import debug, WORK_DIR, PARENT_DIR, LOG_FILE, get_my_key, HOME, LOGGER
 #  from tg.telegram import DOWNLOAD_PATH
-from telethon.tl.types import KeyboardButton, KeyboardButtonUrl, PeerUser, PeerChannel, PeerChat
+from telethon.tl.types import KeyboardButton, KeyboardButtonUrl, PeerUser, PeerChannel, PeerChat, User, Channel, Chat
 
 #  HOME = os.environ.get("HOME")
 
@@ -1956,7 +1956,7 @@ async def print_msg(event):
       res += " [%s %s]" % (peer.first_name, peer.last_name)
   else:
     if event.is_group:
-      res += ">"
+      res += "+"
     else:
       #  if event.is_channel:
       res += "#"
@@ -1969,7 +1969,11 @@ async def print_msg(event):
       #  peer = await get_entity(event.from_id)
       peer = await event.get_sender()
       if peer is not None:
-        res += " [%s %s]" % (peer.first_name, peer.last_name)
+        if isinstance(peer, User):
+          res += " [%s %s]" % (peer.first_name, peer.last_name)
+        else:
+        #  if isinstance(peer, Channel):
+          res += " [# %s]" % peer.title
   if msg.text:
     res += ": %s" % msg.text.splitlines()[0][:64]
   else:
