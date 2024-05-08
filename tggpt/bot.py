@@ -37,8 +37,6 @@ class NoParsingFilter(logging.Filter):
 import asyncio
 
 
-MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
-
 
 
 import logging
@@ -166,7 +164,6 @@ def info(text):
 def dbg(text):
   logger.debug(text)
 
-
 def log(text):
   asyncio.create_task(mt_send_for_long_text(text))
   logger.warning(text)
@@ -206,10 +203,59 @@ def generand(N=4, M=None, *, no_uppercase=False):
     N = random.randint(N, M)
   return ''.join(random.choice(l) for x in range(N))
 
+msg_max_length=500
+
+def split_text(text):
+  texts = []
+  if len(text.encode()) > msg_max_length:
+    ls = text.splitlines()
+    tmp = None
+    last = None
+    for l in ls:
+      if tmp:
+        if len((tmp+l).encode()) > msg_max_length:
+          #  break
+          texts.append(tmp)
+          tmp = l
+        else:
+          tmp += '\n'+l
+      else:
+        if last:
+          if len((last+l).encode()) > msg_max_length:
+            texts.append(last)
+            last = None
+          else:
+            texts.append(last+'\n'+l)
+            last = None
+            continue
+        if len(l.encode()) > msg_max_length:
+          tmp = l[:1300]
+          while True:
+            if len(tmp.encode()) > msg_max_length:
+              tmp = tmp[:-1]
+            else:
+              texts.append(tmp)
+              l = l[len(tmp):]
+              if len(l.encode()) > msg_max_length:
+                tmp = l[:1300]
+              else:
+                last = l
+                break
+        else:
+          tmp = l
+
+    if tmp:
+      texts.append(tmp)
+  else:
+    texts = [text]
+  return texts
+
 
 #  api_id = int(get_my_key("TELEGRAM_API_ID"))
 
 
+
+MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
 
 
 MT_API = "127.0.0.1:4246"
@@ -624,7 +670,7 @@ def raise_error(error: str):
     raise SystemExit(error)
 
 #  def get_sh_path(path='SH_PATH'):
-def read_file_1line(path='/SH_PATH'):
+def read_file_1line(path='SH_PATH'):
   # f = open(os.getcwd() + "/SH_PATH")
   # p = Path(__package__).absolute()
   # p = p.parent
@@ -1921,9 +1967,9 @@ async def mt_send(text="null", username="C bot", gateway="test", qt=None):
         "username": "{}".format(username),
         "gateway": "{}".format(gateway)
     }
-    async with queue_lock:
-      res = await http(url, method="POST", json=data)
+    res = await http(url, method="POST", json=data)
     logger.info("res of mt_send: {}".format(res))
+    return True
     return res
 
 
@@ -2320,14 +2366,36 @@ async def parse_out_msg(event):
 #      await queues[gateways[qid]].put( (msg.id, msg, qid) )
 #      return
 
-async def mt_send_for_long_text(text, gateway='test'):
-  fn='gpt_res'
-  async with queue_lock:
-    async with aiofiles.open(f"{SH_PATH}/{fn}", mode='w') as file:
-      await file.write(text)
-    #  os.system(f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
-    return await asyncio.to_thread(os.system, f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
 
+#  async def mt_send_for_long_text(text, gateway='test'):
+#    fn='gpt_res'
+#    async with queue_lock:
+#      async with aiofiles.open(f"{SH_PATH}/{fn}", mode='w') as file:
+#        await file.write(text)
+#      #  os.system(f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
+#      return await asyncio.to_thread(os.system, f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
+
+async def mt_send_for_long_text(text, gateway="test", *args, **kwargs):
+  need_delete = False
+  if os.path.exists(f"{SH_PATH}"):
+    fn = f"{SH_PATH}/SM_LOCK_{gateway}"
+    while os.path.exists(fn):
+      info(f"busy: {gateway}")
+      await asyncio.sleep(2)
+
+    await write_file(text, fn, "w")
+    need_delete = True
+
+  async with queue_lock:
+    for i in split_text(text):
+      #  if await send(i, *args, **kwargs) is not True:
+      if await mt_send(i, gateway=gateway, *args, **kwargs) is not True:
+        break
+
+  if need_delete:
+    os.remove(fn)
+
+  return True
 
 
 async def my_event_handler(event):
@@ -2487,7 +2555,17 @@ async def _send(msg, client=None, room=None):
     warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
   return False
 
+
 async def send(text, jid=None, client=None):
+  if type(text) is str:
+    for i in split_text(text):
+      if await __send(i, jid, client) is not True:
+        return False
+    return True
+  else:
+    return await __send(text, jid, client)
+
+async def __send(text, jid=None, client=None):
   #  if type(text) is str:
   if isinstance(text, aioxmpp.Message):
     #  info(f"send1: {jid=} {text=}")
@@ -2496,6 +2574,7 @@ async def send(text, jid=None, client=None):
     #  info(f"send2: {jid=} {text=}")
     msg = text
   else:
+
     #  info(f"send: {jid=} {text=}")
     if jid is None:
       jid = ME
