@@ -2491,16 +2491,16 @@ async def regisger_handler(client):
   #  i.stream.register_message_callback(aioxmpp.MessageType.GROUPCHAT, None, gmsg_in)
   #  i.stream.register_message_callback(aioxmpp.MessageType.CHAT, None, msg_in)
 
-  #  presence_dispatcher = client.summon(
-  #     #  aioxmpp.dispatcher.SimpleMessageDispatcher
-  #     dispatcher.SimplePresenceDispatcher
-  #  )
-  #  presence_dispatcher.register_callback(
-  #      None,
-  #      None,
-  #      msg_in,
-  #  )
-  #
+  presence_dispatcher = client.summon(
+     #  aioxmpp.dispatcher.SimpleMessageDispatcher
+     dispatcher.SimplePresenceDispatcher
+  )
+  presence_dispatcher.register_callback(
+      None,
+      None,
+      msg_in,
+  )
+
 #  def gmsg(msg, member, source, **kwargs):
 def msg_in(msg):
   if not allright.is_set():
