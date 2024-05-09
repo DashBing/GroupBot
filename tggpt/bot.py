@@ -424,7 +424,8 @@ def _exceptions_handler(e, *args, **kwargs):
   res = f"已忽略{res}"
   #  log(res)
   #  logger.warning(res)
-  asyncio.create_task(mt_send(res))
+  #  asyncio.create_task(mt_send(res))
+  asyncio.create_task(send(res, ME))
   #  logger.warning(res)
   logger.warning(res, exc_info=True, stack_info=True)
   return res
@@ -2877,6 +2878,7 @@ def clear_msg_jid(msg):
     last_outmsg.pop(j)
 
 
+@exceptions_handler
 def msg_out(msg):
   if not allright.is_set():
     info("skip msg: allright is not ok")
@@ -2890,7 +2892,7 @@ def msg_out(msg):
     else:
       info(f"未更新msgid: {last_outmsg[jid][0]=} != {msg=}")
   else:
-    last_outmsg[jid][1] = msg.id_
+    info(f"忽略: {msg=}")
   return msg
 
 
