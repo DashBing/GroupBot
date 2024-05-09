@@ -2643,13 +2643,13 @@ async def _send(msg, client=None, room=None, gpm=False):
   if gpm is False:
     if client is not None:
       # https://docs.zombofant.net/aioxmpp/devel/api/public/node.html?highlight=client#aioxmpp.Client.send
-      res = client.send(msg, cb=msg_out)
+      res = client.send(msg)
     elif room:
       # https://docs.zombofant.net/aioxmpp/devel/api/public/muc.html?highlight=room#aioxmpp.muc.Room.send_message
       res = room.send_message(msg)
     else:
       client = XB
-      res = client.send(msg, cb=msg_out)
+      res = client.send(msg)
   else:
     # https://docs.zombofant.net/aioxmpp/devel/api/public/im.html#aioxmpp.im.conversation.AbstractConversation.send_message
     if client is None:
