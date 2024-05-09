@@ -1103,13 +1103,11 @@ set_cookies(".google.com", {
 from g4f import models, Provider
 from g4f.client import Client as Client_g4f
 
-g4fclient = None
-
 #  def ai_img(prompt, model="gemini", proxy=None):
 async def ai_img(prompt, model="gemini"):
   try:
     global g4fclient
-    if g4fclient is None:
+    if "g4fclient" not in globals():
       g4fclient = Client_g4f()
     #  response = client.images.generate(
       #  response = await client.images.generate(
@@ -1128,7 +1126,7 @@ async def ai_img(prompt, model="gemini"):
 async def ai(prompt, provider=Provider.You, model=models.default, proxy=None):
   try:
     global g4fclient
-    if g4fclient is None:
+    if "g4fclient" not in globals():
       g4fclient = Client_g4f()
     #  response = client.chat.completions.create(
       #  response = await client.chat.completions.create(
@@ -1152,12 +1150,11 @@ from gradio_client import Client as Client_hg
 
 HF_TOKEN = get_my_key('HF_TOKEN')
 
-hgclient = None
 
 async def hg(prompt, provider=Provider.You, model=models.default, proxy=None):
   try:
     global hgclient
-    if hgclient is None:
+    if "hgclient" not in globals():
       hgclient = Client_hg(api_key=HF_TOKEN)
     #  response = client.chat.completions.create(
     response = await hgclient.chat.completions.create(
@@ -1174,13 +1171,10 @@ async def hg(prompt, provider=Provider.You, model=models.default, proxy=None):
   return image_url
 
 
-qw_client = None
-qw2_client = None
-
 async def qw(text):
   try:
     global qw_client
-    if qw_client is None:
+    if "qw_client" not in globals():
       qw_client = Client_hg("https://qwen-qwen1-5-72b-chat.hf.space/--replicas/3kh1x/")
     #  result = qw_client.predict(
     result = await asyncio.to_thread(qw_client.predict,
@@ -1202,7 +1196,7 @@ async def qw(text):
 async def qw2(text):
   try:
     global qw2_client
-    if qw2_client is None:
+    if "qw2_client" not in globals():
       qw2_client = Client_hg("Qwen/Qwen1.5-110B-Chat-demo")
     #  result = qw2_client.predict(
     result = await asyncio.to_thread(qw2_client.predict,
@@ -1219,8 +1213,6 @@ async def qw2(text):
   except Exception as e:
     res = f"{e=}"
   return res
-
-
 
 
 async def load_config():
@@ -2513,6 +2505,7 @@ async def parse_xmpp_msg(msg):
       #  pprint(msg.from_)
       #  await sendg("pong1")
       #  await sendg("pong2", get_jid(msg.from_))
+      await sendg("pong2", get_jid(msg.from_, True))
       reply = msg.make_reply()
       reply.body[None] = "pong"
       await send(reply)
@@ -2531,13 +2524,24 @@ async def parse_xmpp_msg(msg):
 
 
 async def _send(msg, client=None, room=None):
-  if client is not None:
-    res = client.send(msg)
-  elif room:
-    res = room.send_message(msg)
+  if msg.to.is_bare:
+    if client is not None:
+      # https://docs.zombofant.net/aioxmpp/devel/api/public/node.html?highlight=client#aioxmpp.Client.send
+      res = client.send(msg)
+    elif room:
+      # https://docs.zombofant.net/aioxmpp/devel/api/public/muc.html?highlight=room#aioxmpp.muc.Room.send_message
+      res = room.send_message(msg)
+    else:
+      client = XB
+      res = client.send(msg)
   else:
-    client = XB
-    res = client.send(msg)
+    # https://docs.zombofant.net/aioxmpp/devel/api/public/im.html#aioxmpp.im.conversation.AbstractConversation.send_message
+    if client is None:
+      client = XB
+    p2ps = client.summon(im.p2p.Service)
+    c = p2ps.get_conversation(msg.to)
+    #  stanza = c.send_message(msg)
+    res = c.send_message(msg)
     #  return False
   #  if isawaitable(res):
   if asyncio.iscoroutine(res):
@@ -2546,6 +2550,10 @@ async def _send(msg, client=None, room=None):
     if res is None:
       dbg(f"send msg: finally: {res=}")
       return True
+    #  elif hasattr(res, "stanza") and res.stanza and res.stanza.error is None:
+    #    # 群内私聊
+    #    info(f"send gpm msg: finally: {res=}")
+    #    return True
     else:
       info(f"send msg: finally: {res=}")
       return False
@@ -2568,38 +2576,36 @@ async def __send(text, jid=None, client=None):
   if isinstance(text, aioxmpp.Message):
     #  info(f"send1: {jid=} {text=}")
     msg = text
-  elif isinstance(text, aioxmpp.stanza.Message):
-    #  info(f"send2: {jid=} {text=}")
-    msg = text
+    #  if msg.type_ == MessageType.GROUPCHAT:
+    #    if msg.to.resource is not None:
+    if not msg.to.is_bare:
+        #  msg.to.resource = None
+      #  if '/' in get_jid(msg.to, True):
+        #  msg.to = JID.fromstr(get_jid(msg.to))
+        #  msg.to = msg.to.replace(resource=None)
+      orig = msg.to
+      msg.to = msg.to.bare()
+      info(f"已修正地址错误: {orig} -> {msg=}")
+  #  elif isinstance(text, aioxmpp.stanza.Message):
+  #    #  info(f"send2: {jid=} {text=}")
+  #    msg = text
   else:
-
     #  info(f"send: {jid=} {text=}")
     if jid is None:
       jid = ME
-    recipient_jid = JID.fromstr(jid)
     if jid in my_groups:
       msg = aioxmpp.Message(
-          to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
+          to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
           type_=MessageType.GROUPCHAT,
       )
     else:
       msg = aioxmpp.Message(
-          to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
+          to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
           type_=MessageType.CHAT,
       )
     # None is for "default language"
     msg.body[None] = text
 
-  #  if msg.type_ == MessageType.GROUPCHAT:
-  #    if msg.to.resource is not None:
-  if not msg.to.is_bare:
-      #  msg.to.resource = None
-    #  if '/' in get_jid(msg.to, True):
-      #  msg.to = JID.fromstr(get_jid(msg.to))
-      #  msg.to = msg.to.replace(resource=None)
-    orig = msg.to
-    msg.to = msg.to.bare()
-    info(f"已修正地址错误: {orig} -> {msg=}")
 
   #  info(f"send: {type(msg)} {msg=}")
   if client is None:
