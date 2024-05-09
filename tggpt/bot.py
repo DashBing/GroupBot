@@ -2146,7 +2146,7 @@ async def parse_msg(event):
       #         message='搜索中...',
       info(text)
       return
-    if text == '正在发送中...':
+    if text.endswith('正在发送中...'):
       # message='大熊猫\n专辑: 火火兔儿歌\nflac 14.87MB\n命中缓存, 正在发送中...',
       info(text)
       return
