@@ -2870,7 +2870,8 @@ async def regisger_handler(client):
   #  pprint(client.stream.service_outbound_message_filter)
   #  return
   #  client.stream.service_outbound_messages_filter = stream.AppFilter()
-  client.stream.service_outbound_message_filter.register(msg_out, 1)
+  #  client.stream.service_outbound_message_filter.register(msg_out, 1)
+  client.stream.app_outbound_message_filter.register(msg_out, 1)
 
 
 
@@ -2892,7 +2893,7 @@ def clear_msg_jid(msg):
   j = get_msg_jid(msg)
   if j in last_outmsg:
     last_outmsg.pop(j)
-    info(f"已清楚msg记录: {j}")
+    info(f"已清除msg记录: {j}")
   else:
     info(f"没找到msg记录: {j}")
 
@@ -2968,7 +2969,7 @@ async def parse_xmpp_msg(msg):
     info(f"skip msg type: {msg.type_} {msg}")
     return
 
-  clear_msg_jid(msg)
+  #  clear_msg_jid(msg)
 
   text = None
   for i in msg.body:
