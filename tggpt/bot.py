@@ -3058,7 +3058,7 @@ rooms = {}
 auto_input = False
 
 @exceptions_handler
-async def join(jid=None, nick=None):
+async def join(jid=None, nick=None, client=None):
   if jid is None:
     jid = test_group
   if nick is None:
@@ -3067,7 +3067,8 @@ async def join(jid=None, nick=None):
     #  else:
     #    nick = 'liqsliu_bot'
     nick = 'bot'
-  client = XB
+  if client == None:
+    client = XB
 
   global mucsv
   if "mucsv" not in globals():
