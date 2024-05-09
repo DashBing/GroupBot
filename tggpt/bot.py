@@ -149,6 +149,8 @@ def info2(s):
   print("%s" % s.replace("\n", " "))
 
 def err(text):
+  if type(text) is not str:
+    text = "{text=}"
   #  lineno = currentframe().f_back.f_lineno
   lineno = sys._getframe(1).f_lineno
   text = f"E: {lineno}: {text}"
@@ -157,6 +159,8 @@ def err(text):
   #  raise ValueError
 
 def warn(text, more=True):
+  if type(text) is not str:
+    text = "{text=}"
   #  lineno = currentframe().f_back.f_lineno
   lineno = sys._getframe(1).f_lineno
   text = f"W: {lineno}: {text}"
@@ -167,6 +171,8 @@ def warn(text, more=True):
     logger.warning(text)
 
 def info(text):
+  if type(text) is not str:
+    text = "{text=}"
   lineno = sys._getframe(1).f_lineno
   text = f"{lineno}: {text}"
   logger.info(text)
@@ -175,6 +181,8 @@ def dbg(text):
   logger.debug(text)
 
 def log(text):
+  if type(text) is not str:
+    text = "{text=}"
   #  lineno = currentframe().f_back.f_lineno
   lineno = sys._getframe(1).f_lineno
   text = f"{lineno}: {text}"
@@ -306,7 +314,7 @@ downlaod_lock = asyncio.Lock()
 
 rss_lock = asyncio.Lock()
 
-gateways = {}
+gid_src = {}
 mtmsgsg={}
 
 
@@ -758,463 +766,462 @@ async def my_split(path, is_str=False):
 
 #async def ipfs_add(data, filename=None, url="https://ipfs.infura.io:5001/api/v0/add?cid-version=1", *args, **kwargs):
 async def ipfs_add(data, filename=None, url="https://ipfs.pixura.io/api/v0/add", *args, **kwargs):
-#    res = data2url(data, url=url, filename=filename, fieldname="file", *args, **kwargs)
-    if isinstance(data, str):
-        data = data.encode()
-    data = {"file": data}
-    res = await http(url=url, method="POST", data=data, **kwargs)
-    if not res:
-      logger.error("E: fail to ipfs")
-      return
+#  res = data2url(data, url=url, filename=filename, fieldname="file", *args, **kwargs)
+  if isinstance(data, str):
+    data = data.encode()
+  data = {"file": data}
+  res = await http(url=url, method="POST", data=data, **kwargs)
+  if not res:
+    logger.error("E: fail to ipfs")
+    return
 
-    url = res.strip()
-    logger.info(res)
-#    url = json.loads(url)
-    try:
-        url = load_str(url)
-    except SyntaxError as e:
-        info = f"{e=}\n\n{url}"
-        print(info)
-        return
-#    url = url["Hash"]
-    #  url = "https://{}.ipfs.infura-ipfs.io/".format(url["Hash"])
-    url = "https://ipfs.pixura.io/ipfs/{}".format(url["Hash"])
-    if filename:
-    #    url += "?filename={}".format(parse.urlencode(filename))
-        url += "?filename={}".format(parse.quote(filename))
-#    await session.close()
-    return url
+  url = res.strip()
+  logger.info(res)
+#  url = json.loads(url)
+  try:
+    url = load_str(url)
+  except SyntaxError as e:
+    info = f"{e=}\n\n{url}"
+    print(info)
+    return
+#  url = url["Hash"]
+  #  url = "https://{}.ipfs.infura-ipfs.io/".format(url["Hash"])
+  url = "https://ipfs.pixura.io/ipfs/{}".format(url["Hash"])
+  if filename:
+  #  url += "?filename={}".format(parse.urlencode(filename))
+    url += "?filename={}".format(parse.quote(filename))
+#  await session.close()
+  return url
 
 def file_for_post(data, filename=None, fieldname="c", mimetype=None, **kwargs):
-#    file = aiohttp.FormData()
-    file = FormData(kwargs)
-    if filename and not mimetype:
-        mimetype = mimetypes.guess_type(filename)[0]
-        if not mimetype:
-            mimetype = 'application/octet-stream'
-#    for i in kwargs:
-#        file.add_fields((i, kwargs[i]))
-    file.add_field(fieldname, data, filename=filename, content_type=mimetype)
-    return file
+#  file = aiohttp.FormData()
+  file = FormData(kwargs)
+  if filename and not mimetype:
+    mimetype = mimetypes.guess_type(filename)[0]
+    if not mimetype:
+      mimetype = 'application/octet-stream'
+#  for i in kwargs:
+#    file.add_fields((i, kwargs[i]))
+  file.add_field(fieldname, data, filename=filename, content_type=mimetype)
+  return file
 
 
 async def pb_0x0(data, filename=None, *args, **kwargs):
-    url = "https://0x0.st/"
-    if isinstance(data, str):
-        data = data.encode()
-        if not filename:
-            filename = "0.txt"
-    return await pastebin(data, url=url, filename=filename, fieldname="file", *args, **kwargs)
+  url = "https://0x0.st/"
+  if isinstance(data, str):
+    data = data.encode()
+    if not filename:
+      filename = "0.txt"
+  return await pastebin(data, url=url, filename=filename, fieldname="file", *args, **kwargs)
 
 
 async def itzmx(data, filename=None, *args, **kwargs):
-    # https://send.itzmx.com/?info
-    # 7z, exe, gif, jpg, png, rar, torrent, zip
-    allowed = ("7z", "exe", "gif", "jpg", "png","rar","torrent","zip")
-    url = "https://send.itzmx.com/api.php?d=upload-tool"
-    if isinstance(data, str):
-        data = data.encode()
-        #  if not filename:
-        #      filename = "0.txt"
-        #  data = compress(data, "zst")
-        #  if not filename:
-        #      filename = "bin_zst.zip"
-        if not filename:
-            filename = "txt_not_zip.zip"
-    extra = {}
-    if not filename and filename.split(".")[-1] not in allowed:
-        #  extra = { "randomname": "on" }
-        filename += "_not_zip.zip"
-    fieldname = "file"
-    res = await pastebin(data, url=url, filename=filename, fieldname=fieldname, extra=extra, *args, **kwargs)
-    return res
+  # https://send.itzmx.com/?info
+  # 7z, exe, gif, jpg, png, rar, torrent, zip
+  allowed = ("7z", "exe", "gif", "jpg", "png","rar","torrent","zip")
+  url = "https://send.itzmx.com/api.php?d=upload-tool"
+  if isinstance(data, str):
+    data = data.encode()
+    #  if not filename:
+    #    filename = "0.txt"
+    #  data = compress(data, "zst")
+    #  if not filename:
+    #    filename = "bin_zst.zip"
+    if not filename:
+      filename = "txt_not_zip.zip"
+  extra = {}
+  if not filename and filename.split(".")[-1] not in allowed:
+    #  extra = { "randomname": "on" }
+    filename += "_not_zip.zip"
+  fieldname = "file"
+  res = await pastebin(data, url=url, filename=filename, fieldname=fieldname, extra=extra, *args, **kwargs)
+  return res
 
 async def transfer1(data, filename=None, *args, **kwargs):
-    url = "https://transfer.sh"
-    if isinstance(data, str):
-        data = data.encode()
-        if not filename:
-            filename = "0.txt"
-    if filename:
-        url = "https://transfer.sh/"+filename
-    headers = {}
-    headers['Max-Days'] = str(64)
-    headers['Max-Downloads'] = str(64)
-    res = await http(url=url, method="PUT", data=data, headers=headers,  **kwargs)
-    return res
+  url = "https://transfer.sh"
+  if isinstance(data, str):
+    data = data.encode()
+    if not filename:
+      filename = "0.txt"
+  if filename:
+    url = "https://transfer.sh/"+filename
+  headers = {}
+  headers['Max-Days'] = str(64)
+  headers['Max-Downloads'] = str(64)
+  res = await http(url=url, method="PUT", data=data, headers=headers,  **kwargs)
+  return res
 
 async def transfer(data, filename=None, *args, **kwargs):
-    url = "https://transfer.sh"
-    if isinstance(data, str):
-        data = data.encode()
-        if not filename:
-            filename = "0.txt"
+  url = "https://transfer.sh"
+  if isinstance(data, str):
+    data = data.encode()
     if not filename:
-        filename = "file"
-    return await pastebin(data, url=url, fieldname=filename, *args, **kwargs)
+      filename = "0.txt"
+  if not filename:
+    filename = "file"
+  return await pastebin(data, url=url, fieldname=filename, *args, **kwargs)
 
 async def file_io(data, filename=None, *args, **kwargs):
-    url = "https://file.io"
-    if isinstance(data, str):
-        data = data.encode()
-        if not filename:
-            filename = "0.txt"
-    res = await pastebin(data, url=url, filename=filename, fieldname="file", *args, **kwargs)
-#    return load_str(res)["link"]
-    try:
-        d = load_str(res, no_ast=True)
-    except SyntaxError as e:
-        info = f"{e=}\n\n{url}"
-        print(info)
-        return
-    return d["link"]
+  url = "https://file.io"
+  if isinstance(data, str):
+    data = data.encode()
+    if not filename:
+      filename = "0.txt"
+  res = await pastebin(data, url=url, filename=filename, fieldname="file", *args, **kwargs)
+#  return load_str(res)["link"]
+  try:
+    d = load_str(res, no_ast=True)
+  except SyntaxError as e:
+    info = f"{e=}\n\n{url}"
+    print(info)
+    return
+  return d["link"]
 
 
 async def catbox(data, filename=None, tmp=False, *args, **kwargs):
-    # https://catbox.moe/tools.php
-    # https://litterbox.catbox.moe/tools.php
-    if tmp:
-        url = "https://litterbox.catbox.moe/resources/internals/api.php"
+  # https://catbox.moe/tools.php
+  # https://litterbox.catbox.moe/tools.php
+  if tmp:
+    url = "https://litterbox.catbox.moe/resources/internals/api.php"
+  else:
+    url = "https://catbox.moe/user/api.php"
+  reqtype = "fileupload"
+  fieldname = "fileToUpload"
+  if isinstance(data, str):
+    if not tmp and url_only_re.match(data):
+      # litterbox disallow upload via url
+      reqtype = "urlupload"
+      fieldname = "url"
     else:
-        url = "https://catbox.moe/user/api.php"
-    reqtype = "fileupload"
-    fieldname = "fileToUpload"
-    if isinstance(data, str):
-        if not tmp and url_only_re.match(data):
-            # litterbox disallow upload via url
-            reqtype = "urlupload"
-            fieldname = "url"
-        else:
-            data = data.encode()
-            if not filename:
-                filename = "0.txt"
-    extra = {
-#            "userhash": "",
-            "reqtype": reqtype
-            }
-    if tmp:
-        extra["time"] = "72h"
-    res = await pastebin(data, url=url, filename=filename, fieldname=fieldname, extra=extra, *args, **kwargs)
-    if res:
-        if "https://files.catbox.moe/" in res:
-            res = res.replace("https://files.catbox.moe/", "https://de.catbox.moe/")
-        return res
+      data = data.encode()
+      if not filename:
+        filename = "0.txt"
+  extra = {
+#      "userhash": "",
+      "reqtype": reqtype
+      }
+  if tmp:
+    extra["time"] = "72h"
+  res = await pastebin(data, url=url, filename=filename, fieldname=fieldname, extra=extra, *args, **kwargs)
+  if res:
+    if "https://files.catbox.moe/" in res:
+      res = res.replace("https://files.catbox.moe/", "https://de.catbox.moe/")
+    return res
 
 def tmp_save(data, ex=""):
-    #  from ..config import SH_PATH
-    name = "{}/{}{}".format(SH_PATH, time.time(), ex)
-    if not isinstance(data, bytes):
-        logger.error("need bytes")
-        return
-    data = bytes(data)
-    with open(name, "wb") as file:
-        file.write(data)
-    return name
+  #  from ..config import SH_PATH
+  name = "{}/{}{}".format(SH_PATH, time.time(), ex)
+  if not isinstance(data, bytes):
+    logger.error("need bytes")
+    return
+  data = bytes(data)
+  with open(name, "wb") as file:
+    file.write(data)
+  return name
 
 def load_str(msg, no_ast=False):
-    """str to dict"""
-    msg = msg.strip()
-    if no_ast:
-        import json
-        return json.loads(msg)
+  """str to dict"""
+  msg = msg.strip()
+  if no_ast:
+    import json
+    return json.loads(msg)
+  try:
+    return ast.literal_eval(msg)
+  except ValueError:
+    logger.warning(msg)
+    import json
     try:
-        return ast.literal_eval(msg)
-    except ValueError:
-        logger.warning(msg)
-        import json
-        try:
-          return json.loads(msg)
-        except Exception as e:
-          err(f"json: error str: {msg} line: {e.__traceback__.tb_lineno}")
-          #  raise e
+      return json.loads(msg)
+    except Exception as e:
+      err(f"json: error str: {msg} line: {e.__traceback__.tb_lineno}")
+      #  raise e
 
 
 
 
 def format_byte(num):
-    if not isinstance(num, (int, float)):
-        num = int(num)
-    if num < 0:
-        s = "-"
-        num = -1*num
-    else:
-        s = ""
-    if num < 1000:
-        u = "B"
-        num = f"{num:.3g}"
-    #  elif num < 1024*1024:
-    elif num < 1024*1000:
-        u = "KB"
-        num = f"{num/1024:.3g}"
-    elif num < 1024**2*1000:
-        u = "MB"
-        num = f"{num/1024/1024:.3g}"
-    else:
-        u = "GB"
-        num = f"{num/1024/1024/1024:.3g}"
-    return s+num+u
+  if not isinstance(num, (int, float)):
+    num = int(num)
+  if num < 0:
+    s = "-"
+    num = -1*num
+  else:
+    s = ""
+  if num < 1000:
+    u = "B"
+    num = f"{num:.3g}"
+  #  elif num < 1024*1024:
+  elif num < 1024*1000:
+    u = "KB"
+    num = f"{num/1024:.3g}"
+  elif num < 1024**2*1000:
+    u = "MB"
+    num = f"{num/1024/1024:.3g}"
+  else:
+    u = "GB"
+    num = f"{num/1024/1024/1024:.3g}"
+  return s+num+u
 
 
 
 
 
 async def update_stdouterr(data):
-    while data[2].poll() == None:
-        try:
-            data[0], data[1] = data[2].communicate(timeout=0.6)
-        except subprocess.TimeoutExpired as e:
-            if e.stdout:
-                data[0] = e.stdout.decode("utf-8")
-            if e.stderr:
-                data[1] = e.stderr.decode("utf-8")
-        await asyncio.sleep(0.3)
+  while data[2].poll() == None:
+    try:
+      data[0], data[1] = data[2].communicate(timeout=0.6)
+    except subprocess.TimeoutExpired as e:
+      if e.stdout:
+        data[0] = e.stdout.decode("utf-8")
+      if e.stderr:
+        data[1] = e.stderr.decode("utf-8")
+    await asyncio.sleep(0.3)
 
 
 async def update_stdout(data):
-    while True:
-        print(1)
-        await asyncio.sleep(0.4)
-        tmp = await data[2].stdout.readline()
-        if tmp:
-            data[0] = data[0] + tmp.decode("utf-8")
-        else:
-            break
-    logger.info(11)
+  while True:
+    print(1)
+    await asyncio.sleep(0.4)
+    tmp = await data[2].stdout.readline()
+    if tmp:
+      data[0] = data[0] + tmp.decode("utf-8")
+    else:
+      break
+  logger.info(11)
 
 
 async def update_stderr(data):
-    while True:
-        print(2)
-        await asyncio.sleep(0.2)
-        tmp = await data[2].stderr.readline()
-        if tmp:
-            data[1] = data[1] + tmp.decode("utf-8")
-        else:
-            break
-    logger.info(22)
+  while True:
+    print(2)
+    await asyncio.sleep(0.2)
+    tmp = await data[2].stderr.readline()
+    if tmp:
+      data[1] = data[1] + tmp.decode("utf-8")
+    else:
+      break
+  logger.info(22)
 
 
 async def my_popen(cmd,
-                   shell=True,
-                   max_time=512,
-                   client=None,
-                   msg=None,
-                   combine=True,
-                   return_msg=False,
-                   executable='/bin/bash',
-                   **args):
-    logger.info(cmd)
-    #        args=shlex.split(message.text.split(' ',1)[1])
+           shell=True,
+           max_time=512,
+           client=None,
+           msg=None,
+           combine=True,
+           return_msg=False,
+           executable='/bin/bash',
+           **args):
+  logger.info(cmd)
+  #    args=shlex.split(message.text.split(' ',1)[1])
 
-    #        p=subprocess.Popen(message.text.split(' '))
-    #        p=subprocess.Popen(message.text.split(' ')[1:],universal_newlines=True,bufsize=1,text=True,stdout=PIPE, stderr=PIPE, shell=True)
-    #        p=subprocess.Popen(shlex.split(message.text.split(' ',1)[1]),text=True,stdout=PIPE, stderr=PIPE, shell=True)
+  #    p=subprocess.Popen(message.text.split(' '))
+  #    p=subprocess.Popen(message.text.split(' ')[1:],universal_newlines=True,bufsize=1,text=True,stdout=PIPE, stderr=PIPE, shell=True)
+  #    p=subprocess.Popen(shlex.split(message.text.split(' ',1)[1]),text=True,stdout=PIPE, stderr=PIPE, shell=True)
 
-    #        p=subprocess.Popen(args,text=True,stdout=PIPE, stderr=PIPE, shell=True)
-    #        p=Popen(args,text=True,universal_newlines=True,bufsize=1,stdout=PIPE, stderr=PIPE)
-    #        p=Popen(args,text=True,stdout=PIPE, stderr=PIPE)
-    #        p=await asyncio.create_subprocess_shell(message.text.split(' ',1)[1],stdout=PIPE, stderr=PIPE)#limit=None
-    #        p=Popen(args,stdout=PIPE, stderr=PIPE,bufsize=8000000)
-    #        p=Popen(args,stdout=PIPE, stderr=PIPE,text=True,encoding="utf-8",errors="ignore")
-    #  p=Popen(cmd,shell=shell,stdout=PIPE, stderr=PIPE,text=True,encoding="utf-8",errors="ignore")
-    p = Popen(cmd,
-              shell=shell,
-              stdout=PIPE,
-              stderr=PIPE,
-              text=True,
-              encoding="utf-8",
-              errors="ignore",
-              executable=executable)
+  #    p=subprocess.Popen(args,text=True,stdout=PIPE, stderr=PIPE, shell=True)
+  #    p=Popen(args,text=True,universal_newlines=True,bufsize=1,stdout=PIPE, stderr=PIPE)
+  #    p=Popen(args,text=True,stdout=PIPE, stderr=PIPE)
+  #    p=await asyncio.create_subprocess_shell(message.text.split(' ',1)[1],stdout=PIPE, stderr=PIPE)#limit=None
+  #    p=Popen(args,stdout=PIPE, stderr=PIPE,bufsize=8000000)
+  #    p=Popen(args,stdout=PIPE, stderr=PIPE,text=True,encoding="utf-8",errors="ignore")
+  #  p=Popen(cmd,shell=shell,stdout=PIPE, stderr=PIPE,text=True,encoding="utf-8",errors="ignore")
+  p = Popen(cmd,
+        shell=shell,
+        stdout=PIPE,
+        stderr=PIPE,
+        text=True,
+        encoding="utf-8",
+        errors="ignore",
+        executable=executable)
 
-    start_time = time.time()
-    res = ""
-    errs = ""
-    data = ["", "", p]
-    asyncio.create_task(update_stdouterr(data))
-    await asyncio.sleep(1)
-    logger.info(str(p.args))
-    while True:
-        #  if p.poll() == None and p.returncode == None:
-        if p.poll() == None:
-            pass
-        else:
-            break
-        #  await asyncio.sleep(0.5)
-        res = data[0]
-        errs = data[1]
-
-        #  tmp = "...\n" + res + "\n==\nE: \n" + errs
-        tmp = "...\n%s\n==\nE: ?\n%s" % (res, errs)
-        tmp = tmp.strip()
-        #  if msg:
-        #      if tmp != msg.text:
-        if True:
-                try:
-                    #  msg = await cmd_answer(tmp, client, msg, **args)
-                    info(f"临时输出: {tmp}")
-                except Exception as e:
-                    logger.error(f"can not send tmp: {e=}")
-                    #  msg = await client.send_message(MY_ID, tmp)
-                    info(f"临时输出: {tmp} {e=}")
-        await asyncio.sleep(2)
-        if time.time() - start_time > max_time:
-            p.kill()
-            res = "my_popen: timeout, killed, cmd: {}\nres: {}".format(cmd, res)
-            warn(res)
-            #  await cmd_answer(res, client, msg)
-            #  info(f"最终输出: {res}")
-            break
-
-    try:
-        res, errs = p.communicate(timeout=5)
-    except subprocess.TimeoutExpired as e:
-        logger.error("timeout")
-        res = e.stdout
-        errs = e.stderr
-
-    if res:
-        if isinstance(res, bytes):
-            res = res.decode()
-    if errs:
-        if isinstance(errs, bytes):
-            errs = errs.decode()
-    if not res:
-        res = "null"
-#  res=str(res)
-    if p.returncode:
-        res = "%s\n==\nE: %s" % (res, p.returncode)
-        if errs:
-            res += "\n%s" % errs
-        #await msg.delete()
-    info("popen exit")
-    if msg:
-        #  msg = await cmd_answer(res, client, msg, **args)
-        info(f"发送: {res}")
-        if return_msg:
-            return msg
-    if combine:
-        return res
+  start_time = time.time()
+  res = ""
+  errs = ""
+  data = ["", "", p]
+  asyncio.create_task(update_stdouterr(data))
+  await asyncio.sleep(1)
+  logger.info(str(p.args))
+  while True:
+    #  if p.poll() == None and p.returncode == None:
+    if p.poll() == None:
+      pass
     else:
-        return p.returncode, res, errs
+      break
+    #  await asyncio.sleep(0.5)
+    res = data[0]
+    errs = data[1]
 
+    #  tmp = "...\n" + res + "\n==\nE: \n" + errs
+    tmp = "...\n%s\n==\nE: ?\n%s" % (res, errs)
+    tmp = tmp.strip()
+    #  if msg:
+    #    if tmp != msg.text:
+    if True:
+        try:
+          #  msg = await cmd_answer(tmp, client, msg, **args)
+          info(f"临时输出: {tmp}")
+        except Exception as e:
+          logger.error(f"can not send tmp: {e=}")
+          #  msg = await client.send_message(MY_ID, tmp)
+          info(f"临时输出: {tmp} {e=}")
+    await asyncio.sleep(2)
+    if time.time() - start_time > max_time:
+      p.kill()
+      res = "my_popen: timeout, killed, cmd: {}\nres: {}".format(cmd, res)
+      warn(res)
+      #  await cmd_answer(res, client, msg)
+      #  info(f"最终输出: {res}")
+      break
 
-async def run_my_bash(cmd, shell=True, max_time=64, cmd_msg=None):
-    p = Popen(cmd,
-              shell=shell,
-              stdout=PIPE,
-              stderr=PIPE,
-              text=True,
-              encoding="utf-8",
-              errors="ignore")
+  try:
+    res, errs = p.communicate(timeout=5)
+  except subprocess.TimeoutExpired as e:
+    logger.error("timeout")
+    res = e.stdout
+    errs = e.stderr
 
-    start_time = time.time()
-    res = ""
-    errs = ""
-    msg = None
+  info("popen exit")
+  if res:
+    if isinstance(res, bytes):
+      res = res.decode()
+  if errs:
+    if isinstance(errs, bytes):
+      errs = errs.decode()
+  if not res:
+    res = "null"
 
-    await asyncio.sleep(1)
-    if p.poll() == None and p.returncode == None:
-        while p.poll() == None and p.returncode == None:
-            if time.time() - start_time > max_time:
-                p.kill()
-                break
-            await asyncio.sleep(1)
-
-    try:
-        res, errs = p.communicate(timeout=3)
-    except subprocess.TimeoutExpired as e:
-        res = e.stdout
-        errs = e.stderr
-
-    if not res:
-        res = "null"
-    res = str(res)
+  #  if msg:
+  #    #  msg = await cmd_answer(res, client, msg, **args)
+  #    info(f"发送: {res}")
+  #    if return_msg:
+  #      return msg
+  if combine:
     if p.returncode:
-        res = res + "\n==\nE: " + str(p.returncode)
-        if errs:
-            res = res + "\n" + errs
-        #await msg.delete()
+      res = "%s\n==\nE: %s" % (res, p.returncode)
+      if errs:
+        res += "\n%s" % errs
     return res
+  else:
+    return p.returncode, res, errs
+
+
+async def run_my_bash(cmd, shell=True, max_time=64):
+  p = Popen(cmd,
+        shell=shell,
+        stdout=PIPE,
+        stderr=PIPE,
+        text=True,
+        encoding="utf-8",
+        errors="ignore")
+
+  start_time = time.time()
+  res = ""
+  errs = ""
+  await asyncio.sleep(0.5)
+  if p.poll() == None and p.returncode == None:
+    while p.poll() == None and p.returncode == None:
+      if time.time() - start_time > max_time:
+        p.kill()
+        break
+      await asyncio.sleep(1)
+
+  try:
+    res, errs = p.communicate(timeout=3)
+  except subprocess.TimeoutExpired as e:
+    res = e.stdout
+    errs = e.stderr
+  if not res:
+    res = "null"
+  #  res = str(res)
+  if p.returncode:
+    #  res = res + "\n==\nE: " + str(p.returncode)
+    res = "%s\n==\nE: %s" % (res, p.returncode)
+    if errs:
+      res = res + "\n" + errs
+    #await msg.delete()
+  return res
 
 
 async def my_exec(cmd, client=None, msg=None, **args):
-    #  exec(cmd) #return always is None
-    #  p=Popen("my_exec.py "+message.text.split(' ',1)[1],shell=True,stdout=PIPE, stderr=PIPE,text=True,encoding="utf-8",errors="ignore")
-    #    await my_popen(["python3", "my_exec.py", cmd], shell=False, msg=msg)
-    #    await my_popen([ SH_PATH + "/my_exec.py", cmd], shell=False, msg=msg, executable="/usr/bin/python3")
-    res = await my_popen(cmd,
-                         shell=True,
-                         client=client, 
-                         msg=msg,
-                         executable="/usr/bin/python3",
-                         **args)
-    return res
+  #  exec(cmd) #return always is None
+  #  p=Popen("my_exec.py "+message.text.split(' ',1)[1],shell=True,stdout=PIPE, stderr=PIPE,text=True,encoding="utf-8",errors="ignore")
+  #  await my_popen(["python3", "my_exec.py", cmd], shell=False, msg=msg)
+  #  await my_popen([ SH_PATH + "/my_exec.py", cmd], shell=False, msg=msg, executable="/usr/bin/python3")
+  res = await my_popen(cmd,
+             shell=True,
+             client=client, 
+             msg=msg,
+             executable="/usr/bin/python3",
+             **args)
+  return res
 
 
 async def my_eval(cmd, client=None, msg=None, **args):
-    res = eval(cmd)
-    logger.info(str(res) + "\n" + str(type(res)))
-    res = await cmd_answer(str(res), client=client, msg=msg, **args)
-    return res
+  res = eval(cmd)
+  logger.info(str(res) + "\n" + str(type(res)))
+  res = await cmd_answer(str(res), client=client, msg=msg, **args)
+  return res
 
 
 
 async def send_cmd_to_bash(msg):
-    """run cmd of text msg from mt by bash(old)"""
-    if isinstance(msg, str):
-        shell_cmd = ["bash -l", SH_PATH + "/bcmd.sh"]
-        shell_cmd.append("just_get_reply")
-        shell_cmd.append(msg)
-    else:
-        if type(msg) == list:
-            if not " " in msg[1]:
-                msg[1] = "X " + msg[1]
-            msg_mt = {
-                "text": msg[2],
-                "username": "{}: ".format(msg[1]),
-                "gateway": msg[0]
-            }
-            msg = msg_mt
-        text = msg["text"]
-        name = msg["username"]
-        if not text:
-            return
-        if name.startswith("C "):
-            return
-        logger.info("run cmd: {}".format(msg))
-        #  shell_cmd="{} {} {} {}"
-        #  shell_cmd = ["bash -l", SH_PATH + "/bcmd.sh"]
-        shell_cmd = ["bash", SH_PATH + "/bcmd.sh"]
-        shell_cmd.append(msg["gateway"])
-        shell_cmd.append(msg["username"])
-        shell_cmd.append(msg["text"])
-        shell_cmd.append(repr(msg))
+  """run cmd of text msg from mt by bash(old)"""
+  if isinstance(msg, str):
+    shell_cmd = ["bash -l", SH_PATH + "/bcmd.sh"]
+    shell_cmd.append("just_get_reply")
+    shell_cmd.append(msg)
+  else:
+    # [gateway, username, text]
+    if type(msg) == list:
+      #  if not " " in msg[1]:
+      if len(msg[1]) < 2 or msg[1][1] != ' ':
+        msg[1] = "X " + msg[1]
+      msg_mt = {
+        "text": msg[2],
+        "username": "{}: ".format(msg[1]),
+        "gateway": msg[0]
+      }
+      msg = msg_mt
+    text = msg["text"]
+    name = msg["username"]
+    if not text:
+      return
+    if name.startswith("C "):
+      return
+    logger.info("run cmd: {}".format(msg))
+    #  shell_cmd="{} {} {} {}"
+    #  shell_cmd = ["bash -l", SH_PATH + "/bcmd.sh"]
+    shell_cmd = ["bash", SH_PATH + "/bcmd.sh"]
+    shell_cmd.append(msg["gateway"])
+    shell_cmd.append(msg["username"])
+    shell_cmd.append(msg["text"])
+    shell_cmd.append(repr(msg))
 
-        if shell_cmd[1] == "gateway1":
-            #  if my_host_re.match(shell_cmd[3]):
-            if urlre.match(shell_cmd[3]):
-                print("my url")
-                shell_cmd[3] = ".ipfs {} only".format(shell_cmd[3])
-                #  shell_cmd[1] = "gateway4"
-            elif tw_re.match(shell_cmd[3]):
-                print("a twitter")
-                shell_cmd[3] = ".tw {}".format(shell_cmd[3])
-                #  shell_cmd[1] = "gateway4"
-            elif pic_re.match(shell_cmd[3]):
-                print("a pic")
-                shell_cmd[3] = ".ipfs {} only".format(shell_cmd[3])
-                #  shell_cmd[1] = "gateway4"
-            elif url_only_re.match(shell_cmd[3]):
-                print("a url")
-                shell_cmd[3] = ".ipfs {} autocheck".format(shell_cmd[3])
-                #  shell_cmd[1] = "gateway4"
-    logger.warning("bash cmd: {}".format(shell_cmd))
-    #  await run_my_bash(shell_cmd, shell=False)
-    #  await my_popen(shell_cmd, shell=False)
-    #  await my_popen(" ".join(shell_cmd))
-    res = await my_popen(shell_cmd, shell=False)
-    logger.info(res)
-    return res
+    if shell_cmd[1] == "gateway1":
+      #  if my_host_re.match(shell_cmd[3]):
+      if urlre.match(shell_cmd[3]):
+        print("my url")
+        shell_cmd[3] = ".ipfs {} only".format(shell_cmd[3])
+        #  shell_cmd[1] = "gateway4"
+      elif tw_re.match(shell_cmd[3]):
+        print("a twitter")
+        shell_cmd[3] = ".tw {}".format(shell_cmd[3])
+        #  shell_cmd[1] = "gateway4"
+      elif pic_re.match(shell_cmd[3]):
+        print("a pic")
+        shell_cmd[3] = ".ipfs {} only".format(shell_cmd[3])
+        #  shell_cmd[1] = "gateway4"
+      elif url_only_re.match(shell_cmd[3]):
+        print("a url")
+        shell_cmd[3] = ".ipfs {} autocheck".format(shell_cmd[3])
+        #  shell_cmd[1] = "gateway4"
+  logger.warning("bash cmd: {}".format(shell_cmd))
+  #  await run_my_bash(shell_cmd, shell=False)
+  #  await my_popen(shell_cmd, shell=False)
+  #  await my_popen(" ".join(shell_cmd))
+  res = await my_popen(shell_cmd, shell=False)
+  #  logger.info(res)
+  return res
 
 
 
@@ -1301,6 +1308,54 @@ async def send_cmd_to_bash(msg):
 
 
 
+async def load_config():
+  path = PARENT_DIR / "config.json"
+  config = await read_file(path.as_posix())
+  config = load_str(config)
+
+  info("config\n%s" % json.dumps(config, indent='  '))
+  
+  if config is None:
+    warn("配置文件有问题: config.json")
+    return
+  try:
+    config["sync_groups_all"].append(config["public_groups"])
+    config["sync_groups_all"].append(config["bot_groups"])
+
+    config["public_groups"] = config["public_groups"] + config["rss_groups"] + config["bot_groups"] + config["extra_groups"]
+
+    config["my_groups"] = config["my_groups"] + config["public_groups"]
+
+    
+
+    #  jid = get_my_key("JID")
+    #  config['ME'] = jid
+
+    info("loaded config\n%s" % json.dumps(config, indent='  '))
+
+    for i in config:
+      if type(config[i]) is list:
+        if config[i]:
+          if (config[i][0]) is str:
+            config[i] = set(config[i])
+          elif (config[i][0]) is list:
+            tmp = []
+            for j in config[i]:
+              tmp.append(set(j))
+            config[i] = tmp
+
+
+    globals().update(config)
+
+    return True
+  except Exception as e:
+    warn(f"配置文件有问题: config.json {e=}")
+    raise e
+
+#  asyncio.run(load_config())
+
+
+
 
 import aiohttp
 from aiohttp.client_exceptions import ClientPayloadError, ClientConnectorError
@@ -1308,14 +1363,14 @@ from aiohttp.client_exceptions import ClientPayloadError, ClientConnectorError
 session = None
 
 async def init_aiohttp_session():
-    global session
-    if session is None:
-        #  session = aiohttp.ClientSession()
-        session = aiohttp.ClientSession()
-        logger.warning("a new session")
-    else:
-        logger.debug("session existed")
-    return session
+  global session
+  if session is None:
+    #  session = aiohttp.ClientSession()
+    session = aiohttp.ClientSession()
+    logger.warning("a new session")
+  else:
+    logger.debug("session existed")
+  return session
 
 
 # Titles for HTML content
@@ -1486,51 +1541,171 @@ async def qw2(text):
   return res
 
 
-async def load_config():
-  path = PARENT_DIR / "config.json"
-  config = await read_file(path.as_posix())
-  config = load_str(config)
+async def _send(msg, client=None, room=None, gpm=False):
+  #  if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or get_jid(msg.to) not in my_groups:
+  if gpm is False:
+    if client is not None:
+      # https://docs.zombofant.net/aioxmpp/devel/api/public/node.html?highlight=client#aioxmpp.Client.send
+      res = client.send(msg)
+    elif room:
+      # https://docs.zombofant.net/aioxmpp/devel/api/public/muc.html?highlight=room#aioxmpp.muc.Room.send_message
+      res = room.send_message(msg)
+    else:
+      client = XB
+      res = client.send(msg)
+  else:
+    # https://docs.zombofant.net/aioxmpp/devel/api/public/im.html#aioxmpp.im.conversation.AbstractConversation.send_message
+    if client is None:
+      client = XB
+    p2ps = client.summon(im.p2p.Service)
+    c = p2ps.get_conversation(msg.to)
+    #  stanza = c.send_message(msg)
+    res = c.send_message(msg)
+    #  return False
+  #  if isawaitable(res):
+  #  info(f"{type(res)}: {res} {msg}")
+  if asyncio.iscoroutine(res) or type(res) is stream.StanzaToken:
+    #  dbg(f"client send: {res=}")
+    res2 = await res
+    if res2 is None:
+      dbg(f"send msg: finally: {res=}")
+      return True
+    #  elif hasattr(res, "stanza") and res.stanza and res.stanza.error is None:
+    #    # 群内私聊
+    #    info(f"send gpm msg: finally: {res=}")
+    #    return True
+    else:
+      info(f"send msg: finally: {res=} {res2=}")
+      return False
+  else:
+    warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
+  return False
 
-  info("config\n%s" % json.dumps(config, indent='  '))
-  
-  if config is None:
-    warn("配置文件有问题: config.json")
-    return
-  try:
-    config["sync_groups_all"].append(config["public_groups"])
-    config["sync_groups_all"].append(config["bot_groups"])
+async def send(text, jid=None, client=None, gpm=False, room=None, correct=False):
 
-    config["public_groups"] = config["public_groups"] + config["rss_groups"] + config["bot_groups"] + config["extra_groups"]
+  if type(text) is str:
+    if jid is None:
+      jid = ME
+    else:
+      if type(jid) is JID:
+        jid = get_jid(jid, True)
 
-    config["my_groups"] = config["my_groups"] + config["public_groups"]
-
-    
-
-    #  jid = get_my_key("JID")
-    #  config['ME'] = jid
-
-    info("loaded config\n%s" % json.dumps(config, indent='  '))
-
-    for i in config:
-      if type(config[i]) is list:
-        if config[i]:
-          if (config[i][0]) is str:
-            config[i] = set(config[i])
-          elif (config[i][0]) is list:
-            tmp = []
-            for j in config[i]:
-              tmp.append(set(j))
-            config[i] = tmp
-
-
-    globals().update(config)
-
+      if gpm and '/' not in jid:
+        err(f"无法群私聊，地址错误: {jid}")
+        return False
+    if jid in my_groups:
+      msg = aioxmpp.Message(
+          to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
+          type_=MessageType.GROUPCHAT,
+      )
+    else:
+      #  if '/' in jid and jid.split('/', 1)[0] in my_groups:
+      msg = aioxmpp.Message(
+          to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
+          type_=MessageType.CHAT,
+      )
+    j = get_msg_jid(msg)
+    if correct:
+      if j in last_outmsg:
+        #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
+        r = misc.Replace()
+        r.id_ = last_outmsg[j]
+        msg.xep0308_replace = r
+    else:
+      tmp = False
+      if j in last_outmsg:
+        tmp = True
+      if tmp:
+        last_outmsg.pop(j)
+    for i in split_long_text(text):
+      msg.body[None] = i
+      if await _send(msg, client, room, gpm) is not True:
+        return False
     return True
-  except Exception as e:
-    warn(f"配置文件有问题: config.json {e=}")
-    raise e
+  elif isinstance(text, aioxmpp.Message):
+    #  info(f"send1: {jid=} {text=}")
+    msg = text
+    if msg.type_ == MessageType.GROUPCHAT:
+    #    if msg.to.resource is not None:
+      if not msg.to.is_bare:
+          #  msg.to.resource = None
+        #  if '/' in get_jid(msg.to, True):
+          #  msg.to = JID.fromstr(get_jid(msg.to))
+          #  msg.to = msg.to.replace(resource=None)
+        orig = msg.to
+        msg.to = msg.to.bare()
+        info(f"已修正地址错误: {orig} -> {msg=}")
+    elif gpm and msg.to.resource is None:
+      err(f"无法群私聊，地址错误: {msg.to}")
+      return False
 
-#  asyncio.run(load_config())
+    j = get_msg_jid(msg)
+    if correct:
+      if j in last_outmsg:
+        #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
+        r = misc.Replace()
+        r.id_ = last_outmsg[j]
+        msg.xep0308_replace = r
+    else:
+      tmp = False
+      if j in last_outmsg:
+        tmp = True
+      if tmp:
+        last_outmsg.pop(j)
+    return await _send(msg, client, room, gpm)
+  else:
+    err(f"text类型不对: {type(text)}")
+    return False
+    #  elif isinstance(text, aioxmpp.stanza.Message):
+    #    #  info(f"send2: {jid=} {text=}")
+    #    msg = text
+
+#  async def __send(msg, jid=None, client=None, gpm=False):
+#    #  if type(text) is str:
+#      #  info(f"send: {jid=} {text=}")
+#      # None is for "default language"
+#    #  info(f"send: {type(msg)} {msg=}")
+#    if client is None:
+#      client = XB
+#    #  return await client.send(msg)
+#    return await _send(msg, client, gpm=gpm)
+
+async def sendg(text, jid=None, room=None, client=None):
+  info(f"send group msg: {jid} {text}")
+  if jid is None:
+    jid = test_group
+  recipient_jid = JID.fromstr(jid)
+  msg = aioxmpp.Message(
+      to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
+      type_=aioxmpp.MessageType.GROUPCHAT,
+  )
+  # None is for "default language"
+  msg.body[None] = text
+
+  if room is not None:
+    return await _send(msg, room=room)
+
+  if client is None:
+    client = XB
+  #  return await client.send(msg)
+  if client is not None:
+    return await _send(msg, client)
+    #  res = room.send_message(msg)
+    #  # https://docs.zombofant.net/aioxmpp/devel/api/public/muc.html?highlight=room#aioxmpp.muc.Room.send_message
+    #  if asyncio.iscoroutine(res):
+    #    res = await res
+    #    if res is None:
+    #      dbg(f"room send: finally: {res=}")
+    #      return True
+    #    else:
+    #      info(f"room send: finally: {res=}")
+    #      return False
+    #  else:
+    #    info(f"room send res is not coroutine: {res=}")
+    #    return False
+  else:
+    warn(f"need client or room")
+    return False
 
 
 
@@ -1679,20 +1854,19 @@ async def mt2tg(msg):
     #    queues[gateway] = asyncio.PriorityQueue(maxsize=512)
       #  asyncio.create_task(tg2mt_loop(gateway))
 
-    if text == "ping":
-      all = 0
-      for i in mtmsgsg:
-        all += len(mtmsgsg[i])
-      #  await mt_send(f"pong. now tasks: {here}/{all} {mtmsgsg}", gateway=gateway)
-      here = len(mtmsgsg[gateway])
-      await mt_send(f"pong. now tasks: {here}/{all}", gateway=gateway)
-      return
+    #  if text == "ping":
+    #    all = 0
+    #    for i in mtmsgsg:
+    #      all += len(mtmsgsg[i])
+    #    #  await mt_send(f"pong. now tasks: {here}/{all} {mtmsgsg}", gateway=gateway)
+    #    here = len(mtmsgsg[gateway])
+    #    await mt_send(f"pong. now tasks: {here}/{all}", gateway=gateway)
+    #    return
 
-
-
-    if text.startswith(".py "):
-      text = "." + text[4:]
-    if text[0:1] == ".":
+    #  if text.startswith(".py "):
+    #    text = "." + text[4:]
+    #  if text[0:1] == ".":
+    if 1 > 2:
       if text[1:2] == " ":
         return
       #  cmds = deque(text[1:].split(' '))
@@ -1731,50 +1905,6 @@ async def mt2tg(msg):
           await mt_send(f"reset ok, now tasks: {here}", gateway=gateway)
           return
       #  elif text == ".gpt" or text.startswith(".gpt ") or text.startswith(".gpt\n"):
-      elif cmd == "music":
-        chat_id = music_bot
-        text = ' '.join(cmds[1:])
-        if not text:
-          await mt_send(f"音乐下载\n.{cmd} $text\n.{cmd} clear\n--\ntelegram bot: https://t.me/{music_bot_name}", gateway=gateway)
-          return
-        if cmds[1] == "clear":
-          await clear_history()
-          #  music_bot_state[gateway] = 0
-          await mt_send("ok")
-          return
-
-        #  if gateway not in music_bot_state:
-        music_bot_state[gateway] = 1
-        text="/search "+text
-
-        tmp = []
-        for i in gateways:
-          if gateways[i] == gateway:
-            tmp.append(i)
-        for i in tmp:
-          gateways.pop(i)
-
-        if gateway in mtmsgsg:
-          ms = mtmsgsg[gateway]
-          ms.clear()
-
-        #  if music_bot_state[gateway] == 0:
-        #    music_bot_state[gateway] += 1
-        #  else:
-        #    #  if cmds[1] == "d":
-        #    #    if len(cmds) < 3:
-        #    #      await mt_send("需要一个数字", gateway=gateway)
-        #    #    else:
-        #    #      #  if music_bot_state[gateway] == 2:
-        #    #      #    msg = mt
-        #    #      #    info(msg.buttons)
-        #    #      #  else:
-        #    #      #    await mt_send("顺序不对，请重试", gateway=gateway)
-        #    #      await mt_send("fixme", gateway=gateway)
-        #    #  else:
-        #    #    await mt_send("有未结束任务", gateway=gateway)
-        #    return
-
       elif cmd == "gtg":
         #  need_clean = True
         #  text=text[5:]
@@ -1879,115 +2009,12 @@ async def mt2tg(msg):
           url = await ai(text, provider=Provider.You, proxy="http://127.0.0.1:6080")
           await mt_send_for_long_text(url, gateway)
         return
-      elif cmd == "qw":
-        text = ' '.join(cmds[1:])
-        if not text:
-          await mt_send(f"阿里千问\n.{cmd} $text", gateway=gateway)
-        else:
-          url = await qw(text)
-          await mt_send_for_long_text(url, gateway)
-        return
-      elif cmd == "qw2":
-        text = ' '.join(cmds[1:])
-        if not text:
-          await mt_send(f"阿里千问\n.{cmd} $text", gateway=gateway)
-        else:
-          url = await qw2(text)
-          await mt_send_for_long_text(url, gateway)
-        return
 
       else:
         return
-    elif text.isnumeric() and music_bot_state[gateway] == 2:
-      mtmsgs = mtmsgsg[gateway]
-      tmp = []
-      for i in gateways:
-        if gateways[i] == gateway:
-          tmp.append(i)
-      qid = max(tmp)
-      info(f"尝试下载：{text} {qid}")
-      bs = mtmsgs[qid][1]
-      info(f"尝试下载：{text} {qid} msg: {bs}")
-      i = None
-      for i in bs:
-        if type(i) is list:
-          for j in i:
-            if j.text == text:
-              info(f"已找到：{text}")
-              await j.click()
-              i = True
-              break
-          if i is True:
-            break
-        else:
-          if i.text == text:
-            info(f"已找到：{text}")
-            await i.click()
-            i = True
-            break
-
-      if i is True:
-        #  gateways.pop(qid)
-        #  mtmsgs.pop(qid)
-        music_bot_state[gateway] += 1
-        #  gateways[msg.id] = gateway
-        #  mtmsgs[msg.id] = mtmsgs[qid]
-      else:
-        info(f"没找到：{text}")
-      return
     elif gateway in gptmode:
       pass
-    else:
-      # tilebot
-
-      tmp=""
-      for i in text.splitlines():
-        if not i.startswith("> ") and  i != ">":
-          tmp += i+"\n"
-      #  text = tmp
-      #  qre.sub()
-      #  text = qre.sub("", text)
-      #  urls=urlre.findall(text)
-      #  urls=urlre.findall(qre.sub("", text))
-      urls=urlre.findall(qre.sub("", tmp))
-      res=None
-      #  M=' 🔗 '
-      #  M='- '
-      #  M=' ⤷ '
-      for url in urls:
-        #  url=url[0]
-        url=url[1]
-        if url.startswith("https://t.me/"):
-          return
-        if url.startswith("https://conversations.im/j/"):
-          return
-        if url.startswith("https://icq.im"):
-          return
-        if not res:
-          if len(urls) == 1:
-            res="%s" % await get_title(url)
-            break
-          res="[ %s urls ]" % len(urls)
-        res+="\n\n> %s\n%s" % (url, await get_title(url))
-      if res is not None:
-        #  if len(urls) > 1:
-        #    res="[ %s urls ]\n%s%s" % (len(urls), M, res)
-        #  if rnick:
-        #    nick=rnick+': '
-        #  elif nick == "bot":
-        #    nick=''
-        #    #  nick="\n> %s" % text
-        #  else:
-        #    nick='X %s: ' % nick
-        nick = msgd['username']
-        #  res="**C titlebot:** %s%s" % (nick, res)
-        #  res="%s%s" % (nick, res)
-        res="%s%s" % (nick.splitlines()[-1], res)
-        #  fast_reply(muc, res, msg_type)
-        #  await mt_send(res, gateway=gateway)
-        await mt_send(res, gateway=gateway, username="titlebot")
       return
-
     #  if gateway in MT_GATEWAY_LIST:
     #      chat_id = MT_GATEWAY_LIST[gateway][0]
     #  else:
@@ -2012,32 +2039,20 @@ async def mt2tg(msg):
 
     logger.info("got msg from mt: {}".format(msgd))
     #      if name == "C Telegram: ":
+    if gateway == "gateway1":
+      await sendg(text, main_group)
+    res = await run_cmd(text, gateway, name)
+    if res:
+      await mt_send(res, gateway)
+      await sendg(res, main_group)
 
+    return
     msgd.update({"chat_id": chat_id})
     msgd.update({"text": text})
 
     #  global chat
     #  if not chat:
-    try:
-      chat = await UB.get_input_entity(chat_id)
-    except Exception as e:
-      print(e)
-      try:
-        if chat_id == gpt_bot:
-          chat = await UB.get_input_entity(gpt_bot_name)
-        else:
-          chat = await UB.get_input_entity(music_bot_name)
-      except ValueError:
-        print("wtf, wrong id?")
-        try:
-          chat = await UB.get_entity(chat_id)
-          print(chat.stringify())
-        except:
-          if chat_id == gpt_bot:
-            chat = await UB.get_entity(gpt_bot_name)
-          else:
-            chat = await UB.get_entity(music_bot_name)
-          print(chat.stringify())
+    chat = await get_entity(chat_id)
     #  print(f">{chat.user_id}: {text}")
     print(f"I: send {text} to gpt")
     if text != CLEAN:
@@ -2055,7 +2070,7 @@ async def mt2tg(msg):
       #  queues[gateway] = {msg.id: [msgd, None]}
       #  if gateway not in nids:
         #  nids[gateway] = msg.id
-      gateways[msg.id] = gateway
+      gid_src[msg.id] = gateway
       #  mtmsgs[msg.id] = [msgd,None]
       #  if gateway not in mtmsgs:
       #  mtmsgsg[gateway][msg.id] = [msgd, None]
@@ -2101,8 +2116,8 @@ async def clear_history():
     mtmsgs = mtmsgsg[g]
     mtmsgs.clear()
   #  await mt_send(f"cleaned: {mtmsgsg=}", gateway="test")
-  gateways.clear()
-  #  await mt_send(f"cleaned: {gateways=}", gateway="test"):w
+  gid_src.clear()
+  #  await mt_send(f"cleaned: {gid_src=}", gateway="test"):w
   allright.set()
   info("reset ok")
 
@@ -2420,8 +2435,8 @@ async def parse_msg(event):
       return
     #  try:
     qid=msg.reply_to_msg_id
-    if qid not in gateways:
-      logger.error(f"E: not found gateway for {qid=}, {gateways=} {msg.text=}")
+    if qid not in gid_src:
+      logger.error(f"E: not found gateway for {qid=}, {gid_src=} {msg.text=}")
       return
     text = msg.text
     if not text:
@@ -2449,11 +2464,11 @@ async def parse_msg(event):
       warn(f"已忽略疑似临时消息: {text}", False)
       return
 
-    gateway = gateways[qid]
+    gateway = gid_src[qid]
     mtmsgs = mtmsgsg[gateway]
     #  state = music_bot_state[gateway]
     #  if music_bot_state[gateway] == 0:
-    #    gateways.pop(qid)
+    #    gid_src.pop(qid)
     #    mtmsgs.pop(qid)
     if music_bot_state[gateway] == 1:
       info(msg.buttons)
@@ -2465,15 +2480,15 @@ async def parse_msg(event):
       res = f"{mtmsgs[qid][0]['username']}搜索结果(回复序号)\n{text}"
       await mt_send_for_long_text(res, gateway)
 
-      gateways[msg.id] = gateway
+      gid_src[msg.id] = gateway
       mtmsgs[msg.id] = mtmsgs[qid]
       #  music_bot_state[gateway] = msg.id
-      gateways.pop(qid)
+      gid_src.pop(qid)
       mtmsgs.pop(qid)
 
     elif music_bot_state[gateway] == 2:
-      warn(f"不应该出现: music bot: {gateways=} {music_bot_state[gateway]}\nmsg:\n{msg.stringify()}")
-      gateways.pop(qid)
+      warn(f"不应该出现: music bot: {gid_src=} {music_bot_state[gateway]}\nmsg:\n{msg.stringify()}")
+      gid_src.pop(qid)
       mtmsgs.pop(qid)
       return
     elif msg.file and music_bot_state[gateway] == 3:
@@ -2492,12 +2507,12 @@ async def parse_msg(event):
       if music_bot_state[gateway] == 3:
         music_bot_state[gateway] -= 1
     else:
-      warn(f"未知状态，已忽略: music bot: {gateways=} {music_bot_state[gateway]}\nmsg:\n{msg.stringify()}")
+      warn(f"未知状态，已忽略: music bot: {gid_src=} {music_bot_state[gateway]}\nmsg:\n{msg.stringify()}")
       return
 
 
     #  except Exception as e:
-    #    err(f"fixme: music bot: {gateways=} {e=} line: {e.__traceback__.tb_lineno}")
+    #    err(f"fixme: music bot: {gid_src=} {e=} line: {e.__traceback__.tb_lineno}")
 
     return
 
@@ -2517,20 +2532,20 @@ async def parse_msg(event):
   if msg.is_reply:
     qid=msg.reply_to_msg_id
     print(f"tg msg id: {msg.id=} {event.id=} {qid=}")
-    if qid not in gateways:
-      logger.error(f"E: not found gateway for {qid=}, {gateways=} {msg.text=}")
+    if qid not in gid_src:
+      logger.error(f"E: not found gateway for {qid=}, {gid_src=} {msg.text=}")
       return
-    #  await queues[gateways[qid]].put( (id(msg), qid, msg) )
-    #  await queues[gateways[qid]].put( (msg.date, qid, msg) )
-    #  await queues[gateways[qid]].put( (msg.id, "test") )
-    #  await queues[gateways[qid]].put( (id(msg), qid, msg) )
+    #  await queues[gid_src[qid]].put( (id(msg), qid, msg) )
+    #  await queues[gid_src[qid]].put( (msg.date, qid, msg) )
+    #  await queues[gid_src[qid]].put( (msg.id, "test") )
+    #  await queues[gid_src[qid]].put( (id(msg), qid, msg) )
     if msg.file:
       return
     text = msg.text
     if not text:
       print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
       return
-    print(f"tg msg: {text}: {msg.id=} {event.id=} {qid=} {gateways=} {mtmsgsg=}")
+    print(f"tg msg: {text}: {msg.id=} {event.id=} {qid=} {gid_src=} {mtmsgsg=}")
     l = text.splitlines()
     if l[-1] in loadings:
       return
@@ -2538,19 +2553,19 @@ async def parse_msg(event):
       return
     else:
       #  await mt_send(f"{mtmsgs[qid][0]['username']}[思考中...]", gateway=gateway)
-      gateway = gateways[qid]
+      gateway = gid_src[qid]
       mtmsgs = mtmsgsg[gateway]
       res = f"{mtmsgs[qid][0]['username']}{text}"
       await mt_send_for_long_text(res, gateway)
       #  await mt_send(res, gateway=gateway)
-      gateways.pop(qid)
+      gid_src.pop(qid)
       mtmsgs.pop(qid)
 
     #  except Exception as e:
-    #    err(f"fixme: {qid=} {gateways=} {queues=} {e=} line: {e.__traceback__.tb_lineno}")
+    #    err(f"fixme: {qid=} {gid_src=} {queues=} {e=} line: {e.__traceback__.tb_lineno}")
       #  raise e
     return
-    await queues[gateways[qid]].put( (msg.id, msg, qid) )
+    await queues[gid_src[qid]].put( (msg.id, msg, qid) )
     return
 
 
@@ -2630,27 +2645,27 @@ async def parse_out_msg(event):
 #    #  if not allright.is_set():
 #    #    print("W: skiped the msg because of reset is waiting")
 #    #    return
-#    #  elif event.chat_id not in gateways:
-#    #    logger.error(f"E: not found gateway for {event.chat_id}, {gateways=}")
+#    #  elif event.chat_id not in gid_src:
+#    #    logger.error(f"E: not found gateway for {event.chat_id}, {gid_src=}")
 #    #    return
 #    msg = event.message
 #
 #    if msg.is_reply:
 #      qid=msg.reply_to_msg_id
-#      print(f"msg id: {msg.id=} {event.id=} {qid=} {gateways=} {mtmsgsg=}")
-#      if qid not in gateways:
-#        logger.error(f"E: not found gateway for {qid=}, {gateways=} {msg.text=}")
+#      print(f"msg id: {msg.id=} {event.id=} {qid=} {gid_src=} {mtmsgsg=}")
+#      if qid not in gid_src:
+#        logger.error(f"E: not found gateway for {qid=}, {gid_src=} {msg.text=}")
 #        return
 #      try:
-#        #  await queues[gateways[qid]].put( (id(msg), qid, msg) )
-#        #  await queues[gateways[qid]].put( (msg.date, qid, msg) )
-#        await queues[gateways[qid]].put( (id(msg), qid, msg) )
-#        #  await queues[gateways[qid]].put( (msg.id, "test") )
+#        #  await queues[gid_src[qid]].put( (id(msg), qid, msg) )
+#        #  await queues[gid_src[qid]].put( (msg.date, qid, msg) )
+#        await queues[gid_src[qid]].put( (id(msg), qid, msg) )
+#        #  await queues[gid_src[qid]].put( (msg.id, "test") )
 #      except Exception as e:
-#        logger.info(f"E: fixme: {qid=} {gateways=} {queues=} {e=}")
+#        logger.info(f"E: fixme: {qid=} {gid_src=} {queues=} {e=}")
 #        #  raise e
 #      return
-#      await queues[gateways[qid]].put( (msg.id, msg, qid) )
+#      await queues[gid_src[qid]].put( (msg.id, msg, qid) )
 #      return
 
 
@@ -2859,6 +2874,8 @@ def get_msg_jid(msg):
     return
   return jid
 
+def clear_msg_jid(msg):
+
 
 def msg_out(msg):
   if not allright.is_set():
@@ -2911,13 +2928,14 @@ async def parse_xmpp_msg(msg):
     else:
       pprint(msg)
     return
-  print("%s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
   text = None
   for i in msg.body:
     text = msg.body[i]
     break
   if text is None:
+    print("跳过空消息: %s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
     return
+  print("%s %s %s %s" % (msg.type_, str(msg.from_), msg.to, msg.body))
   if text == "ping":
     #  await send("pong", ME)
     if msg.type_ == MessageType.GROUPCHAT:
@@ -2936,6 +2954,21 @@ async def parse_xmpp_msg(msg):
     else:
       pass
   else:
+
+    if msg.type_ == MessageType.GROUPCHAT:
+      nick = msg.to.resource
+    else:
+      if get_jid(msg.to) in my_groups:
+        nick = msg.to.resource
+      else:
+        nick = msg.to.localpart
+    res = await run_cmd(text, str(msg.from_), nick)
+    if res:
+      reply = msg.make_reply()
+      reply.body[None] = res
+      await send(reply)
+      return
+
     if get_jid(msg.from_) not in me:
       return
     #  awai:t mt_send(text, 'me', get_jid(msg.from_))
@@ -2961,159 +2994,139 @@ async def parse_xmpp_msg(msg):
   src = msg.from_
   text = msg.body
 
-async def _send(msg, client=None, room=None, gpm=False):
-  #  if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or get_jid(msg.to) not in my_groups:
-  if gpm is False:
-    if client is not None:
-      # https://docs.zombofant.net/aioxmpp/devel/api/public/node.html?highlight=client#aioxmpp.Client.send
-      res = client.send(msg)
-    elif room:
-      # https://docs.zombofant.net/aioxmpp/devel/api/public/muc.html?highlight=room#aioxmpp.muc.Room.send_message
-      res = room.send_message(msg)
+
+
+cmd_funs = {}
+
+async def add_cmd():
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"阿里千问\n{cmds[0]} $text"
+    text = ' '.join(cmds[1:])
+    return await qw(text)
+  cmd_funs["qw"] = _
+
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"阿里千问\n{cmds[0]} $text"
+    text = ' '.join(cmds[1:])
+    return await qw2(text)
+  cmd_funs["qw2"] = _
+
+  async def _(cmds, src):
+    text = ' '.join(cmds[1:])
+    if len(cmds) == 1:
+      return f"音乐下载\n.{cmds[0]} $text\n.{cmds[0]} clear\n--\ntelegram bot: https://t.me/{music_bot_name}"
+    if cmds[1] == "clear":
+      await clear_history()
+      return "ok"
+
+    text = ' '.join(cmds[1:])
+    music_bot_state[src] = 1
+    text="/search "+text
+
+    tmp = []
+    for i in gid_src:
+      if gid_src[i] == src:
+        tmp.append(i)
+    for i in tmp:
+      gid_src.pop(i)
+
+    if src in mtmsgsg:
+      ms = mtmsgsg[src]
+      ms.clear()
+  cmd_funs["music"] = _
+
+
+async def run_cmd(text, src, name="test"):
+  if text[0:1] == ".":
+    if text[1:2] == " ":
+      return
+    cmds = get_cmd(text[1:])
+    if cmds:
+      pass
     else:
-      client = XB
-      res = client.send(msg)
-  else:
-    # https://docs.zombofant.net/aioxmpp/devel/api/public/im.html#aioxmpp.im.conversation.AbstractConversation.send_message
-    if client is None:
-      client = XB
-    p2ps = client.summon(im.p2p.Service)
-    c = p2ps.get_conversation(msg.to)
-    #  stanza = c.send_message(msg)
-    res = c.send_message(msg)
-    #  return False
-  #  if isawaitable(res):
-  #  info(f"{type(res)}: {res} {msg}")
-  if asyncio.iscoroutine(res) or type(res) is stream.StanzaToken:
-    #  dbg(f"client send: {res=}")
-    res2 = await res
-    if res2 is None:
-      dbg(f"send msg: finally: {res=}")
-      return True
-    #  elif hasattr(res, "stanza") and res.stanza and res.stanza.error is None:
-    #    # 群内私聊
-    #    info(f"send gpm msg: finally: {res=}")
-    #    return True
+      return
+    #  print(f"> I: {cmds}")
+    logger.info("got cmds: {}".format(cmds))
+    cmd = cmds[0]
+    if cmd in cmd_funs:
+      res = await cmd_funs[cmd](cmds, src)
+      return "%s" % res
+      #  reply = msg.make_reply()
+      #  reply.body[None] = "%s" % res
+      #  await send(reply)
+      #  return True
+  elif text.isnumeric() and music_bot_state[src] == 2:
+    mtmsgs = mtmsgsg[src]
+    tmp = []
+    for i in gid_src:
+      if gid_src[i] == src:
+        tmp.append(i)
+    qid = max(tmp)
+    info(f"尝试下载：{text} {qid}")
+    bs = mtmsgs[qid][1]
+    info(f"尝试下载：{text} {qid} msg: {bs}")
+    i = None
+    for i in bs:
+      if type(i) is list:
+        for j in i:
+          if j.text == text:
+            info(f"已找到：{text}")
+            await j.click()
+            i = True
+            break
+        if i is True:
+          break
+      else:
+        if i.text == text:
+          info(f"已找到：{text}")
+          await i.click()
+          i = True
+          break
+
+    if i is True:
+      music_bot_state[src] += 1
     else:
-      info(f"send msg: finally: {res=} {res2=}")
-      return False
+      info(f"没找到：{text}")
+    return
   else:
-    warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
+    # tilebot
+    res = await send_cmd_to_bash([src, name, text])
+    if res:
+      return res
+    tmp=""
+    for i in text.splitlines():
+      if not i.startswith("> ") and  i != ">":
+        tmp += i+"\n"
+    urls=urlre.findall(qre.sub("", tmp))
+    res=None
+    #  M=' 🔗 '
+    #  M='- '
+    #  M=' ⤷ '
+    for url in urls:
+      #  url=url[0]
+      url=url[1]
+      if url.startswith("https://t.me/"):
+        return
+      if url.startswith("https://conversations.im/j/"):
+        return
+      if url.startswith("https://icq.im"):
+        return
+      if not res:
+        if len(urls) == 1:
+          res="%s" % await get_title(url)
+          break
+        res="[ %s urls ]" % len(urls)
+      res+="\n\n> %s\n%s" % (url, await get_title(url))
+    if res is not None:
+      return res
+      #  await mt_send(res, gateway=gateway, username="titlebot")
+
   return False
 
-async def send(text, jid=None, client=None, gpm=False, room=None, correct=False):
-
-  if type(text) is str:
-    if jid is None:
-      jid = ME
-    else:
-      if type(jid) is JID:
-        jid = get_jid(jid, True)
-
-      if gpm and '/' not in jid:
-        err(f"无法群私聊，地址错误: {jid}")
-        return False
-    if jid in my_groups:
-      msg = aioxmpp.Message(
-          to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
-          type_=MessageType.GROUPCHAT,
-      )
-    else:
-      #  if '/' in jid and jid.split('/', 1)[0] in my_groups:
-      msg = aioxmpp.Message(
-          to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
-          type_=MessageType.CHAT,
-      )
-    if correct:
-      j = get_msg_jid(msg)
-      if j in last_outmsg:
-        #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
-        r = misc.Replace()
-        r.id_ = last_outmsg[j]
-        msg.xep0308_replace = r
-    for i in split_long_text(text):
-      msg.body[None] = i
-      if await _send(msg, client, room, gpm) is not True:
-        return False
-    return True
-  elif isinstance(text, aioxmpp.Message):
-    #  info(f"send1: {jid=} {text=}")
-    msg = text
-    if msg.type_ == MessageType.GROUPCHAT:
-    #    if msg.to.resource is not None:
-      if not msg.to.is_bare:
-          #  msg.to.resource = None
-        #  if '/' in get_jid(msg.to, True):
-          #  msg.to = JID.fromstr(get_jid(msg.to))
-          #  msg.to = msg.to.replace(resource=None)
-        orig = msg.to
-        msg.to = msg.to.bare()
-        info(f"已修正地址错误: {orig} -> {msg=}")
-    elif gpm and msg.to.resource is None:
-      err(f"无法群私聊，地址错误: {msg.to}")
-      return False
-
-    if correct:
-      j = get_msg_jid(msg)
-      if j in last_outmsg:
-        #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
-        r = misc.Replace()
-        r.id_ = last_outmsg[j]
-        msg.xep0308_replace = r
-    return await _send(msg, client, room, gpm)
-  else:
-    err(f"text类型不对: {type(text)}")
-    return False
-    #  elif isinstance(text, aioxmpp.stanza.Message):
-    #    #  info(f"send2: {jid=} {text=}")
-    #    msg = text
-
-#  async def __send(msg, jid=None, client=None, gpm=False):
-#    #  if type(text) is str:
-#      #  info(f"send: {jid=} {text=}")
-#      # None is for "default language"
-#    #  info(f"send: {type(msg)} {msg=}")
-#    if client is None:
-#      client = XB
-#    #  return await client.send(msg)
-#    return await _send(msg, client, gpm=gpm)
-
-async def sendg(text, jid=None, room=None, client=None):
-  info(f"send group msg: {jid} {text}")
-  if jid is None:
-    jid = test_group
-  recipient_jid = JID.fromstr(jid)
-  msg = aioxmpp.Message(
-      to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
-      type_=aioxmpp.MessageType.GROUPCHAT,
-  )
-  # None is for "default language"
-  msg.body[None] = text
-
-  if room is not None:
-    return await _send(msg, room=room)
-
-  if client is None:
-    client = XB
-  #  return await client.send(msg)
-  if client is not None:
-    return await _send(msg, client)
-    #  res = room.send_message(msg)
-    #  # https://docs.zombofant.net/aioxmpp/devel/api/public/muc.html?highlight=room#aioxmpp.muc.Room.send_message
-    #  if asyncio.iscoroutine(res):
-    #    res = await res
-    #    if res is None:
-    #      dbg(f"room send: finally: {res=}")
-    #      return True
-    #    else:
-    #      info(f"room send: finally: {res=}")
-    #      return False
-    #  else:
-    #    info(f"room send res is not coroutine: {res=}")
-    #    return False
-  else:
-    warn(f"need client or room")
-    return False
 
 
 
@@ -3625,6 +3638,8 @@ async def amain():
       print(f"DOMAIN: {DOMAIN}")
 
 
+
+      await add_cmd()
       while True:
         if allright_task > 0:
           info(f"等待初始化完成，剩余任务数：{allright_task}")
