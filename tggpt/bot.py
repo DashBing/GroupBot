@@ -2542,13 +2542,14 @@ async def regisger_handler(client):
       handler,
   )
 
+  client.stream.service_outbound_messages_filter.register(msg_out, 1)
+
 
 def msg_out(msg):
   if not allright.is_set():
     info("skip msg: allright is not ok")
     return
   pprint(msg)
-
 
 
 #  def gmsg(msg, member, source, **kwargs):
