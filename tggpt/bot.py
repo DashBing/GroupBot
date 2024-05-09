@@ -1618,10 +1618,16 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False)
     #  else:
     #    if j in last_outmsg:
     #      last_outmsg.pop(j)
-    for i in split_long_text(text):
+    texts = split_long_text(text)
+    for i in texts:
+      if len(texts) > 1:
+        add_id_to_msg(msg, False)
+      else:
+        add_id_to_msg(msg, correct)
       msg.body[None] = i
       if await _send(msg, client, room, gpm) is not True:
         return False
+
     return True
   elif isinstance(text, aioxmpp.Message):
     #  info(f"send1: {jid=} {text=}")
@@ -1640,32 +1646,8 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False)
       err(f"无法群私聊，地址错误: {msg.to}")
       return False
 
-    j = get_msg_jid(msg)
-    if correct:
-      if j in last_outmsg:
-        last_outmsg[j][0] = msg
-        #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
-        if last_outmsg[j][1]:
-          r = misc.Replace()
-          r.id_ = last_outmsg[j][1]
-          msg.xep0308_replace = r
-        else:
-          info("msg id 不可用: {last_outmsg[j][1]}")
-      else:
-        last_outmsg[j] = [msg, None]
-        info("已添加msg")
-    else:
-        #  last_outmsg.pop(j)
-      if j in last_outmsg:
-        last_outmsg[j][0] = msg
-        #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
-        if last_outmsg[j][1]:
-          r = misc.Replace()
-          r.id_ = last_outmsg[j][1]
-          msg.xep0308_replace = r
-        else:
-          info("msg id 不可用: {last_outmsg[j][1]}")
-        last_outmsg[j].append(0)
+    add_id_to_msg(msg, correct)
+
     return await _send(msg, client, room, gpm)
   else:
     err(f"text类型不对: {type(text)}")
@@ -2874,7 +2856,6 @@ async def regisger_handler(client):
   client.stream.app_outbound_message_filter.register(msg_out, 1)
 
 
-
 last_outmsg = {}
 
 
@@ -2896,6 +2877,42 @@ def clear_msg_jid(msg):
     info(f"已清除msg记录: {j}")
   else:
     info(f"没找到msg记录: {j}")
+
+
+def add_id_to_msg(msg, correct):
+  j = get_msg_jid(msg)
+  if correct:
+    if j in last_outmsg:
+      last_outmsg[j][0] = msg
+      #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
+      for i in range(9):
+        if last_outmsg[j][1]:
+          r = misc.Replace()
+          r.id_ = last_outmsg[j][1]
+          msg.xep0308_replace = r
+          break
+        else:
+          info("msg id 不可用: {last_outmsg[j][1]}")
+          await asyncio.sleep(1)
+    else:
+      last_outmsg[j] = [msg, None]
+      info("已添加msg")
+  else:
+      #  last_outmsg.pop(j)
+    if j in last_outmsg:
+      last_outmsg[j][0] = msg
+      #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
+      for i in range(9):
+        if last_outmsg[j][1]:
+          r = misc.Replace()
+          r.id_ = last_outmsg[j][1]
+          msg.xep0308_replace = r
+        else:
+          info("msg id 不可用: {last_outmsg[j][1]}")
+          await asyncio.sleep(1)
+      last_outmsg[j].append(0)
+
+
 
 
 @exceptions_handler
