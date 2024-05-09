@@ -616,3 +616,297 @@ MessageType.GROUPCHAT bebat@muc.pimux.de/bot wtfipfs@pimux.de/ywyhB7k0EY3z {<aio
 ===
 2024-05-09 10:18:54,770 [DEBUG] aioxmpp.node.PresenceManagedClient.XMLStream [protocol.data_received:552]: RECV b"<r xmlns='urn:xmpp:sm:3'/>"
 
+
+
+
+
+---
+||<class 'aioxmpp.roster.service.RosterClient'>: <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>
+---
+  ORDER_AFTER: <class 'frozenset'>: frozenset({<class 'aioxmpp.dispatcher.SimplePresenceDispatcher'>})
+  ORDER_BEFORE: <class 'frozenset'>: frozenset()
+  PATCHED_ORDER_AFTER: <class 'frozenset'>: frozenset({<class 'aioxmpp.dispatcher.SimplePresenceDispatcher'>})
+  SERVICE_HANDLERS: <class 'tuple'>: (((<function _apply_iq_handler at 0x7f5a76510ea0>, (<IQType.SET: 'set'>, <class 'aioxmpp.roster.xso.Query'>)), <function RosterClient.handle_roster_push at 0x7f5a765363e0>, {'with_send_reply': False}), ((<function _apply_presence_handler at 0x7f5a76525620>, (<PresenceType.SUBSCRIBE: 'subscribe'>, None)), <function RosterClient.handle_subscribe at 0x7f5a76536520>, {}), ((<function _apply_presence_handler at 0x7f5a76525620>, (<PresenceType.SUBSCRIBED: 'subscribed'>, None)), <function RosterClient.handle_subscribed at 0x7f5a76536660>, {}), ((<function _apply_presence_handler at 0x7f5a76525620>, (<PresenceType.UNSUBSCRIBED: 'unsubscribed'>, None)), <function RosterClient.handle_unsubscribed at 0x7f5a765367a0>, {}), ((<function _apply_presence_handler at 0x7f5a76525620>, (<PresenceType.UNSUBSCRIBE: 'unsubscribe'>, None)), <function RosterClient.handle_unsubscribe at 0x7f5a765368e0>, {}))
+  _RosterClient__roster_lock: <class 'asyncio.locks.Lock'>: <asyncio.locks.Lock object at 0x7f5a7340f850 [unlocked]>
+  _Service__client: <class 'aioxmpp.node.PresenceManagedClient'>: <aioxmpp.node.PresenceManagedClient object at 0x7f5a745b6190>
+  _Service__context: <class 'contextlib.ExitStack'>: <contextlib.ExitStack object at 0x7f5a7340f390>
+  _Service__dependencies: <class 'dict'>: {<class 'aioxmpp.dispatcher.SimplePresenceDispatcher'>: <aioxmpp.dispatcher.SimplePresenceDispatcher object at 0x7f5a745d4310>}
+  _Service__service_order_index: <class 'int'>: 4
+  __abstractmethods__: <class 'frozenset'>: frozenset()
+  __class__: <class 'aioxmpp.service.Meta'>: <class 'aioxmpp.roster.service.RosterClient'>
+  __delattr__: <class 'method-wrapper'>: <method-wrapper '__delattr__' of RosterClient object at 0x7f5a745f7d90>
+  __dict__: <class 'dict'>: {'logger': <Logger aioxmpp.node.PresenceManagedClient.roster.RosterClient (DEBUG)>, '_Service__context': <contextlib.ExitStack object at 0x7f5a7340f390>, '_Service__client': <aioxmpp.node.PresenceManagedClient object at 0x7f5a745b6190>, '_Service__dependencies': {<class 'aioxmpp.dispatcher.SimplePresenceDispatcher'>: <aioxmpp.dispatcher.SimplePresenceDispatcher object at 0x7f5a745d4310>}, '_Service__service_order_index': 4, '_bse_token': <object object at 0x7f5a755a5bc0>, '_RosterClient__roster_lock': <asyncio.locks.Lock object at 0x7f5a7340f850 [unlocked]>, 'items': {}, 'groups': {}, 'version': None}
+  __dir__: <class 'builtin_function_or_method'>: <built-in method __dir__ of RosterClient object at 0x7f5a745f7d90>
+  __doc__: <class 'str'>:
+    A roster client :class:`aioxmpp.service.Service`.
+
+    The interaction with a roster service happens mainly by accessing the
+    attributes holding the state and using the events to be notified of state
+    changes:
+
+    Attributes for accessing the roster:
+
+    .. attribute:: items
+
+       A dictionary mapping :class:`~aioxmpp.JID` instances to corresponding
+       :class:`Item` instances.
+
+    .. attribute:: groups
+
+       A dictionary which allows group-based access to :class:`Item`
+       instances. The dictionaries keys are the names of the groups, the values
+       are :class:`set` instances, which hold the :class:`Item` instances in
+       that group.
+
+       At no point one can observe empty :class:`set` instances in this
+       dictionary.
+
+    The :class:`Item` instances stay the same, as long as they represent the
+    identical roster entry on the remote side. That is, if the name or
+    subscription state are changed in the server side roster, the :class:`Item`
+    instance stays the same, but the attributes are mutated. However, if the
+    entry is removed from the server roster and re-added later for the same
+    JID, it will be a different :class:`Item` instance.
+
+    Signals:
+
+    .. signal:: on_initial_roster_received()
+
+       Fires when the initial roster has been received. Note that if roster
+       versioning is used, the initial roster may not be up-to-date. The server
+       is allowed to tell the client to re-use its local state and deliver
+       changes using roster pushes. In that case, the
+       :meth:`on_initial_roster_received` event fires immediately, so that the
+       user sees whatever roster has been set up for versioning before the
+       stream was established; updates pushed by the server are delivered using
+       the normal events.
+
+       The roster data has already been imported at the time the callback is
+       fired.
+
+       Note that the initial roster is diffed against whatever is in the local
+       store and events are fired just like for normal push updates. Thus, in
+       general, you won’t need this signal; it might be better to listen for
+       the events below.
+
+    .. signal:: on_entry_added(item)
+
+       Fires when an `item` has been added to the roster. The attributes of the
+       `item` are up-to-date when this callback fires.
+
+       When the event fires, the bookkeeping structures are already updated.
+       This implies that :meth:`on_group_added` is called before
+       :meth:`on_entry_added` if the entry adds a new group.
+
+    .. signal:: on_entry_name_changed(item)
+
+       Fires when a roster update changed the name of the `item`. The new name
+       is already applied to the `item`.
+
+    .. signal:: on_entry_subscription_state_changed(item)
+
+       Fires when a roster update changes any of the :attr:`Item.subscription`,
+       :attr:`Item.ask` or :attr:`Item.approved` attributes. The new values are
+       already applied to `item`.
+
+       The event always fires once per update, even if the update changes
+       more than one of the above attributes.
+
+    .. signal:: on_entry_added_to_group(item, group_name)
+
+       Fires when an update adds an `item` to a group. The :attr:`Item.groups`
+       attribute is already updated (not only with this, but also other group
+       updates, including removals) when this event is fired.
+
+       The event fires for each added group in an update, thus it may fire more
+       than once per update.
+
+       The name of the new group is in `group_name`.
+
+       At the time the event fires, the bookkeeping structures for the group
+       are already updated; this implies that :meth:`on_group_added` fires
+       *before* :meth:`on_entry_added_to_group` if the entry added a new group.
+
+    .. signal:: on_entry_removed_from_group(item, group_name)
+
+       Fires when an update removes an `item` from a group. The
+       :attr:`Item.groups` attribute is already updated (not only with this,
+       but also other group updates, including additions) when this event is
+       fired.
+
+       The event fires for each removed group in an update, thus it may fire
+       more than once per update.
+
+       The name of the new group is in `group_name`.
+
+       At the time the event fires, the bookkeeping structures are already
+       updated; this implies that :meth:`on_group_removed` fires *before*
+       :meth:`on_entry_removed_from_group` if the removal of an entry from a
+       group causes the group to vanish.
+
+    .. signal:: on_entry_removed(item)
+
+       Fires after an entry has been removed from the roster. The entry is
+       already removed from all bookkeeping structures, but the values on the
+       `item` object are the same as right before the removal.
+
+       This implies that :meth:`on_group_removed` fires *before*
+       :meth:`on_entry_removed` if the removal of an entry causes a group to
+       vanish.
+
+    .. signal:: on_group_added(group)
+
+        Fires after a new group has been added to the bookkeeping structures.
+
+        :param group: Name of the new group.
+        :type group: :class:`str`
+
+        At the time the event fires, the group is empty.
+
+        .. versionadded:: 0.9
+
+    .. signal:: on_group_removed(group)
+
+        Fires after a new group has been removed from the bookkeeping
+        structures.
+
+        :param group: Name of the old group.
+        :type group: :class:`str`
+
+        At the time the event fires, the group is empty.
+
+        .. versionadded:: 0.9
+
+    Modifying roster contents:
+
+    .. automethod:: set_entry
+
+    .. automethod:: remove_entry
+
+    Managing presence subscriptions:
+
+    .. automethod:: approve
+
+    .. automethod:: subscribe
+
+    .. signal:: on_subscribe(stanza)
+
+       Fires when a peer requested a subscription. The whole stanza received is
+       included as `stanza`.
+
+       .. seealso::
+
+          To approve a subscription request, use :meth:`approve`.
+
+    .. signal:: on_subscribed(stanza)
+
+       Fires when a peer has confirmed a previous subscription request. The
+       ``"subscribed"`` stanza is included as `stanza`.
+
+    .. signal:: on_unsubscribe(stanza)
+
+       Fires when a peer cancelled their subscription for our presence. As per
+       :rfc:`6121`, the server forwards the ``"unsubscribe"`` presence stanza
+       (which is included as `stanza` argument) *before* sending the roster
+       push.
+
+       Unless your application is interested in the specific cause of a
+       subscription state change, it is not necessary to use this signal; the
+       subscription state change will be covered by
+       :meth:`on_entry_subscription_state_changed`.
+
+    .. signal:: on_unsubscribed(stanza)
+
+       Fires when a peer cancelled our subscription. As per :rfc:`6121`, the
+       server forwards the ``"unsubscribed"`` presence stanza (which is
+       included as `stanza` argument) *before* sending the roster push.
+
+       Unless your application is interested in the specific cause of a
+       subscription state change, it is not necessary to use this signal; the
+       subscription state change will be covered by
+       :meth:`on_entry_subscription_state_changed`.
+
+    Import/Export of roster data:
+
+    .. automethod:: export_as_json
+
+    .. automethod:: import_from_json
+
+    To make use of roster versioning, use the above two methods. The general
+    workflow is to :meth:`export_as_json` the roster after disconnecting and
+    storing it for the next connection attempt. **Before** connecting, the
+    stored data needs to be loaded using :meth:`import_from_json`. This only
+    needs to happen after a new :class:`Service` has been created, as roster
+    services won’t delete roster contents between two connections on the same
+    :class:`.Client` instance.
+
+    .. versionchanged:: 0.8
+
+       This class was formerly known as :class:`aioxmpp.roster.Service`. It
+       is still available under that name, but the alias will be removed in
+       1.0.
+
+  __eq__: <class 'method-wrapper'>: <method-wrapper '__eq__' of RosterClient object at 0x7f5a745f7d90>
+  __format__: <class 'builtin_function_or_method'>: <built-in method __format__ of RosterClient object at 0x7f5a745f7d90>
+  __ge__: <class 'method-wrapper'>: <method-wrapper '__ge__' of RosterClient object at 0x7f5a745f7d90>
+  __getattribute__: <class 'method-wrapper'>: <method-wrapper '__getattribute__' of RosterClient object at 0x7f5a745f7d90>
+  __getstate__: <class 'builtin_function_or_method'>: <built-in method __getstate__ of RosterClient object at 0x7f5a745f7d90>
+  __gt__: <class 'method-wrapper'>: <method-wrapper '__gt__' of RosterClient object at 0x7f5a745f7d90>
+  __hash__: <class 'method-wrapper'>: <method-wrapper '__hash__' of RosterClient object at 0x7f5a745f7d90>
+  __init__: <class 'method'>: <bound method RosterClient.__init__ of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  __init_subclass__: <class 'builtin_function_or_method'>: <built-in method __init_subclass__ of Meta object at 0x4038580>
+  __le__: <class 'method-wrapper'>: <method-wrapper '__le__' of RosterClient object at 0x7f5a745f7d90>
+  __lt__: <class 'method-wrapper'>: <method-wrapper '__lt__' of RosterClient object at 0x7f5a745f7d90>
+  __module__: <class 'str'>: aioxmpp.roster.service
+  __ne__: <class 'method-wrapper'>: <method-wrapper '__ne__' of RosterClient object at 0x7f5a745f7d90>
+  __new__: <class 'builtin_function_or_method'>: <built-in method __new__ of type object at 0x9563c0>
+  __reduce__: <class 'builtin_function_or_method'>: <built-in method __reduce__ of RosterClient object at 0x7f5a745f7d90>
+  __reduce_ex__: <class 'builtin_function_or_method'>: <built-in method __reduce_ex__ of RosterClient object at 0x7f5a745f7d90>
+  __repr__: <class 'method-wrapper'>: <method-wrapper '__repr__' of RosterClient object at 0x7f5a745f7d90>
+  __setattr__: <class 'method-wrapper'>: <method-wrapper '__setattr__' of RosterClient object at 0x7f5a745f7d90>
+  __sizeof__: <class 'builtin_function_or_method'>: <built-in method __sizeof__ of RosterClient object at 0x7f5a745f7d90>
+  __str__: <class 'method-wrapper'>: <method-wrapper '__str__' of RosterClient object at 0x7f5a745f7d90>
+  __subclasshook__: <class 'builtin_function_or_method'>: <built-in method __subclasshook__ of Meta object at 0x4038580>
+  __weakref__: <class 'NoneType'>: None
+  _abc_impl: <class '_abc._abc_data'>: <_abc._abc_data object at 0x7f5a76543d00>
+  _bse_token: <class 'object'>: <object object at 0x7f5a755a5bc0>
+  _remove_from_groups: <class 'method'>: <bound method RosterClient._remove_from_groups of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  _request_initial_roster: <class 'method'>: <bound method RosterClient._request_initial_roster of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  _shutdown: <class 'method'>: <bound method Service._shutdown of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  _update_entry: <class 'method'>: <bound method RosterClient._update_entry of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  approve: <class 'method'>: <bound method RosterClient.approve of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  client: <class 'aioxmpp.node.PresenceManagedClient'>: <aioxmpp.node.PresenceManagedClient object at 0x7f5a745b6190>
+  dependencies: <class 'dict'>: {<class 'aioxmpp.dispatcher.SimplePresenceDispatcher'>: <aioxmpp.dispatcher.SimplePresenceDispatcher object at 0x7f5a745d4310>}
+  derive_logger: <class 'method'>: <bound method Service.derive_logger of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  export_as_json: <class 'method'>: <bound method RosterClient.export_as_json of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  groups: <class 'dict'>: {}
+  handle_roster_push: <class 'method'>: <bound method RosterClient.handle_roster_push of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  handle_subscribe: <class 'method'>: <bound method RosterClient.handle_subscribe of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  handle_subscribed: <class 'method'>: <bound method RosterClient.handle_subscribed of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  handle_unsubscribe: <class 'method'>: <bound method RosterClient.handle_unsubscribe of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  handle_unsubscribed: <class 'method'>: <bound method RosterClient.handle_unsubscribed of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  import_from_json: <class 'method'>: <bound method RosterClient.import_from_json of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  items: <class 'dict'>: {}
+  logger: <class 'logging.Logger'>: <Logger aioxmpp.node.PresenceManagedClient.roster.RosterClient (DEBUG)>
+  on_entry_added: <class 'aioxmpp.callbacks.AdHocSignal'>: <aioxmpp.callbacks.AdHocSignal object at 0x7f5a745e25d0>
+  on_entry_added_to_group: <class 'aioxmpp.callbacks.AdHocSignal'>: <aioxmpp.callbacks.AdHocSignal object at 0x7f5a7340c810>
+  on_entry_name_changed: <class 'aioxmpp.callbacks.AdHocSignal'>: <aioxmpp.callbacks.AdHocSignal object at 0x7f5a7340c750>
+  on_entry_removed: <class 'aioxmpp.callbacks.AdHocSignal'>: <aioxmpp.callbacks.AdHocSignal object at 0x7f5a7340f890>
+  on_entry_removed_from_group: <class 'aioxmpp.callbacks.AdHocSignal'>: <aioxmpp.callbacks.AdHocSignal object at 0x7f5a7340f910>
+  on_entry_subscription_state_changed: <class 'aioxmpp.callbacks.AdHocSignal'>: <aioxmpp.callbacks.AdHocSignal object at 0x7f5a7340f8d0>
+  on_group_added: <class 'aioxmpp.callbacks.AdHocSignal'>: <aioxmpp.callbacks.AdHocSignal object at 0x7f5a745e2e50>
+  on_group_removed: <class 'aioxmpp.callbacks.AdHocSignal'>: <aioxmpp.callbacks.AdHocSignal object at 0x7f5a734243d0>
+  on_initial_roster_received: <class 'aioxmpp.callbacks.AdHocSignal'>: <aioxmpp.callbacks.AdHocSignal object at 0x7f5a73424410>
+  on_subscribe: <class 'aioxmpp.callbacks.AdHocSignal'>: <aioxmpp.callbacks.AdHocSignal object at 0x7f5a745e2a10>
+  on_subscribed: <class 'aioxmpp.callbacks.AdHocSignal'>: <aioxmpp.callbacks.AdHocSignal object at 0x7f5a745e2ed0>
+  on_unsubscribe: <class 'aioxmpp.callbacks.AdHocSignal'>: <aioxmpp.callbacks.AdHocSignal object at 0x7f5a745e2d50>
+  on_unsubscribed: <class 'aioxmpp.callbacks.AdHocSignal'>: <aioxmpp.callbacks.AdHocSignal object at 0x7f5a745f6350>
+  remove_entry: <class 'method'>: <bound method RosterClient.remove_entry of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  service_order_index: <class 'int'>: 4
+  set_entry: <class 'method'>: <bound method RosterClient.set_entry of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  shutdown: <class 'method'>: <bound method Service.shutdown of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  subscribe: <class 'method'>: <bound method RosterClient.subscribe of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  unsubscribe: <class 'method'>: <bound method RosterClient.unsubscribe of <aioxmpp.roster.service.RosterClient object at 0x7f5a745f7d90>>
+  version: <class 'NoneType'>: None
+===
+
