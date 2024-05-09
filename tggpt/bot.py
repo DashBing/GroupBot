@@ -2571,7 +2571,7 @@ def msg_out(msg):
     info("skip msg: allright is not ok")
     return
   #  pprint(msg)
-  jid = get_msg_id(msg)
+  jid = get_msg_jid(msg)
   last_outmsg[jid] = msg.id_
   return msg
 
