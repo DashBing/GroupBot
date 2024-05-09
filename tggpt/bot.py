@@ -2448,7 +2448,7 @@ async def get_disco(jid, client=None):
   #  for i in my_groups:
   #    jid = i
   #    break
-  jid = test_group
+  jid = test_group.rsplit('@', 1)[1]
   dc = client.summon(aioxmpp.DiscoClient)
   res = await dc.query_info(JID.fromstr(jid))
   #  pprint(res)
