@@ -165,6 +165,8 @@ def warn(text, more=True):
     logger.warning(text)
 
 def info(text):
+  lineno = sys._getframe(1).f_lineno
+  text = f"{lineno}: {text}"
   logger.info(text)
 
 def dbg(text):
