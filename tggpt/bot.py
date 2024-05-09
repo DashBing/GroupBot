@@ -1604,19 +1604,16 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False)
           to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
           type_=MessageType.CHAT,
       )
-    j = get_msg_jid(msg)
-    if correct:
-      if j in last_outmsg:
-        #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
-        r = misc.Replace()
-        r.id_ = last_outmsg[j]
-        msg.xep0308_replace = r
-    else:
-      tmp = False
-      if j in last_outmsg:
-        tmp = True
-      if tmp:
-        last_outmsg.pop(j)
+    #  j = get_msg_jid(msg)
+    #  if correct:
+    #    if j in last_outmsg:
+    #      #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
+    #      r = misc.Replace()
+    #      r.id_ = last_outmsg[j]
+    #      msg.xep0308_replace = r
+    #  else:
+    #    if j in last_outmsg:
+    #      last_outmsg.pop(j)
     for i in split_long_text(text):
       msg.body[None] = i
       if await _send(msg, client, room, gpm) is not True:
@@ -1642,15 +1639,15 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False)
     j = get_msg_jid(msg)
     if correct:
       if j in last_outmsg:
+        last_outmsg[j][0] = msg
         #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
         r = misc.Replace()
-        r.id_ = last_outmsg[j]
+        r.id_ = last_outmsg[j][1]
         msg.xep0308_replace = r
+      else:
+        last_outmsg[j] = [msg, None]
     else:
-      tmp = False
       if j in last_outmsg:
-        tmp = True
-      if tmp:
         last_outmsg.pop(j)
     return await _send(msg, client, room, gpm)
   else:
@@ -2875,7 +2872,9 @@ def get_msg_jid(msg):
   return jid
 
 def clear_msg_jid(msg):
-  pass
+  j = get_msg_jid(msg)
+  if j in last_outmsg:
+    last_outmsg.pop(j)
 
 
 def msg_out(msg):
@@ -2884,7 +2883,14 @@ def msg_out(msg):
     return
   #  pprint(msg)
   jid = get_msg_jid(msg)
-  last_outmsg[jid] = msg.id_
+  if jid in last_outmsg:
+    if last_outmsg[jid][0] == msg:
+      info(f"更新msgid: {last_outmsg[jid][1]} -> {msg.id_}")
+      last_outmsg[jid][1] = msg.id_
+    else:
+      info(f"未更新msgid: {last_outmsg[jid][0]=} != {msg=}")
+  else:
+    last_outmsg[jid][1] = msg.id_
   return msg
 
 
@@ -3529,8 +3535,8 @@ async def xmppbot():
       #  mucsv = client.summon(aioxmpp.MUCClient)
       ms = my_groups
       while True:
-        await join(test_group)
-        break
+        #  await join(test_group)
+        #  break
         tmp = []
         for i in ms:
           if await join(i):
