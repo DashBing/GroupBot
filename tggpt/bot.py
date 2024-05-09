@@ -2523,8 +2523,9 @@ async def parse_xmpp_msg(msg):
   text = msg.body
 
 
-async def _send(msg, client=None, room=None):
-  if msg.to.is_bare or get_jid(msg.to) not in my_groups:
+async def _send(msg, client=None, room=None, pm=False):
+  #  if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or get_jid(msg.to) not in my_groups:
+  if pm is False:
     if client is not None:
       # https://docs.zombofant.net/aioxmpp/devel/api/public/node.html?highlight=client#aioxmpp.Client.send
       res = client.send(msg)
@@ -2574,6 +2575,7 @@ async def send(text, jid=None, client=None):
 
 async def __send(text, jid=None, client=None):
   #  if type(text) is str:
+  pm = False
   if isinstance(text, aioxmpp.Message):
     #  info(f"send1: {jid=} {text=}")
     msg = text
@@ -2600,19 +2602,19 @@ async def __send(text, jid=None, client=None):
           type_=MessageType.GROUPCHAT,
       )
     else:
+      if '/' in jid and jid.split('/', 1)[0] in my_groups:
+        pm = True
       msg = aioxmpp.Message(
           to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
           type_=MessageType.CHAT,
       )
     # None is for "default language"
     msg.body[None] = text
-
-
   #  info(f"send: {type(msg)} {msg=}")
   if client is None:
     client = XB
   #  return await client.send(msg)
-  return await _send(msg, client)
+  return await _send(msg, client, pm=pm)
 
 async def sendg(text, jid=None, room=None, client=None):
   info(f"send group msg: {jid} {text}")
