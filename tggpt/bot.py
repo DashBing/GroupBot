@@ -3174,6 +3174,7 @@ async def xmppbot():
       #  mucsv = client.summon(aioxmpp.MUCClient)
       ms = my_groups
       while True:
+        await join(test_group)
         break
         tmp = []
         for i in ms:
