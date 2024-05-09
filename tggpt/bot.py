@@ -9,6 +9,11 @@ from . import debug, WORK_DIR, PARENT_DIR, LOG_FILE, get_my_key, HOME, LOGGER
 #  from tg.telegram import DOWNLOAD_PATH
 from telethon.tl.types import KeyboardButton, KeyboardButtonUrl, PeerUser, PeerChannel, PeerChat, User, Channel, Chat
 
+#  import aioxmpp
+from aioxmpp import stream, ibr, protocol, node, dispatcher, connector, JID, im, errors, MessageType, PresenceType
+from inspect import isawaitable, currentframe
+
+
 #  HOME = os.environ.get("HOME")
 
 import logging
@@ -104,9 +109,6 @@ import sys, os
 #  from asyncio import sleep
 from collections import deque
 
-#  import aioxmpp
-from aioxmpp import stream, ibr, protocol, node, dispatcher, connector, JID, im, errors, MessageType, PresenceType
-from inspect import isawaitable, currentframe
 
 
 
@@ -2542,6 +2544,7 @@ async def regisger_handler(client):
       handler,
   )
 
+  client.stream.service_outbound_messages_filter = stream.AppFilter()
   client.stream.service_outbound_messages_filter.register(msg_out, 1)
 
 
