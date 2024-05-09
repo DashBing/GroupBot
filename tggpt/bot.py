@@ -2520,6 +2520,8 @@ async def parse_xmpp_msg(msg):
       #  warn(f"状态订阅请求：{msg.from_}")
       rc = XB.summon(aioxmpp.RosterClient)
       pprint(rc)
+      res = rc.subscribe(msg.from_)
+      print(f"结果：{res}")
       res = rc.approve(msg.from_)
       print(f"结果：{res}")
     return
