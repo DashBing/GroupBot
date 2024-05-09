@@ -2551,11 +2551,11 @@ def msg_in(msg):
   if not allright.is_set():
     info("skip msg: allright is not ok")
     return
-  if hasattr(msg, "xep0203_delay"):
-    pprint(msg.xep0203_delay)
-    info("skip msg: delayed: {msg.xep0203_delay}")
-  if hasattr(msg, "xep308_replace"):
-    pprint(msg.xep308_replace)
+  #  if hasattr(msg, "xep0203_delay"):
+  #    pprint(msg.xep0203_delay)
+  #    info("skip msg: delayed: {msg.xep0203_delay}")
+  #  if hasattr(msg, "xep308_replace"):
+  #    pprint(msg.xep308_replace)
   asyncio.create_task(parse_xmpp_msg(msg))
   #  return
   #  info("\n>>> msg: %s\n" % msg)
@@ -2620,6 +2620,8 @@ async def parse_xmpp_msg(msg):
       reply = msg.make_reply()
       reply.body[None] = "ok"
       await send(reply)
+    elif text == "ok":
+      pprint(msg)
     #  elif text == "correct":
     #    pprint(msg.xep308_replace)
 
