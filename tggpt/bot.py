@@ -1621,9 +1621,9 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False)
     texts = split_long_text(text)
     for i in texts:
       if len(texts) > 1:
-        add_id_to_msg(msg, False)
+        await add_id_to_msg(msg, False)
       else:
-        add_id_to_msg(msg, correct)
+        await add_id_to_msg(msg, correct)
       msg.body[None] = i
       if await _send(msg, client, room, gpm) is not True:
         return False
@@ -2879,7 +2879,7 @@ def clear_msg_jid(msg):
     info(f"没找到msg记录: {j}")
 
 
-def add_id_to_msg(msg, correct):
+async def add_id_to_msg(msg, correct):
   j = get_msg_jid(msg)
   if correct:
     if j in last_outmsg:
