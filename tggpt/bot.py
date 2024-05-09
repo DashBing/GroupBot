@@ -2505,7 +2505,7 @@ async def parse_xmpp_msg(msg):
       #  pprint(msg.from_)
       #  await sendg("pong1")
       #  await sendg("pong2", get_jid(msg.from_))
-      await sendg("pong2", get_jid(msg.from_, True))
+      await send("pong3", get_jid(msg.from_, True))
       reply = msg.make_reply()
       reply.body[None] = "pong"
       await send(reply)
