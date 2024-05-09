@@ -311,6 +311,7 @@ queues = {}
 nids = {}
 queue_lock = asyncio.Lock()
 downlaod_lock = asyncio.Lock()
+bash_lock = asyncio.Lock()
 
 rss_lock = asyncio.Lock()
 
@@ -1012,99 +1013,101 @@ async def my_popen(cmd,
            return_msg=False,
            executable='/bin/bash',
            **args):
-  logger.info(cmd)
-  #    args=shlex.split(message.text.split(' ',1)[1])
+  
+  async with bash_lock:
+    logger.info(cmd)
+    #    args=shlex.split(message.text.split(' ',1)[1])
 
-  #    p=subprocess.Popen(message.text.split(' '))
-  #    p=subprocess.Popen(message.text.split(' ')[1:],universal_newlines=True,bufsize=1,text=True,stdout=PIPE, stderr=PIPE, shell=True)
-  #    p=subprocess.Popen(shlex.split(message.text.split(' ',1)[1]),text=True,stdout=PIPE, stderr=PIPE, shell=True)
+    #    p=subprocess.Popen(message.text.split(' '))
+    #    p=subprocess.Popen(message.text.split(' ')[1:],universal_newlines=True,bufsize=1,text=True,stdout=PIPE, stderr=PIPE, shell=True)
+    #    p=subprocess.Popen(shlex.split(message.text.split(' ',1)[1]),text=True,stdout=PIPE, stderr=PIPE, shell=True)
 
-  #    p=subprocess.Popen(args,text=True,stdout=PIPE, stderr=PIPE, shell=True)
-  #    p=Popen(args,text=True,universal_newlines=True,bufsize=1,stdout=PIPE, stderr=PIPE)
-  #    p=Popen(args,text=True,stdout=PIPE, stderr=PIPE)
-  #    p=await asyncio.create_subprocess_shell(message.text.split(' ',1)[1],stdout=PIPE, stderr=PIPE)#limit=None
-  #    p=Popen(args,stdout=PIPE, stderr=PIPE,bufsize=8000000)
-  #    p=Popen(args,stdout=PIPE, stderr=PIPE,text=True,encoding="utf-8",errors="ignore")
-  #  p=Popen(cmd,shell=shell,stdout=PIPE, stderr=PIPE,text=True,encoding="utf-8",errors="ignore")
-  p = Popen(cmd,
-        shell=shell,
-        stdout=PIPE,
-        stderr=PIPE,
-        text=True,
-        encoding="utf-8",
-        errors="ignore",
-        executable=executable)
+    #    p=subprocess.Popen(args,text=True,stdout=PIPE, stderr=PIPE, shell=True)
+    #    p=Popen(args,text=True,universal_newlines=True,bufsize=1,stdout=PIPE, stderr=PIPE)
+    #    p=Popen(args,text=True,stdout=PIPE, stderr=PIPE)
+    #    p=await asyncio.create_subprocess_shell(message.text.split(' ',1)[1],stdout=PIPE, stderr=PIPE)#limit=None
+    #    p=Popen(args,stdout=PIPE, stderr=PIPE,bufsize=8000000)
+    #    p=Popen(args,stdout=PIPE, stderr=PIPE,text=True,encoding="utf-8",errors="ignore")
+    #  p=Popen(cmd,shell=shell,stdout=PIPE, stderr=PIPE,text=True,encoding="utf-8",errors="ignore")
+    p = Popen(cmd,
+          shell=shell,
+          stdout=PIPE,
+          stderr=PIPE,
+          text=True,
+          encoding="utf-8",
+          errors="ignore",
+          executable=executable)
 
-  start_time = time.time()
-  res = ""
-  errs = ""
-  data = ["", "", p]
-  asyncio.create_task(update_stdouterr(data))
-  await asyncio.sleep(1)
-  logger.info(str(p.args))
-  while True:
-    #  if p.poll() == None and p.returncode == None:
-    if p.poll() == None:
-      pass
-    else:
-      break
-    #  await asyncio.sleep(0.5)
-    res = data[0]
-    errs = data[1]
+    start_time = time.time()
+    res = ""
+    errs = ""
+    data = ["", "", p]
+    asyncio.create_task(update_stdouterr(data))
+    await asyncio.sleep(1)
+    logger.info(str(p.args))
+    while True:
+      #  if p.poll() == None and p.returncode == None:
+      if p.poll() == None:
+        pass
+      else:
+        break
+      #  await asyncio.sleep(0.5)
+      res = data[0]
+      errs = data[1]
 
-    #  tmp = "...\n" + res + "\n==\nE: \n" + errs
-    tmp = "...\n%s\n==\nE: ?\n%s" % (res, errs)
-    tmp = tmp.strip()
+      #  tmp = "...\n" + res + "\n==\nE: \n" + errs
+      tmp = "...\n%s\n==\nE: ?\n%s" % (res, errs)
+      tmp = tmp.strip()
+      #  if msg:
+      #    if tmp != msg.text:
+      if True:
+          try:
+            #  msg = await cmd_answer(tmp, client, msg, **args)
+            info(f"临时输出: {tmp}")
+          except Exception as e:
+            logger.error(f"can not send tmp: {e=}")
+            #  msg = await client.send_message(MY_ID, tmp)
+            info(f"临时输出: {tmp} {e=}")
+      await asyncio.sleep(2)
+      if time.time() - start_time > max_time:
+        p.kill()
+        res = "my_popen: timeout, killed, cmd: {}\nres: {}".format(cmd, res)
+        warn(res)
+        #  await cmd_answer(res, client, msg)
+        #  info(f"最终输出: {res}")
+        break
+
+    try:
+      res, errs = p.communicate(timeout=5)
+    except subprocess.TimeoutExpired as e:
+      logger.error("timeout")
+      res = e.stdout
+      errs = e.stderr
+
+    info("popen exit")
+    if res:
+      if isinstance(res, bytes):
+        res = res.decode()
+    if errs:
+      if isinstance(errs, bytes):
+        errs = errs.decode()
+    if not res:
+      return False
+      res = "null"
+
     #  if msg:
-    #    if tmp != msg.text:
-    if True:
-        try:
-          #  msg = await cmd_answer(tmp, client, msg, **args)
-          info(f"临时输出: {tmp}")
-        except Exception as e:
-          logger.error(f"can not send tmp: {e=}")
-          #  msg = await client.send_message(MY_ID, tmp)
-          info(f"临时输出: {tmp} {e=}")
-    await asyncio.sleep(2)
-    if time.time() - start_time > max_time:
-      p.kill()
-      res = "my_popen: timeout, killed, cmd: {}\nres: {}".format(cmd, res)
-      warn(res)
-      #  await cmd_answer(res, client, msg)
-      #  info(f"最终输出: {res}")
-      break
-
-  try:
-    res, errs = p.communicate(timeout=5)
-  except subprocess.TimeoutExpired as e:
-    logger.error("timeout")
-    res = e.stdout
-    errs = e.stderr
-
-  info("popen exit")
-  if res:
-    if isinstance(res, bytes):
-      res = res.decode()
-  if errs:
-    if isinstance(errs, bytes):
-      errs = errs.decode()
-  if not res:
-    return False
-    res = "null"
-
-  #  if msg:
-  #    #  msg = await cmd_answer(res, client, msg, **args)
-  #    info(f"发送: {res}")
-  #    if return_msg:
-  #      return msg
-  if combine:
-    if p.returncode:
-      res = "%s\n==\nE: %s" % (res, p.returncode)
-      if errs:
-        res += "\n%s" % errs
-    return res
-  else:
-    return p.returncode, res, errs
+    #    #  msg = await cmd_answer(res, client, msg, **args)
+    #    info(f"发送: {res}")
+    #    if return_msg:
+    #      return msg
+    if combine:
+      if p.returncode:
+        res = "%s\n==\nE: %s" % (res, p.returncode)
+        if errs:
+          res += "\n%s" % errs
+      return res
+    else:
+      return p.returncode, res, errs
 
 
 async def run_my_bash(cmd, shell=True, max_time=64):
@@ -1163,7 +1166,6 @@ async def my_eval(cmd, client=None, msg=None, **args):
   logger.info(str(res) + "\n" + str(type(res)))
   res = await cmd_answer(str(res), client=client, msg=msg, **args)
   return res
-
 
 
 async def send_cmd_to_bash(msg):
@@ -1643,15 +1645,27 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False)
       if j in last_outmsg:
         last_outmsg[j][0] = msg
         #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
-        r = misc.Replace()
-        r.id_ = last_outmsg[j][1]
-        msg.xep0308_replace = r
+        if last_outmsg[j][1]:
+          r = misc.Replace()
+          r.id_ = last_outmsg[j][1]
+          msg.xep0308_replace = r
+        else:
+          info("msg id 不可用: {last_outmsg[j][1]}")
       else:
         last_outmsg[j] = [msg, None]
         info("已添加msg")
     else:
+        #  last_outmsg.pop(j)
       if j in last_outmsg:
-        last_outmsg.pop(j)
+        last_outmsg[j][0] = msg
+        #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
+        if last_outmsg[j][1]:
+          r = misc.Replace()
+          r.id_ = last_outmsg[j][1]
+          msg.xep0308_replace = r
+        else:
+          info("msg id 不可用: {last_outmsg[j][1]}")
+        last_outmsg[j].append(0)
     return await _send(msg, client, room, gpm)
   else:
     err(f"text类型不对: {type(text)}")
@@ -2886,13 +2900,18 @@ def msg_out(msg):
     info("skip msg: allright is not ok")
     return
   #  pprint(msg)
-  jid = get_msg_jid(msg)
-  if jid in last_outmsg:
-    if last_outmsg[jid][0] == msg:
-      info(f"更新msgid: {last_outmsg[jid][1]} -> {msg.id_}")
-      last_outmsg[jid][1] = msg.id_
+  j = get_msg_jid(msg)
+  if j in last_outmsg:
+    if last_outmsg[j][0] == msg:
+      if len(last_outmsg[j]) > 2 and last_outmsg[j][2] < 1:
+        info(f"停止记录msg id: {msg.id_}")
+        last_outmsg.pop(j)
+      else:
+
+        info(f"更新msgid: {last_outmsg[j][1]} -> {msg.id_}")
+        last_outmsg[j][1] = msg.id_
     else:
-      info(f"未更新msgid: {last_outmsg[jid][0]=} != {msg=}")
+      info(f"未更新msgid: {last_outmsg[j][0]=} != {msg=}")
   else:
     info(f"忽略: {msg=}")
   return msg
