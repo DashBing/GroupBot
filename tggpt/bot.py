@@ -2552,9 +2552,9 @@ def msg_in(msg):
     info("skip msg: allright is not ok")
     return
   if hasattr(msg, "xep0203_delay"):
+    pprint(msg.xep0203_delay)
     info("skip msg: delayed: {msg.xep0203_delay}")
-    return
-  elif hasattr(msg, "xep308_replace"):
+  if hasattr(msg, "xep308_replace"):
     pprint(msg.xep308_replace)
   asyncio.create_task(parse_xmpp_msg(msg))
   #  return
@@ -2606,11 +2606,7 @@ async def parse_xmpp_msg(msg):
     elif msg.type_ == MessageType.CHAT:
 
       reply = msg.make_reply()
-      if get_jid(msg.from_) in me:
-        logger.setLevel(logging.DEBUG)
-        reply.body[None] = "pong, debug on"
-      else:
-        reply.body[None] = "pong"
+      reply.body[None] = "pong"
       await send(reply)
     else:
       pass
@@ -2619,6 +2615,11 @@ async def parse_xmpp_msg(msg):
       return
     if text == "disco":
       await get_disco(get_jid(msg.from_))
+    elif text == "test":
+      logger.setLevel(logging.DEBUG)
+      reply = msg.make_reply()
+      reply.body[None] = "ok"
+      await send(reply)
     #  elif text == "correct":
     #    pprint(msg.xep308_replace)
 
