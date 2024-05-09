@@ -2439,6 +2439,17 @@ async def stop(client=None):
   else:
     logger.info(f"已离线: {jid}")
 
+
+
+async def get_info(jid, client=None):
+  if client is None:
+    client = XB
+  dc = client.summon(aioxmpp.DiscoClient)
+  res = await dc.query_info(JID.fromstr(jid))
+  pprint(res)
+
+
+
 async def regisger_handler(client):
 #  class FooService(aioxmpp.service.Service):
 #    feature = aioxmpp.disco.register_feature(
@@ -2592,6 +2603,11 @@ async def parse_xmpp_msg(msg):
       await send(reply)
     else:
       pass
+  else:
+    if get_jid(msg.from_) not in me:
+      return
+    if text == "disco":
+      await get_info(get_jid(msg.from_))
 
   #  pprint(msg)
   return
