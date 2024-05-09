@@ -2722,7 +2722,7 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False)
       )
     if correct:
       if get_jid(msg.to, True) in last_outmsg:
-        msg.xep0308_replace = misc.Replace(id_=last_outmsg[get_jid(jid, True)])
+        msg.xep0308_replace = misc.Replace(id_=last_outmsg[get_jid(msg.to, True)])
     for i in split_long_text(text):
       msg.body[None] = i
       if await _send(msg, client, room, gpm) is not True:
@@ -2747,7 +2747,7 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False)
 
     if correct:
       if get_jid(msg.to, True) in last_outmsg:
-        msg.xep0308_replace = misc.Replace(id_=last_outmsg[get_jid(jid, True)])
+        msg.xep0308_replace = misc.Replace(id_=last_outmsg[get_jid(msg.to, True)])
     return await _send(msg, client, room, gpm)
   else:
     err(f"text类型不对: {type(text)}")
