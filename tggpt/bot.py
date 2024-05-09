@@ -2442,12 +2442,16 @@ async def stop(client=None):
 
 
 
-async def get_info(jid, client=None):
+async def get_disco(jid, client=None):
   if client is None:
     client = XB
+  for i in my_groups:
+    jid = i
+    break
   dc = client.summon(aioxmpp.DiscoClient)
   res = await dc.query_info(JID.fromstr(jid))
   pprint(res)
+  print(res.to_dict())
 
 
 
@@ -2608,7 +2612,7 @@ async def parse_xmpp_msg(msg):
     if get_jid(msg.from_) not in me:
       return
     if text == "disco":
-      await get_info(get_jid(msg.from_))
+      await get_disco(get_jid(msg.from_))
 
   #  pprint(msg)
   return

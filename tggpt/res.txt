@@ -910,3 +910,98 @@ MessageType.GROUPCHAT bebat@muc.pimux.de/bot wtfipfs@pimux.de/ywyhB7k0EY3z {<aio
   version: <class 'NoneType'>: None
 ===
 
+
+
+
+MessageType.CHAT liqsliu@conversations.im/Conversations.CONk wtfipfs@pimux.de {<aioxmpp.structs.LanguageTag.fromstr('en')>: 'disco'}
+---
+||<class 'aioxmpp.disco.xso.InfoQuery'>: <aioxmpp.disco.xso.InfoQuery object at 0x7f0403f78fc0>
+---
+  ATTR_MAP: <class 'dict'>: {(None, 'node'): <aioxmpp.xso.model.Attr object at 0x7f040b2f7290>}
+  CHILD_MAP: <class 'dict'>: {('http://jabber.org/protocol/disco#info', 'identity'): <aioxmpp.xso.model.ChildList object at 0x7f040b2f7250>, ('http://jabber.org/protocol/disco#info', 'feature'): <aioxmpp.xso.model.ChildValueList object at 0x7f040b2f7350>, ('jabber:x:data', 'x'): <aioxmpp.xso.model.ChildList object at 0x7f040b2f7390>}
+  CHILD_PROPS: <class 'sortedcollections.recipes.OrderedSet'>: OrderedSet([<aioxmpp.xso.model.ChildList object at 0x7f040b2f7250>, <aioxmpp.xso.model.ChildValueList object at 0x7f040b2f7350>, <aioxmpp.xso.model.ChildList object at 0x7f040b2f7390>])
+  COLLECTOR_PROPERTY: <class 'NoneType'>: None
+  DECLARE_NS: <class 'dict'>: {None: 'http://jabber.org/protocol/disco#info'}
+  TAG: <class 'tuple'>: ('http://jabber.org/protocol/disco#info', 'query')
+  TEXT_PROPERTY: <class 'NoneType'>: None
+  UNKNOWN_ATTR_POLICY: <enum 'UnknownAttrPolicy'>: UnknownAttrPolicy.DROP
+  UNKNOWN_CHILD_POLICY: <enum 'UnknownChildPolicy'>: UnknownChildPolicy.DROP
+  __abstractmethods__: <class 'frozenset'>: frozenset()
+  __class__: <class 'aioxmpp.xso.model.CapturingXMLStreamClass'>: <class 'aioxmpp.disco.xso.InfoQuery'>
+  __copy__: <class 'method'>: <bound method XSO.__copy__ of <aioxmpp.disco.xso.InfoQuery object at 0x7f0403f78fc0>>
+  __deepcopy__: <class 'method'>: <bound method XSO.__deepcopy__ of <aioxmpp.disco.xso.InfoQuery object at 0x7f0403f78fc0>>
+  __delattr__: <class 'method-wrapper'>: <method-wrapper '__delattr__' of InfoQuery object at 0x7f0403f78fc0>
+  __dir__: <class 'builtin_function_or_method'>: <built-in method __dir__ of InfoQuery object at 0x7f0403f78fc0>
+  __doc__: <class 'str'>:
+    A query for features and identities of an entity. The keyword arguments to
+    the constructor can be used to initialize the attributes. Note that
+    `identities` and `features` must be iterables of :class:`Identity` and
+    :class:`Feature`, respectively; these iterables are evaluated and the items
+    are stored in the respective attributes.
+
+    .. attribute:: node
+
+       The node at which the query is directed.
+
+    .. attribute:: identities
+
+       The identities of the entity, as :class:`Identity` instances. Each
+       entity has at least one identity.
+
+    .. attribute:: features
+
+       The features of the entity, as a set of strings. Each string represents
+       a :class:`Feature` instance with the corresponding :attr:`~.Feature.var`
+       attribute.
+
+    .. attribute:: captured_events
+
+       If the object was created by parsing an XML stream, this attribute holds
+       a list of events which were used when parsing it.
+
+       Otherwise, this is :data:`None`.
+
+       .. versionadded:: 0.5
+
+    .. automethod:: to_dict
+
+
+  __eq__: <class 'method-wrapper'>: <method-wrapper '__eq__' of InfoQuery object at 0x7f0403f78fc0>
+  __format__: <class 'builtin_function_or_method'>: <built-in method __format__ of InfoQuery object at 0x7f0403f78fc0>
+  __ge__: <class 'method-wrapper'>: <method-wrapper '__ge__' of InfoQuery object at 0x7f0403f78fc0>
+  __getattribute__: <class 'method-wrapper'>: <method-wrapper '__getattribute__' of InfoQuery object at 0x7f0403f78fc0>
+  __getstate__: <class 'builtin_function_or_method'>: <built-in method __getstate__ of InfoQuery object at 0x7f0403f78fc0>
+  __gt__: <class 'method-wrapper'>: <method-wrapper '__gt__' of InfoQuery object at 0x7f0403f78fc0>
+  __hash__: <class 'method-wrapper'>: <method-wrapper '__hash__' of InfoQuery object at 0x7f0403f78fc0>
+  __init__: <class 'method'>: <bound method InfoQuery.__init__ of <aioxmpp.disco.xso.InfoQuery object at 0x7f0403f78fc0>>
+  __init_subclass__: <class 'builtin_function_or_method'>: <built-in method __init_subclass__ of CapturingXMLStreamClass object at 0x23ac280>
+  __le__: <class 'method-wrapper'>: <method-wrapper '__le__' of InfoQuery object at 0x7f0403f78fc0>
+  __lt__: <class 'method-wrapper'>: <method-wrapper '__lt__' of InfoQuery object at 0x7f0403f78fc0>
+  __module__: <class 'str'>: aioxmpp.disco.xso
+  __ne__: <class 'method-wrapper'>: <method-wrapper '__ne__' of InfoQuery object at 0x7f0403f78fc0>
+  __new__: <class 'function'>: <function XSO.__new__ at 0x7f040c9760c0>
+  __reduce__: <class 'builtin_function_or_method'>: <built-in method __reduce__ of InfoQuery object at 0x7f0403f78fc0>
+  __reduce_ex__: <class 'builtin_function_or_method'>: <built-in method __reduce_ex__ of InfoQuery object at 0x7f0403f78fc0>
+  __repr__: <class 'method-wrapper'>: <method-wrapper '__repr__' of InfoQuery object at 0x7f0403f78fc0>
+  __setattr__: <class 'method-wrapper'>: <method-wrapper '__setattr__' of InfoQuery object at 0x7f0403f78fc0>
+  __sizeof__: <class 'builtin_function_or_method'>: <built-in method __sizeof__ of InfoQuery object at 0x7f0403f78fc0>
+  __slots__: <class 'tuple'>: ('captured_events',)
+  __str__: <class 'method-wrapper'>: <method-wrapper '__str__' of InfoQuery object at 0x7f0403f78fc0>
+  __subclasshook__: <class 'builtin_function_or_method'>: <built-in method __subclasshook__ of CapturingXMLStreamClass object at 0x23ac280>
+  __weakref__: <class 'NoneType'>: None
+  _abc_impl: <class '_abc._abc_data'>: <_abc._abc_data object at 0x7f040b2f7cc0>
+  _set_captured_events: <class 'method'>: <bound method InfoQuery._set_captured_events of <aioxmpp.disco.xso.InfoQuery object at 0x7f0403f78fc0>>
+  _xso_contents: <class 'dict'>: {<aioxmpp.xso.model.ChildList object at 0x7f040b2f7250>: [aioxmpp.disco.xso.Identity(category='pubsub', type_='pep', name=None, lang=<aioxmpp.structs.LanguageTag.fromstr('en')>), aioxmpp.disco.xso.Identity(category='account', type_='registered', name=None, lang=<aioxmpp.structs.LanguageTag.fromstr('en')>)], <aioxmpp.xso.model.ChildValueList object at 0x7f040b2f7350>: {'http://jabber.org/protocol/rsm', 'http://jabber.org/protocol/pubsub#delete-items', 'http://jabber.org/protocol/commands', 'http://jabber.org/protocol/pubsub#auto-subscribe', 'http://jabber.org/protocol/pubsub#auto-create', 'http://jabber.org/protocol/pubsub#publish', 'urn:xmpp:bookmarks-conversion:0', 'http://jabber.org/protocol/offline', 'http://jabber.org/protocol/pubsub#create-nodes', 'http://jabber.org/protocol/pubsub#subscribe', 'http://jabber.org/protocol/pubsub', 'http://jabber.org/protocol/pubsub#filtered-notifications', 'http://jabber.org/protocol/pubsub#persistent-items', 'http://jabber.org/protocol/disco#items', 'msgoffline', 'http://jabber.org/protocol/pubsub#outcast-affiliation', 'http://jabber.org/protocol/pubsub#delete-nodes', 'http://jabber.org/protocol/pubsub#retrieve-items', 'http://jabber.org/protocol/pubsub#retrieve-subscriptions', 'http://jabber.org/protocol/pubsub#retrieve-affiliations', 'http://jabber.org/protocol/pubsub#retract-items', 'http://jabber.org/protocol/pubsub#publish-options', 'http://jabber.org/protocol/pubsub#modify-affiliations', 'http://jabber.org/protocol/disco#info', 'urn:xmpp:pep-vcard-conversion:0', 'http://jabber.org/protocol/pubsub#purge-nodes', 'vcard-temp'}, <aioxmpp.xso.model.ChildList object at 0x7f040b2f7390>: []}
+  captured_events: <class 'list'>: [('start', 'http://jabber.org/protocol/disco#info', 'query', {}), ('start', 'http://jabber.org/protocol/disco#info', 'identity', {(None, 'type'): 'pep', (None, 'category'): 'pubsub'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'identity', {(None, 'type'): 'registered', (None, 'category'): 'account'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/disco#info'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/disco#items'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'vcard-temp'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'urn:xmpp:bookmarks-conversion:0'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'urn:xmpp:pep-vcard-conversion:0'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'msgoffline'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/offline'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/rsm'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#create-nodes'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#auto-create'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#auto-subscribe'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#delete-nodes'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#delete-items'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#filtered-notifications'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#modify-affiliations'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#outcast-affiliation'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#persistent-items'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#publish'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#publish-options'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#purge-nodes'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#retract-items'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#retrieve-affiliations'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#retrieve-items'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#retrieve-subscriptions'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/pubsub#subscribe'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/commands'}), ('end',), ('end',)]
+  exts: <class 'aioxmpp.xso.model.XSOList'>: []
+  features: <class 'set'>: {'http://jabber.org/protocol/rsm', 'http://jabber.org/protocol/pubsub#delete-items', 'http://jabber.org/protocol/commands', 'http://jabber.org/protocol/pubsub#auto-subscribe', 'http://jabber.org/protocol/pubsub#auto-create', 'http://jabber.org/protocol/pubsub#publish', 'urn:xmpp:bookmarks-conversion:0', 'http://jabber.org/protocol/offline', 'http://jabber.org/protocol/pubsub#create-nodes', 'http://jabber.org/protocol/pubsub#subscribe', 'http://jabber.org/protocol/pubsub', 'http://jabber.org/protocol/pubsub#filtered-notifications', 'http://jabber.org/protocol/pubsub#persistent-items', 'http://jabber.org/protocol/disco#items', 'msgoffline', 'http://jabber.org/protocol/pubsub#outcast-affiliation', 'http://jabber.org/protocol/pubsub#delete-nodes', 'http://jabber.org/protocol/pubsub#retrieve-items', 'http://jabber.org/protocol/pubsub#retrieve-subscriptions', 'http://jabber.org/protocol/pubsub#retrieve-affiliations', 'http://jabber.org/protocol/pubsub#retract-items', 'http://jabber.org/protocol/pubsub#publish-options', 'http://jabber.org/protocol/pubsub#modify-affiliations', 'http://jabber.org/protocol/disco#info', 'urn:xmpp:pep-vcard-conversion:0', 'http://jabber.org/protocol/pubsub#purge-nodes', 'vcard-temp'}
+  identities: <class 'aioxmpp.xso.model.XSOList'>: [aioxmpp.disco.xso.Identity(category='pubsub', type_='pep', name=None, lang=<aioxmpp.structs.LanguageTag.fromstr('en')>), aioxmpp.disco.xso.Identity(category='account', type_='registered', name=None, lang=<aioxmpp.structs.LanguageTag.fromstr('en')>)]
+  node: <class 'NoneType'>: None
+  to_dict: <class 'method'>: <bound method InfoQuery.to_dict of <aioxmpp.disco.xso.InfoQuery object at 0x7f0403f78fc0>>
+  unparse_to_node: <class 'method'>: <bound method XSO.unparse_to_node of <aioxmpp.disco.xso.InfoQuery object at 0x7f0403f78fc0>>
+  validate: <class 'method'>: <bound method XSO.validate of <aioxmpp.disco.xso.InfoQuery object at 0x7f0403f78fc0>>
+  xso_after_load: <class 'method'>: <bound method XSO.xso_after_load of <aioxmpp.disco.xso.InfoQuery object at 0x7f0403f78fc0>>
+  xso_error_handler: <class 'method'>: <bound method XSO.xso_error_handler of <aioxmpp.disco.xso.InfoQuery object at 0x7f0403f78fc0>>
+  xso_serialise_to_sax: <class 'method'>: <bound method XSO.xso_serialise_to_sax of <aioxmpp.disco.xso.InfoQuery object at 0x7f0403f78fc0>>
+===
+
