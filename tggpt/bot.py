@@ -2611,16 +2611,17 @@ async def _send(msg, client=None, room=None, gpm=False):
   return False
 
 async def send(text, jid=None, client=None, gpm=False, room=None):
-  if jid is None:
-    jid = ME
-  elif type(jid) is JID:
-    jid = get_jid(jid, True)
-
-  if gpm and '/' not in jid:
-    err(f"无法群内私聊，地址错误: {jid}")
-    return False
 
   if type(text) is str:
+    if jid is None:
+      jid = ME
+    else:
+      if type(jid) is JID:
+        jid = get_jid(jid, True)
+
+      if gpm and '/' not in jid:
+        err(f"无法群私聊，地址错误: {jid}")
+        return False
     if jid in my_groups:
       msg = aioxmpp.Message(
           to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
@@ -2650,6 +2651,9 @@ async def send(text, jid=None, client=None, gpm=False, room=None):
         orig = msg.to
         msg.to = msg.to.bare()
         info(f"已修正地址错误: {orig} -> {msg=}")
+    elif gpm and msg.to.resource is None:
+      err(f"无法群私聊，地址错误: {msg.to}")
+      return False
     return await _send(msg, client, room, gpm)
   else:
     err(f"text类型不对: {type(text)}")
