@@ -2420,7 +2420,10 @@ async def my_event_handler(event):
 
 def get_jid(i, full=False):
   if full:
-    return f"{i.localpart}@{i.domain}/{i.resource}"
+    if i.resource:
+      return f"{i.localpart}@{i.domain}/{i.resource}"
+    else:
+      return f"{i.localpart}@{i.domain}"
   else:
     return f"{i.localpart}@{i.domain}"
 
@@ -2608,6 +2611,8 @@ async def _send(msg, client=None, room=None, pm=False):
 
 
 async def send(text, jid=None, client=None):
+  if type(jid) is JID:
+    jid = get_jid(jid, True)
   if type(text) is str:
     for i in split_long_text(text):
       if await __send(i, jid, client) is not True:
