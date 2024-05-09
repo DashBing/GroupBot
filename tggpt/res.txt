@@ -461,3 +461,23 @@ MessageType.GROUPCHAT bebat@muc.pimux.de/bot wtfipfs@pimux.de/ywyhB7k0EY3z {<aio
 2024-05-08 18:49:36,021 [WARNING] aioxmpp.StanzaStream [stream._process_incoming_iq:1012]: unhandleable IQ request: from=JID(localpart='wtfipfs', domain='conversations.im', resource='profanity.kSh4'), type_=<IQType.GET: 'get'>, payload=<aioxmpp.pubsub.xso.Request object at 0x7f5128625f00>
 2024-05-08 18:49:36,181 [INFO] tggpt.bot [bot.info:163]: 进群失败("{urn:ietf:params:xml:ns:xmpp-stanzas}conflict ('That nickname is registered by another person')",): wtfipfs@pimux.de ipfs@salas.suchat.org e=XMPPCancelError("{urn:ietf:params:xml:ns:xmpp-stanzas}conflict ('That nickname is registered by another person')")
 
+
+
+
+
+4-05-09 09:58:20,213 [DEBUG] telethon.network.mtprotosender [mtprotosender._handle_gzip_packed:667]: Handling gzipped data
+2024-05-09 09:58:20,215 [DEBUG] telethon.network.mtprotosender [mtprotosender._handle_update:683]: Handling update Updates
+2024-05-09 09:58:20,215 [DEBUG] telethon.network.mtprotosender [mtprotosender._recv_loop:505]: Receiving items from the network...
+2024-05-09 09:58:21,268 [DEBUG] telethon.network.mtprotosender [mtprotosender._handle_update:683]: Handling update UpdateShort
+2024-05-09 09:58:21,269 [DEBUG] telethon.network.mtprotosender [mtprotosender._recv_loop:505]: Receiving items from the network...
+2024-05-09 09:58:22,217 [DEBUG] telethon.network.mtprotosender [mtprotosender._handle_update:683]: Handling update UpdateShort
+2024-05-09 09:58:22,219 [DEBUG] telethon.network.mtprotosender [mtprotosender._recv_loop:505]: Receiving items from the network...
+2024-05-09 09:58:23,408 [DEBUG] aioxmpp.node.PresenceManagedClient.XMLStream [protocol.data_received:552]: RECV b"<presence type='subscribe' from='liqsliu@conversations.im' to='wtfipfs@pimux.de' xml:lang='en'/>"
+2024-05-09 09:58:23,413 [DEBUG] aioxmpp.StanzaStream [stream._process_incoming_presence:1080]: incoming presence: <presence from='liqsliu@conversations.im' to='wtfipfs@pimux.de' id=None type=<PresenceType.SUBSCRIBE: 'subscribe'>>
+2024-05-09 09:58:23,415 [DEBUG] aioxmpp.node.PresenceManagedClient.im.dispatcher.IMDispatcher [dispatcher.dispatch_presence:146]: presence was not processed by any IM handler: <presence from='liqsliu@conversations.im' to='wtfipfs@pimux.de' id=None type=<PresenceType.SUBSCRIBE: 'subscribe'>>
+2024-05-09 09:58:23,610 [DEBUG] aioxmpp.node.PresenceManagedClient.XMLStream [protocol.data_received:552]: RECV b"<r xmlns='urn:xmpp:sm:3'/>"
+2024-05-09 09:58:23,612 [DEBUG] aioxmpp.StanzaStream [stream._process_incoming:1163]: received SM request: <aioxmpp.nonza.SMRequest object at 0x7f3a943f8a60>
+2024-05-09 09:58:23,612 [DEBUG] aioxmpp.StanzaStream [stream._process_incoming:1169]: sending SM ack: <aioxmpp.nonza.SMAcknowledgement counter=793 at 0x7f3a943fa4a0>
+2024-05-09 09:58:23,616 [DEBUG] aioopenssl.trace.fd=8 [__init__._write_ready:577]: _write_ready: nothing more to write, removing writer
+2024-05-09 09:58:25,291 [DEBUG] telethon.network.mtprotosender [mtprotosender._handle_update:683]: Handling update UpdateShort
+
