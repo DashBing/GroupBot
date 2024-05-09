@@ -1112,3 +1112,9 @@ MessageType.CHAT liqsliu@conversations.im/Conversations.CONk wtfipfs@pimux.de {<
 
 wtfipfs_bot@conference.conversations.im {'identities': [{'category': 'conference', 'type': 'text', 'lang': 'en', 'name': 'wtfipfs_bot'}], 'features': ['http://jabber.org/protocol/disco#info', 'http://jabber.org/protocol/disco#items', 'http://jabber.org/protocol/muc', 'muc_moderated', 'muc_open', 'muc_persistent', 'muc_public', 'muc_semianonymous', 'muc_unsecured', 'vcard-temp'], 'forms': [{'FORM_TYPE': ['http://jabber.org/protocol/muc#roominfo'], 'muc#roominfo_occupants': ['5'], 'muc#roomconfig_roomname': ['wtfipfs_bot'], 'muc#roominfo_description': ['hello bot'], 'muc#roominfo_contactjid': ['wtfipfs@pimux.de', 'liqsliu@suchat.org', 'liqsliu@pimux.de', 'liqsliu@monocles.eu', 'liqsliu@jabb3r.org', 'liqsliu@conversations.im'], 'muc#roominfo_changesubject': ['0'], 'muc#roomconfig_allowinvites': ['0'], 'muc#roomconfig_allowpm': ['participants'], 'muc#roominfo_lang': ['zh']}]}
 
+
+MessageType.CHAT liqsliu@conversations.im/Conversations.CONk wtfipfs@pimux.de {<aioxmpp.structs.LanguageTag.fromstr('en')>: 'disco'}
+conference.conversations.im {'identities': [{'category': 'conference', 'type': 'text', 'lang': 'en', 'name': 'Chatrooms'}], 'features': ['http://jabber.org/protocol/disco#info', 'http://jabber.org/protocol/disco#items', 'http://jabber.org/protocol/muc', 'http://jabber.org/protocol/muc#unique', 'http://jabber.org/protocol/rsm', 'jabber:iq:register', 'urn:xmpp:mam:0', 'urn:xmpp:mam:1', 'urn:xmpp:mam:2', 'urn:xmpp:mam:tmp', 'urn:xmpp:mucsub:0', 'vcard-temp'], 'forms': [{'FORM_TYPE': ['http://jabber.org/network/serverinfo'], 'abuse-addresses': ['mailto:abuse@conversations.im'], 'admin-addresses': ['mailto:admin@conversations.im'], 'support-addresses': ['mailto:support@conversations.im']}]}
+
+
+
