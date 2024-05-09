@@ -2524,7 +2524,7 @@ async def parse_xmpp_msg(msg):
 
 
 async def _send(msg, client=None, room=None):
-  if msg.to.is_bare:
+  if msg.to.is_bare or get_jid(msg.to) not in my_groups:
     if client is not None:
       # https://docs.zombofant.net/aioxmpp/devel/api/public/node.html?highlight=client#aioxmpp.Client.send
       res = client.send(msg)
@@ -2544,6 +2544,7 @@ async def _send(msg, client=None, room=None):
     res = c.send_message(msg)
     #  return False
   #  if isawaitable(res):
+  info(f"{type(res)}: {res} {msg}")
   if asyncio.iscoroutine(res):
     #  dbg(f"client send: {res=}")
     res = await res
