@@ -2563,6 +2563,8 @@ def get_msg_jid(msg):
     jid = get_jid(msg.to)
     if jid in my_groups:
       jid = get_jid(msg.to, True)
+  else:
+    return
   return jid
 
 
@@ -3319,8 +3321,6 @@ async def amain():
       print(f"SH_PATH: {SH_PATH}")
       print(f"DOMAIN: {DOMAIN}")
 
-      #  await mt_send("gpt start")
-      asyncio.create_task(mt_read(), name="mt_read")
 
       while True:
         if allright_task > 0:
@@ -3330,6 +3330,9 @@ async def amain():
         allright.set()
         break
       info(f"初始化完成")
+
+      #  await mt_send("gpt start")
+      asyncio.create_task(mt_read(), name="mt_read")
 
       await UB.run_until_disconnected()
 
