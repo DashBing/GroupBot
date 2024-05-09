@@ -80,6 +80,7 @@ import brotli
 import time
 
 import threading
+import subprocess
 from subprocess import Popen, PIPE
 
 from telethon import events
@@ -270,8 +271,6 @@ def split_long_text(text):
 MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
 
 
-MT_API = "127.0.0.1:4246"
-MT_API_RES = "127.0.0.1:4249"
 HTTP_RES_MAX_BYTES = 15000000
 FILE_DOWNLOAD_MAX_BYTES = 64000000
 TMP_PATH=HOME+"/tera/tmp"
@@ -956,6 +955,218 @@ def format_byte(num):
     return s+num+u
 
 
+
+
+
+async def update_stdouterr(data):
+    while data[2].poll() == None:
+        try:
+            data[0], data[1] = data[2].communicate(timeout=0.3)
+        except subprocess.TimeoutExpired as e:
+            if e.stdout:
+                data[0] = e.stdout.decode("utf-8")
+            if e.stderr:
+                data[1] = e.stderr.decode("utf-8")
+        await asyncio.sleep(0.1)
+
+
+async def update_stdout(data):
+    while True:
+        print(1)
+        await asyncio.sleep(0.4)
+        tmp = await data[2].stdout.readline()
+        if tmp:
+            data[0] = data[0] + tmp.decode("utf-8")
+        else:
+            break
+    logger.info(11)
+
+
+async def update_stderr(data):
+    while True:
+        print(2)
+        await asyncio.sleep(0.2)
+        tmp = await data[2].stderr.readline()
+        if tmp:
+            data[1] = data[1] + tmp.decode("utf-8")
+        else:
+            break
+    logger.info(22)
+
+
+async def my_popen(cmd,
+                   shell=True,
+                   max_time=512,
+                   client=NB,
+                   msg=None,
+                   combine=True,
+                   return_msg=False,
+                   executable='/bin/bash',
+                   **args):
+    logger.info(cmd)
+    #        args=shlex.split(message.text.split(' ',1)[1])
+
+    #        p=subprocess.Popen(message.text.split(' '))
+    #        p=subprocess.Popen(message.text.split(' ')[1:],universal_newlines=True,bufsize=1,text=True,stdout=PIPE, stderr=PIPE, shell=True)
+    #        p=subprocess.Popen(shlex.split(message.text.split(' ',1)[1]),text=True,stdout=PIPE, stderr=PIPE, shell=True)
+
+    #        p=subprocess.Popen(args,text=True,stdout=PIPE, stderr=PIPE, shell=True)
+    #        p=Popen(args,text=True,universal_newlines=True,bufsize=1,stdout=PIPE, stderr=PIPE)
+    #        p=Popen(args,text=True,stdout=PIPE, stderr=PIPE)
+    #        p=await asyncio.create_subprocess_shell(message.text.split(' ',1)[1],stdout=PIPE, stderr=PIPE)#limit=None
+    #        p=Popen(args,stdout=PIPE, stderr=PIPE,bufsize=8000000)
+    #        p=Popen(args,stdout=PIPE, stderr=PIPE,text=True,encoding="utf-8",errors="ignore")
+    #  p=Popen(cmd,shell=shell,stdout=PIPE, stderr=PIPE,text=True,encoding="utf-8",errors="ignore")
+    p = Popen(cmd,
+              shell=shell,
+              stdout=PIPE,
+              stderr=PIPE,
+              text=True,
+              encoding="utf-8",
+              errors="ignore",
+              executable=executable)
+
+    #      if client == userbot and message.chat_id < 0:
+    #      if client == userbot and message.is_group:
+    #      msg=await cmd_answer("...",cmd_msg)
+
+    start_time = time.time()
+    res = ""
+    errs = ""
+    data = ["", "", p]
+    asyncio.create_task(update_stdouterr(data))
+    await asyncio.sleep(0.5)
+    logger.info(str(p.args))
+    while True:
+        #  if p.poll() == None and p.returncode == None:
+        if p.poll() == None:
+            pass
+        else:
+            break
+        #  await asyncio.sleep(0.5)
+        res = data[0]
+        errs = data[1]
+
+        tmp = "...\n" + res + "\n==\nE: \n" + errs
+        tmp = tmp.strip()
+        if msg:
+            if tmp != msg.text:
+                try:
+                    #  msg = await cmd_answer(tmp, client, msg, **args)
+                    info(f"临时输出: {tmp}")
+                except Exception as e:
+                    logger.error(f"can not send tmp: {e=}")
+                    msg = await client.send_message(MY_ID, tmp)
+        await asyncio.sleep(2)
+        if time.time() - start_time > max_time:
+            p.kill()
+            res = "my_popen: timeout, killed, cmd: {}".format(cmd)
+            warn(res)
+            #  await cmd_answer(res, client, msg)
+            info(f"最终输出: {res}")
+            break
+
+    try:
+        res, errs = p.communicate(timeout=5)
+    except subprocess.TimeoutExpired as e:
+        logger.error("timeout")
+        res = e.stdout
+        errs = e.stderr
+
+    if res:
+        if isinstance(res, bytes):
+            res = res.decode()
+    if errs:
+        if isinstance(errs, bytes):
+            errs = errs.decode()
+    if not res:
+        res = "null"
+
+
+#  res=str(res)
+    res = res
+    if p.returncode:
+        res = "%s\n==\nE: %s" % (res, p.returncode)
+        if errs:
+            res += "\n%s" % errs
+        #await msg.delete()
+    dbg("popen exit")
+    if msg:
+        #  msg = await cmd_answer(res, client, msg, **args)
+        info(f"返回: {res}")
+        if return_msg:
+            return msg
+    if combine:
+        return res
+    else:
+        return p.returncode, res, errs
+
+
+async def run_my_bash(cmd, shell=True, max_time=64, cmd_msg=None):
+    p = Popen(cmd,
+              shell=shell,
+              stdout=PIPE,
+              stderr=PIPE,
+              text=True,
+              encoding="utf-8",
+              errors="ignore")
+
+    start_time = time.time()
+    res = ""
+    errs = ""
+    msg = None
+
+    await asyncio.sleep(0.5)
+    if p.poll() == None and p.returncode == None:
+        while p.poll() == None and p.returncode == None:
+            if time.time() - start_time > max_time:
+                p.kill()
+                break
+            await asyncio.sleep(1)
+
+    try:
+        res, errs = p.communicate(timeout=3)
+    except subprocess.TimeoutExpired as e:
+        res = e.stdout
+        errs = e.stderr
+
+    if not res:
+        res = "null"
+    res = str(res)
+    if p.returncode:
+        res = res + "\n==\nE: " + str(p.returncode)
+        if errs:
+            res = res + "\n" + errs
+        #await msg.delete()
+    return res
+
+
+async def my_exec(cmd, client=None, msg=None, **args):
+    #  exec(cmd) #return always is None
+    #  p=Popen("my_exec.py "+message.text.split(' ',1)[1],shell=True,stdout=PIPE, stderr=PIPE,text=True,encoding="utf-8",errors="ignore")
+    #    await my_popen(["python3", "my_exec.py", cmd], shell=False, msg=msg)
+    #    await my_popen([ SH_PATH + "/my_exec.py", cmd], shell=False, msg=msg, executable="/usr/bin/python3")
+    res = await my_popen(cmd,
+                         shell=True,
+                         client=client, 
+                         msg=msg,
+                         executable="/usr/bin/python3",
+                         **args)
+    return res
+
+
+async def my_eval(cmd, client=None, msg=None, **args):
+    res = eval(cmd)
+    logger.info(str(res) + "\n" + str(type(res)))
+    res = await cmd_answer(str(res), client=client, msg=msg, **args)
+    return res
+
+
+
+
+
+
+
 #  @exceptions_handler
 #  async def send2mt(client, message):
 #      "get msg for matterbridge api"
@@ -1032,6 +1243,8 @@ def format_byte(num):
 #                                  raise StopPropagation
 #  #        if message.out:
 #  #            raise StopPropagation
+
+
 
 
 
@@ -1270,6 +1483,8 @@ async def load_config():
 
 @exceptions_handler
 async def mt_read():
+  # api.xmpp
+  MT_API = "127.0.0.1:4247"
   url = "http://" + MT_API + "/api/stream"
   session = await init_aiohttp_session()
   logger.info("start read msg from mt api...")
@@ -1284,15 +1499,15 @@ async def mt_read():
         #    #  print(f"I: original msg: %s" % line)
         #    await mt2tg(line)
 
-      async with session.get(url, timeout=0, read_bufsize=2**20*4, chunked=True) as resp:
-        print("N: mt api init ok")
+      async with session.get(url, timeout=0, read_bufsize=2**18*4, chunked=True) as resp:
+        info("N: mt api init ok")
         #  await mt_send("N: tggpt: mt read: init ok")
         line = b""
         async for data, end_of_http_chunk in resp.content.iter_chunks():
           line += data
-          info(f"read bytes: {len(data)}")
+          #  info(f"read bytes: {len(data)}")
           if end_of_http_chunk:
-            info(f"read end: {len(line)}")
+            #  info(f"read end: {len(line)}")
             # # print(buffer)
             # await send_mt_msg_to_queue(buffer, queue)
             #  await mt2tg(line)
@@ -1304,10 +1519,10 @@ async def mt_read():
     except ClientConnectorError:
       logger.warning("mt api is not ok, retry...")
     except ValueError as e:
-      logger.warning(f"{e=}: {line}")
-      print("W: maybe a msg is lost")
+      #  print("W: maybe a msg is lost")
+      err(f"{e=}: {line}")
     except Exception as e:
-      logger.error(f"{e=}")
+      err(f"{e=}: {line}")
     await asyncio.sleep(3)
 
 
@@ -1352,6 +1567,23 @@ async def mt2tg(msg):
     text = msgd["text"]
     name = msgd["username"]
     gateway = msgd["gateway"]
+    if gateway == 'me':
+      if text:
+        global last_mt_res_jid
+        if text.startswith("X "):
+          tmp = text.splitlines()[0]
+          if ': ' in tmp:
+            tmp = tmp.split(': ', 1)[0]
+            if ' ' in tmp:
+              tmp = tmp.split(' ', 1)[1]
+              if tmp in me:
+                last_mt_res_jid = tmp
+                text = text.split(': ', 1)[1]
+        warn(f"reply to {last_mt_res_jid}")
+        if last_mt_res_jid:
+          await send(text, last_mt_res_jid)
+      return
+
     #  print(f"I: got msg: {name}: {text}")
     if not text:
       logger.info("I: ignore msg: no text")
@@ -1940,33 +2172,39 @@ async def http(url, method="GET", return_headers=False, **kwargs):
         else:
             return html
 
-@exceptions_handler
 #  async def mt_send(text="null", username="bot", gateway="test", qt=None):
 async def mt_send(text="null", gateway="test", username="C bot", qt=None):
 
-    # send msg to matterbridge
-    url = "http://" + MT_API_RES + "/api/message"
+  MT_API_RES = "127.0.0.1:4247"
+  #  if gateway == 'me':
+  #    # api.xmpp
+  #    MT_API_RES = "127.0.0.1:4247"
+  #  else:
+  #    # api.cmdres
+  #    MT_API_RES = "127.0.0.1:4249"
+  # send msg to matterbridge
+  url = "http://" + MT_API_RES + "/api/message"
 
-    #nc -l -p 5555 # https://mika-s.github.io/http/debugging/2019/04/08/debugging-http-requests.html
-    #  url="http://127.0.0.1:5555/api/message"
+  #nc -l -p 5555 # https://mika-s.github.io/http/debugging/2019/04/08/debugging-http-requests.html
+  #  url="http://127.0.0.1:5555/api/message"
 
-#    if not username.startswith("C "):
-#        username = "T " + username
+#  if not username.startswith("C "):
+#    username = "T " + username
 
-    if qt:
-        username = "{}\n\n{}".format("> " + "\n> ".join(qt.splitlines()), username)
+  if qt:
+    username = "{}\n\n{}".format("> " + "\n> ".join(qt.splitlines()), username)
 
 
 #  gateway="gateway0"
-    data = {
-        "text": "{}".format(text),
-        "username": "{}".format(username),
-        "gateway": "{}".format(gateway)
-    }
-    res = await http(url, method="POST", json=data)
-    logger.info("res of mt_send: {}".format(res))
-    return True
-    return res
+  data = {
+    "text": "{}".format(text),
+    "username": "{}".format(username),
+    "gateway": "{}".format(gateway)
+  }
+  res = await http(url, method="POST", json=data)
+  logger.info("res of mt_send: {}".format(res))
+  return True
+  return res
 
 
 
@@ -2646,6 +2884,7 @@ async def parse_xmpp_msg(msg):
   else:
     if get_jid(msg.from_) not in me:
       return
+    #  awai:t mt_send(text, 'me', get_jid(msg.from_))
     if text == "disco":
       await get_disco(get_jid(msg.from_))
     elif text == "test":
@@ -2667,8 +2906,6 @@ async def parse_xmpp_msg(msg):
   print(">>>> %s << %s" % (msg.body, msg))
   src = msg.from_
   text = msg.body
-
-
 
 async def _send(msg, client=None, room=None, gpm=False):
   #  if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or get_jid(msg.to) not in my_groups:
@@ -3247,6 +3484,15 @@ async def xmppbot():
 #  @exceptions_handler
 async def amain():
   try:
+    if len(sys.argv) > 1:
+      #  if sys.argv[1] == '1':
+      if sys.argv[1].isnumeric():
+        pass
+      elif sys.argv[1] == 'cmd':
+        res = await my_popen(sys.argv[1])
+        print(res)
+      return
+
     global loop
     loop = asyncio.get_event_loop()
     global allright_task

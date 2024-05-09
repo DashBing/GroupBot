@@ -20,9 +20,9 @@ block_msg(){
 if [[ -z "$2" ]]; then
   case $8 in
     discord.*)
-      if [[ "${3}" == "api.gpt" ]] ; then
+      if [[ "${3}" == "api.xmpp" ]] ; then
         # echo -n "C gpt: "
-        NAME="bot"
+        NAME="C bot"
       elif [[ "${3}" == "api.cmdres" ]] ; then
         # echo -n "C bot: "
         NAME="C bot"
@@ -32,9 +32,9 @@ if [[ -z "$2" ]]; then
       fi
       ;;
     irc.*)
-      if [[ "${3}" == "api.gpt" ]] ; then
+      if [[ "${3}" == "api.xmpp" ]] ; then
         # echo -n "C gpt: "
-        NAME="gpt"
+        NAME="C bot"
       fi
       ;;
     # telegram.*)
@@ -56,7 +56,6 @@ newline(){
 $TEXT"
   fi
 }
-
 
 
 # [[ "${NAME:0:1}" == ">" ]] && orig_msg
@@ -531,7 +530,8 @@ api.gpt)
   LABLE="C"
   ;;
 api.xmpp)
-  LABLE="X"
+  # LABLE="X"
+  LABLE="0"
   ;;
 # api.simplex)
 #   LABLE="S"
