@@ -3490,7 +3490,7 @@ async def amain():
       if sys.argv[1].isnumeric():
         pass
       elif sys.argv[1] == 'cmd':
-        res = await my_popen(sys.argv[1])
+        res = await my_popen(' '.join(sys.argv[2:]))
         print(res)
       return
 
