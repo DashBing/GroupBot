@@ -2744,7 +2744,10 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False)
 
     if correct:
       if get_jid(msg.to, True) in last_outmsg:
-        msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
+        #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
+        r = misc.Replace()
+        r.id_ = last_outmsg[get_jid(msg.to, True)]
+        msg.xep0308_replace = r
     return await _send(msg, client, room, gpm)
   else:
     err(f"text类型不对: {type(text)}")
