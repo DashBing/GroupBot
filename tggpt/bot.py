@@ -2515,15 +2515,25 @@ async def parse_xmpp_msg(msg):
     info("normal msg")
   if not hasattr(msg, "body"):
     #  print("%s %s" % (type(msg), msg.type_))
-    pprint(msg)
     if msg.type_ == PresenceType.SUBSCRIBE:
-      #  warn(f"状态订阅请求：{msg.from_}")
-      rc = XB.summon(aioxmpp.RosterClient)
-      pprint(rc)
-      res = rc.subscribe(msg.from_)
-      print(f"结果：{res}")
-      res = rc.approve(msg.from_)
-      print(f"结果：{res}")
+      #  pprint(msg)
+      warn(f"状态订阅请求：{msg.from_}")
+      if get_jid(msg.from_) in me:
+        rc = XB.summon(aioxmpp.RosterClient)
+        pprint(rc)
+        res = rc.subscribe(msg.from_)
+        #  print(f"结果：{res}")
+        res = rc.approve(msg.from_)
+        #  print(f"结果：{res}")
+        await send("ok", msg.from_)
+      else:
+        await send("not allowed", msg.from_)
+    elif msg.type_ == PresenceType.AVAILABLE:
+      print(f"上线: {msg.from_} {msg.status}")
+    elif msg.type_ == PresenceType.UNAVAILABLE:
+      print(f"离线: {msg.from_} {msg.status}")
+    else:
+      pprint(msg)
     return
   print("%s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
   text = None
