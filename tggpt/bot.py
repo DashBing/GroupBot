@@ -105,9 +105,8 @@ import sys, os
 from collections import deque
 
 #  import aioxmpp
-from aioxmpp import stream, ibr, protocol, node, dispatcher, connector, JID, im, errors, MessageType
+from aioxmpp import stream, ibr, protocol, node, dispatcher, connector, JID, im, errors, MessageType, PresenceType
 from inspect import isawaitable, currentframe
-
 
 
 
@@ -2517,6 +2516,10 @@ async def parse_xmpp_msg(msg):
   if not hasattr(msg, "body"):
     #  print("%s %s" % (type(msg), msg.type_))
     pprint(msg)
+    if msg.type_ == PresenceType.SUBSCRIBE:
+      warn(f"状态订阅请求：{msg.from_}")
+      rc = XB.summon(aioxmpp.RosterClient)
+      print(rc)
     return
   print("%s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
   text = None
@@ -3081,6 +3084,7 @@ async def xmppbot():
       #  mucsv = client.summon(aioxmpp.MUCClient)
       ms = my_groups
       while True:
+        break
         tmp = []
         for i in ms:
           if await join(i):

@@ -481,3 +481,138 @@ MessageType.GROUPCHAT bebat@muc.pimux.de/bot wtfipfs@pimux.de/ywyhB7k0EY3z {<aio
 2024-05-09 09:58:23,616 [DEBUG] aioopenssl.trace.fd=8 [__init__._write_ready:577]: _write_ready: nothing more to write, removing writer
 2024-05-09 09:58:25,291 [DEBUG] telethon.network.mtprotosender [mtprotosender._handle_update:683]: Handling update UpdateShort
 
+
+
+||<class 'aioxmpp.stanza.Presence'>: <presence from='liqsliu@conversations.im' to='wtfipfs@pimux.de' id=None type=<PresenceType.SUBSCRIBE: 'subscribe'>>
+---
+  ATTR_MAP: <class 'dict'>: {(None, 'from'): <aioxmpp.xso.model.Attr object at 0x7f9772f8fbd0>, (None, 'to'): <aioxmpp.xso.model.Attr object at 0x7f9772f8fd10>, ('http://www.w3.org/XML/1998/namespace', 'lang'): <aioxmpp.xso.model.LangAttr object at 0x7f9772f8fb50>, (None, 'id'): <aioxmpp.xso.model.Attr object at 0x7f9772fa2b50>, (None, 'type'): <aioxmpp.xso.model.Attr object at 0x7f9772fa2c50>}
+  CHILD_MAP: <class 'dict'>: {('jabber:client', 'error'): <aioxmpp.xso.model.Child object at 0x7f9772f8fd50>, ('jabber:client', 'show'): <aioxmpp.xso.model.ChildText object at 0x7f9772fa2cd0>, ('jabber:client', 'status'): <aioxmpp.xso.model.ChildTextMap object at 0x7f9772fa2c90>, ('jabber:client', 'priority'): <aioxmpp.xso.model.ChildText object at 0x7f9772fa2d90>, ('http://jabber.org/protocol/caps', 'c'): <aioxmpp.xso.model.Child object at 0x7f9771747c10>, ('urn:xmpp:caps', 'c'): <aioxmpp.xso.model.Child object at 0x7f9771747c50>, ('urn:xmpp:pars:0', 'preauth'): <aioxmpp.xso.model.Child object at 0x7f9771616390>, ('http://jabber.org/protocol/muc', 'x'): <aioxmpp.xso.model.Child object at 0x7f9771636510>, ('http://jabber.org/protocol/muc#user', 'x'): <aioxmpp.xso.model.Child object at 0x7f9771643a90>, ('http://jabber.org/protocol/shim', 'header'): <aioxmpp.xso.model.Child object at 0x7f9771658890>, ('vcard-temp:x:update', 'x'): <aioxmpp.xso.model.Child object at 0x7f9771691290>}
+  CHILD_PROPS: <class 'sortedcollections.recipes.OrderedSet'>: OrderedSet([<aioxmpp.xso.model.Child object at 0x7f9772f8fd50>, <aioxmpp.xso.model.ChildText object at 0x7f9772fa2cd0>, <aioxmpp.xso.model.ChildTextMap object at 0x7f9772fa2c90>, <aioxmpp.xso.model.ChildText object at 0x7f9772fa2d90>, <aioxmpp.xso.model.Child object at 0x7f9771747c10>, <aioxmpp.xso.model.Child object at 0x7f9771747c50>, <aioxmpp.xso.model.Child object at 0x7f9771616390>, <aioxmpp.xso.model.Child object at 0x7f9771636510>, <aioxmpp.xso.model.Child object at 0x7f9771643a90>, <aioxmpp.xso.model.Child object at 0x7f9771658890>, <aioxmpp.xso.model.Child object at 0x7f9771691290>])
+  COLLECTOR_PROPERTY: <class 'lxml.etree._Element'>: <Element {jabber:client}presence at 0x7f976e786000>
+  DECLARE_NS: <class 'dict'>: {}
+  TAG: <class 'tuple'>: ('jabber:client', 'presence')
+  TEXT_PROPERTY: <class 'NoneType'>: None
+  UNKNOWN_ATTR_POLICY: <enum 'UnknownAttrPolicy'>: UnknownAttrPolicy.DROP
+  UNKNOWN_CHILD_POLICY: <enum 'UnknownChildPolicy'>: UnknownChildPolicy.DROP
+  __abstractmethods__: <class 'frozenset'>: frozenset()
+  __class__: <class 'aioxmpp.xso.model.XMLStreamClass'>: <class 'aioxmpp.stanza.Presence'>
+  __copy__: <class 'method'>: <bound method XSO.__copy__ of <presence from='liqsliu@conversations.im' to='wtfipfs@pimux.de' id=None type=<PresenceType.SUBSCRIBE: 'subscribe'>>>
+  __deepcopy__: <class 'method'>: <bound method XSO.__deepcopy__ of <presence from='liqsliu@conversations.im' to='wtfipfs@pimux.de' id=None type=<PresenceType.SUBSCRIBE: 'subscribe'>>>
+  __delattr__: <class 'method-wrapper'>: <method-wrapper '__delattr__' of Presence object at 0x7f976f896f20>
+  __dir__: <class 'builtin_function_or_method'>: <built-in method __dir__ of Presence object at 0x7f976f896f20>
+  __doc__: <class 'str'>:
+    An XMPP presence stanza. The keyword arguments can be used to initialize
+    the attributes of the :class:`Presence`.
+
+    .. attribute:: id_
+
+       The optional ID of the stanza.
+
+    .. attribute:: type_
+
+       The type attribute of the stanza. The allowed values are enumerated in
+       :class:`~.PresenceType`.
+
+       .. versionchanged:: 0.7
+
+          Starting with 0.7, the enumeration :class:`~.PresenceType` is
+          used. Before, strings equal to the XML attribute value character data
+          were used (``"probe"``, ``"unavailable"``, and so on, as well as
+          :data:`None` to indicate the absence of the attribute and thus
+          "available" presence).
+
+          As of 0.7, setting the string equivalents and :data:`None` is still
+          supported. However, reading from the attribute always returns the
+          corresponding enumeration members (which still compare equal to their
+          string equivalents).
+
+       .. deprecated:: 0.7
+
+          The use of the aforementioned string values (and :data:`None`) is
+          deprecated and will lead to :exc:`TypeError` and/or :exc:`ValueError`
+          being raised when they are written to this attribute. See the
+          Changelog for :ref:`api-changelog-0.7` for further details on how to
+          upgrade your code efficiently.
+
+    .. attribute:: show
+
+       The ``show`` value of the stanza, or :data:`None` if no ``show`` element
+       is present.
+
+    .. attribute:: priority
+
+       The ``priority`` value of the presence. The default here is ``0`` and
+       corresponds to an absent ``priority`` element.
+
+    .. attribute:: status
+
+       A :class:`~.structs.LanguageMap` mapping the languages of the different
+       status elements to their text.
+
+       .. versionchanged:: 0.5
+
+          Before 0.5, this was a :class:`~aioxmpp.xso.model.XSOList`.
+
+    Note that some attributes are inherited from :class:`StanzaBase`:
+
+    ========================= =======================================
+    :attr:`~StanzaBase.from_` sender :class:`~aioxmpp.JID`
+    :attr:`~StanzaBase.to`    recipient :class:`~aioxmpp.JID`
+    :attr:`~StanzaBase.lang`  ``xml:lang`` value
+    :attr:`~StanzaBase.error` :class:`Error` instance
+    ========================= =======================================
+
+
+  __eq__: <class 'method-wrapper'>: <method-wrapper '__eq__' of Presence object at 0x7f976f896f20>
+  __format__: <class 'builtin_function_or_method'>: <built-in method __format__ of Presence object at 0x7f976f896f20>
+  __ge__: <class 'method-wrapper'>: <method-wrapper '__ge__' of Presence object at 0x7f976f896f20>
+  __getattribute__: <class 'method-wrapper'>: <method-wrapper '__getattribute__' of Presence object at 0x7f976f896f20>
+  __getstate__: <class 'builtin_function_or_method'>: <built-in method __getstate__ of Presence object at 0x7f976f896f20>
+  __gt__: <class 'method-wrapper'>: <method-wrapper '__gt__' of Presence object at 0x7f976f896f20>
+  __hash__: <class 'method-wrapper'>: <method-wrapper '__hash__' of Presence object at 0x7f976f896f20>
+  __init__: <class 'method'>: <bound method Presence.__init__ of <presence from='liqsliu@conversations.im' to='wtfipfs@pimux.de' id=None type=<PresenceType.SUBSCRIBE: 'subscribe'>>>
+  __init_subclass__: <class 'builtin_function_or_method'>: <built-in method __init_subclass__ of XMLStreamClass object at 0x21a34b0>
+  __le__: <class 'method-wrapper'>: <method-wrapper '__le__' of Presence object at 0x7f976f896f20>
+  __lt__: <class 'method-wrapper'>: <method-wrapper '__lt__' of Presence object at 0x7f976f896f20>
+  __module__: <class 'str'>: aioxmpp.stanza
+  __ne__: <class 'method-wrapper'>: <method-wrapper '__ne__' of Presence object at 0x7f976f896f20>
+  __new__: <class 'function'>: <function XSO.__new__ at 0x7f9772f5a0c0>
+  __reduce__: <class 'builtin_function_or_method'>: <built-in method __reduce__ of Presence object at 0x7f976f896f20>
+  __reduce_ex__: <class 'builtin_function_or_method'>: <built-in method __reduce_ex__ of Presence object at 0x7f976f896f20>
+  __repr__: <class 'method'>: <bound method Presence.__repr__ of <presence from='liqsliu@conversations.im' to='wtfipfs@pimux.de' id=None type=<PresenceType.SUBSCRIBE: 'subscribe'>>>
+  __setattr__: <class 'method-wrapper'>: <method-wrapper '__setattr__' of Presence object at 0x7f976f896f20>
+  __sizeof__: <class 'builtin_function_or_method'>: <built-in method __sizeof__ of Presence object at 0x7f976f896f20>
+  __slots__: <class 'tuple'>: ()
+  __str__: <class 'method-wrapper'>: <method-wrapper '__str__' of Presence object at 0x7f976f896f20>
+  __subclasshook__: <class 'builtin_function_or_method'>: <built-in method __subclasshook__ of XMLStreamClass object at 0x21a34b0>
+  __weakref__: <class 'NoneType'>: None
+  _abc_impl: <class '_abc._abc_data'>: <_abc._abc_data object at 0x7f9772fa3640>
+  _make_reply: <class 'method'>: <bound method StanzaBase._make_reply of <presence from='liqsliu@conversations.im' to='wtfipfs@pimux.de' id=None type=<PresenceType.SUBSCRIBE: 'subscribe'>>>
+  _xso_contents: <class 'dict'>: {<aioxmpp.xso.model.Attr object at 0x7f9772fa2c50>: <PresenceType.SUBSCRIBE: 'subscribe'>, <aioxmpp.xso.model.Attr object at 0x7f9772f8fbd0>: JID(localpart='liqsliu', domain='conversations.im', resource=None), <aioxmpp.xso.model.Attr object at 0x7f9772f8fd10>: JID(localpart='wtfipfs', domain='pimux.de', resource=None), <aioxmpp.xso.model.LangAttr object at 0x7f9772f8fb50>: <aioxmpp.structs.LanguageTag.fromstr('en')>, <aioxmpp.xso.model.ChildTextMap object at 0x7f9772fa2c90>: {}, <aioxmpp.xso.model.Collector object at 0x7f9772fa2e10>: <Element {jabber:client}presence at 0x7f976e786000>}
+  autoset_id: <class 'method'>: <bound method StanzaBase.autoset_id of <presence from='liqsliu@conversations.im' to='wtfipfs@pimux.de' id=None type=<PresenceType.SUBSCRIBE: 'subscribe'>>>
+  error: <class 'NoneType'>: None
+  from_: <class 'aioxmpp.structs.JID'>: liqsliu@conversations.im
+  id_: <class 'NoneType'>: None
+  lang: <class 'aioxmpp.structs.LanguageTag'>: en
+  make_error: <class 'method'>: <bound method StanzaBase.make_error of <presence from='liqsliu@conversations.im' to='wtfipfs@pimux.de' id=None type=<PresenceType.SUBSCRIBE: 'subscribe'>>>
+  priority: <class 'int'>: 0
+  show: <enum 'PresenceShow'>: PresenceShow.NONE
+  status: <class 'aioxmpp.structs.LanguageMap'>: {}
+  to: <class 'aioxmpp.structs.JID'>: wtfipfs@pimux.de
+  type_: <enum 'PresenceType'>: PresenceType.SUBSCRIBE
+  unhandled_children: <class 'lxml.etree._Element'>: <Element {jabber:client}presence at 0x7f976e786000>
+  unparse_to_node: <class 'method'>: <bound method XSO.unparse_to_node of <presence from='liqsliu@conversations.im' to='wtfipfs@pimux.de' id=None type=<PresenceType.SUBSCRIBE: 'subscribe'>>>
+  validate: <class 'method'>: <bound method XSO.validate of <presence from='liqsliu@conversations.im' to='wtfipfs@pimux.de' id=None type=<PresenceType.SUBSCRIBE: 'subscribe'>>>
+  xep0045_muc: <class 'NoneType'>: None
+  xep0045_muc_user: <class 'NoneType'>: None
+  xep0115_caps: <class 'NoneType'>: None
+  xep0131_headers: <class 'NoneType'>: None
+  xep0153_x: <class 'NoneType'>: None
+  xep0379_preauth: <class 'NoneType'>: None
+  xep0390_caps: <class 'NoneType'>: None
+  xso_after_load: <class 'method'>: <bound method XSO.xso_after_load of <presence from='liqsliu@conversations.im' to='wtfipfs@pimux.de' id=None type=<PresenceType.SUBSCRIBE: 'subscribe'>>>
+  xso_error_handler: <class 'method'>: <bound method StanzaBase.xso_error_handler of <presence from='liqsliu@conversations.im' to='wtfipfs@pimux.de' id=None type=<PresenceType.SUBSCRIBE: 'subscribe'>>>
+  xso_serialise_to_sax: <class 'method'>: <bound method XSO.xso_serialise_to_sax of <presence from='liqsliu@conversations.im' to='wtfipfs@pimux.de' id=None type=<PresenceType.SUBSCRIBE: 'subscribe'>>>
+===
+2024-05-09 10:18:54,770 [DEBUG] aioxmpp.node.PresenceManagedClient.XMLStream [protocol.data_received:552]: RECV b"<r xmlns='urn:xmpp:sm:3'/>"
+
