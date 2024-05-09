@@ -2732,10 +2732,11 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False)
           type_=MessageType.CHAT,
       )
     if correct:
-      if get_jid(msg.to, True) in last_outmsg:
+      j = get_msg_jid(msg)
+      if j in last_outmsg:
         #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
         r = misc.Replace()
-        r.id_ = last_outmsg[get_msg_jid(msg)]
+        r.id_ = last_outmsg[j]
         msg.xep0308_replace = r
     for i in split_long_text(text):
       msg.body[None] = i
@@ -2760,10 +2761,11 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False)
       return False
 
     if correct:
-      if get_jid(msg.to, True) in last_outmsg:
+      j = get_msg_jid(msg)
+      if j in last_outmsg:
         #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
         r = misc.Replace()
-        r.id_ = last_outmsg[get_msg_jid(msg)]
+        r.id_ = last_outmsg[j]
         msg.xep0308_replace = r
     return await _send(msg, client, room, gpm)
   else:
