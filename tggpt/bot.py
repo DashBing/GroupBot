@@ -1646,7 +1646,7 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False)
       err(f"无法群私聊，地址错误: {msg.to}")
       return False
 
-    add_id_to_msg(msg, correct)
+    await add_id_to_msg(msg, correct)
 
     return await _send(msg, client, room, gpm)
   else:
