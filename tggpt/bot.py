@@ -1049,8 +1049,9 @@ async def my_popen(cmd,
 
         tmp = "...\n" + res + "\n==\nE: \n" + errs
         tmp = tmp.strip()
-        if msg:
-            if tmp != msg.text:
+        #  if msg:
+        #      if tmp != msg.text:
+        if True:
                 try:
                     #  msg = await cmd_answer(tmp, client, msg, **args)
                     info(f"临时输出: {tmp}")
