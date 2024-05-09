@@ -2517,7 +2517,7 @@ async def parse_xmpp_msg(msg):
     #  print("%s %s" % (type(msg), msg.type_))
     pprint(msg)
     if msg.type_ == PresenceType.SUBSCRIBE:
-      warn(f"状态订阅请求：{msg.from_}")
+      #  warn(f"状态订阅请求：{msg.from_}")
       rc = XB.summon(aioxmpp.RosterClient)
       pprint(rc)
     return
