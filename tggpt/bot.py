@@ -2985,12 +2985,12 @@ async def parse_xmpp_msg(msg):
   else:
 
     if msg.type_ == MessageType.GROUPCHAT:
-      nick = msg.to.resource
+      nick = msg.from_.resource
     else:
       if get_jid(msg.to) in my_groups:
-        nick = msg.to.resource
+        nick = msg.from_.resource
       else:
-        nick = msg.to.localpart
+        nick = msg.from_.localpart
     res = await run_cmd(text, str(msg.from_), nick)
     if res:
       reply = msg.make_reply()
