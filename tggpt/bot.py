@@ -1044,7 +1044,7 @@ async def my_popen(cmd,
         errs = data[1]
 
         #  tmp = "...\n" + res + "\n==\nE: \n" + errs
-        tmp = "%s\n==\nE: ?\n%s" % (res, errs)
+        tmp = "...\n%s\n==\nE: ?\n%s" % (res, errs)
         tmp = tmp.strip()
         #  if msg:
         #      if tmp != msg.text:
@@ -1059,10 +1059,10 @@ async def my_popen(cmd,
         await asyncio.sleep(2)
         if time.time() - start_time > max_time:
             p.kill()
-            res = "my_popen: timeout, killed, cmd: {}".format(cmd)
+            res = "my_popen: timeout, killed, cmd: {}\nres: {}".format(cmd, res)
             warn(res)
             #  await cmd_answer(res, client, msg)
-            info(f"最终输出: {res}")
+            #  info(f"最终输出: {res}")
             break
 
     try:
@@ -1080,19 +1080,16 @@ async def my_popen(cmd,
             errs = errs.decode()
     if not res:
         res = "null"
-
-
 #  res=str(res)
-    res = res
     if p.returncode:
         res = "%s\n==\nE: %s" % (res, p.returncode)
         if errs:
             res += "\n%s" % errs
         #await msg.delete()
-    dbg("popen exit")
+    info("popen exit")
     if msg:
         #  msg = await cmd_answer(res, client, msg, **args)
-        info(f"返回: {res}")
+        info(f"发送: {res}")
         if return_msg:
             return msg
     if combine:
@@ -1160,6 +1157,64 @@ async def my_eval(cmd, client=None, msg=None, **args):
     res = await cmd_answer(str(res), client=client, msg=msg, **args)
     return res
 
+
+
+async def send_cmd_to_bash(msg):
+    """run cmd of text msg from mt by bash(old)"""
+    if isinstance(msg, str):
+        shell_cmd = ["bash -l", SH_PATH + "/bcmd.sh"]
+        shell_cmd.append("just_get_reply")
+        shell_cmd.append(msg)
+    else:
+        if type(msg) == list:
+            if not " " in msg[1]:
+                msg[1] = "X " + msg[1]
+            msg_mt = {
+                "text": msg[2],
+                "username": "{}: ".format(msg[1]),
+                "gateway": msg[0]
+            }
+            msg = msg_mt
+        text = msg["text"]
+        name = msg["username"]
+        if not text:
+            return
+        if name.startswith("C "):
+            return
+        logger.info("run cmd: {}".format(msg))
+        #  shell_cmd="{} {} {} {}"
+        #  shell_cmd = ["bash -l", SH_PATH + "/bcmd.sh"]
+        shell_cmd = ["bash", SH_PATH + "/bcmd.sh"]
+        shell_cmd.append(msg["gateway"])
+        shell_cmd.append(msg["username"])
+        shell_cmd.append(msg["text"])
+        shell_cmd.append(repr(msg))
+
+        if shell_cmd[1] == "gateway1":
+            #  if my_host_re.match(shell_cmd[3]):
+            if urlre.match(shell_cmd[3]):
+                print("my url")
+                shell_cmd[3] = ".ipfs {} only".format(shell_cmd[3])
+                #  shell_cmd[1] = "gateway4"
+            elif tw_re.match(shell_cmd[3]):
+                print("a twitter")
+                shell_cmd[3] = ".tw {}".format(shell_cmd[3])
+                #  shell_cmd[1] = "gateway4"
+            elif pic_re.match(shell_cmd[3]):
+                print("a pic")
+                shell_cmd[3] = ".ipfs {} only".format(shell_cmd[3])
+                #  shell_cmd[1] = "gateway4"
+            elif url_only_re.match(shell_cmd[3]):
+                print("a url")
+                shell_cmd[3] = ".ipfs {} autocheck".format(shell_cmd[3])
+                #  shell_cmd[1] = "gateway4"
+    logger.warning("bash cmd: {}".format(shell_cmd))
+    #  await run_my_bash(shell_cmd, shell=False)
+    #  await my_popen(shell_cmd, shell=False)
+    #  await my_popen(" ".join(shell_cmd))
+    res = await my_popen(shell_cmd, shell=False)
+    logger.info(res)
+    return res
 
 
 
@@ -3489,6 +3544,9 @@ async def amain():
         pass
       elif sys.argv[1] == 'cmd':
         res = await my_popen(' '.join(sys.argv[2:]))
+        print(res)
+      elif sys.argv[1] == 'cmd2':
+        res = await send_cmd_to_bash(["gateway1", "X test", ' '.join(sys.argv[2:])])
         print(res)
       return
 
