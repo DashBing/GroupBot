@@ -997,7 +997,7 @@ async def update_stderr(data):
 async def my_popen(cmd,
                    shell=True,
                    max_time=512,
-                   client=NB,
+                   client=None,
                    msg=None,
                    combine=True,
                    return_msg=False,
@@ -1056,7 +1056,8 @@ async def my_popen(cmd,
                     info(f"临时输出: {tmp}")
                 except Exception as e:
                     logger.error(f"can not send tmp: {e=}")
-                    msg = await client.send_message(MY_ID, tmp)
+                    #  msg = await client.send_message(MY_ID, tmp)
+                    info(f"临时输出: {tmp} {e=}")
         await asyncio.sleep(2)
         if time.time() - start_time > max_time:
             p.kill()
