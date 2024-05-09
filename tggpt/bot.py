@@ -2545,9 +2545,10 @@ async def regisger_handler(client):
   )
 
   pprint(client.stream)
+  pprint(client.stream.service_outbound_message_filter)
   #  return
-  client.stream.service_outbound_messages_filter = stream.AppFilter()
-  client.stream.service_outbound_messages_filter.register(msg_out, 1)
+  #  client.stream.service_outbound_messages_filter = stream.AppFilter()
+  client.stream.service_outbound_message_filter.register(msg_out, 1)
 
 
 def msg_out(msg):
@@ -3068,7 +3069,9 @@ async def join(jid=None, nick=None):
     nick = 'bot'
   client = XB
 
-  mucsv = client.summon(aioxmpp.MUCClient)
+  global mucsv
+  if "mucsv" not in globals():
+    mucsv = client.summon(aioxmpp.MUCClient)
   J = JID.fromstr(jid)
 
   #  client.stream.register_iq_request_handler(
