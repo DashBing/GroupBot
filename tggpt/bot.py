@@ -3119,6 +3119,10 @@ async def run_cmd(text, src, name="test"):
       #  reply.body[None] = "%s" % res
       #  await send(reply)
       #  return True
+    else:
+      res = await send_cmd_to_bash([src, name, text])
+      if res:
+        return res
   elif text.isnumeric() and music_bot_state[src] == 2:
     mtmsgs = mtmsgsg[src]
     tmp = []
