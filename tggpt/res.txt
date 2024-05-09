@@ -1118,3 +1118,156 @@ conference.conversations.im {'identities': [{'category': 'conference', 'type': '
 
 
 
+
+MessageType.CHAT liqsliu@conversations.im/Conversations.CONk wtfipfs@pimux.de {<aioxmpp.structs.LanguageTag.fromstr('en')>: 'ping'}
+---
+||<class 'aioxmpp.stanza.Message'>: <message from='wtfipfs@pimux.de' to='liqsliu@conversations.im/Conversations.CONk' id=':aECRaKVNe6YUel9jWMlu' type=<MessageType.CHAT: 'chat'>>
+---
+  ATTR_MAP: <class 'dict'>: {(None, 'from'): <aioxmpp.xso.model.Attr object at 0x7fefffec7d90>, (None, 'to'): <aioxmpp.xso.model.Attr object at 0x7fefffec7ed0>, ('http://www.w3.org/XML/1998/namespace', 'lang'): <aioxmpp.xso.model.LangAttr object at 0x7fefffec7d10>, (None, 'id'): <aioxmpp.xso.model.Attr object at 0x7fefff715c10>, (None, 'type'): <aioxmpp.xso.model.Attr object at 0x7fefffffc510>}
+  CHILD_MAP: <class 'dict'>: {('jabber:client', 'error'): <aioxmpp.xso.model.Child object at 0x7fefffec7f10>, ('jabber:client', 'body'): <aioxmpp.xso.model.ChildTextMap object at 0x7fefff715d10>, ('jabber:client', 'subject'): <aioxmpp.xso.model.ChildTextMap object at 0x7fefff715c90>, ('jabber:client', 'thread'): <aioxmpp.xso.model.Child object at 0x7fefff715dd0>, ('jabber:x:data', 'x'): <aioxmpp.xso.model.ChildList object at 0x7feffe0afa10>, ('urn:xmpp:delay', 'delay'): <aioxmpp.xso.model.ChildList object at 0x7feffdf8f410>, ('urn:xmpp:message-correct:0', 'replace'): <aioxmpp.xso.model.Child object at 0x7feffdf8fd50>, ('jabber:x:oob', 'x'): <aioxmpp.xso.model.Child object at 0x7feffdfa1210>, ('urn:xmpp:chat-markers:0', 'received'): <aioxmpp.xso.model.Child object at 0x7feffdfa3310>, ('urn:xmpp:chat-markers:0', 'displayed'): <aioxmpp.xso.model.Child object at 0x7feffdfa3310>, ('urn:xmpp:chat-markers:0', 'acknowledged'): <aioxmpp.xso.model.Child object at 0x7feffdfa3310>, ('urn:xmpp:chat-markers:0', 'markable'): <aioxmpp.xso.model.ChildFlag object at 0x7fefff716450>, ('http://jabber.org/protocol/pubsub', 'pubsub'): <aioxmpp.xso.model.Child object at 0x7feffdfd9510>, ('http://jabber.org/protocol/pubsub#event', 'event'): <aioxmpp.xso.model.Child object at 0x7feffdfe8610>, ('jabber:x:encrypted', 'x'): <aioxmpp.xso.model.Child object at 0x7feffde15310>, ('jabber:x:signed', 'x'): <aioxmpp.xso.model.Child object at 0x7feffde15350>, ('urn:xmpp:sid:0', 'stanza-id'): <aioxmpp.xso.model.ChildList object at 0x7feffde165d0>, ('urn:xmpp:sid:0', 'origin-id'): <aioxmpp.xso.model.Child object at 0x7feffe0bb590>, ('urn:xmpp:carbons:2', 'sent'): <aioxmpp.xso.model.Child object at 0x7feffde20550>, ('urn:xmpp:carbons:2', 'received'): <aioxmpp.xso.model.Child object at 0x7feffde20590>, ('http://jabber.org/protocol/muc', 'x'): <aioxmpp.xso.model.Child object at 0x7feffe0bb450>, ('http://jabber.org/protocol/muc#user', 'x'): <aioxmpp.xso.model.Child object at 0x7fefff717690>, ('jabber:x:conference', 'x'): <aioxmpp.xso.model.Child object at 0x7feffde509d0>, ('http://jabber.org/protocol/shim', 'header'): <aioxmpp.xso.model.Child object at 0x7feffde5e3d0>, ('urn:xmpp:receipts', 'request'): <aioxmpp.xso.model.ChildFlag object at 0x7feffdec5b10>, ('urn:xmpp:receipts', 'received'): <aioxmpp.xso.model.Child object at 0x7feffdec6610>}
+  CHILD_PROPS: <class 'sortedcollections.recipes.OrderedSet'>: OrderedSet([<aioxmpp.xso.model.Child object at 0x7fefffec7f10>, <aioxmpp.xso.model.ChildTextMap object at 0x7fefff715d10>, <aioxmpp.xso.model.ChildTextMap object at 0x7fefff715c90>, <aioxmpp.xso.model.Child object at 0x7fefff715dd0>, <aioxmpp.xso.model.ChildList object at 0x7feffe0afa10>, <aioxmpp.xso.model.ChildList object at 0x7feffdf8f410>, <aioxmpp.xso.model.Child object at 0x7feffdf8fd50>, <aioxmpp.xso.model.Child object at 0x7feffdfa1210>, <aioxmpp.xso.model.Child object at 0x7feffdfa3310>, <aioxmpp.xso.model.ChildFlag object at 0x7fefff716450>, <aioxmpp.xso.model.Child object at 0x7feffdfd9510>, <aioxmpp.xso.model.Child object at 0x7feffdfe8610>, <aioxmpp.xso.model.Child object at 0x7feffde15310>, <aioxmpp.xso.model.Child object at 0x7feffde15350>, <aioxmpp.xso.model.ChildList object at 0x7feffde165d0>, <aioxmpp.xso.model.Child object at 0x7feffe0bb590>, <aioxmpp.xso.model.Child object at 0x7feffde20550>, <aioxmpp.xso.model.Child object at 0x7feffde20590>, <aioxmpp.xso.model.Child object at 0x7feffe0bb450>, <aioxmpp.xso.model.Child object at 0x7fefff717690>, <aioxmpp.xso.model.Child object at 0x7feffde509d0>, <aioxmpp.xso.model.Child object at 0x7feffde5e3d0>, <aioxmpp.xso.model.ChildFlag object at 0x7feffdec5b10>, <aioxmpp.xso.model.Child object at 0x7feffdec6610>])
+  COLLECTOR_PROPERTY: <class 'NoneType'>: None
+  DECLARE_NS: <class 'dict'>: {}
+  TAG: <class 'tuple'>: ('jabber:client', 'message')
+  TEXT_PROPERTY: <class 'NoneType'>: None
+  UNKNOWN_ATTR_POLICY: <enum 'UnknownAttrPolicy'>: UnknownAttrPolicy.DROP
+  UNKNOWN_CHILD_POLICY: <enum 'UnknownChildPolicy'>: UnknownChildPolicy.DROP
+  __abstractmethods__: <class 'frozenset'>: frozenset()
+  __class__: <class 'aioxmpp.xso.model.XMLStreamClass'>: <class 'aioxmpp.stanza.Message'>
+  __copy__: <class 'method'>: <bound method XSO.__copy__ of <message from='wtfipfs@pimux.de' to='liqsliu@conversations.im/Conversations.CONk' id=':aECRaKVNe6YUel9jWMlu' type=<MessageType.CHAT: 'chat'>>>
+  __deepcopy__: <class 'method'>: <bound method XSO.__deepcopy__ of <message from='wtfipfs@pimux.de' to='liqsliu@conversations.im/Conversations.CONk' id=':aECRaKVNe6YUel9jWMlu' type=<MessageType.CHAT: 'chat'>>>
+  __delattr__: <class 'method-wrapper'>: <method-wrapper '__delattr__' of Message object at 0x7feffaba4520>
+  __dir__: <class 'builtin_function_or_method'>: <built-in method __dir__ of Message object at 0x7feffaba4520>
+  __doc__: <class 'str'>:
+    An XMPP message stanza. The keyword arguments can be used to initialize the
+    attributes of the :class:`Message`.
+
+    .. attribute:: id_
+
+       The optional ID of the stanza.
+
+    .. attribute:: type_
+
+       The type attribute of the stanza. The allowed values are enumerated in
+       :class:`~.MessageType`.
+
+       .. versionchanged:: 0.7
+
+          Starting with 0.7, the enumeration :class:`~.MessageType` is
+          used. Before, strings equal to the XML attribute value character data
+          were used (``"chat"``, ``"headline"``, and so on).
+
+          As of 0.7, setting the string equivalents is still supported.
+          However, reading from the attribute always returns the corresponding
+          enumeration members (which still compare equal to their string
+          equivalents).
+
+       .. deprecated:: 0.7
+
+          The use of the aforementioned string values is deprecated and will
+          lead to :exc:`TypeError` and/or :exc:`ValueError` being raised when
+          they are written to this attribute. See the Changelog for
+          :ref:`api-changelog-0.7` for further details on how to upgrade your
+          code efficiently.
+
+    .. attribute:: body
+
+       A :class:`~.structs.LanguageMap` mapping the languages of the different
+       body elements to their text.
+
+       .. versionchanged:: 0.5
+
+          Before 0.5, this was a :class:`~aioxmpp.xso.model.XSOList`.
+
+    .. attribute:: subject
+
+       A :class:`~.structs.LanguageMap` mapping the languages of the different
+       subject elements to their text.
+
+       .. versionchanged:: 0.5
+
+          Before 0.5, this was a :class:`~aioxmpp.xso.model.XSOList`.
+
+    .. attribute:: thread
+
+       A :class:`Thread` instance representing the threading information
+       attached to the message or :data:`None` if no threading information is
+       attached.
+
+    Note that some attributes are inherited from :class:`StanzaBase`:
+
+    ========================= =======================================
+    :attr:`~StanzaBase.from_` sender :class:`~aioxmpp.JID`
+    :attr:`~StanzaBase.to`    recipient :class:`~aioxmpp.JID`
+    :attr:`~StanzaBase.lang`  ``xml:lang`` value
+    :attr:`~StanzaBase.error` :class:`Error` instance
+    ========================= =======================================
+
+    .. automethod:: make_reply
+
+
+  __eq__: <class 'method-wrapper'>: <method-wrapper '__eq__' of Message object at 0x7feffaba4520>
+  __format__: <class 'builtin_function_or_method'>: <built-in method __format__ of Message object at 0x7feffaba4520>
+  __ge__: <class 'method-wrapper'>: <method-wrapper '__ge__' of Message object at 0x7feffaba4520>
+  __getattribute__: <class 'method-wrapper'>: <method-wrapper '__getattribute__' of Message object at 0x7feffaba4520>
+  __getstate__: <class 'builtin_function_or_method'>: <built-in method __getstate__ of Message object at 0x7feffaba4520>
+  __gt__: <class 'method-wrapper'>: <method-wrapper '__gt__' of Message object at 0x7feffaba4520>
+  __hash__: <class 'method-wrapper'>: <method-wrapper '__hash__' of Message object at 0x7feffaba4520>
+  __init__: <class 'method'>: <bound method Message.__init__ of <message from='wtfipfs@pimux.de' to='liqsliu@conversations.im/Conversations.CONk' id=':aECRaKVNe6YUel9jWMlu' type=<MessageType.CHAT: 'chat'>>>
+  __init_subclass__: <class 'builtin_function_or_method'>: <built-in method __init_subclass__ of XMLStreamClass object at 0x2937400>
+  __le__: <class 'method-wrapper'>: <method-wrapper '__le__' of Message object at 0x7feffaba4520>
+  __lt__: <class 'method-wrapper'>: <method-wrapper '__lt__' of Message object at 0x7feffaba4520>
+  __module__: <class 'str'>: aioxmpp.stanza
+  __ne__: <class 'method-wrapper'>: <method-wrapper '__ne__' of Message object at 0x7feffaba4520>
+  __new__: <class 'function'>: <function XSO.__new__ at 0x7fefffe865c0>
+  __reduce__: <class 'builtin_function_or_method'>: <built-in method __reduce__ of Message object at 0x7feffaba4520>
+  __reduce_ex__: <class 'builtin_function_or_method'>: <built-in method __reduce_ex__ of Message object at 0x7feffaba4520>
+  __repr__: <class 'method'>: <bound method Message.__repr__ of <message from='wtfipfs@pimux.de' to='liqsliu@conversations.im/Conversations.CONk' id=':aECRaKVNe6YUel9jWMlu' type=<MessageType.CHAT: 'chat'>>>
+  __setattr__: <class 'method-wrapper'>: <method-wrapper '__setattr__' of Message object at 0x7feffaba4520>
+  __sizeof__: <class 'builtin_function_or_method'>: <built-in method __sizeof__ of Message object at 0x7feffaba4520>
+  __slots__: <class 'tuple'>: ()
+  __str__: <class 'method-wrapper'>: <method-wrapper '__str__' of Message object at 0x7feffaba4520>
+  __subclasshook__: <class 'builtin_function_or_method'>: <built-in method __subclasshook__ of XMLStreamClass object at 0x2937400>
+  __weakref__: <class 'NoneType'>: None
+  _abc_impl: <class '_abc._abc_data'>: <_abc._abc_data object at 0x7fefff716680>
+  _make_reply: <class 'method'>: <bound method StanzaBase._make_reply of <message from='wtfipfs@pimux.de' to='liqsliu@conversations.im/Conversations.CONk' id=':aECRaKVNe6YUel9jWMlu' type=<MessageType.CHAT: 'chat'>>>
+  _xso_contents: <class 'dict'>: {<aioxmpp.xso.model.Attr object at 0x7fefffffc510>: <MessageType.CHAT: 'chat'>, <aioxmpp.xso.model.Attr object at 0x7fefffec7d90>: JID(localpart='wtfipfs', domain='pimux.de', resource=None), <aioxmpp.xso.model.Attr object at 0x7fefffec7ed0>: JID(localpart='liqsliu', domain='conversations.im', resource='Conversations.CONk'), <aioxmpp.xso.model.Attr object at 0x7fefff715c10>: ':aECRaKVNe6YUel9jWMlu', <aioxmpp.xso.model.ChildTextMap object at 0x7fefff715d10>: {None: 'pong'}, <aioxmpp.xso.model.ChildTextMap object at 0x7fefff715c90>: {}, <aioxmpp.xso.model.ChildList object at 0x7feffe0afa10>: [], <aioxmpp.xso.model.ChildList object at 0x7feffdf8f410>: [], <aioxmpp.xso.model.ChildList object at 0x7feffde165d0>: []}
+  autoset_id: <class 'method'>: <bound method StanzaBase.autoset_id of <message from='wtfipfs@pimux.de' to='liqsliu@conversations.im/Conversations.CONk' id=':aECRaKVNe6YUel9jWMlu' type=<MessageType.CHAT: 'chat'>>>
+  body: <class 'aioxmpp.structs.LanguageMap'>: {None: 'pong'}
+  error: <class 'NoneType'>: None
+  from_: <class 'aioxmpp.structs.JID'>: wtfipfs@pimux.de
+  id_: <class 'str'>: :aECRaKVNe6YUel9jWMlu
+  lang: <class 'NoneType'>: None
+  make_error: <class 'method'>: <bound method StanzaBase.make_error of <message from='wtfipfs@pimux.de' to='liqsliu@conversations.im/Conversations.CONk' id=':aECRaKVNe6YUel9jWMlu' type=<MessageType.CHAT: 'chat'>>>
+  make_reply: <class 'method'>: <bound method Message.make_reply of <message from='wtfipfs@pimux.de' to='liqsliu@conversations.im/Conversations.CONk' id=':aECRaKVNe6YUel9jWMlu' type=<MessageType.CHAT: 'chat'>>>
+  subject: <class 'aioxmpp.structs.LanguageMap'>: {}
+  thread: <class 'NoneType'>: None
+  to: <class 'aioxmpp.structs.JID'>: liqsliu@conversations.im/Conversations.CONk
+  type_: <enum 'MessageType'>: MessageType.CHAT
+  unparse_to_node: <class 'method'>: <bound method XSO.unparse_to_node of <message from='wtfipfs@pimux.de' to='liqsliu@conversations.im/Conversations.CONk' id=':aECRaKVNe6YUel9jWMlu' type=<MessageType.CHAT: 'chat'>>>
+  validate: <class 'method'>: <bound method XSO.validate of <message from='wtfipfs@pimux.de' to='liqsliu@conversations.im/Conversations.CONk' id=':aECRaKVNe6YUel9jWMlu' type=<MessageType.CHAT: 'chat'>>>
+  xep0004_data: <class 'aioxmpp.xso.model.XSOList'>: []
+  xep0027_encrypted: <class 'NoneType'>: None
+  xep0027_signed: <class 'NoneType'>: None
+  xep0045_muc: <class 'NoneType'>: None
+  xep0045_muc_user: <class 'NoneType'>: None
+  xep0060_event: <class 'NoneType'>: None
+  xep0060_request: <class 'NoneType'>: None
+  xep0066_oob: <class 'NoneType'>: None
+  xep0131_headers: <class 'NoneType'>: None
+  xep0184_received: <class 'NoneType'>: None
+  xep0184_request_receipt: <class 'bool'>: False
+  xep0203_delay: <class 'aioxmpp.xso.model.XSOList'>: []
+  xep0249_direct_invite: <class 'NoneType'>: None
+  xep0280_received: <class 'NoneType'>: None
+  xep0280_sent: <class 'NoneType'>: None
+  xep0308_replace: <class 'NoneType'>: None
+  xep0333_markable: <class 'bool'>: False
+  xep0333_marker: <class 'NoneType'>: None
+  xep0359_origin_id: <class 'NoneType'>: None
+  xep0359_stanza_ids: <class 'aioxmpp.xso.model.XSOList'>: []
+  xso_after_load: <class 'method'>: <bound method XSO.xso_after_load of <message from='wtfipfs@pimux.de' to='liqsliu@conversations.im/Conversations.CONk' id=':aECRaKVNe6YUel9jWMlu' type=<MessageType.CHAT: 'chat'>>>
+  xso_error_handler: <class 'method'>: <bound method StanzaBase.xso_error_handler of <message from='wtfipfs@pimux.de' to='liqsliu@conversations.im/Conversations.CONk' id=':aECRaKVNe6YUel9jWMlu' type=<MessageType.CHAT: 'chat'>>>
+  xso_serialise_to_sax: <class 'method'>: <bound method XSO.xso_serialise_to_sax of <message from='wtfipfs@pimux.de' to='liqsliu@conversations.im/Conversations.CONk' id=':aECRaKVNe6YUel9jWMlu' type=<MessageType.CHAT: 'chat'>>>
+===
+

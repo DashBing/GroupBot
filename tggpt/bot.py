@@ -10,7 +10,7 @@ from . import debug, WORK_DIR, PARENT_DIR, LOG_FILE, get_my_key, HOME, LOGGER
 from telethon.tl.types import KeyboardButton, KeyboardButtonUrl, PeerUser, PeerChannel, PeerChat, User, Channel, Chat
 
 #  import aioxmpp
-from aioxmpp import stream, ibr, protocol, node, dispatcher, connector, JID, im, errors, MessageType, PresenceType
+from aioxmpp import stream, ibr, protocol, node, dispatcher, connector, JID, im, errors, MessageType, PresenceType, misc
 from inspect import isawaitable, currentframe
 
 
@@ -2545,18 +2545,24 @@ async def regisger_handler(client):
       handler,
   )
 
-  pprint(client.stream)
-  pprint(client.stream.service_outbound_message_filter)
+  #  pprint(client.stream)
+  #  pprint(client.stream.service_outbound_message_filter)
   #  return
   #  client.stream.service_outbound_messages_filter = stream.AppFilter()
   client.stream.service_outbound_message_filter.register(msg_out, 1)
 
 
+
+last_outmsg = {}
+
 def msg_out(msg):
   if not allright.is_set():
     info("skip msg: allright is not ok")
     return
-  pprint(msg)
+  #  pprint(msg)
+  if msg.type_ == MessageType.CHAT:
+    jid = get_jid(msg.to, True)
+    last_outmsg[jid] = msg.id_
   return msg
 
 
@@ -2636,6 +2642,10 @@ async def parse_xmpp_msg(msg):
       await send(reply)
     elif text == "ok":
       log(f"got a msg: ok")
+    elif text == "correct":
+      reply = msg.make_reply()
+      reply.body[None] = generand(3)
+      await send(reply, correct=True)
     #  elif text == "correct":
     #    pprint(msg.xep308_replace)
 
@@ -2687,7 +2697,7 @@ async def _send(msg, client=None, room=None, gpm=False):
     warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
   return False
 
-async def send(text, jid=None, client=None, gpm=False, room=None):
+async def send(text, jid=None, client=None, gpm=False, room=None, correct=False):
 
   if type(text) is str:
     if jid is None:
@@ -2710,6 +2720,9 @@ async def send(text, jid=None, client=None, gpm=False, room=None):
           to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
           type_=MessageType.CHAT,
       )
+    if correct:
+      if get_jid(jid, True) in last_outmsg:
+        msg.xep0308_replace = misc.Replace(id_=last_outmsg[get_jid(jid, True)])
     for i in split_long_text(text):
       msg.body[None] = i
       if await _send(msg, client, room, gpm) is not True:
@@ -2731,6 +2744,10 @@ async def send(text, jid=None, client=None, gpm=False, room=None):
     elif gpm and msg.to.resource is None:
       err(f"无法群私聊，地址错误: {msg.to}")
       return False
+
+    if correct:
+      if get_jid(jid, True) in last_outmsg:
+        msg.xep0308_replace = misc.Replace(id_=last_outmsg[get_jid(jid, True)])
     return await _send(msg, client, room, gpm)
   else:
     err(f"text类型不对: {type(text)}")
