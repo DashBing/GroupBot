@@ -385,48 +385,40 @@ def _exceptions_handler(e, *args, **kwargs):
     #  res = f'{e=} line: {e.__traceback__.tb_next.tb_next.tb_lineno}'
     raise e
   except KeyboardInterrupt:
-    err("W: 用户手动终止")
+    logger.info("W: 手动终止")
     raise
   except SystemExit:
-    err(res)
+    logger.error(res, exc_info=True, stack_info=True)
     raise
   except RuntimeError:
-    log(res)
-    #  logger.warning(res)
-    logger.warning(res, exc_info=True, stack_info=True)
-    return res
+    pass
   except AttributeError:
-    log(res)
-    logger.warning(res, exc_info=True, stack_info=True)
-    return res
+    pass
+
   except urllib.error.HTTPError:
     res += ' Data not retrieved because %s\nURL: %s %s' % (e, args, kwargs)
-    log(res)
-    logger.warning(res, exc_info=True, stack_info=True)
-    return res
-  except urllib.error.URLErrorrror:
+  except urllib.error.URLError:
     if isinstance(e.reason, socket.timeout):
-      res += ' socket timed out: urllib.error.URLErrorrror'
+      res += ' socket timed out: urllib.error.URLError'
     else:
       res += ' some other error happened'
-    log(res)
-    logger.warning(res, exc_info=True, stack_info=True)
-    return res
   except socket.timeout:
     res += ' socket timed out'
-    log(res)
-    logger.warning(res, exc_info=True, stack_info=True)
-    return res
   except UnicodeDecodeError:
-    log(res)
-    logger.warning(res, exc_info=True, stack_info=True)
-    return res
+    pass
+
   except Exception:
+    pass
     #  logger.error(f"W: {repr(e)} line: {e.__traceback__.tb_lineno}", exc_info=True, stack_info=True)
     #  print(f"W: {repr(e)} line: {e.__traceback__.tb_next.tb_next.tb_lineno}")
-    log(res)
-    logger.warning(res, exc_info=True, stack_info=True)
-    return res
+
+  res = f"已忽略{res}"
+  #  log(res)
+  #  logger.warning(res)
+  #  logger.warning(res, exc_info=True, stack_info=True)
+  asyncio.create_task(mt_send(res))
+  logger.warning(res)
+  return res
 
 
 # https://www.utf8-chartable.de/unicode-utf8-table.pl
@@ -2524,9 +2516,9 @@ async def parse_xmpp_msg(msg):
       if get_jid(msg.from_) in me:
         rc = XB.summon(aioxmpp.RosterClient)
         #  pprint(rc)
-        res = rc.subscribe(msg.from_)
-        #  print(f"结果：{res}")
         res = rc.approve(msg.from_)
+        #  print(f"结果：{res}")
+        res = rc.subscribe(msg.from_)
         #  print(f"结果：{res}")
         await send("ok", msg.from_)
       else:
@@ -2551,7 +2543,7 @@ async def parse_xmpp_msg(msg):
       #  pprint(msg.from_)
       #  await sendg("pong1")
       #  await sendg("pong2", get_jid(msg.from_))
-      await send("pong3", get_jid(msg.from_, True))
+      await send("pong", msg.from_, gpm=True)
       reply = msg.make_reply()
       reply.body[None] = "pong"
       await send(reply)
@@ -3208,12 +3200,6 @@ async def amain():
       print(f"DOMAIN: {DOMAIN}")
 
       #  await mt_send("gpt start")
-      #  await asyncio.sleep(2)
-      #  await mt_send("ping")
-      #  await asyncio.sleep(3)
-      #  await mt_send("ping", username="")
-      #  await asyncio.sleep(1)
-      #  await mt_send(".gpt", username="")
       asyncio.create_task(mt_read(), name="mt_read")
 
       while True:
