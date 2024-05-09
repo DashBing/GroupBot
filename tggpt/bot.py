@@ -2543,6 +2543,11 @@ async def regisger_handler(client):
   )
 
 
+def msg_out(msg):
+  if not allright.is_set():
+    info("skip msg: allright is not ok")
+    return
+  pprint(msg)
 
 
 
@@ -2621,7 +2626,7 @@ async def parse_xmpp_msg(msg):
       reply.body[None] = "ok"
       await send(reply)
     elif text == "ok":
-      pprint(msg)
+      log(f"got a msg: ok")
     #  elif text == "correct":
     #    pprint(msg.xep308_replace)
 
@@ -2638,13 +2643,13 @@ async def _send(msg, client=None, room=None, gpm=False):
   if gpm is False:
     if client is not None:
       # https://docs.zombofant.net/aioxmpp/devel/api/public/node.html?highlight=client#aioxmpp.Client.send
-      res = client.send(msg)
+      res = client.send(msg, cb=msg_out)
     elif room:
       # https://docs.zombofant.net/aioxmpp/devel/api/public/muc.html?highlight=room#aioxmpp.muc.Room.send_message
       res = room.send_message(msg)
     else:
       client = XB
-      res = client.send(msg)
+      res = client.send(msg, cb=msg_out)
   else:
     # https://docs.zombofant.net/aioxmpp/devel/api/public/im.html#aioxmpp.im.conversation.AbstractConversation.send_message
     if client is None:
@@ -2658,8 +2663,8 @@ async def _send(msg, client=None, room=None, gpm=False):
   #  info(f"{type(res)}: {res} {msg}")
   if asyncio.iscoroutine(res) or type(res) is stream.StanzaToken:
     #  dbg(f"client send: {res=}")
-    res = await res
-    if res is None:
+    res2 = await res
+    if res2 is None:
       dbg(f"send msg: finally: {res=}")
       return True
     #  elif hasattr(res, "stanza") and res.stanza and res.stanza.error is None:
@@ -2667,7 +2672,7 @@ async def _send(msg, client=None, room=None, gpm=False):
     #    info(f"send gpm msg: finally: {res=}")
     #    return True
     else:
-      info(f"send msg: finally: {res=}")
+      info(f"send msg: finally: {res=} {res2=}")
       return False
   else:
     warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
