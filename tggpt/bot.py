@@ -106,7 +106,7 @@ from collections import deque
 
 #  import aioxmpp
 from aioxmpp import stream, ibr, protocol, node, dispatcher, connector, JID, im, errors, MessageType
-from inspect import isawaitable
+from inspect import isawaitable, currentframe
 
 
 
@@ -147,12 +147,18 @@ def info2(s):
   print("%s" % s.replace("\n", " "))
 
 def err(text):
-  asyncio.create_task(mt_send_for_long_text(f"E: {text}"))
+  #  lineno = currentframe().f_back.f_lineno
+  lineno = sys._getframe(1).f_lineno
+  text = f"E: {lineno}: {text}"
+  asyncio.create_task(mt_send_for_long_text(text))
   logger.error(text, exc_info=True, stack_info=True)
   #  raise ValueError
 
 def warn(text, more=True):
-  asyncio.create_task(mt_send_for_long_text(f"W: {text}"))
+  #  lineno = currentframe().f_back.f_lineno
+  lineno = sys._getframe(1).f_lineno
+  text = f"W: {lineno}: {text}"
+  asyncio.create_task(mt_send_for_long_text(text))
   if more:
     logger.warning(text, exc_info=True, stack_info=True)
   else:
@@ -165,6 +171,9 @@ def dbg(text):
   logger.debug(text)
 
 def log(text):
+  #  lineno = currentframe().f_back.f_lineno
+  lineno = sys._getframe(1).f_lineno
+  text = f"{lineno}: {text}"
   asyncio.create_task(mt_send_for_long_text(text))
   logger.warning(text)
 
@@ -3167,6 +3176,7 @@ async def amain():
         allright.set()
         break
       info(f"初始化完成")
+      LOGGER.setLevel(logging.DEBUG)
 
       await UB.run_until_disconnected()
 
