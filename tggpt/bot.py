@@ -2615,10 +2615,10 @@ async def send(text, jid=None, client=None, gpm=False, room=None):
     jid = ME
   elif type(jid) is JID:
     jid = get_jid(jid, True)
-  else:
-    if gpm and '/' not in jid:
-      err(f"无法群内私聊，地址错误: {jid}")
-      return False
+
+  if gpm and '/' not in jid:
+    err(f"无法群内私聊，地址错误: {jid}")
+    return False
 
   if type(text) is str:
     if jid in my_groups:
@@ -2637,27 +2637,26 @@ async def send(text, jid=None, client=None, gpm=False, room=None):
       if await _send(msg, client, room, gpm) is not True:
         return False
     return True
+  elif isinstance(text, aioxmpp.Message):
+    #  info(f"send1: {jid=} {text=}")
+    msg = text
+    if msg.type_ == MessageType.GROUPCHAT:
+    #    if msg.to.resource is not None:
+      if not msg.to.is_bare:
+          #  msg.to.resource = None
+        #  if '/' in get_jid(msg.to, True):
+          #  msg.to = JID.fromstr(get_jid(msg.to))
+          #  msg.to = msg.to.replace(resource=None)
+        orig = msg.to
+        msg.to = msg.to.bare()
+        info(f"已修正地址错误: {orig} -> {msg=}")
+    return await _send(msg, client, room, gpm)
   else:
-    if isinstance(text, aioxmpp.Message):
-      #  info(f"send1: {jid=} {text=}")
-      msg = text
-      if msg.type_ == MessageType.GROUPCHAT:
-      #    if msg.to.resource is not None:
-        if not msg.to.is_bare:
-            #  msg.to.resource = None
-          #  if '/' in get_jid(msg.to, True):
-            #  msg.to = JID.fromstr(get_jid(msg.to))
-            #  msg.to = msg.to.replace(resource=None)
-          orig = msg.to
-          msg.to = msg.to.bare()
-          info(f"已修正地址错误: {orig} -> {msg=}")
-      else:
-        err(f"text类型不对: {type(text)}")
-        return False
+    err(f"text类型不对: {type(text)}")
+    return False
     #  elif isinstance(text, aioxmpp.stanza.Message):
     #    #  info(f"send2: {jid=} {text=}")
     #    msg = text
-    return await _send(msg, client, room, gpm)
 
 #  async def __send(msg, jid=None, client=None, gpm=False):
 #    #  if type(text) is str:
