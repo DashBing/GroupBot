@@ -961,13 +961,13 @@ def format_byte(num):
 async def update_stdouterr(data):
     while data[2].poll() == None:
         try:
-            data[0], data[1] = data[2].communicate(timeout=0.3)
+            data[0], data[1] = data[2].communicate(timeout=0.6)
         except subprocess.TimeoutExpired as e:
             if e.stdout:
                 data[0] = e.stdout.decode("utf-8")
             if e.stderr:
                 data[1] = e.stderr.decode("utf-8")
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.3)
 
 
 async def update_stdout(data):
@@ -1026,16 +1026,12 @@ async def my_popen(cmd,
               errors="ignore",
               executable=executable)
 
-    #      if client == userbot and message.chat_id < 0:
-    #      if client == userbot and message.is_group:
-    #      msg=await cmd_answer("...",cmd_msg)
-
     start_time = time.time()
     res = ""
     errs = ""
     data = ["", "", p]
     asyncio.create_task(update_stdouterr(data))
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(1)
     logger.info(str(p.args))
     while True:
         #  if p.poll() == None and p.returncode == None:
@@ -1047,7 +1043,8 @@ async def my_popen(cmd,
         res = data[0]
         errs = data[1]
 
-        tmp = "...\n" + res + "\n==\nE: \n" + errs
+        #  tmp = "...\n" + res + "\n==\nE: \n" + errs
+        tmp = "%s\n==\nE: ?\n%s" % (res, errs)
         tmp = tmp.strip()
         #  if msg:
         #      if tmp != msg.text:
@@ -1118,7 +1115,7 @@ async def run_my_bash(cmd, shell=True, max_time=64, cmd_msg=None):
     errs = ""
     msg = None
 
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(1)
     if p.poll() == None and p.returncode == None:
         while p.poll() == None and p.returncode == None:
             if time.time() - start_time > max_time:
