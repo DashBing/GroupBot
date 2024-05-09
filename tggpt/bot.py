@@ -2544,6 +2544,8 @@ async def regisger_handler(client):
       handler,
   )
 
+  pprint(client.stream)
+  return
   client.stream.service_outbound_messages_filter = stream.AppFilter()
   client.stream.service_outbound_messages_filter.register(msg_out, 1)
 
