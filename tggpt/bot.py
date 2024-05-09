@@ -1089,6 +1089,7 @@ async def my_popen(cmd,
     if isinstance(errs, bytes):
       errs = errs.decode()
   if not res:
+    return False
     res = "null"
 
   #  if msg:
@@ -1647,6 +1648,7 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False)
         msg.xep0308_replace = r
       else:
         last_outmsg[j] = [msg, None]
+        info("已添加msg")
     else:
       if j in last_outmsg:
         last_outmsg.pop(j)
@@ -2894,7 +2896,6 @@ def msg_out(msg):
   else:
     info(f"忽略: {msg=}")
   return msg
-
 
 
 #  def gmsg(msg, member, source, **kwargs):
