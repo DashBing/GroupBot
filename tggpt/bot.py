@@ -2545,7 +2545,7 @@ async def _send(msg, client=None, room=None):
     #  return False
   #  if isawaitable(res):
   info(f"{type(res)}: {res} {msg}")
-  if asyncio.iscoroutine(res):
+  if asyncio.iscoroutine(res) or type(res) is stream.StanzaToken:
     #  dbg(f"client send: {res=}")
     res = await res
     if res is None:
