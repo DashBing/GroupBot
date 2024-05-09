@@ -2520,10 +2520,10 @@ async def parse_xmpp_msg(msg):
     #  print("%s %s" % (type(msg), msg.type_))
     if msg.type_ == PresenceType.SUBSCRIBE:
       #  pprint(msg)
-      warn(f"状态订阅请求：{msg.from_}")
+      log(f"状态订阅请求：{msg.from_}")
       if get_jid(msg.from_) in me:
         rc = XB.summon(aioxmpp.RosterClient)
-        pprint(rc)
+        #  pprint(rc)
         res = rc.subscribe(msg.from_)
         #  print(f"结果：{res}")
         res = rc.approve(msg.from_)
@@ -2569,9 +2569,10 @@ async def parse_xmpp_msg(msg):
   text = msg.body
 
 
-async def _send(msg, client=None, room=None, pm=False):
+
+async def _send(msg, client=None, room=None, gpm=False):
   #  if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or get_jid(msg.to) not in my_groups:
-  if pm is False:
+  if gpm is False:
     if client is not None:
       # https://docs.zombofant.net/aioxmpp/devel/api/public/node.html?highlight=client#aioxmpp.Client.send
       res = client.send(msg)
@@ -2609,60 +2610,64 @@ async def _send(msg, client=None, room=None, pm=False):
     warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
   return False
 
-
-async def send(text, jid=None, client=None):
-  if type(jid) is JID:
+async def send(text, jid=None, client=None, gpm=False, room=None):
+  if jid is None:
+    jid = ME
+  elif type(jid) is JID:
     jid = get_jid(jid, True)
-  if type(text) is str:
-    for i in split_long_text(text):
-      if await __send(i, jid, client) is not True:
-        return False
-    return True
   else:
-    return await __send(text, jid, client)
+    if gpm and '/' not in jid:
+      err(f"无法群内私聊，地址错误: {jid}")
+      return False
 
-async def __send(text, jid=None, client=None):
-  #  if type(text) is str:
-  pm = False
-  if isinstance(text, aioxmpp.Message):
-    #  info(f"send1: {jid=} {text=}")
-    msg = text
-    if msg.type_ == MessageType.GROUPCHAT:
-    #    if msg.to.resource is not None:
-      if not msg.to.is_bare:
-          #  msg.to.resource = None
-        #  if '/' in get_jid(msg.to, True):
-          #  msg.to = JID.fromstr(get_jid(msg.to))
-          #  msg.to = msg.to.replace(resource=None)
-        orig = msg.to
-        msg.to = msg.to.bare()
-        info(f"已修正地址错误: {orig} -> {msg=}")
-  #  elif isinstance(text, aioxmpp.stanza.Message):
-  #    #  info(f"send2: {jid=} {text=}")
-  #    msg = text
-  else:
-    #  info(f"send: {jid=} {text=}")
-    if jid is None:
-      jid = ME
+  if type(text) is str:
     if jid in my_groups:
       msg = aioxmpp.Message(
           to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
           type_=MessageType.GROUPCHAT,
       )
     else:
-      if '/' in jid and jid.split('/', 1)[0] in my_groups:
-        pm = True
+      #  if '/' in jid and jid.split('/', 1)[0] in my_groups:
       msg = aioxmpp.Message(
           to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
           type_=MessageType.CHAT,
       )
-    # None is for "default language"
-    msg.body[None] = text
-  #  info(f"send: {type(msg)} {msg=}")
-  if client is None:
-    client = XB
-  #  return await client.send(msg)
-  return await _send(msg, client, pm=pm)
+    for i in split_long_text(text):
+      msg.body[None] = i
+      if await _send(msg, client, room, gpm) is not True:
+        return False
+    return True
+  else:
+    if isinstance(text, aioxmpp.Message):
+      #  info(f"send1: {jid=} {text=}")
+      msg = text
+      if msg.type_ == MessageType.GROUPCHAT:
+      #    if msg.to.resource is not None:
+        if not msg.to.is_bare:
+            #  msg.to.resource = None
+          #  if '/' in get_jid(msg.to, True):
+            #  msg.to = JID.fromstr(get_jid(msg.to))
+            #  msg.to = msg.to.replace(resource=None)
+          orig = msg.to
+          msg.to = msg.to.bare()
+          info(f"已修正地址错误: {orig} -> {msg=}")
+      else:
+        err(f"text类型不对: {type(text)}")
+        return False
+    #  elif isinstance(text, aioxmpp.stanza.Message):
+    #    #  info(f"send2: {jid=} {text=}")
+    #    msg = text
+    return await _send(msg, client, room, gpm)
+
+#  async def __send(msg, jid=None, client=None, gpm=False):
+#    #  if type(text) is str:
+#      #  info(f"send: {jid=} {text=}")
+#      # None is for "default language"
+#    #  info(f"send: {type(msg)} {msg=}")
+#    if client is None:
+#      client = XB
+#    #  return await client.send(msg)
+#    return await _send(msg, client, gpm=gpm)
 
 async def sendg(text, jid=None, room=None, client=None):
   info(f"send group msg: {jid} {text}")
