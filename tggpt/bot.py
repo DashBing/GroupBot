@@ -2548,8 +2548,13 @@ async def parse_xmpp_msg(msg):
       reply.body[None] = "pong"
       await send(reply)
     elif msg.type_ == MessageType.CHAT:
+
       reply = msg.make_reply()
-      reply.body[None] = "pong"
+      if get_jid(msg.from_) in me:
+        logger.setLevel(logging.DEBUG)
+        reply.body[None] = "pong, debug on"
+      else:
+        reply.body[None] = "pong"
       await send(reply)
     else:
       pass
@@ -3210,7 +3215,6 @@ async def amain():
         allright.set()
         break
       info(f"初始化完成")
-      LOGGER.setLevel(logging.DEBUG)
 
       await UB.run_until_disconnected()
 
