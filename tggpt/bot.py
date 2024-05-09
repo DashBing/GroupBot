@@ -2554,6 +2554,8 @@ def msg_in(msg):
   if hasattr(msg, "xep0203_delay"):
     info("skip msg: delayed: {msg.xep0203_delay}")
     return
+  elif hasattr(msg, "xep308_replace"):
+    pprint(msg.xep308_replace)
   asyncio.create_task(parse_xmpp_msg(msg))
   #  return
   #  info("\n>>> msg: %s\n" % msg)
@@ -2617,8 +2619,8 @@ async def parse_xmpp_msg(msg):
       return
     if text == "disco":
       await get_disco(get_jid(msg.from_))
-    elif text == "correct":
-      pprint(msg.xep308_replace)
+    #  elif text == "correct":
+    #    pprint(msg.xep308_replace)
 
   #  pprint(msg)
   return
