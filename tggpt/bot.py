@@ -2875,6 +2875,7 @@ def get_msg_jid(msg):
   return jid
 
 def clear_msg_jid(msg):
+  pass
 
 
 def msg_out(msg):
