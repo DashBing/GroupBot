@@ -417,9 +417,9 @@ def _exceptions_handler(e, *args, **kwargs):
   res = f"已忽略{res}"
   #  log(res)
   #  logger.warning(res)
-  #  logger.warning(res, exc_info=True, stack_info=True)
   asyncio.create_task(mt_send(res))
-  logger.warning(res)
+  #  logger.warning(res)
+  logger.warning(res, exc_info=True, stack_info=True)
   return res
 
 
@@ -2545,7 +2545,7 @@ async def regisger_handler(client):
   )
 
   pprint(client.stream)
-  return
+  #  return
   client.stream.service_outbound_messages_filter = stream.AppFilter()
   client.stream.service_outbound_messages_filter.register(msg_out, 1)
 
