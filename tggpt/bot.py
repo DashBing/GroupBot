@@ -2514,6 +2514,10 @@ def msg_in(msg):
 async def parse_xmpp_msg(msg):
   if msg.type_ == MessageType.NORMAL:
     info("normal msg")
+  if not hasattr(msg, "body"):
+    #  print("%s %s" % (type(msg), msg.type_))
+    pprint(msg)
+    return
   print("%s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
   text = None
   for i in msg.body:
