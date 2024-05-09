@@ -2445,13 +2445,14 @@ async def stop(client=None):
 async def get_disco(jid, client=None):
   if client is None:
     client = XB
-  for i in my_groups:
-    jid = i
-    break
+  #  for i in my_groups:
+  #    jid = i
+  #    break
+  jid = test_group
   dc = client.summon(aioxmpp.DiscoClient)
   res = await dc.query_info(JID.fromstr(jid))
-  pprint(res)
-  print(res.to_dict())
+  #  pprint(res)
+  print(jid, res.to_dict())
 
 
 

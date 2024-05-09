@@ -1005,3 +1005,107 @@ MessageType.CHAT liqsliu@conversations.im/Conversations.CONk wtfipfs@pimux.de {<
   xso_serialise_to_sax: <class 'method'>: <bound method XSO.xso_serialise_to_sax of <aioxmpp.disco.xso.InfoQuery object at 0x7f0403f78fc0>>
 ===
 
+
+
+
+
+
+
+
+
+
+MessageType.CHAT liqsliu@conversations.im/Conversations.CONk wtfipfs@pimux.de {}
+MessageType.CHAT liqsliu@conversations.im/Conversations.CONk wtfipfs@pimux.de {<aioxmpp.structs.LanguageTag.fromstr('en')>: 'disco'}
+---
+||<class 'aioxmpp.disco.xso.InfoQuery'>: <aioxmpp.disco.xso.InfoQuery object at 0x7f61f026f200>
+---
+  ATTR_MAP: <class 'dict'>: {(None, 'node'): <aioxmpp.xso.model.Attr object at 0x7f61f2bbb310>}
+  CHILD_MAP: <class 'dict'>: {('http://jabber.org/protocol/disco#info', 'identity'): <aioxmpp.xso.model.ChildList object at 0x7f61f2bbb2d0>, ('http://jabber.org/protocol/disco#info', 'feature'): <aioxmpp.xso.model.ChildValueList object at 0x7f61f2bbb3d0>, ('jabber:x:data', 'x'): <aioxmpp.xso.model.ChildList object at 0x7f61f2bbb410>}
+  CHILD_PROPS: <class 'sortedcollections.recipes.OrderedSet'>: OrderedSet([<aioxmpp.xso.model.ChildList object at 0x7f61f2bbb2d0>, <aioxmpp.xso.model.ChildValueList object at 0x7f61f2bbb3d0>, <aioxmpp.xso.model.ChildList object at 0x7f61f2bbb410>])
+  COLLECTOR_PROPERTY: <class 'NoneType'>: None
+  DECLARE_NS: <class 'dict'>: {None: 'http://jabber.org/protocol/disco#info'}
+  TAG: <class 'tuple'>: ('http://jabber.org/protocol/disco#info', 'query')
+  TEXT_PROPERTY: <class 'NoneType'>: None
+  UNKNOWN_ATTR_POLICY: <enum 'UnknownAttrPolicy'>: UnknownAttrPolicy.DROP
+  UNKNOWN_CHILD_POLICY: <enum 'UnknownChildPolicy'>: UnknownChildPolicy.DROP
+  __abstractmethods__: <class 'frozenset'>: frozenset()
+  __class__: <class 'aioxmpp.xso.model.CapturingXMLStreamClass'>: <class 'aioxmpp.disco.xso.InfoQuery'>
+  __copy__: <class 'method'>: <bound method XSO.__copy__ of <aioxmpp.disco.xso.InfoQuery object at 0x7f61f026f200>>
+  __deepcopy__: <class 'method'>: <bound method XSO.__deepcopy__ of <aioxmpp.disco.xso.InfoQuery object at 0x7f61f026f200>>
+  __delattr__: <class 'method-wrapper'>: <method-wrapper '__delattr__' of InfoQuery object at 0x7f61f026f200>
+  __dir__: <class 'builtin_function_or_method'>: <built-in method __dir__ of InfoQuery object at 0x7f61f026f200>
+  __doc__: <class 'str'>:
+    A query for features and identities of an entity. The keyword arguments to
+    the constructor can be used to initialize the attributes. Note that
+    `identities` and `features` must be iterables of :class:`Identity` and
+    :class:`Feature`, respectively; these iterables are evaluated and the items
+    are stored in the respective attributes.
+
+    .. attribute:: node
+
+       The node at which the query is directed.
+
+    .. attribute:: identities
+
+       The identities of the entity, as :class:`Identity` instances. Each
+       entity has at least one identity.
+
+    .. attribute:: features
+
+       The features of the entity, as a set of strings. Each string represents
+       a :class:`Feature` instance with the corresponding :attr:`~.Feature.var`
+       attribute.
+
+    .. attribute:: captured_events
+
+       If the object was created by parsing an XML stream, this attribute holds
+       a list of events which were used when parsing it.
+
+       Otherwise, this is :data:`None`.
+
+       .. versionadded:: 0.5
+
+    .. automethod:: to_dict
+
+
+  __eq__: <class 'method-wrapper'>: <method-wrapper '__eq__' of InfoQuery object at 0x7f61f026f200>
+  __format__: <class 'builtin_function_or_method'>: <built-in method __format__ of InfoQuery object at 0x7f61f026f200>
+  __ge__: <class 'method-wrapper'>: <method-wrapper '__ge__' of InfoQuery object at 0x7f61f026f200>
+  __getattribute__: <class 'method-wrapper'>: <method-wrapper '__getattribute__' of InfoQuery object at 0x7f61f026f200>
+  __getstate__: <class 'builtin_function_or_method'>: <built-in method __getstate__ of InfoQuery object at 0x7f61f026f200>
+  __gt__: <class 'method-wrapper'>: <method-wrapper '__gt__' of InfoQuery object at 0x7f61f026f200>
+  __hash__: <class 'method-wrapper'>: <method-wrapper '__hash__' of InfoQuery object at 0x7f61f026f200>
+  __init__: <class 'method'>: <bound method InfoQuery.__init__ of <aioxmpp.disco.xso.InfoQuery object at 0x7f61f026f200>>
+  __init_subclass__: <class 'builtin_function_or_method'>: <built-in method __init_subclass__ of CapturingXMLStreamClass object at 0x4292300>
+  __le__: <class 'method-wrapper'>: <method-wrapper '__le__' of InfoQuery object at 0x7f61f026f200>
+  __lt__: <class 'method-wrapper'>: <method-wrapper '__lt__' of InfoQuery object at 0x7f61f026f200>
+  __module__: <class 'str'>: aioxmpp.disco.xso
+  __ne__: <class 'method-wrapper'>: <method-wrapper '__ne__' of InfoQuery object at 0x7f61f026f200>
+  __new__: <class 'function'>: <function XSO.__new__ at 0x7f61f42420c0>
+  __reduce__: <class 'builtin_function_or_method'>: <built-in method __reduce__ of InfoQuery object at 0x7f61f026f200>
+  __reduce_ex__: <class 'builtin_function_or_method'>: <built-in method __reduce_ex__ of InfoQuery object at 0x7f61f026f200>
+  __repr__: <class 'method-wrapper'>: <method-wrapper '__repr__' of InfoQuery object at 0x7f61f026f200>
+  __setattr__: <class 'method-wrapper'>: <method-wrapper '__setattr__' of InfoQuery object at 0x7f61f026f200>
+  __sizeof__: <class 'builtin_function_or_method'>: <built-in method __sizeof__ of InfoQuery object at 0x7f61f026f200>
+  __slots__: <class 'tuple'>: ('captured_events',)
+  __str__: <class 'method-wrapper'>: <method-wrapper '__str__' of InfoQuery object at 0x7f61f026f200>
+  __subclasshook__: <class 'builtin_function_or_method'>: <built-in method __subclasshook__ of CapturingXMLStreamClass object at 0x4292300>
+  __weakref__: <class 'NoneType'>: None
+  _abc_impl: <class '_abc._abc_data'>: <_abc._abc_data object at 0x7f61f2bbbd40>
+  _set_captured_events: <class 'method'>: <bound method InfoQuery._set_captured_events of <aioxmpp.disco.xso.InfoQuery object at 0x7f61f026f200>>
+  _xso_contents: <class 'dict'>: {<aioxmpp.xso.model.ChildValueList object at 0x7f61f2bbb3d0>: {'jabber:iq:register', 'http://jabber.org/protocol/muc#stable_id', 'vcard-temp', 'muc_hidden', 'muc_persistent', 'muc_nonanonymous', 'http://jabber.org/protocol/muc#self-ping-optimization', 'muc_membersonly', 'urn:xmpp:mam:2#extended', 'muc_unmoderated', 'muc_unsecured', 'urn:xmpp:sid:0', 'http://jabber.org/protocol/muc', 'http://jabber.org/protocol/muc#request', 'urn:xmpp:occupant-id:0', 'urn:xmpp:mam:2'}, <aioxmpp.xso.model.ChildList object at 0x7f61f2bbb2d0>: [aioxmpp.disco.xso.Identity(category='conference', type_='text', name='bot', lang=<aioxmpp.structs.LanguageTag.fromstr('en')>)], <aioxmpp.xso.model.ChildList object at 0x7f61f2bbb410>: [<aioxmpp.forms.xso.Data object at 0x7f61f0248b80>]}
+  captured_events: <class 'list'>: [('start', 'http://jabber.org/protocol/disco#info', 'query', {}), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'urn:xmpp:occupant-id:0'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'vcard-temp'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'muc_membersonly'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'muc_unsecured'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/muc#request'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'muc_unmoderated'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'muc_hidden'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'muc_persistent'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'urn:xmpp:mam:2'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'urn:xmpp:mam:2#extended'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'urn:xmpp:sid:0'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'jabber:iq:register'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'muc_nonanonymous'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/muc'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/muc#stable_id'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'feature', {(None, 'var'): 'http://jabber.org/protocol/muc#self-ping-optimization'}), ('end',), ('start', 'http://jabber.org/protocol/disco#info', 'identity', {(None, 'type'): 'text', (None, 'name'): 'bot', (None, 'category'): 'conference'}), ('end',), ('start', 'jabber:x:data', 'x', {(None, 'type'): 'result'}), ('start', 'jabber:x:data', 'field', {(None, 'type'): 'hidden', (None, 'var'): 'FORM_TYPE'}), ('start', 'jabber:x:data', 'value', {}), ('text', 'http://jabber.org/protocol/muc#roominfo'), ('end',), ('end',), ('start', 'jabber:x:data', 'field', {(None, 'type'): 'text-single', (None, 'var'): '{http://modules.prosody.im/mod_vcard_muc}avatar#sha1'}), ('start', 'jabber:x:data', 'value', {}), ('text', '65d3be24a752e17ed891920795a114e3a403ae7c'), ('end',), ('end',), ('start', 'jabber:x:data', 'field', {(None, 'type'): 'boolean', (None, 'var'): '{http://prosody.im/protocol/muc}roomconfig_allowmemberinvites', (None, 'label'): 'Allow members to invite new members'}), ('start', 'jabber:x:data', 'value', {}), ('text', '1'), ('end',), ('end',), ('start', 'jabber:x:data', 'field', {(None, 'type'): 'boolean', (None, 'var'): 'muc#roomconfig_allowinvites', (None, 'label'): 'Allow users to invite other users'}), ('start', 'jabber:x:data', 'value', {}), ('text', '1'), ('end',), ('end',), ('start', 'jabber:x:data', 'field', {(None, 'type'): 'text-single', (None, 'var'): 'muc#roominfo_occupants', (None, 'label'): 'Number of occupants'}), ('start', 'jabber:x:data', 'value', {}), ('text', '4'), ('end',), ('end',), ('start', 'jabber:x:data', 'field', {(None, 'type'): 'boolean', (None, 'var'): 'muc#roomconfig_changesubject'}), ('end',), ('start', 'jabber:x:data', 'field', {(None, 'type'): 'text-single', (None, 'var'): 'muc#roominfo_lang'}), ('start', 'jabber:x:data', 'value', {}), ('text', 'en'), ('end',), ('end',), ('start', 'jabber:x:data', 'field', {(None, 'type'): 'text-single', (None, 'var'): 'muc#roomconfig_roomname', (None, 'label'): 'Title'}), ('start', 'jabber:x:data', 'value', {}), ('text', 'bot'), ('end',), ('end',), ('start', 'jabber:x:data', 'field', {(None, 'type'): 'text-single', (None, 'var'): 'muc#roominfo_description', (None, 'label'): 'Description'}), ('start', 'jabber:x:data', 'value', {}), ('text', 'for test'), ('end',), ('end',), ('end',), ('end',)]
+  exts: <class 'aioxmpp.xso.model.XSOList'>: [<aioxmpp.forms.xso.Data object at 0x7f61f0248b80>]
+  features: <class 'set'>: {'jabber:iq:register', 'http://jabber.org/protocol/muc#stable_id', 'vcard-temp', 'muc_hidden', 'muc_persistent', 'muc_nonanonymous', 'http://jabber.org/protocol/muc#self-ping-optimization', 'muc_membersonly', 'urn:xmpp:mam:2#extended', 'muc_unmoderated', 'muc_unsecured', 'urn:xmpp:sid:0', 'http://jabber.org/protocol/muc', 'http://jabber.org/protocol/muc#request', 'urn:xmpp:occupant-id:0', 'urn:xmpp:mam:2'}
+  identities: <class 'aioxmpp.xso.model.XSOList'>: [aioxmpp.disco.xso.Identity(category='conference', type_='text', name='bot', lang=<aioxmpp.structs.LanguageTag.fromstr('en')>)]
+  node: <class 'NoneType'>: None
+  to_dict: <class 'method'>: <bound method InfoQuery.to_dict of <aioxmpp.disco.xso.InfoQuery object at 0x7f61f026f200>>
+  unparse_to_node: <class 'method'>: <bound method XSO.unparse_to_node of <aioxmpp.disco.xso.InfoQuery object at 0x7f61f026f200>>
+  validate: <class 'method'>: <bound method XSO.validate of <aioxmpp.disco.xso.InfoQuery object at 0x7f61f026f200>>
+  xso_after_load: <class 'method'>: <bound method XSO.xso_after_load of <aioxmpp.disco.xso.InfoQuery object at 0x7f61f026f200>>
+  xso_error_handler: <class 'method'>: <bound method XSO.xso_error_handler of <aioxmpp.disco.xso.InfoQuery object at 0x7f61f026f200>>
+  xso_serialise_to_sax: <class 'method'>: <bound method XSO.xso_serialise_to_sax of <aioxmpp.disco.xso.InfoQuery object at 0x7f61f026f200>>
+===
+{'identities': [{'category': 'conference', 'type': 'text', 'lang': 'en', 'name': 'bot'}], 'features': ['http://jabber.org/protocol/muc', 'http://jabber.org/protocol/muc#request', 'http://jabber.org/protocol/muc#self-ping-optimization', 'http://jabber.org/protocol/muc#stable_id', 'jabber:iq:register', 'muc_hidden', 'muc_membersonly', 'muc_nonanonymous', 'muc_persistent', 'muc_unmoderated', 'muc_unsecured', 'urn:xmpp:mam:2', 'urn:xmpp:mam:2#extended', 'urn:xmpp:occupant-id:0', 'urn:xmpp:sid:0', 'vcard-temp'], 'forms': [{'FORM_TYPE': ['http://jabber.org/protocol/muc#roominfo'], '{http://modules.prosody.im/mod_vcard_muc}avatar#sha1': ['65d3be24a752e17ed891920795a114e3a403ae7c'], '{http://prosody.im/protocol/muc}roomconfig_allowmemberinvites': ['1'], 'muc#roomconfig_allowinvites': ['1'], 'muc#roominfo_occupants': ['4'], 'muc#roomconfig_changesubject': [], 'muc#roominfo_lang': ['en'], 'muc#roomconfig_roomname': ['bot'], 'muc#roominfo_description': ['for test']}]}
+
+
