@@ -2495,6 +2495,40 @@ async def regisger_handler(client):
       msg_in,
   )
 
+#  client.stream.register_iq_request_handler(
+#      aioxmpp.IQType.GET,
+#      aioxmpp.disco.xso.InfoQuery,
+#      request_handler,
+#  )
+  async def request_handler(request):
+      print("request_handler: %s" % request)
+
+  client.stream.register_iq_request_handler(
+      aioxmpp.IQType.GET,
+      aioxmpp.disco.xso.InfoQuery,
+      request_handler,
+  )
+
+  from aioxmpp.version.xso import Query
+
+  async def handler(iq):
+      print("software version request from {!r}".format(iq.from_))
+      result = Query()
+      result.name = "bot"
+      result.version = ":)"
+      result.os = "by liqsliu"
+      return result
+
+  client.stream.register_iq_request_handler(
+      aioxmpp.IQType.GET,
+      Query,
+      handler,
+  )
+
+
+
+
+
 #  def gmsg(msg, member, source, **kwargs):
 def msg_in(msg):
   if not allright.is_set():
@@ -2971,11 +3005,6 @@ async def _bypass(msg):
     #  pprint(s)
     info(f"识别验证码失败: {myid} {jid} {s}")
 
-#  client.stream.register_iq_request_handler(
-#      aioxmpp.IQType.GET,
-#      aioxmpp.disco.xso.InfoQuery,
-#      request_handler,
-#  )
 
 
 
