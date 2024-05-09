@@ -2957,6 +2957,16 @@ async def parse_xmpp_msg(msg):
     else:
       pprint(msg)
     return
+  if msg.type_ == MessageType.GROUPCHAT:
+    pass
+  elif msg.type_ == MessageType.CHAT:
+    pass
+  else:
+    info(f"skip msg type: {msg.type_} {msg}")
+    return
+
+  clear_msg_jid(msg)
+
   text = None
   for i in msg.body:
     text = msg.body[i]
