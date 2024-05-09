@@ -2372,7 +2372,7 @@ async def mt_send_for_long_text(text, gateway="test", *args, **kwargs):
   if os.path.exists(f"{SH_PATH}"):
     fn = f"{SH_PATH}/SM_LOCK_{gateway}"
     while os.path.exists(fn):
-      info(f"busy: {gateway}")
+      info(f"busy: {gateway} {fn}")
       await asyncio.sleep(2)
 
     await write_file(text, fn, "w")
@@ -2576,16 +2576,16 @@ async def __send(text, jid=None, client=None):
   if isinstance(text, aioxmpp.Message):
     #  info(f"send1: {jid=} {text=}")
     msg = text
-    #  if msg.type_ == MessageType.GROUPCHAT:
+    if msg.type_ == MessageType.GROUPCHAT:
     #    if msg.to.resource is not None:
-    if not msg.to.is_bare:
-        #  msg.to.resource = None
-      #  if '/' in get_jid(msg.to, True):
-        #  msg.to = JID.fromstr(get_jid(msg.to))
-        #  msg.to = msg.to.replace(resource=None)
-      orig = msg.to
-      msg.to = msg.to.bare()
-      info(f"已修正地址错误: {orig} -> {msg=}")
+      if not msg.to.is_bare:
+          #  msg.to.resource = None
+        #  if '/' in get_jid(msg.to, True):
+          #  msg.to = JID.fromstr(get_jid(msg.to))
+          #  msg.to = msg.to.replace(resource=None)
+        orig = msg.to
+        msg.to = msg.to.bare()
+        info(f"已修正地址错误: {orig} -> {msg=}")
   #  elif isinstance(text, aioxmpp.stanza.Message):
   #    #  info(f"send2: {jid=} {text=}")
   #    msg = text
