@@ -2555,15 +2555,26 @@ async def regisger_handler(client):
 
 last_outmsg = {}
 
+
+def get_msg_jid(msg):
+  if msg.type_ == MessageType.GROUPCHAT:
+    jid = get_jid(msg.to)
+  elif msg.type_ == MessageType.CHAT:
+    jid = get_jid(msg.to)
+    if jid in my_groups:
+      jid = get_jid(msg.to, True)
+  return jid
+
+
 def msg_out(msg):
   if not allright.is_set():
     info("skip msg: allright is not ok")
     return
   #  pprint(msg)
-  if msg.type_ == MessageType.CHAT:
-    jid = get_jid(msg.to, True)
-    last_outmsg[jid] = msg.id_
+  jid = get_msgid(msg)
+  last_outmsg[jid] = msg.id_
   return msg
+
 
 
 #  def gmsg(msg, member, source, **kwargs):
@@ -2720,6 +2731,12 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False)
           to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
           type_=MessageType.CHAT,
       )
+    if correct:
+      if get_jid(msg.to, True) in last_outmsg:
+        #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
+        r = misc.Replace()
+        r.id_ = last_outmsg[get_msg_jid(msg)]
+        msg.xep0308_replace = r
     for i in split_long_text(text):
       msg.body[None] = i
       if await _send(msg, client, room, gpm) is not True:
@@ -2746,7 +2763,7 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False)
       if get_jid(msg.to, True) in last_outmsg:
         #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
         r = misc.Replace()
-        r.id_ = last_outmsg[get_jid(msg.to, True)]
+        r.id_ = last_outmsg[get_msg_jid(msg)]
         msg.xep0308_replace = r
     return await _send(msg, client, room, gpm)
   else:
