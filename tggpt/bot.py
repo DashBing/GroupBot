@@ -2892,6 +2892,9 @@ def clear_msg_jid(msg):
   j = get_msg_jid(msg)
   if j in last_outmsg:
     last_outmsg.pop(j)
+    info(f"已清楚msg记录: {j}")
+  else:
+    info(f"没找到msg记录: {j}")
 
 
 @exceptions_handler
