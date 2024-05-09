@@ -2519,14 +2519,15 @@ async def regisger_handler(client):
 #      aioxmpp.disco.xso.InfoQuery,
 #      request_handler,
 #  )
-  async def request_handler(request):
-      print("request_handler: %s" % request)
 
-  client.stream.register_iq_request_handler(
-      aioxmpp.IQType.GET,
-      aioxmpp.disco.xso.InfoQuery,
-      request_handler,
-  )
+  #  async def request_handler(request):
+  #      print("request_handler: %s" % request)
+  #
+  #  client.stream.register_iq_request_handler(
+  #      aioxmpp.IQType.GET,
+  #      aioxmpp.disco.xso.InfoQuery,
+  #      request_handler,
+  #  )
 
   from aioxmpp.version.xso import Query
 
