@@ -2550,6 +2550,7 @@ def msg_out(msg):
     info("skip msg: allright is not ok")
     return
   pprint(msg)
+  return msg
 
 
 #  def gmsg(msg, member, source, **kwargs):
