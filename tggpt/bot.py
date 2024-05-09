@@ -1940,7 +1940,7 @@ async def http(url, method="GET", return_headers=False, **kwargs):
 
 @exceptions_handler
 #  async def mt_send(text="null", username="bot", gateway="test", qt=None):
-async def mt_send(text="null", username="C bot", gateway="test", qt=None):
+async def mt_send(text="null", gateway="test", username="C bot", qt=None):
 
     # send msg to matterbridge
     url = "http://" + MT_API_RES + "/api/message"
@@ -2248,7 +2248,6 @@ async def parse_msg(event):
       mtmsgs = mtmsgsg[gateway]
       res = f"{mtmsgs[qid][0]['username']}{text}"
       await mt_send_for_long_text(res, gateway)
-      #  await mt_send(res, gateway=gateway, username="")
       #  await mt_send(res, gateway=gateway)
       gateways.pop(qid)
       mtmsgs.pop(qid)
@@ -2329,7 +2328,7 @@ async def parse_out_msg(event):
 #      pass
 #    elif event.chat_id == rss_bot:
 #      msg = event.message
-#      await mt_send(msg.text, "rss2tg_bot", id2gateway[rss_bot])
+#      await mt_send(msg.text, id2gateway[rss_bot], "rss2tg_bot")
 #      return
 #      #  print("N: skip: %s != %s" % (event.chat_id, gpt_bot))
 #    else:
@@ -2369,7 +2368,7 @@ async def parse_out_msg(event):
 #      #  os.system(f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
 #      return await asyncio.to_thread(os.system, f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
 
-async def mt_send_for_long_text(text, gateway="test", *args, **kwargs):
+async def mt_send_for_long_text(text, gateway="test", username="C bot", *args, **kwargs):
   need_delete = False
   if os.path.exists(f"{SH_PATH}"):
     fn = f"{SH_PATH}/SM_LOCK_{gateway}"
@@ -2383,8 +2382,10 @@ async def mt_send_for_long_text(text, gateway="test", *args, **kwargs):
   async with queue_lock:
     for i in split_long_text(text):
       #  if await send(i, *args, **kwargs) is not True:
-      if await mt_send(i, gateway=gateway, *args, **kwargs) is not True:
+      if await mt_send(i, gateway=gateway, username=username, *args, **kwargs) is not True:
         break
+      #  await mt_send(res, gateway=gateway, username="")
+      username = ""
 
   if need_delete:
     os.remove(fn)
