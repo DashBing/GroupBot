@@ -3048,11 +3048,11 @@ async def parse_xmpp_msg(msg):
     return
 
   if msg.xep0203_delay:
-    if time.time() - msg.xep0203_delay.timestamp() > 60:
+    if time.time() - msg.xep0203_delay.stamp.timestamp() > 60:
       print("跳过旧消息: %s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, msg.xep0203_delay))
       return
     else:
-      print("旧消息: %s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, time.time() - msg.xep0203_delay.timestamp()))
+      print("旧消息: %s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, time.time() - msg.xep0203_delay.stamp.timestamp()))
   if msg.type_ == MessageType.NORMAL:
     logger.info("normal msg")
   if msg.type_ == MessageType.GROUPCHAT:
