@@ -2199,14 +2199,14 @@ async def mt2tg(msg):
 
 
 
-async def send_to_tg_bot(text, chat_id, src=None, name=None):
+async def send_to_tg_bot(text, chat_id, src=None):
   chat = await get_entity(chat_id)
   msg = await UB.send_message(chat, text)
   gid_src[msg.id] = src
   if src not in mtmsgsg:
     mtmsgsg[src] = {}
   #  mtmsgsg[src][msg.id] = [msg]
-  mtmsgsg[src][msg.id] = [name]
+  mtmsgsg[src][msg.id] = [None]
   return msg.id
 
 
@@ -3329,7 +3329,7 @@ async def run_cmd(text, src, name="test"):
       res = await cmd_funs[cmd](cmds, src)
       if type(res) is tuple:
         if res[0] == 1:
-          mtmsgsg[src][res[1]].append(name)
+          mtmsgsg[src][res[1]][0] = name
         return res[0]
       return "%s" % res
       #  reply = msg.make_reply()
