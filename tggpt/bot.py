@@ -1575,11 +1575,20 @@ async def _send(*args, **kwargs):
   asyncio.create_task(__send(*args, **kwargs))
   return True
 
-async def __send(msg, client=None, room=None, gpm=False):
+async def __send(msg, client=None, room=None, name=None):
   jid = str(msg.to)
   if jid not in send_locks:
     send_locks[jid] = asyncio.Lock()
+
+  room = None
+  if str(msg.to.bare()) in rooms:
+    room = rooms[str(msg.to.bare())]
   async with send_locks[jid]:
+    if room:
+      #  if msg.type_ == MessageType.GROUPCHAT:
+      if room.me.nick != name:
+        await room.set_nick(name)
+
     if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or str(msg.to.bare()) not in my_groups:
     #  if gpm is False:
       if client is not None:
@@ -1624,9 +1633,12 @@ async def send(text, jid=None, *args, **kwargs):
   muc = None
   if 'name' in kwargs:
     name = kwargs["name"]
-    kwargs.pop("name")
+    #  kwargs.pop("name")
+    if name:
+      kwargs["name"] = name[2:-4]
   else:
     name = "**C bot:** "
+    kwargs["name"] = name[2:-4]
   if jid is None:
     if isinstance(text, aioxmpp.Message):
       if text.type_ == MessageType.GROUPCHAT:
@@ -1670,7 +1682,7 @@ async def send(text, jid=None, *args, **kwargs):
     info(f"准备发送到: {get_mucs(muc)}")
     return await send1(text, jid=jid, *args, **kwargs)
 
-async def send1(text, jid=None, client=None, gpm=False, room=None, correct=False):
+async def send1(text, jid=None, client=None, room=None, correct=False, name=None):
 
   if type(text) is str:
     #  if name:
@@ -1681,9 +1693,9 @@ async def send1(text, jid=None, client=None, gpm=False, room=None, correct=False
       if type(jid) is JID:
         jid = get_jid(jid, True)
 
-      if gpm and '/' not in jid:
-        err(f"无法群私聊，地址错误: {jid}")
-        return False
+      #  if gpm and '/' not in jid:
+      #    err(f"无法群私聊，地址错误: {jid}")
+      #    return False
     texts = split_long_text(text)
     for i in texts:
       if jid in my_groups:
@@ -1712,7 +1724,7 @@ async def send1(text, jid=None, client=None, gpm=False, room=None, correct=False
       #  else:
       await add_id_to_msg(msg, correct)
       msg.body[None] = i
-      if await _send(msg, client, room, gpm) is not True:
+      if await _send(msg, client, room, name) is not True:
         return False
       if correct:
         if len(texts) > 1:
@@ -1742,7 +1754,7 @@ async def send1(text, jid=None, client=None, gpm=False, room=None, correct=False
 
     await add_id_to_msg(msg, correct)
 
-    return await _send(msg, client, room, gpm)
+    return await _send(msg, client, room, name)
   else:
     err(f"text类型不对: {type(text)}")
     return False
@@ -2633,7 +2645,7 @@ async def parse_msg(event):
       music_bot_state[src] += 1
 
       #  logger.info(f"{mtmsgs[qid]}搜索结果(回复序号)\n{text}")
-      res = f"{mtmsgs[qid][0]}搜索结果(回复序号)\n{text}"
+      res = f"{mtmsgs[qid][0]}: 搜索结果(回复序号)\n{text}"
       #  await mt_send_for_long_text(res, src)
       await send(res, src)
 
@@ -2654,7 +2666,7 @@ async def parse_msg(event):
         #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
       #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
         path = "https://%s/%s" % (DOMAIN, (parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
-      res = f"{mtmsgs[qid][0]}{path}\n{text}"
+      res = f"{mtmsgs[qid][0]}: {path}\n{text}"
       if msg.buttons:
         for i in get_buttons(msg.buttons):
           #  if isinstance(i, KeyboardButtonUrl):
@@ -2713,7 +2725,7 @@ async def parse_msg(event):
     else:
       src = gid_src[qid]
       mtmsgs = mtmsgsg[src]
-      res = f"{mtmsgs[qid][0]}{text}"
+      res = f"{mtmsgs[qid][0]}: {text}"
       #  await mt_send_for_long_text(res, src)
       await send(res, src)
       gid_src.pop(qid)
@@ -3240,8 +3252,8 @@ async def parse_xmpp_msg(msg):
       nick = msg.from_.resource
     else:
       nick = msg.from_.localpart
-  res = await run_cmd(text, get_src(msg), f"X {nick}: ", is_admin)
-  if type(res) is tuple:
+  res = await run_cmd(text, get_src(msg), f"X {nick}", is_admin)
+  if res is True:
     return
   if res:
     reply = msg.make_reply()
@@ -3405,7 +3417,7 @@ async def run_cmd(text, src, name="test", is_admin=False):
       if type(res) is tuple:
         if res[0] == 1:
           mtmsgsg[src][res[1]][0] = name
-        return res
+        return True
       return res
       #  reply = msg.make_reply()
       #  reply.body[None] = "%s" % res
