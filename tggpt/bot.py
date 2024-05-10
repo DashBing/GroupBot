@@ -1628,8 +1628,15 @@ async def send(text, jid=None, *args, **kwargs):
     ms = get_mucs(muc)
     for m in ms:
       if await send1(text, jid=m, *args, **kwargs):
-        #  if isinstance(text, aioxmpp.Message):
-        #    text.body[None] = text0
+        if isinstance(text, aioxmpp.Message):
+          text = text.body[None]
+          #  #  text.body[None] = text0
+          #  body = text.body
+          #  text = aioxmpp.Message(
+          #      to=JID.fromstr(text.to),  # recipient_jid must be an aioxmpp.JID
+          #      type_=text.type_,
+          #  )
+          #  text.body = body
         continue
       return False
     if main_group in ms:
