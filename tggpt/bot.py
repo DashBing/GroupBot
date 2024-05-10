@@ -2588,7 +2588,7 @@ async def parse_msg(event):
     pass
 
   elif event.chat_id == music_bot:
-    print("I: music bot: chat_id: %s\nmsg: %s" % (event.chat_id, msg.stringify()))
+    #  print("I: music bot: chat_id: %s\nmsg: %s" % (event.chat_id, msg.stringify()))
     if msg.is_reply:
       pass
     else:
@@ -2628,16 +2628,17 @@ async def parse_msg(event):
     mtmsgs = mtmsgsg[src]
     if music_bot_state[src] == 1:
       logger.info(msg.buttons)
-      logger.info(f"找到了几个音乐:{len(msg.buttons)} {msg.text}")
+      #  logger.info(f"找到了几个音乐:{len(msg.buttons)} {msg.text}")
 
       music_bot_state[src] += 1
-      mtmsgs[qid].append(msg.buttons)
 
+      logger.info(f"{mtmsgs[qid]}搜索结果(回复序号)\n{text}")
       res = f"{mtmsgs[qid][0]}搜索结果(回复序号)\n{text}"
       #  await mt_send_for_long_text(res, src)
       await send(text, src)
 
       gid_src[msg.id] = src
+      mtmsgs[qid].append(msg.buttons)
       mtmsgs[msg.id] = mtmsgs[qid]
       gid_src.pop(qid)
       mtmsgs.pop(qid)
