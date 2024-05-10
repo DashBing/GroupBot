@@ -1680,7 +1680,7 @@ async def send(text, jid=None, *args, **kwargs):
         await mt_send_for_long_text(text0, name=name)
     return True
   else:
-    info(f"准备发送到: {get_mucs(muc)}")
+    info(f"准备发送到: {muc=} {jid=}")
     return await send1(text, jid=jid, *args, **kwargs)
 
 async def send1(text, jid=None, client=None, room=None, correct=False, name=None):
@@ -3044,6 +3044,7 @@ async def parse_xmpp_msg(msg):
       else:
         await send("not allowed", msg.from_)
     elif msg.type_ == PresenceType.AVAILABLE:
+      pprint(msg)
       print(f"上线: {msg.from_} {msg.status}")
     elif msg.type_ == PresenceType.UNAVAILABLE:
       print(f"离线: {msg.from_} {msg.status}")
