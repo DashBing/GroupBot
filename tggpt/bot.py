@@ -1602,7 +1602,8 @@ async def __send(msg, client=None, room=None, gpm=False):
 async def send(text, jid=None, *args, **kwargs):
   muc = None
   if 'name' in kwargs:
-    name = kwargs['name']
+    name = kwargs["name"]
+    kwargs.pop("name")
   else:
     name = "**C bot:** "
   if jid is None:
@@ -3006,7 +3007,7 @@ def get_mucs(muc):
 @exceptions_handler
 def msg_out(msg):
   if not allright.is_set():
-    logger.info("skip msg: allright is not ok")
+    logger.info("skip msg: allright is not ok: {msg.from_}: {msg.body}")
     return
   #  pprint(msg)
   j = get_msg_jid(msg)
@@ -3023,7 +3024,7 @@ def msg_out(msg):
       logger.info(f"msg不匹配: {last_outmsg[j][0]=} != {msg=}")
       last_outmsg.pop(j)
   else:
-    logger.info(f"忽略: {msg=}")
+    logger.debug(f"忽略: {msg=}")
   return msg
 
 
@@ -3087,10 +3088,9 @@ async def parse_xmpp_msg(msg):
     text = msg.body[i]
     break
   if text is None:
-    print("跳过空消息: %s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
+    #  print("跳过空消息: %s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
     return
 
-  print("%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
   muc = str(msg.from_.bare())
 
   if text == "ping":
@@ -3124,10 +3124,10 @@ async def parse_xmpp_msg(msg):
   if muc in my_groups:
     #  if str(msg.from_) == str(rooms[muc].me.conversation_jid.bare()):
     if msg.from_.resource == rooms[muc].me.nick:
-      print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+      #  print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
       return
   elif muc == myjid:
-    print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+    #  print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
     return
   elif muc in me:
     pass
@@ -3136,6 +3136,7 @@ async def parse_xmpp_msg(msg):
     return
     #  pprint(msg)
 
+  print("%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
   if msg.type_ == MessageType.GROUPCHAT:
     nick = msg.from_.resource
     ms = get_mucs(muc)
