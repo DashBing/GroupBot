@@ -1556,11 +1556,10 @@ async def _send(*args, **kwargs):
   asyncio.create_task(__send(*args, **kwargs))
   return True
 
-async def __send(msg, client=None, room=None, name=None):
+async def __send(msg, client=None, room=None, name=None, correct=False):
   jid = str(msg.to)
   if jid not in send_locks:
     send_locks[jid] = asyncio.Lock()
-
   async with send_locks[jid]:
     if name is not None:
       room = None
@@ -1575,6 +1574,7 @@ async def __send(msg, client=None, room=None, name=None):
       else:
         logger.info(f"not found room: {msg.to}")
 
+    add_id_to_msg(msg, correct)
 
     if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or str(msg.to.bare()) not in my_groups:
     #  if gpm is False:
@@ -1672,7 +1672,7 @@ async def send(text, jid=None, *args, **kwargs):
     info(f"准备发送到: {muc=} {jid=}")
     return await send1(text, jid=jid, *args, **kwargs)
 
-async def send1(text, jid=None, client=None, room=None, correct=False, name=None):
+async def send1(text, jid=None, *args, **kwargs):
 
   if type(text) is str:
     #  if name:
@@ -1712,9 +1712,8 @@ async def send1(text, jid=None, client=None, room=None, correct=False, name=None
       #  if len(texts) > 1:
       #    await add_id_to_msg(msg, False)
       #  else:
-      await add_id_to_msg(msg, correct)
       msg.body[None] = i
-      if await _send(msg, client, room, name) is not True:
+      if await _send(msg, *args, **kwargs) is not True:
         return False
       if correct:
         break
@@ -1741,9 +1740,8 @@ async def send1(text, jid=None, client=None, room=None, correct=False, name=None
     #    err(f"无法群私聊，地址错误: {msg.to}")
     #    return False
 
-    await add_id_to_msg(msg, correct)
 
-    return await _send(msg, client, room, name)
+    return await _send(msg, *args, **kwargs)
   else:
     err(f"text类型不对: {type(text)}")
     return False
@@ -2902,7 +2900,7 @@ async def regisger_handler(client):
   #  return
   #  client.stream.service_outbound_messages_filter = stream.AppFilter()
   #  client.stream.service_outbound_message_filter.register(msg_out, 1)
-  client.stream.app_outbound_message_filter.register(msg_out, 1)
+  #  client.stream.app_outbound_message_filter.register(msg_out, 1)
 
 
 last_outmsg = {}
@@ -2928,7 +2926,19 @@ def clear_msg_jid(msg):
     logger.info(f"没找到msg记录: {j}")
 
 
-async def add_id_to_msg(msg, correct):
+def add_id_to_msg(msg, correct):
+  j = get_msg_jid(msg)
+  if j in last_outmsg:
+    r = misc.Replace()
+    r.id_ = last_outmsg[j][1]
+    msg.xep0308_replace = r
+  if correct:
+    msg.autoset_id()
+    last_outmsg[j] = [msg, msg.id_]
+  else:
+      last_outmsg.pop(j)
+
+async def ___add_id_to_msg(msg, correct):
   j = get_msg_jid(msg)
   if correct:
     if j in last_outmsg:
@@ -2970,9 +2980,6 @@ def get_mucs(muc):
     if muc in s:
       return s
   return set([muc])
-
-
-
 
 @exceptions_handler
 def msg_out(msg):
