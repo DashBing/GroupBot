@@ -2984,6 +2984,10 @@ async def parse_xmpp_msg(msg):
     else:
       pprint(msg)
     return
+
+  if msg.xep0203_delay:
+    print("跳过旧消息%s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, msg.xep0203_delay))
+    return
   if msg.type_ == MessageType.NORMAL:
     logger.info("normal msg")
   if msg.type_ == MessageType.GROUPCHAT:
@@ -3003,22 +3007,10 @@ async def parse_xmpp_msg(msg):
   if text is None:
     print("跳过空消息: %s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
     return
-  muc = str(msg.from_.bare())
-  if muc == myjid:
-    print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
-    return
-  elif muc in my_groups:
-    if muc == str(rooms[muc].me.conversation_jid):
-      print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
-      return
-    pprint(msg)
-  else:
-    logger.info(f"{str(msg.to.bare())=} != {myjid=}")
-  #  pprint(msg)
-  if msg.xep0203_delay:
-    print("跳过旧消息%s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, msg.xep0203_delay))
-    return
+
   print("%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+  muc = str(msg.from_.bare())
+
   if text == "ping":
     #  await send("pong", ME)
     if msg.type_ == MessageType.GROUPCHAT:
@@ -3034,42 +3026,56 @@ async def parse_xmpp_msg(msg):
       reply = msg.make_reply()
       reply.body[None] = "pong"
       await send(reply)
-    else:
-      pass
-  else:
+    return
 
-    if msg.type_ == MessageType.GROUPCHAT:
+  if muc in my_groups:
+    if muc == str(rooms[muc].me.conversation_jid.bare()):
+      print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+      return
+    else:
+      logger.info(f"{muc=} != {rooms[muc].me.conversation_jid.bare()=}")
+  elif muc == myjid:
+    print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+    return
+  elif muc in me:
+    pass
+  else:
+    print("未知来源的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+    return
+    #  pprint(msg)
+
+  if msg.type_ == MessageType.GROUPCHAT:
+    nick = msg.from_.resource
+  else:
+    if get_jid(msg.to) in my_groups:
       nick = msg.from_.resource
     else:
-      if get_jid(msg.to) in my_groups:
-        nick = msg.from_.resource
-      else:
-        nick = msg.from_.localpart
-    res = await run_cmd(text, str(msg.from_), nick)
-    if res:
-      reply = msg.make_reply()
-      reply.body[None] = res
-      await send(reply)
-      return
+      nick = msg.from_.localpart
+  res = await run_cmd(text, str(msg.from_), nick)
+  if res:
+    reply = msg.make_reply()
+    reply.body[None] = res
+    await send(reply)
+    return
 
-    if get_jid(msg.from_) not in me:
-      return
-    #  awai:t mt_send(text, 'me', get_jid(msg.from_))
-    if text == "disco":
-      await get_disco(get_jid(msg.from_))
-    elif text == "test":
-      logger.setLevel(logging.DEBUG)
-      reply = msg.make_reply()
-      reply.body[None] = "ok"
-      await send(reply)
-    elif text == "ok":
-      log(f"got a msg: ok")
-    elif text == "correct":
-      reply = msg.make_reply()
-      reply.body[None] = generand(3)
-      await send(reply, correct=True)
-    #  elif text == "correct":
-    #    pprint(msg.xep308_replace)
+  if get_jid(msg.from_) not in me:
+    return
+  #  awai:t mt_send(text, 'me', get_jid(msg.from_))
+  if text == "disco":
+    await get_disco(get_jid(msg.from_))
+  elif text == "test":
+    logger.setLevel(logging.DEBUG)
+    reply = msg.make_reply()
+    reply.body[None] = "ok"
+    await send(reply)
+  elif text == "ok":
+    log(f"got a msg: ok")
+  elif text == "correct":
+    reply = msg.make_reply()
+    reply.body[None] = generand(3)
+    await send(reply, correct=True)
+  #  elif text == "correct":
+  #    pprint(msg.xep308_replace)
 
   #  pprint(msg)
   return
