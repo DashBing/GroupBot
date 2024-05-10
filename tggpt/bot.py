@@ -148,15 +148,20 @@ def info1(s):
 def info2(s):
   print("%s" % s.replace("\n", " "))
 
+def send_log(text):
+  #  asyncio.create_task(mt_send_for_long_text(text))
+  asyncio.create_task(send1(text))
+
 def err(text):
   if type(text) is not str:
     text = "{text=}"
   #  lineno = currentframe().f_back.f_lineno
   lineno = sys._getframe(1).f_lineno
   text = f"E: {lineno}: {text}"
-  asyncio.create_task(mt_send_for_long_text(text))
+  send_log(text)
   logger.error(text, exc_info=True, stack_info=True)
   #  raise ValueError
+
 
 def warn(text, more=True):
   if type(text) is not str:
@@ -164,7 +169,7 @@ def warn(text, more=True):
   #  lineno = currentframe().f_back.f_lineno
   lineno = sys._getframe(1).f_lineno
   text = f"W: {lineno}: {text}"
-  asyncio.create_task(mt_send_for_long_text(text))
+  send_log(text)
   if more:
     logger.warning(text, exc_info=True, stack_info=True)
   else:
@@ -186,7 +191,7 @@ def log(text):
   #  lineno = currentframe().f_back.f_lineno
   lineno = sys._getframe(1).f_lineno
   text = f"{lineno}: {text}"
-  asyncio.create_task(mt_send_for_long_text(text))
+  send_log(text)
   logger.warning(text)
 
 def get_cmd(text):
@@ -1663,29 +1668,29 @@ async def send1(text, jid=None, client=None, gpm=False, room=None, correct=False
       if gpm and '/' not in jid:
         err(f"无法群私聊，地址错误: {jid}")
         return False
-    if jid in my_groups:
-      msg = aioxmpp.Message(
-          to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
-          type_=MessageType.GROUPCHAT,
-      )
-    else:
-      #  if '/' in jid and jid.split('/', 1)[0] in my_groups:
-      msg = aioxmpp.Message(
-          to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
-          type_=MessageType.CHAT,
-      )
-    #  j = get_msg_jid(msg)
-    #  if correct:
-    #    if j in last_outmsg:
-    #      #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
-    #      r = misc.Replace()
-    #      r.id_ = last_outmsg[j]
-    #      msg.xep0308_replace = r
-    #  else:
-    #    if j in last_outmsg:
-    #      last_outmsg.pop(j)
     texts = split_long_text(text)
     for i in texts:
+      if jid in my_groups:
+        msg = aioxmpp.Message(
+            to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
+            type_=MessageType.GROUPCHAT,
+        )
+      else:
+        #  if '/' in jid and jid.split('/', 1)[0] in my_groups:
+        msg = aioxmpp.Message(
+            to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
+            type_=MessageType.CHAT,
+        )
+      #  j = get_msg_jid(msg)
+      #  if correct:
+      #    if j in last_outmsg:
+      #      #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
+      #      r = misc.Replace()
+      #      r.id_ = last_outmsg[j]
+      #      msg.xep0308_replace = r
+      #  else:
+      #    if j in last_outmsg:
+      #      last_outmsg.pop(j)
       if len(texts) > 1:
         await add_id_to_msg(msg, False)
       else:
@@ -3083,6 +3088,8 @@ async def parse_xmpp_msg(msg):
     pass
   elif msg.type_ == MessageType.CHAT:
     pass
+  elif msg.type_ == MessageType.ERROR:
+    warn("收到错误消息：{msg} {msg.error}")
   else:
     pprint(msg)
     logger.info(f"skip msg type: {msg.type_} {msg}")
@@ -3132,6 +3139,9 @@ async def parse_xmpp_msg(msg):
     #  if str(msg.from_) == str(rooms[muc].me.conversation_jid.bare()):
     if msg.from_.resource == rooms[muc].me.nick:
       #  print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+      return
+    if msg.type_ == MessageType.CHAT:
+      logger.info("忽略群内私聊" % msg)
       return
   elif muc == myjid:
     #  print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
