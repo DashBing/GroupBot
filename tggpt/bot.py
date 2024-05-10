@@ -3003,7 +3003,7 @@ async def parse_xmpp_msg(msg):
   if text is None:
     print("跳过空消息: %s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
     return
-  if str(msg.to.bare()) == myjid:
+  if str(msg.to.bare()) != myjid:
     print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
     return
   pprint(msg)
