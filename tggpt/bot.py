@@ -2883,10 +2883,10 @@ async def add_id_to_msg(msg, correct):
   j = get_msg_jid(msg)
   if correct:
     if j in last_outmsg:
-      last_outmsg[j][0] = msg
       #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
-      for i in range(9):
+      for _ in range(5):
         if last_outmsg[j][1]:
+          last_outmsg[j][0] = msg
           r = misc.Replace()
           r.id_ = last_outmsg[j][1]
           msg.xep0308_replace = r
@@ -2894,22 +2894,26 @@ async def add_id_to_msg(msg, correct):
         else:
           info("msg id 不可用: {last_outmsg[j][1]}")
           await asyncio.sleep(1)
+      if last_outmsg[j][1] is None:
+        last_outmsg[j] = [msg, None]
     else:
       last_outmsg[j] = [msg, None]
       info("已添加msg")
   else:
       #  last_outmsg.pop(j)
     if j in last_outmsg:
-      last_outmsg[j][0] = msg
       #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
-      for i in range(9):
+      for _ in range(5):
         if last_outmsg[j][1]:
+          last_outmsg[j][0] = msg
           r = misc.Replace()
           r.id_ = last_outmsg[j][1]
           msg.xep0308_replace = r
         else:
           info("msg id 不可用: {last_outmsg[j][1]}")
           await asyncio.sleep(1)
+      if last_outmsg[j][1] is None:
+        last_outmsg[j] = [msg, None]
       last_outmsg[j].append(0)
 
 
@@ -2995,7 +2999,7 @@ async def parse_xmpp_msg(msg):
   if text is None:
     print("跳过空消息: %s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
     return
-  print("%s %s %s %s" % (msg.type_, str(msg.from_), msg.to, msg.body))
+  print("%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
   if text == "ping":
     #  await send("pong", ME)
     if msg.type_ == MessageType.GROUPCHAT:
