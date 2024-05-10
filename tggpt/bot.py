@@ -3308,8 +3308,8 @@ async def add_cmd():
       rc = XB.summon(aioxmpp.RosterClient)
       return "json:\n%s" % rc.export_as_json()
     else:
-      pc = XB.summon(aioxmpp.PresenceClient)
-      res = pc.get_most_available_stanza(cmds[1])
+      #  pc = XB.summon(aioxmpp.PresenceClient)
+      res = XB.get_most_available_stanza(cmds[1])
       return res
   cmd_funs["list"] = _
   cmd_for_admin.add('list')
@@ -3406,7 +3406,7 @@ async def run_cmd(text, src, name="test", is_admin=False):
         if res[0] == 1:
           mtmsgsg[src][res[1]][0] = name
         return res
-      return "%s" % res
+      return res
       #  reply = msg.make_reply()
       #  reply.body[None] = "%s" % res
       #  await send(reply)
