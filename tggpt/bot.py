@@ -1585,7 +1585,29 @@ async def _send(msg, client=None, room=None, gpm=False):
     warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
   return False
 
-async def send(text, jid=None, client=None, gpm=False, room=None, correct=False, name="**C bot:** "):
+async def send(text, jid=None, *args, **kwargs):
+  muc = None
+  if jid is None:
+    if isinstance(text, aioxmpp.Message):
+      if msg.type_ == MessageType.GROUPCHAT:
+        muc = (text.to.bare())
+      else:
+        pass
+    else:
+      err(f"需要jid")
+      return False
+  else:
+    muc = jid
+  if muc in my_groups:
+    for m in get_mucs(muc):
+      if await send(text, jid=m, *args, **kwargs):
+        continue
+      return False
+    return True
+  else:
+    return await send(text, jid=jid, *args, **kwargs)
+
+async def send1(text, jid=None, client=None, gpm=False, room=None, correct=False, name="**C bot:** "):
 
   if type(text) is str:
     if name:
@@ -1638,6 +1660,8 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False,
       msg.body[None] = f"{name}{msg.body[None]}"
     if msg.type_ == MessageType.GROUPCHAT:
     #    if msg.to.resource is not None:
+      if jid is not None:
+        msg.to = JID.fromstr(jid)
       if not msg.to.is_bare:
           #  msg.to.resource = None
         #  if '/' in get_jid(msg.to, True):
@@ -2041,14 +2065,14 @@ async def mt2tg(msg):
 
     logger.info("got msg from mt: {}".format(msgd))
     #      if name == "C Telegram: ":
-    res = await run_cmd(text, gateway, name)
-    if res:
-      await mt_send(res, gateway)
     if gateway == "gateway1":
-      for m in get_mucs(main_group):
-        await sendg(text, m, name=name)
-        if res:
-          await sendg(res, m, name=name)
+      res = await run_cmd(text, gateway, name)
+      if res:
+        await mt_send(res, gateway)
+      #  for m in get_mucs(main_group):
+      await send(text, main_group, name=name)
+      if res:
+        await sendg(res, main_group)
 
     return
     msgd.update({"chat_id": chat_id})
@@ -3059,9 +3083,10 @@ async def parse_xmpp_msg(msg):
 
     ms = get_mucs(muc)
     if main_group in ms:
-      await mt_send(text, username=nick)
+      await mt_send(text, username=f"**X {nick}:** ")
     for m in ms - {muc}:
-      await send(text, m, name="**X nick:** ")
+      await send1(text, m, name=f"**X {nick}:** ")
+
   else:
     if get_jid(msg.to) in my_groups:
       nick = msg.from_.resource
