@@ -3007,7 +3007,7 @@ async def parse_xmpp_msg(msg):
     print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
     return
   else:
-    info(f"{msg.to.bare()} != {myjid}")
+    info(f"{str(msg.to.bare())=} != {myjid=}")
   #  pprint(msg)
   print("%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
   if text == "ping":
