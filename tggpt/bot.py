@@ -307,7 +307,7 @@ url_md_left=re.compile(r'\[[^\]]+\]\([^\)]+')
 qre = re.compile(r'^(>( .+)?)$', re.M)
 
 
-gptmode=[]
+#  gptmode=[]
 CLEAN = "/new_chat"
 
 #  queue = asyncio.Queue(512)
@@ -1580,13 +1580,11 @@ async def __send(msg, client=None, room=None, name=None):
   if jid not in send_locks:
     send_locks[jid] = asyncio.Lock()
 
-  if name is not None:
-    room = None
-    if str(msg.to.bare()) in rooms:
-      room = rooms[str(msg.to.bare())]
   async with send_locks[jid]:
     if name is not None:
-      if room:
+      room = None
+      if str(msg.to.bare()) in rooms:
+        room = rooms[str(msg.to.bare())]
         #  if msg.type_ == MessageType.GROUPCHAT:
         if room.me.nick != name:
           await room.set_nick(name)
@@ -1982,155 +1980,69 @@ async def mt2tg(msg):
     #  if text.startswith(".py "):
     #    text = "." + text[4:]
     #  if text[0:1] == ".":
-    if 1 > 2:
-      if text[1:2] == " ":
-        return
-      #  cmds = deque(text[1:].split(' '))
-      #  cmds = text[1:].split(' ')
-      cmds = get_cmd(text[1:])
-      if cmds:
-        pass
-      else:
-        return
-      #  print(f"> I: {cmds}")
-      logger.info("got cmds: {}".format(cmds))
-      cmd = cmds[0]
-      length = len(cmds)
-      here = len(mtmsgsg[gateway])
-      if text == ".gtpmode":
-        if gateway in gptmode:
-          gptmode.remove(gateway)
-          await mt_send("gtp mode off", gateway=gateway)
-          return
-        else:
-          gptmode.append(gateway)
-          await mt_send("gtp mode on", gateway=gateway)
-          return
-      elif text == ".gtg reset":
-        if allright.is_set():
-          await mt_send(f"now tasks: {here}, waiting...", gateway=gateway)
-          #  for g in mtmsgsg:
-          #  for g in queues:
-          #    await mt_send(f"clean {g}...", gateway="test")
-          #    await queues[g].put((0,0,0))
-          text= CLEAN
-        else:
-          await mt_send("waiting...", gateway=gateway)
-          await allright.wait()
-          here = len(mtmsgsg[gateway])
-          await mt_send(f"reset ok, now tasks: {here}", gateway=gateway)
-          return
-      #  elif text == ".gpt" or text.startswith(".gpt ") or text.startswith(".gpt\n"):
-      elif cmd == "gtg":
-        #  need_clean = True
-        #  text=text[5:]
-        text = ' '.join(cmds[1:])
-        if not text:
-          #  await mt_send(".gpt $text", gateway=gateway)
-          await mt_send(HELP, gateway=gateway)
-          return
-      #  elif text == ".se" or text.startswith(".se "):
-      elif cmd == "gse":
-        #  need_clean = True
-        text = ' '.join(cmds[1:])
-        if not text:
-          await mt_send(".gse $text", gateway=gateway)
-          return
-        text="/search "+text
-      #  elif text == ".img" or text.startswith(".img "):
-      #  elif text.startswith(".gtz"):
-      elif cmd == "gtz":
-        #  text=text[5:]
-        text = ' '.join(cmds[1:])
-        if not text:
-          await mt_send("中文专用翻译", gateway=gateway)
-          return
-        #  need_clean = True
-        text = f'{PROMPT_TR_ZH}“{text}”'
-      #  elif text.startswith(".gt"):
-      elif cmd == "gtr":
-        #  text=text[4:]
-        text = ' '.join(cmds[1:])
-        if not text:
-          await mt_send("gpt(telegram bot) translate", gateway=gateway)
-          return
-        #  need_clean = True
-        text = f'{PROMPT_TR_MY}“{text}”'
-      #  elif text.startswith(".gptr"):
-      elif cmd == "gptr":
-        #  text=text[6:]
-        text = ' '.join(cmds[1:])
-        if not text:
-          await mt_send("gpt translate with short prompt", gateway=gateway)
-          return
-        #  need_clean = True
-        text = f'{PROMPT_TR_MY_S}“{text}”'
-
-      elif cmd == "img":
-        #  need_clean = True
-        #  text=text[5:]
-        #  text = ' '.join(cmds[1:])
-        #  if not text:
-        #    await mt_send(".img $text\n--\nhttps://t.me/littleb_gptBOT", gateway=gateway)
-        #    return
-        #  text="/image "+text
-        text = ' '.join(cmds[1:])
-        if not text:
-          await mt_send(f"gemini 图像生成(仅支持英文)\n.{cmd} $text", gateway=gateway)
-        else:
-          url = await ai_img(text)
-          await mt_send(url, gateway=gateway)
-        return
-      elif cmd == "hg":
-        text = ' '.join(cmds[1:])
-        if not text:
-          #  await mt_send(f".{cmd} $text", gateway=gateway)
-          await mt_send(f"HuggingChat\n.{cmd} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: hg/di/lb/kl/you/bd/ai", gateway=gateway)
-        else:
-          url = await hg(text, provider=Provider.HuggingChat)
-          #  await mt_send(url, gateway=gateway)
-          await mt_send_for_long_text(url, gateway)
-        return
-      elif cmd == "di":
-        text = ' '.join(cmds[1:])
-        if not text:
-          #  await mt_send(f".{cmd} $text", gateway=gateway)
-          await mt_send(f"DeepInfra\n.{cmd} $text", gateway=gateway)
-        else:
-          url = await ai(text, provider=Provider.DeepInfra)
-          #  await mt_send(url, gateway=gateway)
-          await mt_send_for_long_text(url, gateway)
-        return
-      elif cmd == "lb":
-        text = ' '.join(cmds[1:])
-        if not text:
-          await mt_send(f"Liaobots\n.{cmd} $text", gateway=gateway)
-        else:
-          url = await ai(text, provider=Provider.Liaobots)
-          await mt_send_for_long_text(url, gateway)
-        return
-      elif cmd == "kl":
-        text = ' '.join(cmds[1:])
-        if not text:
-          await mt_send(f"Koala\n.{cmd} $text", gateway=gateway)
-        else:
-          url = await ai(text, provider=Provider.Koala, proxy="http://127.0.0.1:6080")
-          await mt_send_for_long_text(url, gateway)
-        return
-      elif cmd == "you":
-        text = ' '.join(cmds[1:])
-        if not text:
-          await mt_send(f"You\n.{cmd} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: hg/di/lb/kl/you/bd/ai", gateway=gateway)
-        else:
-          url = await ai(text, provider=Provider.You, proxy="http://127.0.0.1:6080")
-          await mt_send_for_long_text(url, gateway)
-        return
-
-      else:
-        return
-    elif gateway in gptmode:
-      pass
-      return
+    #  if 1 > 2:
+    #    if text[1:2] == " ":
+    #      return
+    #    #  cmds = deque(text[1:].split(' '))
+    #    #  cmds = text[1:].split(' ')
+    #    cmds = get_cmd(text[1:])
+    #    if cmds:
+    #      pass
+    #    else:
+    #      return
+    #    #  print(f"> I: {cmds}")
+    #    logger.info("got cmds: {}".format(cmds))
+    #    cmd = cmds[0]
+    #    length = len(cmds)
+    #    here = len(mtmsgsg[gateway])
+    #    if text == ".gtpmode":
+    #      if gateway in gptmode:
+    #        gptmode.remove(gateway)
+    #        await mt_send("gtp mode off", gateway=gateway)
+    #        return
+    #      else:
+    #        gptmode.append(gateway)
+    #        await mt_send("gtp mode on", gateway=gateway)
+    #        return
+    #    elif text == ".gtg reset":
+    #      if allright.is_set():
+    #        await mt_send(f"now tasks: {here}, waiting...", gateway=gateway)
+    #        #  for g in mtmsgsg:
+    #        #  for g in queues:
+    #        #    await mt_send(f"clean {g}...", gateway="test")
+    #        #    await queues[g].put((0,0,0))
+    #        text= CLEAN
+    #      else:
+    #        await mt_send("waiting...", gateway=gateway)
+    #        await allright.wait()
+    #        here = len(mtmsgsg[gateway])
+    #        await mt_send(f"reset ok, now tasks: {here}", gateway=gateway)
+    #        return
+    #    #  elif text == ".gpt" or text.startswith(".gpt ") or text.startswith(".gpt\n"):
+    #    #  elif text == ".se" or text.startswith(".se "):
+    #    elif cmd == "gse":
+    #      #  need_clean = True
+    #      text = ' '.join(cmds[1:])
+    #      if not text:
+    #        await mt_send(".gse $text", gateway=gateway)
+    #        return
+    #      text="/search "+text
+    #    #  elif text == ".img" or text.startswith(".img "):
+    #    #  elif text.startswith(".gtz"):
+    #    elif cmd == "gptr":
+    #      #  text=text[6:]
+    #      text = ' '.join(cmds[1:])
+    #      if not text:
+    #        await mt_send("gpt translate with short prompt", gateway=gateway)
+    #        return
+    #      #  need_clean = True
+    #      text = f'{PROMPT_TR_MY_S}“{text}”'
+    #
+    #    else:
+    #      return
+    #  elif gateway in gptmode:
+    #    pass
+    #    return
     #  if gateway in MT_GATEWAY_LIST:
     #      chat_id = MT_GATEWAY_LIST[gateway][0]
     #  else:
@@ -2160,13 +2072,13 @@ async def mt2tg(msg):
       if res:
         await mt_send(res, gateway)
       for m in get_mucs(main_group):
-        if await send1(f"{name}{text}", m) is False:
+        if await send1(f"{name}{text}", m, name) is False:
           return
         if res:
-          if await send1(f"{name}{res}", m) is False:
+          if await send1(f"{name}{res}", m, "C bot") is False:
             return
 
-    #  return
+    return
     if 1 < 2:
       return
     msgd.update({"chat_id": chat_id})
@@ -3246,7 +3158,7 @@ async def parse_xmpp_msg(msg):
     nick = msg.from_.resource
     ms = get_mucs(muc)
     for m in ms - {muc}:
-      if await send1(f"**X {nick}:** {text}", m) is False:
+      if await send1(f"**X {nick}:** {text}", m, f"X {nick}") is False:
         return
     if main_group in ms:
       if await mt_send_for_long_text(text, name=f"X {nick}") is False:
@@ -3376,6 +3288,66 @@ async def add_cmd():
     return 1, mid
   cmd_funs["gtg"] = _
 
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"gpt(telegram bot) translate\n.{cmds[0]} $text\n--\n所有数据来自telegram机器人: https://t.me/littleb_gptBOT"
+    text = ' '.join(cmds[1:])
+    text = f'{PROMPT_TR_MY}“{text}”'
+    mid = await send_to_tg_bot(text, gpt_bot, src)
+    return 1, mid
+  cmd_funs["gtr"] = _
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"gpt(telegram bot) translate 中文专用翻译\n.{cmds[0]} $text\n--\n所有数据来自telegram机器人: https://t.me/littleb_gptBOT"
+    text = ' '.join(cmds[1:])
+    text = f'{PROMPT_TR_ZH}“{text}”'
+    mid = await send_to_tg_bot(text, gpt_bot, src)
+    return 1, mid
+  cmd_funs["gtz"] = _
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"gemini 图像生成(仅支持英文)\n.{cmds[0]} $text"
+    text = ' '.join(cmds[1:])
+    return await ai_img(text)
+  cmd_funs["img"] = _
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"HuggingChat\n.{cmd} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: hg/di/lb/kl/you/bd/ai"
+    text = ' '.join(cmds[1:])
+    return await hg(text, provider=Provider.HuggingChat)
+  cmd_funs["hg"] = _
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"DeepInfra\n.{cmds[0]} $text"
+    text = ' '.join(cmds[1:])
+    return  await ai(text, provider=Provider.DeepInfra)
+  cmd_funs["di"] = _
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"Liaobots\n.{cmds[0]} $text"
+    text = ' '.join(cmds[1:])
+    return await ai(text, provider=Provider.Liaobots)
+  cmd_funs["lb"] = _
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"Liaobots\n.{cmds[0]} $text"
+    text = ' '.join(cmds[1:])
+    return await ai(text, provider=Provider.Koala, proxy="http://127.0.0.1:6080")
+  cmd_funs["kl"] = _
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"You\n.{cmds[0]} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: hg/di/lb/kl/you/bd/ai"
+    text = ' '.join(cmds[1:])
+    return await ai(text, provider=Provider.You, proxy="http://127.0.0.1:6080")
+  cmd_funs["you"] = _
 
   async def _(cmds, src):
     i = 0
