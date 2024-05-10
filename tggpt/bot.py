@@ -1571,8 +1571,8 @@ async def __send(msg, client=None, room=None, name=None, correct=False):
           logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} -> {name}")
         else:
           logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} = {name}")
-      else:
-        logger.info(f"not found room: {msg.to}")
+      #  else:
+      #    logger.info(f"not found room: {msg.to}")
 
     add_id_to_msg(msg, correct)
 
@@ -2932,11 +2932,11 @@ def add_id_to_msg(msg, correct):
     r = misc.Replace()
     r.id_ = last_outmsg[j][1]
     msg.xep0308_replace = r
+    if not correct:
+      last_outmsg.pop(j)
   if correct:
     msg.autoset_id()
     last_outmsg[j] = [msg, msg.id_]
-  else:
-      last_outmsg.pop(j)
 
 async def ___add_id_to_msg(msg, correct):
   j = get_msg_jid(msg)
