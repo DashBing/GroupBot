@@ -357,7 +357,6 @@ If the bot doesn't respond, please /new_chat before asking.""",
 
 
 
-HELP="用法: .gtg $text\n--\n所有数据来自telegram机器人: https://t.me/littleb_gptBOT"
 
 
 # https://xtxian.com/ChatGPT/prompt/%E8%A7%92%E8%89%B2%E6%89%AE%E6%BC%94/%E6%88%91%E6%83%B3%E8%AE%A9%E4%BD%A0%E5%85%85%E5%BD%93%E4%B8%AD%E6%96%87%E7%BF%BB%E8%AF%91%E5%91%98%E3%80%81%E6%8B%BC%E5%86%99%E7%BA%A0%E6%AD%A3%E5%91%98%E5%92%8C%E6%94%B9%E8%BF%9B%E5%91%98.html#%E6%88%91%E6%83%B3%E8%AE%A9%E4%BD%A0%E5%85%85%E5%BD%93%E4%B8%AD%E6%96%87%E7%BF%BB%E8%AF%91%E5%91%98%E3%80%81%E6%8B%BC%E5%86%99%E7%BA%A0%E6%AD%A3%E5%91%98%E5%92%8C%E6%94%B9%E8%BF%9B%E5%91%98
@@ -2145,7 +2144,9 @@ async def mt2tg(msg):
           if await send1(f"{name}{res}", m) is False:
             return
 
-    return
+    #  return
+    if 1 < 2:
+      return
     msgd.update({"chat_id": chat_id})
     msgd.update({"text": text})
 
@@ -2198,25 +2199,45 @@ async def mt2tg(msg):
 
 
 
+async def send_to_tg_bot(text, chat_id, src=None):
+  chat = await get_entity(chat_id)
+  msg = await UB.send_message(chat, text)
+  gid_src[msg.id] = src
+  if src not in mtmsgsg:
+    mtmsgsg[src] = {}
+  #  mtmsgsg[src][msg.id] = [msg]
+  mtmsgsg[src][msg.id] = []
+  return msg.id
 
 
 
 
-async def clear_history():
+async def clear_history(src=None):
   if not allright.is_set():
     warn("wait for allright...")
     await allright.wait()
     return
-
   allright.clear()
   #  await asyncio.sleep(1)
   #  for g in queues:
-  for g in mtmsgsg:
-    mtmsgs = mtmsgsg[g]
-    mtmsgs.clear()
-  #  await mt_send(f"cleaned: {mtmsgsg=}", gateway="test")
-  gid_src.clear()
-  #  await mt_send(f"cleaned: {gid_src=}", gateway="test"):w
+  if src:
+    tmp = []
+    for i in gid_src:
+      if gid_src[i] == src:
+        tmp.append(i)
+    for i in tmp:
+      gid_src.pop(i)
+
+    if src in mtmsgsg:
+      ms = mtmsgsg[src]
+      ms.clear()
+  else:
+    for g in mtmsgsg:
+      mtmsgs = mtmsgsg[g]
+      mtmsgs.clear()
+    #  await mt_send(f"cleaned: {mtmsgsg=}", gateway="test")
+    gid_src.clear()
+    #  await mt_send(f"cleaned: {gid_src=}", gateway="test"):w
   allright.set()
   logger.info("reset ok")
 
@@ -2440,7 +2461,7 @@ async def mt_send_for_long_text(text, gateway="gateway1", name="C bot", *args, *
 
 last_time = {}
 
-async def download_media(msg, gateway='test', path=f"{DOWNLOAD_PATH}/", in_memory=False):
+async def download_media(msg, src='gateway1', path=f"{DOWNLOAD_PATH}/", in_memory=False):
 #  await client.download_media(message, progress_callback=callback)
   async with downlaod_lock:
 
@@ -2456,24 +2477,27 @@ async def download_media(msg, gateway='test', path=f"{DOWNLOAD_PATH}/", in_memor
           res += f" {i.url}"
         else:
           logger.info(f"ignore button: {i}")
-    await mt_send(f"{res} 下载中...", gateway=gateway)
-    last_time[gateway] = time.time()
+    #  await mt_send(f"{res} 下载中...", gateway=gateway)
+    await send(f"{res} 下载中...", src, correct=True)
+    last_time[src] = time.time()
 
     # Printing download progress
     def download_media_callback(current, total):
       print('Downloaded', current, 'out of', total,
         'bytes: {:.2%}'.format(current / total))
-      if time.time() - last_time[gateway] > 5:
+      if time.time() - last_time[src] > 5:
         #  await mt_send("{:.2%} %s/%s".format(current / total, current, total), gateway=gateway)
-        asyncio.create_task(mt_send("{:.2%} {}/{} bytes".format(current / total, current, total), gateway=gateway))
-        last_time[gateway] = time.time()
+        #  asyncio.create_task(mt_send("{:.2%} {}/{} bytes".format(current / total, current, total), gateway=gateway))
+        asyncio.create_task(send("{:.2%} {}/{} bytes".format(current / total, current, total), src, correct=True))
+        last_time[src] = time.time()
 
     path = await msg.download_media(path, progress_callback=download_media_callback)
     if path:
       return path
     else:
       warn(f"下载失败: {path}")
-      await mt_send(f"下载失败: {path}", gateway=gateway)
+      #  await mt_send(f"下载失败: {path}", gateway=gateway)
+      await send(f"下载失败: {path}", src)
 
 
 
@@ -2504,7 +2528,7 @@ async def get_entity(peer):
   if peer:
     entity = await UB.get_entity(peer)
     return entity
-  return
+  raise ValueError(f"无法获取chat信息: {peer}")
 
 
 
@@ -2600,35 +2624,31 @@ async def parse_msg(event):
       warn(f"已忽略疑似临时消息: {text}", False)
       return
 
-    gateway = gid_src[qid]
-    mtmsgs = mtmsgsg[gateway]
-    #  state = music_bot_state[gateway]
-    #  if music_bot_state[gateway] == 0:
-    #    gid_src.pop(qid)
-    #    mtmsgs.pop(qid)
-    if music_bot_state[gateway] == 1:
+    src = gid_src[qid]
+    mtmsgs = mtmsgsg[src]
+    if music_bot_state[src] == 1:
       logger.info(msg.buttons)
       logger.info(f"找到了几个音乐:{len(msg.buttons)} {msg.text}")
 
-      music_bot_state[gateway] += 1
+      music_bot_state[src] += 1
       mtmsgs[qid].append(msg.buttons)
 
       res = f"{mtmsgs[qid][0]['username']}搜索结果(回复序号)\n{text}"
-      await mt_send_for_long_text(res, gateway)
+      #  await mt_send_for_long_text(res, src)
+      await send(text, src)
 
-      gid_src[msg.id] = gateway
+      gid_src[msg.id] = src
       mtmsgs[msg.id] = mtmsgs[qid]
-      #  music_bot_state[gateway] = msg.id
       gid_src.pop(qid)
       mtmsgs.pop(qid)
 
-    elif music_bot_state[gateway] == 2:
-      warn(f"不应该出现: music bot: {gid_src=} {music_bot_state[gateway]}\nmsg:\n{msg.stringify()}")
+    elif music_bot_state[src] == 2:
+      warn(f"不应该出现: music bot: {gid_src=} {music_bot_state[src]}\nmsg:\n{msg.stringify()}")
       gid_src.pop(qid)
       mtmsgs.pop(qid)
       return
-    elif msg.file and music_bot_state[gateway] == 3:
-      path = await download_media(msg, gateway)
+    elif msg.file and music_bot_state[src] == 3:
+      path = await download_media(msg, src)
       if path is not None:
         #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
       #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
@@ -2639,7 +2659,8 @@ async def parse_msg(event):
           #  if isinstance(i, KeyboardButtonUrl):
           if isinstance(i.button, KeyboardButtonUrl):
             res += f"\n原始链接: {i.url}"
-      await mt_send_for_long_text(res, gateway)
+      #  await mt_send_for_long_text(res, gateway)
+      await send(res, src)
       if music_bot_state[gateway] == 3:
         music_bot_state[gateway] -= 1
     else:
@@ -2655,7 +2676,8 @@ async def parse_msg(event):
   elif event.chat_id == rss_bot:
     async with rss_lock:
       #  await mt_send(msg.text, "C rss2tg_bot", id2gateway[rss_bot])
-      await mt_send_for_long_text(msg.text, id2gateway[rss_bot])
+      #  await mt_send_for_long_text(msg.text, id2gateway[rss_bot])
+      await send(msg.text, rss_channel, name="")
       await asyncio.sleep(5)
     return
     #  print("N: skip: %s != %s" % (event.chat_id, gpt_bot))
@@ -2669,7 +2691,7 @@ async def parse_msg(event):
     qid=msg.reply_to_msg_id
     print(f"tg msg id: {msg.id=} {event.id=} {qid=}")
     if qid not in gid_src:
-      logger.error(f"E: not found gateway for {qid=}, {gid_src=} {msg.text=}")
+      logger.error(f"E: not found src for {qid=}, {gid_src=} {msg.text=}")
       return
     #  await queues[gid_src[qid]].put( (id(msg), qid, msg) )
     #  await queues[gid_src[qid]].put( (msg.date, qid, msg) )
@@ -2688,12 +2710,10 @@ async def parse_msg(event):
     elif len(l) > 1 and f"{l[-2]}\n{l[-1]}" in loadings:
       return
     else:
-      #  await mt_send(f"{mtmsgs[qid][0]['username']}[思考中...]", gateway=gateway)
-      gateway = gid_src[qid]
-      mtmsgs = mtmsgsg[gateway]
+      src = gid_src[qid]
+      mtmsgs = mtmsgsg[src]
       res = f"{mtmsgs[qid][0]['username']}{text}"
-      await mt_send_for_long_text(res, gateway)
-      #  await mt_send(res, gateway=gateway)
+      await mt_send_for_long_text(res, src)
       gid_src.pop(qid)
       mtmsgs.pop(qid)
 
@@ -3231,6 +3251,7 @@ async def add_cmd():
   cmd_funs["qw"] = _
 
 
+
   async def _(cmds, src):
     if len(cmds) == 1:
       return f"阿里千问\n{cmds[0]} $text"
@@ -3238,8 +3259,8 @@ async def add_cmd():
     return await qw2(text)
   cmd_funs["qw2"] = _
 
+
   async def _(cmds, src):
-    text = ' '.join(cmds[1:])
     if len(cmds) == 1:
       return f"音乐下载\n.{cmds[0]} $text\n.{cmds[0]} clear\n--\ntelegram bot: https://t.me/{music_bot_name}"
     if cmds[1] == "clear":
@@ -3249,18 +3270,42 @@ async def add_cmd():
     text = ' '.join(cmds[1:])
     music_bot_state[src] = 1
     text="/search "+text
-
-    tmp = []
-    for i in gid_src:
-      if gid_src[i] == src:
-        tmp.append(i)
-    for i in tmp:
-      gid_src.pop(i)
-
-    if src in mtmsgsg:
-      ms = mtmsgsg[src]
-      ms.clear()
+    mid = await send_to_tg_bot(text, music_bot, src)
   cmd_funs["music"] = _
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"gpt bot\n.{cmds[0]} $text\n--\n所有数据来自telegram机器人: https://t.me/littleb_gptBOT"
+
+    text = ' '.join(cmds[1:])
+    mid = await send_to_tg_bot(text, gpt_bot, src)
+  cmd_funs["gtg"] = _
+
+
+  async def _(cmds, src):
+    i = 0
+    for g in mtmsgsg:
+      i += 1
+      for j in mtmsgsg[g]:
+        i += 1
+    for g in gid_src:
+      i += 1
+    ii = i
+
+    if cmds[1] == "all":
+      await clear_history()
+    else:
+      await clear_history(src)
+    i = 0
+    for g in mtmsgsg:
+      i += 1
+      for j in mtmsgsg[g]:
+        i += 1
+    for g in gid_src:
+      i += 1
+    #  return "ok {ii} -> {i}"
+    return f"清除状态\n.{cmds[0]} all\n--\n{ii} -> {i}"
+  cmd_funs["clear"] = _
 
 
 async def run_cmd(text, src, name="test"):
@@ -3294,20 +3339,20 @@ async def run_cmd(text, src, name="test"):
         tmp.append(i)
     qid = max(tmp)
     logger.info(f"尝试下载：{text} {qid}")
-    bs = mtmsgs[qid][1]
+    bs = mtmsgs[qid][0]
     logger.info(f"尝试下载：{text} {qid} msg: {bs}")
     i = None
-    for i in bs:
-      if type(i) is list:
-        for j in i:
-          if j.text == text:
-            logger.info(f"已找到：{text}")
-            await j.click()
-            i = True
-            break
-        if i is True:
-          break
-      else:
+    for i in get_buttons(bs):
+      #  if type(i) is list:
+      #    for j in i:
+      #      if j.text == text:
+      #        logger.info(f"已找到：{text}")
+      #        await j.click()
+      #        i = True
+      #        break
+      #    if i is True:
+      #      break
+      #  else:
         if i.text == text:
           logger.info(f"已找到：{text}")
           await i.click()
