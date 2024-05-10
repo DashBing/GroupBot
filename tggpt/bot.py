@@ -1550,7 +1550,7 @@ async def qw2(text):
 send_locks = {}
 
 
-async def _send(*args, kwargs):
+async def _send(*args, **kwargs):
   asyncio.create_task(__send(*args, **kwargs))
   return True
 
@@ -2307,7 +2307,7 @@ async def http(url, method="GET", return_headers=False, **kwargs):
         else:
             return html
 
-async def mt_send(*args, kwargs):
+async def mt_send(*args, **kwargs):
   asyncio.create_task(_mt_send(*args, **kwargs))
   return True
 
