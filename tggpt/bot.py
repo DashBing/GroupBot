@@ -3044,7 +3044,7 @@ async def parse_xmpp_msg(msg):
       else:
         await send("not allowed", msg.from_)
     elif msg.type_ == PresenceType.AVAILABLE:
-      pprint(msg)
+      pprint(msg.xep0045_muc_user)
       print(f"上线: {msg.from_} {msg.status}")
     elif msg.type_ == PresenceType.UNAVAILABLE:
       print(f"离线: {msg.from_} {msg.status}")
