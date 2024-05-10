@@ -1601,7 +1601,11 @@ async def send(text, jid=None, *args, **kwargs):
   if muc in my_groups:
     info(f"准备发送同步消息到: {get_mucs(muc)}")
     for m in get_mucs(muc):
+      if isinstance(text, aioxmpp.Message):
+        text0 = text.body[None]
       if await send1(text, jid=m, *args, **kwargs):
+        if isinstance(text, aioxmpp.Message):
+          text.body[None] = text0
         continue
       return False
     return True
