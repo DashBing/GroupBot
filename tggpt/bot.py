@@ -229,6 +229,8 @@ def generand(N=4, M=None, *, no_uppercase=False):
     N = random.randint(N, M)
   return ''.join(random.choice(l) for x in range(N))
 
+
+
 msg_max_length=500
 
 def split_long_text(text):
@@ -314,7 +316,7 @@ CLEAN = "/new_chat"
 #  stuck= {}
 queues = {}
 nids = {}
-queue_lock = asyncio.Lock()
+mt_send_lock = asyncio.Lock()
 downlaod_lock = asyncio.Lock()
 bash_lock = asyncio.Lock()
 
@@ -1552,6 +1554,21 @@ async def qw2(text):
 
 
 
+
+
+def get_src(msg):
+  if msg.type_ == MessageType.GROUPCHAT:
+    return str(msg.from_.bare())
+  if msg.from_.is_bare:
+    return str(msg.from_)
+  if str(msg.to.bare()) in my_groups:
+    return str(msg.from_)
+  return str(msg.from_.bare())
+
+
+
+
+
 send_locks = {}
 
 
@@ -1564,8 +1581,8 @@ async def __send(msg, client=None, room=None, gpm=False):
   if jid not in send_locks:
     send_locks[jid] = asyncio.Lock()
   async with send_locks[jid]:
-    #  if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or get_jid(msg.to) not in my_groups:
-    if gpm is False:
+    if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or str(msg.to.bare()) not in my_groups:
+    #  if gpm is False:
       if client is not None:
         # https://docs.zombofant.net/aioxmpp/devel/api/public/node.html?highlight=client#aioxmpp.Client.send
         res = client.send(msg)
@@ -1646,9 +1663,9 @@ async def send(text, jid=None, *args, **kwargs):
       return False
     if main_group in ms:
       if len(name) > 4:
-        await mt_send(text0, name=name[2:-4])
+        await mt_send_for_long_text(text0, name=name[2:-4])
       else:
-        await mt_send(text0, name=name)
+        await mt_send_for_long_text(text0, name=name)
     return True
   else:
     info(f"准备发送到: {get_mucs(muc)}")
@@ -1691,13 +1708,16 @@ async def send1(text, jid=None, client=None, gpm=False, room=None, correct=False
       #  else:
       #    if j in last_outmsg:
       #      last_outmsg.pop(j)
-      if len(texts) > 1:
-        await add_id_to_msg(msg, False)
-      else:
-        await add_id_to_msg(msg, correct)
+      #  if len(texts) > 1:
+      #    await add_id_to_msg(msg, False)
+      #  else:
+      await add_id_to_msg(msg, correct)
       msg.body[None] = i
       if await _send(msg, client, room, gpm) is not True:
         return False
+      if correct:
+        if len(texts) > 1:
+          break
 
     return True
   elif isinstance(text, aioxmpp.Message):
@@ -2346,8 +2366,6 @@ async def _mt_send(text="null", gateway="gateway1", name="C bot", qt=None):
 
   if qt:
     username = "{}\n\n{}".format("> " + "\n> ".join(qt.splitlines()), name)
-
-
 #  gateway="gateway0"
   data = {
     "text": "{}".format(text),
@@ -2359,7 +2377,6 @@ async def _mt_send(text="null", gateway="gateway1", name="C bot", qt=None):
   return True
   return res
 
-
 #  async def mt_send_for_long_text(text, gateway='test'):
 #    fn='gpt_res'
 #    async with queue_lock:
@@ -2369,20 +2386,20 @@ async def _mt_send(text="null", gateway="gateway1", name="C bot", qt=None):
 #      return await asyncio.to_thread(os.system, f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
 
 async def mt_send_for_long_text(text, gateway="gateway1", name="C bot", *args, **kwargs):
-  need_delete = False
-  if os.path.exists(f"{SH_PATH}"):
-    fn = f"{SH_PATH}/SM_LOCK_{gateway}"
-    for _ in range(5):
-      if os.path.exists(fn):
-        logger.info(f"busy: {gateway} {fn}")
-        await asyncio.sleep(2)
-      else:
-        break
+  async with mt_send_lock:
+    need_delete = False
+    if os.path.exists(f"{SH_PATH}"):
+      fn = f"{SH_PATH}/SM_LOCK_{gateway}"
+      for _ in range(5):
+        if os.path.exists(fn):
+          logger.info(f"busy: {gateway} {fn}")
+          await asyncio.sleep(2)
+        else:
+          break
 
-    await write_file(text, fn, "w")
-    need_delete = True
+      await write_file(text, fn, "w")
+      need_delete = True
 
-  async with queue_lock:
     for i in split_long_text(text):
       #  if await send(i, *args, **kwargs) is not True:
       if await mt_send(i, gateway=gateway, name=name, *args, **kwargs) is not True:
@@ -2390,8 +2407,8 @@ async def mt_send_for_long_text(text, gateway="gateway1", name="C bot", *args, *
       #  await mt_send(res, gateway=gateway, name="")
       name = ""
 
-  if need_delete:
-    os.remove(fn)
+    if need_delete:
+      os.remove(fn)
 
   return True
 
@@ -3089,7 +3106,7 @@ async def parse_xmpp_msg(msg):
   elif msg.type_ == MessageType.CHAT:
     pass
   elif msg.type_ == MessageType.ERROR:
-    warn("收到错误消息：{msg} {msg.error}")
+    warn(f"收到错误消息：{msg} {msg.error}")
   else:
     pprint(msg)
     logger.info(f"skip msg type: {msg.type_} {msg}")
@@ -3141,8 +3158,8 @@ async def parse_xmpp_msg(msg):
       #  print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
       return
     if msg.type_ == MessageType.CHAT:
-      logger.info("忽略群内私聊" % msg)
-      return
+      logger.info("群内私聊: %s" % msg)
+      #  return
   elif muc == myjid:
     #  print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
     return
@@ -3161,15 +3178,14 @@ async def parse_xmpp_msg(msg):
       if await send1(f"**X {nick}:** {text}", m) is False:
         return
     if main_group in ms:
-      if await mt_send(text, name=f"X {nick}") is False:
+      if await mt_send_for_long_text(text, name=f"X {nick}") is False:
         return
-
   else:
     if get_jid(msg.to) in my_groups:
       nick = msg.from_.resource
     else:
       nick = msg.from_.localpart
-  res = await run_cmd(text, str(msg.from_), nick)
+  res = await run_cmd(text, get_src(msg), nick)
   if res:
     reply = msg.make_reply()
     reply.body[None] = res
