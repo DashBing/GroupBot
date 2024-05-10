@@ -2999,6 +2999,7 @@ async def parse_xmpp_msg(msg):
   if text is None:
     print("跳过空消息: %s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
     return
+  pprint(msg)
   print("%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
   if text == "ping":
     #  await send("pong", ME)
