@@ -2951,19 +2951,6 @@ def msg_in(msg):
   if not allright.is_set():
     info("skip msg: allright is not ok")
     return
-  #  if hasattr(msg, "xep0203_delay"):
-  #    pprint(msg.xep0203_delay)
-  #    info("skip msg: delayed: {msg.xep0203_delay}")
-  #  if hasattr(msg, "xep308_replace"):
-  #    pprint(msg.xep308_replace)
-  asyncio.create_task(parse_xmpp_msg(msg))
-  #  return
-  #  info("\n>>> msg: %s\n" % msg)
-
-@exceptions_handler
-async def parse_xmpp_msg(msg):
-  if msg.type_ == MessageType.NORMAL:
-    info("normal msg")
   if not hasattr(msg, "body"):
     #  print("%s %s" % (type(msg), msg.type_))
     if msg.type_ == PresenceType.SUBSCRIBE:
@@ -2986,6 +2973,19 @@ async def parse_xmpp_msg(msg):
     else:
       pprint(msg)
     return
+  #  if hasattr(msg, "xep0203_delay"):
+  #    pprint(msg.xep0203_delay)
+  #    info("skip msg: delayed: {msg.xep0203_delay}")
+  #  if hasattr(msg, "xep308_replace"):
+  #    pprint(msg.xep308_replace)
+  asyncio.create_task(parse_xmpp_msg(msg))
+  #  return
+  #  info("\n>>> msg: %s\n" % msg)
+
+@exceptions_handler
+async def parse_xmpp_msg(msg):
+  if msg.type_ == MessageType.NORMAL:
+    info("normal msg")
   if msg.type_ == MessageType.GROUPCHAT:
     pass
   elif msg.type_ == MessageType.CHAT:
@@ -3009,6 +3009,9 @@ async def parse_xmpp_msg(msg):
   else:
     info(f"{str(msg.to.bare())=} != {myjid=}")
   #  pprint(msg)
+  if msg.xep0203_delay:
+    print("跳过旧消息%s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, msg.xep0203_delay))
+    return
   print("%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
   if text == "ping":
     #  await send("pong", ME)
