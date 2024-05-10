@@ -3367,7 +3367,7 @@ async def run_cmd(text, src, name="test", from_=None):
     logger.info("got cmds: {}".format(cmds))
     cmd = cmds[0]
     if cmd in cmd_for_admin:
-      if from_ is None
+      if from_ is None:
         await send("not allowed", src)
         return
       if src in me:
