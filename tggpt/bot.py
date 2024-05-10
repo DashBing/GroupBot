@@ -3048,8 +3048,8 @@ async def parse_xmpp_msg(msg):
     return
 
   if msg.xep0203_delay:
-    print("跳过旧消息%s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, msg.xep0203_delay))
-    return
+    print("旧消息%s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, msg.xep0203_delay))
+    #  return
   if msg.type_ == MessageType.NORMAL:
     logger.info("normal msg")
   if msg.type_ == MessageType.GROUPCHAT:
@@ -3146,6 +3146,9 @@ async def parse_xmpp_msg(msg):
 
   print("%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
   if msg.type_ == MessageType.GROUPCHAT:
+    if muc == acg_channel:
+      await send(text, rssbot, name="")
+      return
     nick = msg.from_.resource
     ms = get_mucs(muc)
     for m in ms - {muc}:
@@ -3154,9 +3157,7 @@ async def parse_xmpp_msg(msg):
     if main_group in ms:
       if await mt_send_for_long_text(text, name=f"X {nick}") is False:
         return
-    if muc == acg_channel:
-      await send(text, rssbot, name="")
-      return
+
   else:
     if muc == rssbot:
       await send(text, acg_channel, name="")
@@ -3165,6 +3166,12 @@ async def parse_xmpp_msg(msg):
       nick = msg.from_.resource
     else:
       nick = msg.from_.localpart
+
+  if text == "ping":
+    reply = msg.make_reply()
+    reply.body[None] = "pong"
+    await send(reply)
+    return
   res = await run_cmd(text, get_src(msg), f"X {nick}: ", is_admin)
   if res is True:
     return
