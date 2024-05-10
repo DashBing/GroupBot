@@ -2714,7 +2714,8 @@ async def parse_msg(event):
       src = gid_src[qid]
       mtmsgs = mtmsgsg[src]
       res = f"{mtmsgs[qid][0]}{text}"
-      await mt_send_for_long_text(res, src)
+      #  await mt_send_for_long_text(res, src)
+      await send(res, src)
       gid_src.pop(qid)
       mtmsgs.pop(qid)
 
