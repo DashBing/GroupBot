@@ -1589,7 +1589,7 @@ async def send(text, jid=None, *args, **kwargs):
   muc = None
   if jid is None:
     if isinstance(text, aioxmpp.Message):
-      if msg.type_ == MessageType.GROUPCHAT:
+      if text.type_ == MessageType.GROUPCHAT:
         muc = (text.to.bare())
       else:
         pass
