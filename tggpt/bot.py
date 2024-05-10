@@ -3158,7 +3158,7 @@ async def parse_xmpp_msg(msg):
     nick = msg.from_.resource
     ms = get_mucs(muc)
     for m in ms - {muc}:
-      if await send1(f"**X {nick}:** {text}", m, f"X {nick}") is False:
+      if await send1(f"**X {nick}:** {text}", m, name=f"X {nick}") is False:
         return
     if main_group in ms:
       if await mt_send_for_long_text(text, name=f"X {nick}") is False:
