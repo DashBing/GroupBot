@@ -1627,7 +1627,7 @@ async def send(text, jid=None, *args, **kwargs):
     info(f"准备发送到: {get_mucs(muc)}")
     return await send1(text, jid=jid, *args, **kwargs)
 
-async def send1(text, jid=None, client=None, gpm=False, room=None, correct=False, name="**C bot:** "):
+async def send1(text, jid=None, client=None, gpm=False, room=None, correct=False):
 
   if type(text) is str:
     #  if name:
@@ -1871,6 +1871,9 @@ async def mt2tg(msg):
     if name.startswith("C "):
       logger.info("I: ignore msg: C ")
       return
+    if name.startswith("X "):
+      logger.info("I: ignore msg: X ")
+      return
     if name.startswith("**C "):
       logger.info("I: ignore msg: **C ")
       return
@@ -2089,9 +2092,9 @@ async def mt2tg(msg):
       if res:
         await mt_send(res, gateway)
       for m in get_mucs(main_group):
-        await send1(text, m, name=name)
+        await send1(f"{name}{text}", m)
         if res:
-          await send1(res, m)
+          await send1(f"{name}{res}", m)
 
     return
     msgd.update({"chat_id": chat_id})
@@ -2291,6 +2294,7 @@ async def http(url, method="GET", return_headers=False, **kwargs):
 #  async def mt_send(text="null", name="bot", gateway="test", qt=None):
 async def mt_send(text="null", gateway="gateway1", name="C bot", qt=None):
 
+  # api.xmpp
   MT_API_RES = "127.0.0.1:4247"
   #  if gateway == 'me':
   #    # api.xmpp
@@ -3077,7 +3081,7 @@ async def parse_xmpp_msg(msg):
       #  if main_group in ms:
       #    await mt_send(text, name=f"X {nick}")
       for m in ms - {muc}:
-        await send1(text, m, name=f"**X {nick}:** ")
+        await send1(f"**X {nick}:** {text}", m)
 
       #  pprint(msg.from_)
       #  await sendg("pong1")
@@ -3116,7 +3120,7 @@ async def parse_xmpp_msg(msg):
     #  if main_group in ms:
     #    await mt_send(text, name=f"X {nick}")
     for m in ms - {muc}:
-      await send1(text, m, name=f"**X {nick}:** ")
+      await send1(f"**X {nick}:** {text}", m)
 
   else:
     if get_jid(msg.to) in my_groups:
