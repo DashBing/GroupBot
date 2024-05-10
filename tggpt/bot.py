@@ -1588,6 +1588,12 @@ async def __send(msg, client=None, room=None, name=None):
       #  if msg.type_ == MessageType.GROUPCHAT:
       if room.me.nick != name:
         await room.set_nick(name)
+        logger.info(f"set nick: {room.me.nick} -> {name}")
+      else:
+        logger.info(f"set nick: {room.me.nick} = {name}")
+    else:
+      logger.info(f"not found room: {msg.to}")
+
 
     if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or str(msg.to.bare()) not in my_groups:
     #  if gpm is False:
