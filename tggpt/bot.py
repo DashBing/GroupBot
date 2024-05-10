@@ -3029,11 +3029,10 @@ async def parse_xmpp_msg(msg):
     return
 
   if muc in my_groups:
-    if str(msg.from_) == str(rooms[muc].me.conversation_jid.bare()):
+    #  if str(msg.from_) == str(rooms[muc].me.conversation_jid.bare()):
+    if msg.from_.resource == rooms[muc].me.nick:
       print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
       return
-    else:
-      logger.info(f"{muc=} != {rooms[muc].me.conversation_jid.bare()=}")
   elif muc == myjid:
     print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
     return
