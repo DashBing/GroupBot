@@ -3078,10 +3078,10 @@ async def parse_xmpp_msg(msg):
 
       nick = msg.from_.resource
       ms = get_mucs(muc)
-      #  if main_group in ms:
-      #    await mt_send(text, name=f"X {nick}")
       for m in ms - {muc}:
         await send1(f"**X {nick}:** {text}", m)
+      if main_group in ms:
+        await mt_send(text, name=f"X {nick}")
 
       #  pprint(msg.from_)
       #  await sendg("pong1")
@@ -3115,12 +3115,11 @@ async def parse_xmpp_msg(msg):
 
   if msg.type_ == MessageType.GROUPCHAT:
     nick = msg.from_.resource
-
     ms = get_mucs(muc)
-    #  if main_group in ms:
-    #    await mt_send(text, name=f"X {nick}")
     for m in ms - {muc}:
       await send1(f"**X {nick}:** {text}", m)
+    if main_group in ms:
+      await mt_send(text, name=f"X {nick}")
 
   else:
     if get_jid(msg.to) in my_groups:
