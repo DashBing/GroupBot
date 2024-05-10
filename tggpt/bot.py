@@ -2071,12 +2071,15 @@ async def mt2tg(msg):
       res = await run_cmd(text, gateway, name)
       if res:
         await mt_send(res, gateway)
-      for m in get_mucs(main_group):
-        if await send1(f"{name}{text}", m, name) is False:
-          return
-        if res:
-          if await send1(f"{name}{res}", m, "C bot") is False:
-            return
+      await send(f"{name}{text}", main_group, name=name)
+      if res:
+        await send(f"{name}{res}", main_group)
+      #  for m in get_mucs(main_group):
+      #    if await send1(f"{name}{text}", m, name) is False:
+      #      return
+      #    if res:
+      #      if await send1(f"{name}{res}", m, "C bot") is False:
+      #        return
 
     return
     if 1 < 2:
