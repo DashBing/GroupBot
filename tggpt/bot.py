@@ -315,6 +315,7 @@ bash_lock = asyncio.Lock()
 
 rss_lock = asyncio.Lock()
 
+
 gid_src = {}
 mtmsgsg={}
 
@@ -1545,45 +1546,58 @@ async def qw2(text):
   return res
 
 
-async def _send(msg, client=None, room=None, gpm=False):
-  #  if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or get_jid(msg.to) not in my_groups:
-  if gpm is False:
-    if client is not None:
-      # https://docs.zombofant.net/aioxmpp/devel/api/public/node.html?highlight=client#aioxmpp.Client.send
-      res = client.send(msg)
-    elif room:
-      # https://docs.zombofant.net/aioxmpp/devel/api/public/muc.html?highlight=room#aioxmpp.muc.Room.send_message
-      res = room.send_message(msg)
+
+send_locks = {}
+
+
+async def _send(*args, kwargs):
+  asyncio.create_task(__send(*args, **kwargs))
+  return True
+
+async def __send(msg, client=None, room=None, gpm=False):
+  jid = str(msg.to)
+  if jid not in send_locks:
+    send_locks[jid] = asyncio.Lock()
+  async with send_locks[jid]:
+    #  if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or get_jid(msg.to) not in my_groups:
+    if gpm is False:
+      if client is not None:
+        # https://docs.zombofant.net/aioxmpp/devel/api/public/node.html?highlight=client#aioxmpp.Client.send
+        res = client.send(msg)
+      elif room:
+        # https://docs.zombofant.net/aioxmpp/devel/api/public/muc.html?highlight=room#aioxmpp.muc.Room.send_message
+        res = room.send_message(msg)
+      else:
+        client = XB
+        res = client.send(msg)
     else:
-      client = XB
-      res = client.send(msg)
-  else:
-    # https://docs.zombofant.net/aioxmpp/devel/api/public/im.html#aioxmpp.im.conversation.AbstractConversation.send_message
-    if client is None:
-      client = XB
-    p2ps = client.summon(im.p2p.Service)
-    c = p2ps.get_conversation(msg.to)
-    #  stanza = c.send_message(msg)
-    res = c.send_message(msg)
-    #  return False
-  #  if isawaitable(res):
-  #  logger.info(f"{type(res)}: {res} {msg}")
-  if asyncio.iscoroutine(res) or type(res) is stream.StanzaToken:
-    #  dbg(f"client send: {res=}")
-    res2 = await res
-    if res2 is None:
-      dbg(f"send msg: finally: {res=}")
-      return True
-    #  elif hasattr(res, "stanza") and res.stanza and res.stanza.error is None:
-    #    # 群内私聊
-    #    logger.info(f"send gpm msg: finally: {res=}")
-    #    return True
+      # https://docs.zombofant.net/aioxmpp/devel/api/public/im.html#aioxmpp.im.conversation.AbstractConversation.send_message
+      if client is None:
+        client = XB
+      p2ps = client.summon(im.p2p.Service)
+      c = p2ps.get_conversation(msg.to)
+      #  stanza = c.send_message(msg)
+      res = c.send_message(msg)
+      #  return False
+    #  if isawaitable(res):
+    #  logger.info(f"{type(res)}: {res} {msg}")
+    if asyncio.iscoroutine(res) or type(res) is stream.StanzaToken:
+      #  dbg(f"client send: {res=}")
+      res2 = await res
+      if res2 is None:
+        dbg(f"send msg: finally: {res=}")
+        return True
+      #  elif hasattr(res, "stanza") and res.stanza and res.stanza.error is None:
+      #    # 群内私聊
+      #    logger.info(f"send gpm msg: finally: {res=}")
+      #    return True
+      else:
+        logger.info(f"send msg: finally: {res=} {res2=}")
+        return False
     else:
-      logger.info(f"send msg: finally: {res=} {res2=}")
-      return False
-  else:
-    warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
-  return False
+      warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
+    return False
+
 
 async def send(text, jid=None, *args, **kwargs):
   muc = None
@@ -2092,9 +2106,11 @@ async def mt2tg(msg):
       if res:
         await mt_send(res, gateway)
       for m in get_mucs(main_group):
-        await send1(f"{name}{text}", m)
+        if await send1(f"{name}{text}", m) is False:
+          return
         if res:
-          await send1(f"{name}{res}", m)
+          if await send1(f"{name}{res}", m) is False:
+            return
 
     return
     msgd.update({"chat_id": chat_id})
@@ -2291,8 +2307,12 @@ async def http(url, method="GET", return_headers=False, **kwargs):
         else:
             return html
 
+async def mt_send(*args, kwargs):
+  asyncio.create_task(_mt_send(*args, **kwargs))
+  return True
+
 #  async def mt_send(text="null", name="bot", gateway="test", qt=None):
-async def mt_send(text="null", gateway="gateway1", name="C bot", qt=None):
+async def _mt_send(text="null", gateway="gateway1", name="C bot", qt=None):
 
   # api.xmpp
   MT_API_RES = "127.0.0.1:4247"
@@ -3079,9 +3099,11 @@ async def parse_xmpp_msg(msg):
       nick = msg.from_.resource
       ms = get_mucs(muc)
       for m in ms - {muc}:
-        await send1(f"**X {nick}:** {text}", m)
+        if await send1(f"**X {nick}:** {text}", m) is False:
+          return
       if main_group in ms:
-        await mt_send(text, name=f"X {nick}")
+        if await mt_send(text, name=f"X {nick}") is False:
+          return
 
       #  pprint(msg.from_)
       #  await sendg("pong1")
@@ -3117,9 +3139,11 @@ async def parse_xmpp_msg(msg):
     nick = msg.from_.resource
     ms = get_mucs(muc)
     for m in ms - {muc}:
-      await send1(f"**X {nick}:** {text}", m)
+      if await send1(f"**X {nick}:** {text}", m) is False:
+        return
     if main_group in ms:
-      await mt_send(text, name=f"X {nick}")
+      if await mt_send(text, name=f"X {nick}") is False:
+        return
 
   else:
     if get_jid(msg.to) in my_groups:
