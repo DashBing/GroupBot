@@ -1340,9 +1340,9 @@ async def load_config():
     for i in config:
       if type(config[i]) is list:
         if config[i]:
-          if (config[i][0]) is str:
+          if type(config[i][0]) is str:
             config[i] = set(config[i])
-          elif (config[i][0]) is list:
+          elif type(config[i][0]) is list:
             tmp = []
             for j in config[i]:
               tmp.append(set(j))
