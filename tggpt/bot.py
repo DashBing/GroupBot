@@ -3150,49 +3150,72 @@ async def parse_xmpp_msg(msg):
 
   muc = str(msg.from_.bare())
 
-  if text == "ping":
-    #  await send("pong", ME)
-    if msg.type_ == MessageType.GROUPCHAT:
+  #  if text == "ping":
+  #    #  await send("pong", ME)
+  #    if msg.type_ == MessageType.GROUPCHAT:
+  #
+  #      nick = msg.from_.resource
+  #      ms = get_mucs(muc)
+  #      for m in ms - {muc}:
+  #        if await send1(f"**X {nick}:** {text}", m) is False:
+  #          return
+  #      if main_group in ms:
+  #        if await mt_send(text, name=f"X {nick}") is False:
+  #          return
+  #
+  #      #  pprint(msg.from_)
+  #      #  await sendg("pong1")
+  #      #  await sendg("pong2", get_jid(msg.from_))
+  #      await send("pong", msg.from_, gpm=True)
+  #      reply = msg.make_reply()
+  #      reply.body[None] = "pong"
+  #      await send(reply)
+  #      #  await mt_send("pong")
+  #    elif msg.type_ == MessageType.CHAT:
+  #
+  #      reply = msg.make_reply()
+  #      reply.body[None] = "pong"
+  #      await send(reply)
+  #    return
 
-      nick = msg.from_.resource
-      ms = get_mucs(muc)
-      for m in ms - {muc}:
-        if await send1(f"**X {nick}:** {text}", m) is False:
-          return
-      if main_group in ms:
-        if await mt_send(text, name=f"X {nick}") is False:
-          return
 
-      #  pprint(msg.from_)
-      #  await sendg("pong1")
-      #  await sendg("pong2", get_jid(msg.from_))
-      await send("pong", msg.from_, gpm=True)
-      reply = msg.make_reply()
-      reply.body[None] = "pong"
-      await send(reply)
-      #  await mt_send("pong")
-    elif msg.type_ == MessageType.CHAT:
-
-      reply = msg.make_reply()
-      reply.body[None] = "pong"
-      await send(reply)
-    return
-
+  is_admin = False
   if muc in my_groups:
     #  if str(msg.from_) == str(rooms[muc].me.conversation_jid.bare()):
     if msg.from_.resource == rooms[muc].me.nick:
       #  print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
       return
     if msg.type_ == MessageType.CHAT:
-      logger.info("群内私聊: %s" % msg)
-      #  return
+      if muc not in rooms:
+        err("not found room: {muc}")
+        return
+      room = rooms[muc]
+      for i in room.members:
+        if i.direct_jid is None:
+          err("没有权限查看jid: {muc}")
+          return
+        if i.nick == msg.from_.resource and (i.direct_jid.bare()) in me:
+          is_admin = True
+          break
+      if is_admin is False:
+        if text == "ping":
+          reply = msg.make_reply()
+          reply.body[None] = "pong"
+          await send(reply)
+        logger.info("已忽略群内私聊: %s" % msg)
+        return
   elif muc == myjid:
     #  print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
     return
   elif muc in me:
+    is_admin = True
     pass
   else:
     print("未知来源的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+    if text == "ping":
+      reply = msg.make_reply()
+      reply.body[None] = "pong"
+      await send(reply)
     return
     #  pprint(msg)
 
@@ -3217,8 +3240,8 @@ async def parse_xmpp_msg(msg):
       nick = msg.from_.resource
     else:
       nick = msg.from_.localpart
-  res = await run_cmd(text, get_src(msg), f"X {nick}: ", from_=msg.from_)
-  if res == 1:
+  res = await run_cmd(text, get_src(msg), f"X {nick}: ", is_admin)
+  if type(res) is tuple:
     return
   if res:
     reply = msg.make_reply()
@@ -3257,6 +3280,10 @@ cmd_funs = {}
 cmd_for_admin = set()
 
 async def add_cmd():
+
+  async def _(cmds, src):
+    return "pong"
+  cmd_funs["ping"] = _
 
   async def _(cmds, src):
     if len(cmds) == 1:
@@ -3354,7 +3381,7 @@ async def add_cmd():
   cmd_funs["clear"] = _
 
 
-async def run_cmd(text, src, name="test", from_=None):
+async def run_cmd(text, src, name="test", is_admin=False):
   if text[0:1] == ".":
     if text[1:2] == " ":
       return
@@ -3366,37 +3393,19 @@ async def run_cmd(text, src, name="test", from_=None):
     #  print(f"> I: {cmds}")
     logger.info("got cmds: {}".format(cmds))
     cmd = cmds[0]
+    res = False
     if cmd in cmd_for_admin:
-      if from_ is None:
-        await send("not allowed", src)
+      if is_admin is False:
         return
-      if src in me:
-        pass
-      elif src in rooms:
-        room = rooms[src]
-        is_me = False
-        for i in room.members:
-          if i.direct_jid is None:
-            err("没有权限查看jid: {src}")
-            return
-          if i.nick == from_.resource and (i.direct_jid.bare()) in me:
-            is_me = True
-            break
-        if is_me:
-          pass
-        else:
-          await send("not allowed", src)
-          return
-      else:
-        await send("not allowed", src)
-        return
-      return
-    if cmd in cmd_funs:
+      res = True
+    elif cmd in cmd_funs:
+      res = True
+    if res is True:
       res = await cmd_funs[cmd](cmds, src)
       if type(res) is tuple:
         if res[0] == 1:
           mtmsgsg[src][res[1]][0] = name
-        return res[0]
+        return res
       return "%s" % res
       #  reply = msg.make_reply()
       #  reply.body[None] = "%s" % res
