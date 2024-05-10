@@ -1599,12 +1599,14 @@ async def send(text, jid=None, *args, **kwargs):
   else:
     muc = jid
   if muc in my_groups:
+    info(f"准备发送同步消息到: {get_mucs(muc)}")
     for m in get_mucs(muc):
       if await send1(text, jid=m, *args, **kwargs):
         continue
       return False
     return True
   else:
+    info(f"准备发送到: {get_mucs(muc)}")
     return await send1(text, jid=jid, *args, **kwargs)
 
 async def send1(text, jid=None, client=None, gpm=False, room=None, correct=False, name="**C bot:** "):
@@ -2325,7 +2327,7 @@ async def mt_send_for_long_text(text, gateway="gateway1", name="C bot", *args, *
   async with queue_lock:
     for i in split_long_text(text):
       #  if await send(i, *args, **kwargs) is not True:
-      if await mt_send(i, gateway=gateway, name=username, *args, **kwargs) is not True:
+      if await mt_send(i, gateway=gateway, name=name, *args, **kwargs) is not True:
         break
       #  await mt_send(res, gateway=gateway, name="")
       name = ""
