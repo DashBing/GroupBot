@@ -2071,7 +2071,7 @@ async def mt2tg(msg):
       res = await run_cmd(text, gateway, name)
       if res:
         await mt_send(res, gateway)
-      await send(f"{name}{text}", main_group, name=name)
+      await send(f"{name}{text}", main_group, name=name.strip())
       if res:
         await send(f"{name}{res}", main_group)
       #  for m in get_mucs(main_group):
