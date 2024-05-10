@@ -205,7 +205,7 @@ def get_cmd(text):
         tmp.append(i)
   if tmp:
     cmd = tmp
-    info(f"return cmd {len(cmd)}: {cmd=}")
+    logger.info(f"return cmd {len(cmd)}: {cmd=}")
     return cmd
 
 def check_str(nick, nicks):
@@ -1063,18 +1063,18 @@ async def my_popen(cmd,
       if True:
           try:
             #  msg = await cmd_answer(tmp, client, msg, **args)
-            info(f"临时输出: {tmp}")
+            logger.info(f"临时输出: {tmp}")
           except Exception as e:
             logger.error(f"can not send tmp: {e=}")
             #  msg = await client.send_message(MY_ID, tmp)
-            info(f"临时输出: {tmp} {e=}")
+            logger.info(f"临时输出: {tmp} {e=}")
       await asyncio.sleep(2)
       if time.time() - start_time > max_time:
         p.kill()
         res = "my_popen: timeout, killed, cmd: {}\nres: {}".format(cmd, res)
         warn(res)
         #  await cmd_answer(res, client, msg)
-        #  info(f"最终输出: {res}")
+        #  logger.info(f"最终输出: {res}")
         break
 
     try:
@@ -1084,7 +1084,7 @@ async def my_popen(cmd,
       res = e.stdout
       errs = e.stderr
 
-    info("popen exit")
+    logger.info("popen exit")
     if res:
       if isinstance(res, bytes):
         res = res.decode()
@@ -1097,7 +1097,7 @@ async def my_popen(cmd,
 
     #  if msg:
     #    #  msg = await cmd_answer(res, client, msg, **args)
-    #    info(f"发送: {res}")
+    #    logger.info(f"发送: {res}")
     #    if return_msg:
     #      return msg
     if combine:
@@ -1317,7 +1317,7 @@ async def load_config():
   config = await read_file(path.as_posix())
   config = load_str(config)
 
-  info("config\n%s" % json.dumps(config, indent='  '))
+  logger.info("config\n%s" % json.dumps(config, indent='  '))
   
   if config is None:
     warn("配置文件有问题: config.json")
@@ -1335,7 +1335,7 @@ async def load_config():
     #  jid = get_my_key("JID")
     #  config['ME'] = jid
 
-    info("loaded config\n%s" % json.dumps(config, indent='  '))
+    logger.info("loaded config\n%s" % json.dumps(config, indent='  '))
 
     for i in config:
       if type(config[i]) is list:
@@ -1403,9 +1403,9 @@ async def get_title(url):
 
 
 #  async def other_init():
-#    info("开始初始化其他组件")
+#    logger.info("开始初始化其他组件")
 #    res = await asyncio.to_thread(_other_init)
-#    info(res)
+#    logger.info(res)
 #  #  allright.set()
 #    if res is True:
 #      global allright_task
@@ -1567,7 +1567,7 @@ async def _send(msg, client=None, room=None, gpm=False):
     res = c.send_message(msg)
     #  return False
   #  if isawaitable(res):
-  #  info(f"{type(res)}: {res} {msg}")
+  #  logger.info(f"{type(res)}: {res} {msg}")
   if asyncio.iscoroutine(res) or type(res) is stream.StanzaToken:
     #  dbg(f"client send: {res=}")
     res2 = await res
@@ -1576,10 +1576,10 @@ async def _send(msg, client=None, room=None, gpm=False):
       return True
     #  elif hasattr(res, "stanza") and res.stanza and res.stanza.error is None:
     #    # 群内私聊
-    #    info(f"send gpm msg: finally: {res=}")
+    #    logger.info(f"send gpm msg: finally: {res=}")
     #    return True
     else:
-      info(f"send msg: finally: {res=} {res2=}")
+      logger.info(f"send msg: finally: {res=} {res2=}")
       return False
   else:
     warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
@@ -1632,7 +1632,7 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False,
 
     return True
   elif isinstance(text, aioxmpp.Message):
-    #  info(f"send1: {jid=} {text=}")
+    #  logger.info(f"send1: {jid=} {text=}")
     msg = text
     if name:
       msg.body[None] = f"{name}{msg.body[None]}"
@@ -1645,7 +1645,7 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False,
           #  msg.to = msg.to.replace(resource=None)
         orig = msg.to
         msg.to = msg.to.bare()
-        info(f"已修正地址错误: {orig} -> {msg=}")
+        logger.info(f"已修正地址错误: {orig} -> {msg=}")
     elif gpm and msg.to.resource is None:
       err(f"无法群私聊，地址错误: {msg.to}")
       return False
@@ -1657,21 +1657,21 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False,
     err(f"text类型不对: {type(text)}")
     return False
     #  elif isinstance(text, aioxmpp.stanza.Message):
-    #    #  info(f"send2: {jid=} {text=}")
+    #    #  logger.info(f"send2: {jid=} {text=}")
     #    msg = text
 
 #  async def __send(msg, jid=None, client=None, gpm=False):
 #    #  if type(text) is str:
-#      #  info(f"send: {jid=} {text=}")
+#      #  logger.info(f"send: {jid=} {text=}")
 #      # None is for "default language"
-#    #  info(f"send: {type(msg)} {msg=}")
+#    #  logger.info(f"send: {type(msg)} {msg=}")
 #    if client is None:
 #      client = XB
 #    #  return await client.send(msg)
 #    return await _send(msg, client, gpm=gpm)
 
 async def sendg(text, jid=None, room=None, client=None):
-  info(f"send group msg: {jid} {text}")
+  logger.info(f"send group msg: {jid} {text}")
   if jid is None:
     jid = test_group
   recipient_jid = JID.fromstr(jid)
@@ -1698,10 +1698,10 @@ async def sendg(text, jid=None, room=None, client=None):
     #      dbg(f"room send: finally: {res=}")
     #      return True
     #    else:
-    #      info(f"room send: finally: {res=}")
+    #      logger.info(f"room send: finally: {res=}")
     #      return False
     #  else:
-    #    info(f"room send res is not coroutine: {res=}")
+    #    logger.info(f"room send res is not coroutine: {res=}")
     #    return False
   else:
     warn(f"need client or room")
@@ -1729,14 +1729,14 @@ async def mt_read():
         #    await mt2tg(line)
 
       async with session.get(url, timeout=0, read_bufsize=2**18*4, chunked=True) as resp:
-        info("N: mt api init ok")
+        logger.info("N: mt api init ok")
         #  await mt_send("N: tggpt: mt read: init ok")
         line = b""
         async for data, end_of_http_chunk in resp.content.iter_chunks():
           line += data
-          #  info(f"read bytes: {len(data)}")
+          #  logger.info(f"read bytes: {len(data)}")
           if end_of_http_chunk:
-            #  info(f"read end: {len(line)}")
+            #  logger.info(f"read end: {len(line)}")
             # # print(buffer)
             # await send_mt_msg_to_queue(buffer, queue)
             #  await mt2tg(line)
@@ -1841,7 +1841,7 @@ async def mt2tg(msg):
     #    pass
     #  else:
     #    return
-    info("msg of mt_read: %s" % msgd)
+    logger.info("msg of mt_read: %s" % msgd)
 
 
     global queue
@@ -2119,7 +2119,7 @@ async def clear_history():
   gid_src.clear()
   #  await mt_send(f"cleaned: {gid_src=}", gateway="test"):w
   allright.set()
-  info("reset ok")
+  logger.info("reset ok")
 
 
 
@@ -2313,13 +2313,13 @@ async def download_media(msg, gateway='test', path=f"{DOWNLOAD_PATH}/", in_memor
     else:
       res = ''
     if msg.buttons:
-      info(msg.buttons)
+      logger.info(msg.buttons)
       for i in get_buttons(msg.buttons):
         if isinstance(i.button, KeyboardButtonUrl):
-          info(f"add url from: {i}")
+          logger.info(f"add url from: {i}")
           res += f" {i.url}"
         else:
-          info(f"ignore button: {i}")
+          logger.info(f"ignore button: {i}")
     await mt_send(f"{res} 下载中...", gateway=gateway)
     last_time[gateway] = time.time()
 
@@ -2353,13 +2353,13 @@ def get_buttons(bs):
 
 async def get_entity(peer):
   #  if isinstance(peer, PeerUser):
-  #    #  info(f"PeerUser: {peer}")
+  #    #  logger.info(f"PeerUser: {peer}")
   #    peer = await UB.get_input_entity(peer)
   #  elif isinstance(peer, PeerChat):
-  #    #  info(f"PeerChat: {peer}")
+  #    #  logger.info(f"PeerChat: {peer}")
   #    peer = await UB.get_input_entity(peer)
   #  elif isinstance(peer, PeerChannel):
-  #    #  info(f"PeerChannel: {peer}")
+  #    #  logger.info(f"PeerChannel: {peer}")
   #    peer = await UB.get_input_entity(peer)
   #  elif isinstance(peer, str):
   #    peer = await UB.get_input_entity(peer)
@@ -2445,19 +2445,19 @@ async def parse_msg(event):
     
     if text == '等待下载中...':
       #   message='等待下载中...',
-      info(text)
+      logger.info(text)
       return
     if text == '正在获取歌曲信息...':
       #         message='正在获取歌曲信息...',
-      info(text)
+      logger.info(text)
       return
     if text == '搜索中...':
       #         message='搜索中...',
-      info(text)
+      logger.info(text)
       return
     if text.endswith('正在发送中...'):
       # message='大熊猫\n专辑: 火火兔儿歌\nflac 14.87MB\n命中缓存, 正在发送中...',
-      info(text)
+      logger.info(text)
       return
     if '中...' in text:
       #         message='搜索中...',
@@ -2471,8 +2471,8 @@ async def parse_msg(event):
     #    gid_src.pop(qid)
     #    mtmsgs.pop(qid)
     if music_bot_state[gateway] == 1:
-      info(msg.buttons)
-      info(f"找到了几个音乐:{len(msg.buttons)} {msg.text}")
+      logger.info(msg.buttons)
+      logger.info(f"找到了几个音乐:{len(msg.buttons)} {msg.text}")
 
       music_bot_state[gateway] += 1
       mtmsgs[qid].append(msg.buttons)
@@ -2682,7 +2682,7 @@ async def mt_send_for_long_text(text, gateway="test", username="C bot", *args, *
   if os.path.exists(f"{SH_PATH}"):
     fn = f"{SH_PATH}/SM_LOCK_{gateway}"
     while os.path.exists(fn):
-      info(f"busy: {gateway} {fn}")
+      logger.info(f"busy: {gateway} {fn}")
       await asyncio.sleep(2)
 
     await write_file(text, fn, "w")
@@ -2781,7 +2781,7 @@ async def regisger_handler(client):
 
 #  @aioxmpp.dispatcher.message_handler(aioxmpp.MessageType.GROUPCHAT, None)
 #  async def gmsg_in(msg):
-#    info("\n>> group msg: %s\n" % msg)
+#    logger.info("\n>> group msg: %s\n" % msg)
 
   #  # obtain an instance of the service (we’ll discuss services later)
   message_dispatcher = client.summon(
@@ -2878,9 +2878,9 @@ def clear_msg_jid(msg):
   j = get_msg_jid(msg)
   if j in last_outmsg:
     last_outmsg.pop(j)
-    info(f"已清除msg记录: {j}")
+    logger.info(f"已清除msg记录: {j}")
   else:
-    info(f"没找到msg记录: {j}")
+    logger.info(f"没找到msg记录: {j}")
 
 
 async def add_id_to_msg(msg, correct):
@@ -2896,13 +2896,13 @@ async def add_id_to_msg(msg, correct):
           msg.xep0308_replace = r
           break
         else:
-          info("msg id 不可用: {last_outmsg[j][1]}")
+          logger.info("msg id 不可用: {last_outmsg[j][1]}")
           await asyncio.sleep(1)
       if last_outmsg[j][1] is None:
         last_outmsg[j] = [msg, None]
     else:
       last_outmsg[j] = [msg, None]
-      info("已添加msg")
+      logger.info("已添加msg")
   else:
       #  last_outmsg.pop(j)
     if j in last_outmsg:
@@ -2914,7 +2914,7 @@ async def add_id_to_msg(msg, correct):
           r.id_ = last_outmsg[j][1]
           msg.xep0308_replace = r
         else:
-          info("msg id 不可用: {last_outmsg[j][1]}")
+          logger.info("msg id 不可用: {last_outmsg[j][1]}")
           await asyncio.sleep(1)
       if last_outmsg[j][1] is None:
         last_outmsg[j] = [msg, None]
@@ -2926,39 +2926,39 @@ async def add_id_to_msg(msg, correct):
 @exceptions_handler
 def msg_out(msg):
   if not allright.is_set():
-    info("skip msg: allright is not ok")
+    logger.info("skip msg: allright is not ok")
     return
   #  pprint(msg)
   j = get_msg_jid(msg)
   if j in last_outmsg:
     if last_outmsg[j][0] == msg:
       if len(last_outmsg[j]) > 2 and last_outmsg[j][2] < 1:
-        info(f"停止记录msg id: {msg.id_}")
+        logger.info(f"停止记录msg id: {msg.id_}")
         last_outmsg.pop(j)
       else:
 
-        info(f"更新msgid: {last_outmsg[j][1]} -> {msg.id_}")
+        logger.info(f"更新msgid: {last_outmsg[j][1]} -> {msg.id_}")
         last_outmsg[j][1] = msg.id_
     else:
-      info(f"未更新msgid: {last_outmsg[j][0]=} != {msg=}")
+      logger.info(f"未更新msgid: {last_outmsg[j][0]=} != {msg=}")
   else:
-    info(f"忽略: {msg=}")
+    logger.info(f"忽略: {msg=}")
   return msg
 
 
 #  def gmsg(msg, member, source, **kwargs):
 def msg_in(msg):
   if not allright.is_set():
-    info("skip msg: allright is not ok")
+    logger.info("skip msg: allright is not ok")
     return
   #  if hasattr(msg, "xep0203_delay"):
   #    pprint(msg.xep0203_delay)
-  #    info("skip msg: delayed: {msg.xep0203_delay}")
+  #    logger.info("skip msg: delayed: {msg.xep0203_delay}")
   #  if hasattr(msg, "xep308_replace"):
   #    pprint(msg.xep308_replace)
   asyncio.create_task(parse_xmpp_msg(msg))
   #  return
-  #  info("\n>>> msg: %s\n" % msg)
+  #  logger.info("\n>>> msg: %s\n" % msg)
 
 @exceptions_handler
 async def parse_xmpp_msg(msg):
@@ -2985,13 +2985,13 @@ async def parse_xmpp_msg(msg):
       pprint(msg)
     return
   if msg.type_ == MessageType.NORMAL:
-    info("normal msg")
+    logger.info("normal msg")
   if msg.type_ == MessageType.GROUPCHAT:
     pass
   elif msg.type_ == MessageType.CHAT:
     pass
   else:
-    info(f"skip msg type: {msg.type_} {msg}")
+    logger.info(f"skip msg type: {msg.type_} {msg}")
     return
 
   #  clear_msg_jid(msg)
@@ -3003,11 +3003,11 @@ async def parse_xmpp_msg(msg):
   if text is None:
     print("跳过空消息: %s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
     return
-  if str(msg.to.bare()) != myjid:
+  if str(msg.to.bare()) == myjid:
     print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
     return
   else:
-    info(f"{str(msg.to.bare())=} != {myjid=}")
+    logger.info(f"{str(msg.to.bare())=} != {myjid=}")
   #  pprint(msg)
   if msg.xep0203_delay:
     print("跳过旧消息%s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, msg.xep0203_delay))
@@ -3147,15 +3147,15 @@ async def run_cmd(text, src, name="test"):
       if gid_src[i] == src:
         tmp.append(i)
     qid = max(tmp)
-    info(f"尝试下载：{text} {qid}")
+    logger.info(f"尝试下载：{text} {qid}")
     bs = mtmsgs[qid][1]
-    info(f"尝试下载：{text} {qid} msg: {bs}")
+    logger.info(f"尝试下载：{text} {qid} msg: {bs}")
     i = None
     for i in bs:
       if type(i) is list:
         for j in i:
           if j.text == text:
-            info(f"已找到：{text}")
+            logger.info(f"已找到：{text}")
             await j.click()
             i = True
             break
@@ -3163,7 +3163,7 @@ async def run_cmd(text, src, name="test"):
           break
       else:
         if i.text == text:
-          info(f"已找到：{text}")
+          logger.info(f"已找到：{text}")
           await i.click()
           i = True
           break
@@ -3171,7 +3171,7 @@ async def run_cmd(text, src, name="test"):
     if i is True:
       music_bot_state[src] += 1
     else:
-      info(f"没找到：{text}")
+      logger.info(f"没找到：{text}")
     return
   else:
     # tilebot
@@ -3222,7 +3222,7 @@ async def login(client=None):
   try:
     #  steam = await i.connected().__aenter__()
     steam = await asyncio.wait_for(client.connected().__aenter__(), timeout=30)
-    info(f"登录成功：{jid}")
+    logger.info(f"登录成功：{jid}")
 
     vs = client.summon(aioxmpp.vcard.VCardService)
     vc = await vs.get_vcard(None)
@@ -3239,13 +3239,13 @@ async def login(client=None):
       await asyncio.sleep(1)
       vc = await vs.get_vcard(None)
       if vc.get_photo_mime_type() is not None:
-        info(f"头像设置成功: {jid} {fn}")
+        logger.info(f"头像设置成功: {jid} {fn}")
         #  logger.warning(f"修改头像需要重新登录才能生效：{jid}")
         #  await stop(client)
         #  if await login(client, True):
         #    #  n = fn.split("@", 1)[1].split('_', 1)[1].rsplit('.', 1)[0]
         #    #  mynicks.add((jid, n))
-        #    info(f"头像设置成功: {jid} {fn}")
+        #    logger.info(f"头像设置成功: {jid} {fn}")
         #    return True
         #  else:
         #    return False
@@ -3276,14 +3276,14 @@ ocr_ok = None
 def ocr_init():
   global ocr_ok
   ocr_ok = []
-  info("开始初始化ocr")
+  logger.info("开始初始化ocr")
   #  if 'liqsliu' not in HOME:
   if os.path.exists("%s/ddddocr" % HOME):
     sys.path.append("%s/ddddocr" % HOME)
     import ddddocr
     ocr = ddddocr.DdddOcr()
     def f(img):
-      info("正在运行识别程序：ddddocr")
+      logger.info("正在运行识别程序：ddddocr")
       return ocr.classification(img)
     ocr_ok.append(f)
   if os.path.exists("%s/ddddocr" % HOME):
@@ -3291,11 +3291,11 @@ def ocr_init():
     import muggle_ocr
     sdk = muggle_ocr.SDK(model_type=muggle_ocr.ModelType.Captcha)
     def f(img):
-      info("正在运行识别程序：muggle_ocr")
+      logger.info("正在运行识别程序：muggle_ocr")
       return sdk.predict(image_bytes=img)
     ocr_ok.append(f)
   if ocr_ok is None:
-    info("没找到orc程序，将会无法识别验证码")
+    logger.info("没找到orc程序，将会无法识别验证码")
     return False
 
 def run_ocr(img):
@@ -3304,12 +3304,12 @@ def run_ocr(img):
       return
   elif ocr_ok == []:
     for _ in range(5):
-      info("等待orc初始化")
+      logger.info("等待orc初始化")
       time.sleep(5)
       if ocr_ok:
         break
     if ocr_ok == []:
-      info("等待orc初始化超时")
+      logger.info("等待orc初始化超时")
       return
   f = None
   try:
@@ -3318,10 +3318,10 @@ def run_ocr(img):
     #  for f in ocr_ok:
       s = f(img)
       if s:
-        info(f" 识别结果: {s}")
+        logger.info(f" 识别结果: {s}")
         return s
       else:
-        info(f" 识别失败: {s}")
+        logger.info(f" 识别失败: {s}")
   except Exception as e:
     warn(f"识别程序出现错误 {f=} {e=}")
 
@@ -3414,9 +3414,9 @@ async def _bypass(msg):
       warn("需要验证才能入群，但无法输入验证码，没找到URL: {myid} {jid} {text}")
       return
     else:
-      info(f"需要验证才能入群: {myid} {jid} {text} {tmp}")
+      logger.info(f"需要验证才能入群: {myid} {jid} {text} {tmp}")
   else:
-    info(f"fixme: 这个群需要验证才能进吗？那就程序有bug: {myid} {jid} {text}")
+    logger.info(f"fixme: 这个群需要验证才能进吗？那就程序有bug: {myid} {jid} {text}")
     return
 
   u = None
@@ -3426,10 +3426,10 @@ async def _bypass(msg):
       break
     u = None
   if u is None:
-    info(f"没找到合适的，随便选第一个作为验证码地址: {jid} {tmp}")
+    logger.info(f"没找到合适的，随便选第一个作为验证码地址: {jid} {tmp}")
     u = tmp[0]
-  info(f"验证码地址: {u}")
-  #  info(f"验证码地址: {u=}")
+  logger.info(f"验证码地址: {u}")
+  #  logger.info(f"验证码地址: {u=}")
   headers = {
       #  'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
       'Accept': 'image/jpeg,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
@@ -3444,7 +3444,7 @@ async def _bypass(msg):
   iu = f"{u}/image"
   res = await http(f"{iu}", headers=headers, proxy="http://127.0.0.1:6080")
   #  res = await http("https://fars.ee/eUVh.jpg")
-  info(f"image size: {len(res)} {iu}")
+  logger.info(f"image size: {len(res)} {iu}")
   #  print("===")
   #  s = ocr.classification(res)
   s = await asyncio.to_thread(run_ocr, img=res)
@@ -3460,19 +3460,19 @@ async def _bypass(msg):
     headers.pop('Referer')
     headers['Origin'] = "%s//%s" % (u.split('//', 1)[0], u.split('//', 1)[1].split('/', 1)[0])
     headers['Accept'] = 'application/json,application/xhtml+xml,application/xml,text/html;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
-    info(f"headers: {headers}")
-    info(f"data: {data}")
+    logger.info(f"headers: {headers}")
+    logger.info(f"data: {data}")
     res = await http(f"{u}", "POST", headers=headers, data=data, proxy="http://127.0.0.1:6080")
-    info(res)
+    logger.info(res)
     #  while True:
-    #    info(f"等待进群结果: {myid} {jid}")
+    #    logger.info(f"等待进群结果: {myid} {jid}")
     #    await asyncio.sleep(3)
     #    if jid in muc_now:
     #      if myid in muc_now[jid]:
     #        break
   else:
     #  pprint(s)
-    info(f"识别验证码失败: {myid} {jid} {s}")
+    logger.info(f"识别验证码失败: {myid} {jid} {s}")
 
 
 
@@ -3541,7 +3541,7 @@ async def join(jid=None, nick=None, client=None):
       except errors.XMPPCancelError as e:
         # XMPPCancelError("{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')")
         if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')" or e.args[0].startswith("{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found"):
-          info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
+          logger.info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
           return False
         elif e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}conflict ('That nickname is already in use by another occupant')" or e.args[0] == '{urn:ietf:params:xml:ns:xmpp-stanzas}conflict' or '{urn:ietf:params:xml:ns:xmpp-stanzas}conflict' in e.args[0]:
           if '_' in nick:
@@ -3550,7 +3550,7 @@ async def join(jid=None, nick=None, client=None):
             nick = f"{nick}_%s" % generand(1)
           logger.warning(f"群名字冲突{sum_try}: {myid} {jid} {nick} {e=}")
         else:
-          info(f"进群失败{e.args}: {myid} {jid} {e=}")
+          logger.info(f"进群失败{e.args}: {myid} {jid} {e=}")
           return False
       except errors.XMPPAuthError as e:
         #  pprint(e.args)
@@ -3559,24 +3559,24 @@ async def join(jid=None, nick=None, client=None):
           if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized ('The CAPTCHA verification has failed')" or e.args[0].startswith("{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized"):
             if auto_input is False:
               return False
-            info(f"进群失败, 验证码不正确，准备重试: {myid} {jid} {e=}")
+            logger.info(f"进群失败, 验证码不正确，准备重试: {myid} {jid} {e=}")
           else:
             if e.args[0] == '{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden':
-              info(f"进群失败，被ban了(forbiden): {myid} {jid} {e=}")
+              logger.info(f"进群失败，被ban了(forbiden): {myid} {jid} {e=}")
             elif e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden ('You have been banned from this room')" or e.args[0].startswith("{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden"):
-              info(f"进群失败，被ban了: {myid} {jid} {e=}")
+              logger.info(f"进群失败，被ban了: {myid} {jid} {e=}")
             else:
-              info(f"进群失败{e.args}: {myid} {jid} {e=}")
+              logger.info(f"进群失败{e.args}: {myid} {jid} {e=}")
             return False
         else:
-          info(f"进群失败(无权限): {myid} {jid} {e=}")
+          logger.info(f"进群失败(无权限): {myid} {jid} {e=}")
           return False
       except Exception as e:
-        info(f"进群失败: {myid} {jid} {e=}")
+        logger.info(f"进群失败: {myid} {jid} {e=}")
         return False
       sum_try += 1
       if sum_try > 3:
-        info(f"进群失败(重试次数达到最大值): {myid} {jid}")
+        logger.info(f"进群失败(重试次数达到最大值): {myid} {jid}")
         return False
       await asyncio.sleep(0.1)
 
@@ -3591,10 +3591,10 @@ async def join(jid=None, nick=None, client=None):
 
 @exceptions_handler
 async def xmppbot():
-  info("开始登录xmpp")
+  logger.info("开始登录xmpp")
   global XB, myjid
   myjid = get_my_key("JID")
-  info(f"bot jid: {myjid}")
+  logger.info(f"bot jid: {myjid}")
   password = get_my_key("JID_PASS")
   #  jid = aioxmpp.JID.fromstr(jid)
   XB = aioxmpp.PresenceManagedClient(
@@ -3604,7 +3604,7 @@ async def xmppbot():
   logger.info(f"已导入新账户: {myjid} password: {password[:4]}...")
   if await load_config():
     if await login():
-      info(f"join all groups...\n%s" % my_groups)
+      logger.info(f"join all groups...\n%s" % my_groups)
       #  await join()
       global mucsv
       #  mucsv = client.summon(aioxmpp.MUCClient)
@@ -3618,7 +3618,7 @@ async def xmppbot():
             continue
           tmp.append(i)
         if tmp:
-          info(f"无法进入的群组: {tmp}")
+          logger.info(f"无法进入的群组: {tmp}")
           await mt_send_for_long_text(f"无法进入的群组: {tmp}")
           ms = tmp
           await asyncio.sleep(5)
@@ -3692,14 +3692,14 @@ async def amain():
     @UB.on(events.MessageEdited(incoming=True))
     async def _(event):
       if not allright.is_set():
-        info("skip msg: allright is not ok")
+        logger.info("skip msg: allright is not ok")
         return
       asyncio.create_task(parse_msg(event))
 
     @UB.on(events.NewMessage(outgoing=True))
     async def _(event):
       if not allright.is_set():
-        info("skip msg: allright is not ok")
+        logger.info("skip msg: allright is not ok")
         return
       asyncio.create_task(parse_out_msg(event))
 
@@ -3724,12 +3724,12 @@ async def amain():
       await add_cmd()
       while True:
         if allright_task > 0:
-          info(f"等待初始化完成，剩余任务数：{allright_task}")
+          logger.info(f"等待初始化完成，剩余任务数：{allright_task}")
           await asyncio.sleep(3)
           continue
         allright.set()
         break
-      info(f"初始化完成")
+      logger.info(f"初始化完成")
 
       #  await mt_send("gpt start")
       asyncio.create_task(mt_read(), name="mt_read")
