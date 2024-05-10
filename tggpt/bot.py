@@ -1600,12 +1600,12 @@ async def send(text, jid=None, *args, **kwargs):
     muc = jid
   if muc in my_groups:
     for m in get_mucs(muc):
-      if await send(text, jid=m, *args, **kwargs):
+      if await send1(text, jid=m, *args, **kwargs):
         continue
       return False
     return True
   else:
-    return await send(text, jid=jid, *args, **kwargs)
+    return await send1(text, jid=jid, *args, **kwargs)
 
 async def send1(text, jid=None, client=None, gpm=False, room=None, correct=False, name="**C bot:** "):
 
