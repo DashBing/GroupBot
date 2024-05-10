@@ -1670,7 +1670,9 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False,
 #    #  return await client.send(msg)
 #    return await _send(msg, client, gpm=gpm)
 
-async def sendg(text, jid=None, room=None, client=None):
+async def sendg(text, jid=None, room=None, client=None, name="**C bot:** "):
+  if name:
+    text = f"{name}{text}"
   logger.info(f"send group msg: {jid} {text}")
   if jid is None:
     jid = test_group
@@ -2039,12 +2041,14 @@ async def mt2tg(msg):
 
     logger.info("got msg from mt: {}".format(msgd))
     #      if name == "C Telegram: ":
-    if gateway == "gateway1":
-      await sendg(text, main_group)
     res = await run_cmd(text, gateway, name)
     if res:
       await mt_send(res, gateway)
-      await sendg(res, main_group)
+    if gateway == "gateway1":
+      for m in get_mucs(main_group):
+        await sendg(text, m, name=name)
+        if res:
+          await sendg(res, m, name=name)
 
     return
     msgd.update({"chat_id": chat_id})
@@ -2242,7 +2246,7 @@ async def http(url, method="GET", return_headers=False, **kwargs):
             return html
 
 #  async def mt_send(text="null", username="bot", gateway="test", qt=None):
-async def mt_send(text="null", gateway="test", username="C bot", qt=None):
+async def mt_send(text="null", gateway="gateway1", username="C bot", qt=None):
 
   MT_API_RES = "127.0.0.1:4247"
   #  if gateway == 'me':
@@ -2275,6 +2279,38 @@ async def mt_send(text="null", gateway="test", username="C bot", qt=None):
   return True
   return res
 
+
+#  async def mt_send_for_long_text(text, gateway='test'):
+#    fn='gpt_res'
+#    async with queue_lock:
+#      async with aiofiles.open(f"{SH_PATH}/{fn}", mode='w') as file:
+#        await file.write(text)
+#      #  os.system(f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
+#      return await asyncio.to_thread(os.system, f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
+
+async def mt_send_for_long_text(text, gateway="gateway1", username="C bot", *args, **kwargs):
+  need_delete = False
+  if os.path.exists(f"{SH_PATH}"):
+    fn = f"{SH_PATH}/SM_LOCK_{gateway}"
+    while os.path.exists(fn):
+      logger.info(f"busy: {gateway} {fn}")
+      await asyncio.sleep(2)
+
+    await write_file(text, fn, "w")
+    need_delete = True
+
+  async with queue_lock:
+    for i in split_long_text(text):
+      #  if await send(i, *args, **kwargs) is not True:
+      if await mt_send(i, gateway=gateway, username=username, *args, **kwargs) is not True:
+        break
+      #  await mt_send(res, gateway=gateway, username="")
+      username = ""
+
+  if need_delete:
+    os.remove(fn)
+
+  return True
 
 
 
@@ -2669,38 +2705,6 @@ async def parse_out_msg(event):
 #      return
 
 
-#  async def mt_send_for_long_text(text, gateway='test'):
-#    fn='gpt_res'
-#    async with queue_lock:
-#      async with aiofiles.open(f"{SH_PATH}/{fn}", mode='w') as file:
-#        await file.write(text)
-#      #  os.system(f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
-#      return await asyncio.to_thread(os.system, f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
-
-async def mt_send_for_long_text(text, gateway="test", username="C bot", *args, **kwargs):
-  need_delete = False
-  if os.path.exists(f"{SH_PATH}"):
-    fn = f"{SH_PATH}/SM_LOCK_{gateway}"
-    while os.path.exists(fn):
-      logger.info(f"busy: {gateway} {fn}")
-      await asyncio.sleep(2)
-
-    await write_file(text, fn, "w")
-    need_delete = True
-
-  async with queue_lock:
-    for i in split_long_text(text):
-      #  if await send(i, *args, **kwargs) is not True:
-      if await mt_send(i, gateway=gateway, username=username, *args, **kwargs) is not True:
-        break
-      #  await mt_send(res, gateway=gateway, username="")
-      username = ""
-
-  if need_delete:
-    os.remove(fn)
-
-  return True
-
 
 async def my_event_handler(event):
   #  if 'hello' in event.raw_text:
@@ -2920,6 +2924,12 @@ async def add_id_to_msg(msg, correct):
         last_outmsg[j] = [msg, None]
       last_outmsg[j].append(0)
 
+def get_mucs(muc):
+  for s in sync_groups_all:
+    if muc in s:
+      return s
+  return set([muc])
+
 
 
 
@@ -2940,7 +2950,8 @@ def msg_out(msg):
         logger.info(f"更新msgid: {last_outmsg[j][1]} -> {msg.id_}")
         last_outmsg[j][1] = msg.id_
     else:
-      logger.info(f"未更新msgid: {last_outmsg[j][0]=} != {msg=}")
+      logger.info(f"msg不匹配: {last_outmsg[j][0]=} != {msg=}")
+      last_outmsg.pop(j)
   else:
     logger.info(f"忽略: {msg=}")
   return msg
@@ -3045,6 +3056,12 @@ async def parse_xmpp_msg(msg):
 
   if msg.type_ == MessageType.GROUPCHAT:
     nick = msg.from_.resource
+
+    ms = get_mucs(muc)
+    if main_group in ms:
+      await mt_send(text, username=nick)
+    for m in ms - {muc}:
+      await send(text, m, name="**X nick:** ")
   else:
     if get_jid(msg.to) in my_groups:
       nick = msg.from_.resource
