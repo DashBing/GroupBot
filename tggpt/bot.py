@@ -1585,9 +1585,11 @@ async def _send(msg, client=None, room=None, gpm=False):
     warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
   return False
 
-async def send(text, jid=None, client=None, gpm=False, room=None, correct=False):
+async def send(text, jid=None, client=None, gpm=False, room=None, correct=False, name="**C bot:** "):
 
   if type(text) is str:
+    if name:
+      text = f"{name}{text}"
     if jid is None:
       jid = ME
     else:
@@ -1632,6 +1634,8 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False)
   elif isinstance(text, aioxmpp.Message):
     #  info(f"send1: {jid=} {text=}")
     msg = text
+    if name:
+      msg.body[None] = f"{name}{text}"
     if msg.type_ == MessageType.GROUPCHAT:
     #    if msg.to.resource is not None:
       if not msg.to.is_bare:
@@ -2999,7 +3003,7 @@ async def parse_xmpp_msg(msg):
   if text is None:
     print("跳过空消息: %s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
     return
-  if str(msg.to_.bare()) == myjid:
+  if str(msg.to.bare()) == myjid:
     print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
     return
   pprint(msg)
