@@ -3202,7 +3202,13 @@ async def parse_xmpp_msg(msg):
     if main_group in ms:
       if await mt_send_for_long_text(text, name=f"X {nick}") is False:
         return
+    if muc == acg_channel:
+      await send(text, rssbot, name="")
+      return
   else:
+    if muc == rssbot:
+      await send(text, acg_channel, name="")
+      return
     if get_jid(msg.to) in my_groups:
       nick = msg.from_.resource
     else:
@@ -3249,7 +3255,32 @@ async def add_cmd():
 
   async def _(cmds, src):
     if len(cmds) == 1:
-      return f"阿里千问\n{cmds[0]} $text"
+      return f"添加好友\n.{cmds[0]} $jid"
+    rc = XB.summon(aioxmpp.RosterClient)
+    #  pprint(rc)
+    res = rc.subscribe(JID.fromstr(cmds[1]))
+    #  print(f"结果：{res}")
+    await send(f"结果：{res}", src)
+    await asyncio.sleep(1)
+    res = rc.approve(JID.fromstr(cmds[1]))
+    #  print(f"结果：{res}")
+    await send(f"结果：{res}", src)
+  cmd_funs["connect"] = _
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      rc = XB.summon(aioxmpp.RosterClient)
+      if rc.items:
+        return "items: %s" % rc.items
+      return "json:\n%s" % rc.export_as_json()
+    pc = XB.summon(aioxmpp.PresenceClient)
+    res = pc.get_most_available_stanza(cmds[1])
+    return res
+  cmd_funs["list"] = _
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"阿里千问\n.{cmds[0]} $text"
     text = ' '.join(cmds[1:])
     return await qw(text)
   cmd_funs["qw"] = _
