@@ -1580,19 +1580,21 @@ async def __send(msg, client=None, room=None, name=None):
   if jid not in send_locks:
     send_locks[jid] = asyncio.Lock()
 
-  room = None
-  if str(msg.to.bare()) in rooms:
-    room = rooms[str(msg.to.bare())]
+  if name is not None:
+    room = None
+    if str(msg.to.bare()) in rooms:
+      room = rooms[str(msg.to.bare())]
   async with send_locks[jid]:
-    if room:
-      #  if msg.type_ == MessageType.GROUPCHAT:
-      if room.me.nick != name:
-        await room.set_nick(name)
-        logger.info(f"set nick: {room.me.nick} -> {name}")
+    if name is not None:
+      if room:
+        #  if msg.type_ == MessageType.GROUPCHAT:
+        if room.me.nick != name:
+          await room.set_nick(name)
+          logger.info(f"set nick: {room.me.nick} -> {name}")
+        else:
+          logger.info(f"set nick: {room.me.nick} = {name}")
       else:
-        logger.info(f"set nick: {room.me.nick} = {name}")
-    else:
-      logger.info(f"not found room: {msg.to}")
+        logger.info(f"not found room: {msg.to}")
 
 
     if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or str(msg.to.bare()) not in my_groups:
@@ -1642,6 +1644,8 @@ async def send(text, jid=None, *args, **kwargs):
     #  kwargs.pop("name")
     if name:
       kwargs["name"] = name[2:-4]
+    else:
+      kwargs["name"] = None
   else:
     name = "**C bot:** "
     kwargs["name"] = name[2:-4]
