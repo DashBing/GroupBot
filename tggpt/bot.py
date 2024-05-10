@@ -3093,6 +3093,10 @@ def msg_in(msg):
   #  return
   #  logger.info("\n>>> msg: %s\n" % msg)
 
+
+
+
+
 @exceptions_handler
 async def parse_xmpp_msg(msg):
   if not hasattr(msg, "body"):
@@ -3213,7 +3217,7 @@ async def parse_xmpp_msg(msg):
       nick = msg.from_.resource
     else:
       nick = msg.from_.localpart
-  res = await run_cmd(text, get_src(msg), f"X {nick}: ")
+  res = await run_cmd(text, get_src(msg), f"X {nick}: ", from_=msg.from_)
   if res == 1:
     return
   if res:
@@ -3250,6 +3254,7 @@ async def parse_xmpp_msg(msg):
 
 
 cmd_funs = {}
+cmd_for_admin = set()
 
 async def add_cmd():
 
@@ -3266,17 +3271,21 @@ async def add_cmd():
     #  print(f"结果：{res}")
     await send(f"结果：{res}", src)
   cmd_funs["connect"] = _
+  cmd_for_admin.add('connect')
 
   async def _(cmds, src):
     if len(cmds) == 1:
       rc = XB.summon(aioxmpp.RosterClient)
-      if rc.items:
-        return "items: %s" % rc.items
+      return "items: %s" % rc.items
+    elif cmds[1] == "json":
+      rc = XB.summon(aioxmpp.RosterClient)
       return "json:\n%s" % rc.export_as_json()
-    pc = XB.summon(aioxmpp.PresenceClient)
-    res = pc.get_most_available_stanza(cmds[1])
-    return res
+    else:
+      pc = XB.summon(aioxmpp.PresenceClient)
+      res = pc.get_most_available_stanza(cmds[1])
+      return res
   cmd_funs["list"] = _
+  cmd_for_admin.add('list')
 
   async def _(cmds, src):
     if len(cmds) == 1:
@@ -3345,7 +3354,7 @@ async def add_cmd():
   cmd_funs["clear"] = _
 
 
-async def run_cmd(text, src, name="test"):
+async def run_cmd(text, src, name="test", from_):
   if text[0:1] == ".":
     if text[1:2] == " ":
       return
@@ -3357,6 +3366,28 @@ async def run_cmd(text, src, name="test"):
     #  print(f"> I: {cmds}")
     logger.info("got cmds: {}".format(cmds))
     cmd = cmds[0]
+    if cmd in cmd_for_admin:
+      if src in me:
+        pass
+      elif src in rooms:
+        room = rooms[src]
+        is_me = False
+        for i in room.members:
+          if i.direct_jid is None:
+            err("没有权限查看jid: {src}")
+            return
+          if (i.direct_jid.bare()) in me:
+            is_me = True
+            break
+        if is_me:
+          pass
+        else:
+          await send("not allowed", src)
+          return
+      else:
+        await send("not allowed", src)
+        return
+      return
     if cmd in cmd_funs:
       res = await cmd_funs[cmd](cmds, src)
       if type(res) is tuple:
