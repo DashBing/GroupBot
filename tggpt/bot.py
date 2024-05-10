@@ -231,9 +231,7 @@ def generand(N=4, M=None, *, no_uppercase=False):
 
 
 
-msg_max_length=500
-
-def split_long_text(text):
+def split_long_text(text, msg_max_length=500):
   texts = []
   if len(text.encode()) > msg_max_length:
     ls = text.splitlines()
@@ -1699,7 +1697,7 @@ async def send1(text, jid=None, client=None, room=None, correct=False, name=None
       #  if gpm and '/' not in jid:
       #    err(f"无法群私聊，地址错误: {jid}")
       #    return False
-    texts = split_long_text(text)
+    texts = split_long_text(text, 4096)
     for i in texts:
       if jid in my_groups:
         msg = aioxmpp.Message(
@@ -1730,8 +1728,7 @@ async def send1(text, jid=None, client=None, room=None, correct=False, name=None
       if await _send(msg, client, room, name) is not True:
         return False
       if correct:
-        if len(texts) > 1:
-          break
+        break
 
     return True
   elif isinstance(text, aioxmpp.Message):
