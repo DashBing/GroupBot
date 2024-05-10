@@ -2199,14 +2199,14 @@ async def mt2tg(msg):
 
 
 
-async def send_to_tg_bot(text, chat_id, src=None):
+async def send_to_tg_bot(text, chat_id, src=None, name=None):
   chat = await get_entity(chat_id)
   msg = await UB.send_message(chat, text)
   gid_src[msg.id] = src
   if src not in mtmsgsg:
     mtmsgsg[src] = {}
   #  mtmsgsg[src][msg.id] = [msg]
-  mtmsgsg[src][msg.id] = []
+  mtmsgsg[src][msg.id] = [name]
   return msg.id
 
 
@@ -2633,7 +2633,7 @@ async def parse_msg(event):
       music_bot_state[src] += 1
       mtmsgs[qid].append(msg.buttons)
 
-      res = f"{mtmsgs[qid][0]['username']}搜索结果(回复序号)\n{text}"
+      res = f"{mtmsgs[qid][0]}搜索结果(回复序号)\n{text}"
       #  await mt_send_for_long_text(res, src)
       await send(text, src)
 
@@ -2653,7 +2653,7 @@ async def parse_msg(event):
         #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
       #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
         path = "https://%s/%s" % (DOMAIN, (parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
-      res = f"{mtmsgs[qid][0]['username']}{path}\n{text}"
+      res = f"{mtmsgs[qid][0]}{path}\n{text}"
       if msg.buttons:
         for i in get_buttons(msg.buttons):
           #  if isinstance(i, KeyboardButtonUrl):
@@ -2712,7 +2712,7 @@ async def parse_msg(event):
     else:
       src = gid_src[qid]
       mtmsgs = mtmsgsg[src]
-      res = f"{mtmsgs[qid][0]['username']}{text}"
+      res = f"{mtmsgs[qid][0]}{text}"
       await mt_send_for_long_text(res, src)
       gid_src.pop(qid)
       mtmsgs.pop(qid)
@@ -3205,7 +3205,9 @@ async def parse_xmpp_msg(msg):
       nick = msg.from_.resource
     else:
       nick = msg.from_.localpart
-  res = await run_cmd(text, get_src(msg), nick)
+  res = await run_cmd(text, get_src(msg), f"X {nick}: ")
+  if res == 1:
+    return
   if res:
     reply = msg.make_reply()
     reply.body[None] = res
@@ -3271,6 +3273,7 @@ async def add_cmd():
     music_bot_state[src] = 1
     text="/search "+text
     mid = await send_to_tg_bot(text, music_bot, src)
+    return 1, mid
   cmd_funs["music"] = _
 
   async def _(cmds, src):
@@ -3279,6 +3282,7 @@ async def add_cmd():
 
     text = ' '.join(cmds[1:])
     mid = await send_to_tg_bot(text, gpt_bot, src)
+    return 1, mid
   cmd_funs["gtg"] = _
 
 
@@ -3322,6 +3326,10 @@ async def run_cmd(text, src, name="test"):
     cmd = cmds[0]
     if cmd in cmd_funs:
       res = await cmd_funs[cmd](cmds, src)
+      if type(res) is tuple:
+        if res[1] == 1:
+          mtmsgsg[src][res[1]].append(name)
+        return res[0]
       return "%s" % res
       #  reply = msg.make_reply()
       #  reply.body[None] = "%s" % res
@@ -3339,7 +3347,7 @@ async def run_cmd(text, src, name="test"):
         tmp.append(i)
     qid = max(tmp)
     logger.info(f"尝试下载：{text} {qid}")
-    bs = mtmsgs[qid][0]
+    bs = mtmsgs[qid][1]
     logger.info(f"尝试下载：{text} {qid} msg: {bs}")
     i = None
     for i in get_buttons(bs):
