@@ -3006,7 +3006,9 @@ async def parse_xmpp_msg(msg):
   if str(msg.to.bare()) != myjid:
     print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
     return
-  pprint(msg)
+  else:
+    info(f"{msg.to.bare()} != {myjid}")
+  #  pprint(msg)
   print("%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
   if text == "ping":
     #  await send("pong", ME)
@@ -3589,6 +3591,7 @@ async def xmppbot():
   info("开始登录xmpp")
   global XB, myjid
   myjid = get_my_key("JID")
+  info(f"bot jid: {myjid}")
   password = get_my_key("JID_PASS")
   #  jid = aioxmpp.JID.fromstr(jid)
   XB = aioxmpp.PresenceManagedClient(
