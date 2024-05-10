@@ -1425,3 +1425,18 @@ MessageType.CHAT liqsliu@conversations.im/Conversations.CONk wtfipfs@pimux.de {<
 ===
 MessageType.GROUPCHAT :DlSTIpRNF4y24flxtTzN wtfipfs_bot@conference.conversations.im/bot wtfipfs@pimux.de/u4fvpAx8t4FJ {<aioxmpp.structs.LanguageTag.fromstr('en')>: '**C bot:** pong'}
 
+
+
+
+
+for i in msg.xep0045_muc_user.items:
+	pprint(i)
+
+ affiliation: <class 'str'>: member
+  bare_jid: <class 'aioxmpp.structs.JID'>: su@conversations.im
+  continue_: <class 'NoneType'>: None
+  jid: <class 'aioxmpp.structs.JID'>: su@conversations.im/Conversa.BY
+  nick: <class 'NoneType'>: None
+  reason: <class 'NoneType'>: None
+  role: <class 'str'>: participant
+
