@@ -1610,16 +1610,18 @@ async def send(text, jid=None, *args, **kwargs):
     text = f"{name}{text}"
   if muc in my_groups:
     info(f"准备发送同步消息到: {get_mucs(muc)}")
-    for m in get_mucs(muc):
+    ms = get_mucs(muc)
+    for m in ms:
       if await send1(text, jid=m, *args, **kwargs):
         #  if isinstance(text, aioxmpp.Message):
         #    text.body[None] = text0
         continue
       return False
-    if len(name) > 4:
-      await mt_send(text0, name=name[2:-4])
-    else:
-      await mt_send(text0, name=name)
+    if main_group in ms:
+      if len(name) > 4:
+        await mt_send(text0, name=name[2:-4])
+      else:
+        await mt_send(text0, name=name)
     return True
   else:
     info(f"准备发送到: {get_mucs(muc)}")
