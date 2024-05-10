@@ -40,7 +40,7 @@ if [[ -z "$1" ]]; then
   echo ".gpt -u \$username \$str"
   # echo "/GPT \$str"
   echo '--'
-  echo '.gtp \$str'
+  echo '.gtg \$str'
   echo '--'
   echo "https://github.com/LanQian528/chat2api"
   echo "https://chat.openai.com/"

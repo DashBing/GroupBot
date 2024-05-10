@@ -45,7 +45,6 @@
 #rss T liqsliu: xmpp:jabrss@jotwewe.de
 #magisk T liqsliu: 修改系统文件 build.prop 可以参考该项目自己写模块 https://github.com/wacko1805/Volume-steps-magisk
 #faq T liqsliu⁨⁣⁩᠎: test|ok
-#faq T liqsliu: 1|2
 #tools T liqsliu: X Katherine: https://suchat.org:5443/upload/8221638bab44d7c313e8d70da273edcb1b01782a/tdD2lRq4YR3HnPhLt5gvslE6Htwa7RWZF4eKNpsQ/org.chromium.webapk.a7e66a32d67646129_v2.apk
 #default X Katherine: 课改
 #default X Katherine: 课改
