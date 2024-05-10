@@ -90,10 +90,9 @@ def get_my_key(key, path=f"{HOME}/vps/private_keys.txt"):
       line = f.readline()
       if line:
         if ' ' in line and line.split(' ', 1)[0] == key:
-          #  f.close()
           return line.split(' ', 1)[1].rstrip('\n')
       else:
-        return
+        raise ValueError(f"没找到key: {key}")
   LOGGER.error("wtf", exc_info=True)
   #  return None;
   exit(1)

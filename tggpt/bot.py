@@ -1808,7 +1808,7 @@ async def mt_read():
   # api.xmpp
   MT_API = "127.0.0.1:4247"
   url = "http://" + MT_API + "/api/stream"
-  session = await init_aiohttp_session()
+  #  session = await init_aiohttp_session()
   logger.info("start read msg from mt api...")
   while True:
     line = ""
@@ -2160,15 +2160,16 @@ async def clear_history(src=None):
   logger.info("reset ok")
 
 
-session = None
+#  session = None
+#  async def init_aiohttp_session():
+#    global session
+#    if session is None:
+#      session = aiohttp.ClientSession()
+#      logger.warning("a new session")
 
 @exceptions_handler
 async def http(url, method="GET", return_headers=False, *args, **kwargs):
   #  await init_aiohttp_session()
-  global session
-  if session is None:
-    session = aiohttp.ClientSession()
-    logger.warning("a new session")
 
   if "headers" in kwargs:
     headers = kwargs["headers"]
@@ -2495,7 +2496,7 @@ music_bot_state = {}
 
 
 @exceptions_handler
-async def parse_msg(event):
+async def parse_tg_msg(event):
   msg = event.message
   
   #  if event.chat_id not in id2gateway:
@@ -2667,7 +2668,7 @@ async def parse_msg(event):
 
 
 @exceptions_handler
-async def parse_out_msg(event):
+async def parse_tg_out_msg(event):
   if event.chat_id == MY_ID:
     msg = event.message
     text = msg.text
@@ -3854,8 +3855,8 @@ async def xmppbot():
   logger.info("开始登录xmpp")
   global XB, myjid
   myjid = get_my_key("JID")
-  logger.info(f"bot jid: {myjid}")
   password = get_my_key("JID_PASS")
+  logger.info(f"xmpp: {myjid} {password[:3]}...")
   #  jid = aioxmpp.JID.fromstr(jid)
   XB = aioxmpp.PresenceManagedClient(
       JID.fromstr(myjid),
@@ -3890,9 +3891,46 @@ async def xmppbot():
 
 
 
+async def init():
+  #  await init_aiohttp_session()
+  global session
+  session = aiohttp.ClientSession()
+
+  global SH_PATH, DOMAIN
+  SH_PATH = await read_file()
+  if SH_PATH:
+    SH_PATH = SH_PATH.rstrip('\n')
+  DOMAIN = await read_file("DOMAIN")
+  if DOMAIN:
+    DOMAIN = DOMAIN.rstrip('\n')
+  print(f"SH_PATH: {SH_PATH}")
+  print(f"DOMAIN: {DOMAIN}")
+
+  global loop
+  loop = asyncio.get_event_loop()
+
+  #  #  LOGGER.addFilter(NoParsingFilter())
+  #
+  #  # https://stackoverflow.com/questions/17275334/what-is-a-correct-way-to-filter-different-loggers-using-python-logging
+  #  for handler in logging.root.handlers:
+  #    #  handler.addFilter(logging.Filter('foo'))
+  #    #  handler.addFilter(NoParsingFilter())
+  #    f = NoParsingFilter()
+  #    handler.addFilter(f)
+  #    logger.info(f"added filter to: {handler}")
+
+
+  return True
+
+
 #  @exceptions_handler
 async def amain():
   try:
+
+    if await init() is not True:
+      err("初始化失败")
+      return
+
     if len(sys.argv) > 1:
       #  if sys.argv[1] == '1':
       if sys.argv[1].isnumeric():
@@ -3905,8 +3943,6 @@ async def amain():
         print(res)
       return
 
-    global loop
-    loop = asyncio.get_event_loop()
     global allright_task
     allright_task += 1
     asyncio.create_task(xmppbot(), name="xmppbot")
@@ -3916,19 +3952,7 @@ async def amain():
     # with UB:
     #  loop.run_until_complete(run())
 
-    #  LOGGER.addFilter(NoParsingFilter())
-
-    # https://stackoverflow.com/questions/17275334/what-is-a-correct-way-to-filter-different-loggers-using-python-logging
-    for handler in logging.root.handlers:
-      #  handler.addFilter(logging.Filter('foo'))
-      #  handler.addFilter(NoParsingFilter())
-      f = NoParsingFilter()
-      handler.addFilter(f)
-      logger.info(f"added filter to: {handler}")
-
-
     global MY_NAME, MY_ID, UB
-
 
     api_id = int(get_my_key("TELEGRAM_API_ID"))
     api_hash = get_my_key("TELEGRAM_API_HASH")
@@ -3954,14 +3978,14 @@ async def amain():
       if not allright.is_set():
         logger.info("skip msg: allright is not ok")
         return
-      asyncio.create_task(parse_msg(event))
+      asyncio.create_task(parse_tg_msg(event))
 
     @UB.on(events.NewMessage(outgoing=True))
     async def _(event):
       if not allright.is_set():
         logger.info("skip msg: allright is not ok")
         return
-      asyncio.create_task(parse_out_msg(event))
+      asyncio.create_task(parse_tg_out_msg(event))
 
     #  await UB.start()
     async with UB:
@@ -3973,26 +3997,18 @@ async def amain():
 
       UB.parse_mode = 'md'
 
-      global SH_PATH, DOMAIN
-      SH_PATH = (await read_file()).rstrip('\n')
-      DOMAIN = (await read_file("DOMAIN")).rstrip('\n')
-      print(f"SH_PATH: {SH_PATH}")
-      print(f"DOMAIN: {DOMAIN}")
-
-
-
       await add_cmd()
+      #  await mt_send("gpt start")
+      asyncio.create_task(mt_read(), name="mt_read")
       while True:
         if allright_task > 0:
           logger.info(f"等待初始化完成，剩余任务数：{allright_task}")
-          await asyncio.sleep(3)
+          await asyncio.sleep(1)
           continue
         allright.set()
         break
       logger.info(f"初始化完成")
 
-      #  await mt_send("gpt start")
-      asyncio.create_task(mt_read(), name="mt_read")
 
       await UB.run_until_disconnected()
 
