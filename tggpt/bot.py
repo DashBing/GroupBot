@@ -2596,7 +2596,7 @@ async def parse_msg(event):
     #  try:
     qid=msg.reply_to_msg_id
     if qid not in gid_src:
-      logger.error(f"E: not found gateway for {qid=}, {gid_src=} {msg.text=}")
+      logger.error(f"E: not found src for {qid=}, {gid_src=} {msg.text=}")
       return
     text = msg.text
     if not text:
@@ -2632,10 +2632,10 @@ async def parse_msg(event):
 
       music_bot_state[src] += 1
 
-      logger.info(f"{mtmsgs[qid]}搜索结果(回复序号)\n{text}")
+      #  logger.info(f"{mtmsgs[qid]}搜索结果(回复序号)\n{text}")
       res = f"{mtmsgs[qid][0]}搜索结果(回复序号)\n{text}"
       #  await mt_send_for_long_text(res, src)
-      await send(text, src)
+      await send(res, src)
 
       gid_src[msg.id] = src
       mtmsgs[qid].append(msg.buttons)
@@ -2662,10 +2662,10 @@ async def parse_msg(event):
             res += f"\n原始链接: {i.url}"
       #  await mt_send_for_long_text(res, gateway)
       await send(res, src)
-      if music_bot_state[gateway] == 3:
-        music_bot_state[gateway] -= 1
+      if music_bot_state[src] == 3:
+        music_bot_state[src] -= 1
     else:
-      warn(f"未知状态，已忽略: music bot: {gid_src=} {music_bot_state[gateway]}\nmsg:\n{msg.stringify()}")
+      warn(f"未知状态，已忽略: music bot: {gid_src=} {music_bot_state[src]}\nmsg:\n{msg.stringify()}")
       return
 
 
