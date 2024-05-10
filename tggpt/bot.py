@@ -3470,8 +3470,8 @@ async def run_cmd(text, src, name="test", is_admin=False):
           break
         res="[ %s urls ]" % len(urls)
       res+="\n\n> %s\n%s" % (url, await get_title(url))
-    if res is not None:
-      return res
+    if res:
+      return name + res
       #  await mt_send(res, gateway=gateway, name="titlebot")
 
   return False
