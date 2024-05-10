@@ -1364,18 +1364,6 @@ async def load_config():
 import aiohttp
 from aiohttp.client_exceptions import ClientPayloadError, ClientConnectorError
 
-session = None
-
-async def init_aiohttp_session():
-  global session
-  if session is None:
-    #  session = aiohttp.ClientSession()
-    session = aiohttp.ClientSession()
-    logger.warning("a new session")
-  else:
-    logger.debug("session existed")
-  return session
-
 
 # Titles for HTML content
 reader = URLTitleReader(verify_ssl=True)
@@ -1640,6 +1628,7 @@ async def send(text, jid=None, *args, **kwargs):
   else:
     name = "**C bot:** "
     kwargs["name"] = name[2:-4]
+
   if jid is None:
     if isinstance(text, aioxmpp.Message):
       if text.type_ == MessageType.GROUPCHAT:
@@ -2171,124 +2160,125 @@ async def clear_history(src=None):
   logger.info("reset ok")
 
 
-
-
-
+session = None
 
 @exceptions_handler
-async def http(url, method="GET", return_headers=False, **kwargs):
-    await init_aiohttp_session()
+async def http(url, method="GET", return_headers=False, *args, **kwargs):
+  #  await init_aiohttp_session()
+  global session
+  if session is None:
+    session = aiohttp.ClientSession()
+    logger.warning("a new session")
 
-    if "headers" in kwargs:
-        headers = kwargs["headers"]
-    else:
-        headers = {}
-        kwargs["headers"] = headers
-    if "Accept-Encoding" not in headers:
-        headers.update({
-            "Accept-Encoding": "br;q=1.0, gzip;q=0.8, deflate;q=0.5"
-            })
-    if "User-agent" not in headers:
-        headers.update({'User-agent': UA})
+  if "headers" in kwargs:
+    headers = kwargs["headers"]
+  else:
+    headers = {}
+    kwargs["headers"] = headers
+  if "Accept-Encoding" not in headers:
+    headers.update({
+      "Accept-Encoding": "br;q=1.0, gzip;q=0.8, deflate;q=0.5"
+      })
+  if "User-agent" not in headers:
+    headers.update({'User-agent': UA})
+
+  try:
+    res = await session.request(url=url, method=method, *args, **kwargs)
+  except asyncio.TimeoutError as e:
+    #  raise
+    res = f"{e=}"
+  async with res:
+    # print("All:", res)
+#    res.raise_for_status()
+    if res.status == 304:
+      logger.warning(f"W: http status: {res.status} {res.reason} {res.url=}")
+      logger.warning("ignore: {}".format(await res.text()))
+      if return_headers:
+        return None, res.headers
+      else:
+        return
+    if res.status != 200:
+#      logger.error(res)
+#      put(str(res))
+      #  html = f"E: error http status: {res.status} {res.reason} url: {res.url} headers: {res.headers}"
+      html = f"E: error http status: {res.status} {res.reason} url: {res.url}"
+      if return_headers:
+        return html, res.headers
+      else:
+        return html
+    # print(type(res))
+    # print("Status:", res.status)
+    # print("Content-type:", res.headers['content-type'])
+    # print("Content-Encoding:", res.headers['Content-Encoding'])
+    # print('Content-Length:', res.headers['Content-Length'])
+    # print('Content-Length:', res.headers['Content-Length'])
+      # print(res)
+      # print("q: ", res.request_info)
+      # print("a: ",  res.headers)
 
     try:
-        res = await session.request(url=url, method=method, **kwargs)
-    except asyncio.TimeoutError as e:
-        #  raise
-        res = f"{e=}"
-    async with res:
-        # print("All:", res)
-#        res.raise_for_status()
-        if res.status == 304:
-            logger.warning(f"W: http status: {res.status} {res.reason} {res.url=}")
-            logger.warning("ignore: {}".format(await res.text()))
-            if return_headers:
-                return None, res.headers
-            else:
-                return
-        if res.status != 200:
-#            logger.error(res)
-#            put(str(res))
-            #  html = f"E: error http status: {res.status} {res.reason} url: {res.url} headers: {res.headers}"
-            html = f"E: error http status: {res.status} {res.reason} url: {res.url}"
-            if return_headers:
-                return html, res.headers
-            else:
-                return html
-        # print(type(res))
-        # print("Status:", res.status)
-        # print("Content-type:", res.headers['content-type'])
-        # print("Content-Encoding:", res.headers['Content-Encoding'])
-        # print('Content-Length:', res.headers['Content-Length'])
-        # print('Content-Length:', res.headers['Content-Length'])
-            # print(res)
-            # print("q: ", res.request_info)
-            # print("a: ",  res.headers)
+      data = None
+      html = None
+      if 'Content-Length' in res.headers and int(res.headers['Content-Length']) > HTTP_RES_MAX_BYTES:
+        logger.warning(f"skip: too big: {url}")
+      elif 'Transfer-Encoding' in res.headers and res.headers['Transfer-Encoding'] == "chunked":
 
+        #  async for data in res.content.iter_chunked(HTTP_RES_MAX_BYTES):
+        #    break
+        data = b""
+        async for tmp, _ in res.content.iter_chunks():
+          data += tmp
+          if len(data) > HTTP_RES_MAX_BYTES:
+            break
+      else:
+      # if res.headers['content-type'] == "text/plain; charset=utf-8":
+        #  data = await res.read()
+        data = await res.content.read(HTTP_RES_MAX_BYTES)
+
+      if data is not None:
         try:
-            data = None
-            html = None
-            if 'Content-Length' in res.headers and int(res.headers['Content-Length']) > HTTP_RES_MAX_BYTES:
-                logger.warning(f"skip: too big: {url}")
-            elif 'Transfer-Encoding' in res.headers and res.headers['Transfer-Encoding'] == "chunked":
+          if "Content-Encoding" in res.headers:
+            if res.headers['Content-Encoding'] == "gzip":
+              logger.info("use gzip")
+              data = gzip.decompress(data)
+            elif res.headers['Content-Encoding'] == "deflate":
+              logger.info("use zlib")
+              data = zlib.decompress(data)
+            elif res.headers['Content-Encoding'] == "br":
+              logger.info("use br")
+              data = brotli.decompress(data)
+            elif res.headers['Content-Encoding']:
+              err("url: {}\nunknown encoding: {}".format(url, res.headers['Content-Encoding']))
+              #  return data
+        except Exception as e:
+          warn(f"解压时出现错误: {e=}")
 
-                #  async for data in res.content.iter_chunked(HTTP_RES_MAX_BYTES):
-                #      break
-                data = b""
-                async for tmp, _ in res.content.iter_chunks():
-                    data += tmp
-                    if len(data) > HTTP_RES_MAX_BYTES:
-                        break
-            else:
-            # if res.headers['content-type'] == "text/plain; charset=utf-8":
-                #  data = await res.read()
-                data = await res.content.read(HTTP_RES_MAX_BYTES)
-
-            if data is not None:
-                #  try:
-                #      if "Content-Encoding" in res.headers:
-                #          if res.headers['Content-Encoding'] == "gzip":
-                #              print("use gzip")
-                #              data = gzip.decompress(data)
-                #          elif res.headers['Content-Encoding'] == "deflate":
-                #              print("use zlib")
-                #              data = zlib.decompress(data)
-                #          elif res.headers['Content-Encoding'] == "br":
-                #              print("use br")
-                #              data = brotli.decompress(data)
-                #          elif res.headers['Content-Encoding']:
-                #              logger.error("url: {}\nunknown encoding: {}".format(url, res.headers['Content-Encoding']))
-                #              put("url: {}\nunknown encoding: {}".format(url, res.headers['Content-Encoding']))
-                #              #  return data
-                #  except Exception as e:
-                #      logger.warning(e)
-                #      put(e)
-
-                # if "text/plain" in res.headers['content-type']:
-                if "text" in res.headers['content-type']:
-                    # return await res.text()
-                    html = data.decode(errors='ignore')
-                else:
-                    # html = data.decode(errors='ignore')
-                    html = data.decode()
-        except ClientPayloadError as e:
-            try:
-                if "data" in locals():
-                    html = data.decode(errors='ignore')
-                else:
-                    html = None
-            except UnicodeDecodeError as e:
-                html = None
-        except UnicodeDecodeError as e:
-            print("res.headers: ",  res.headers)
-            print(f"res data: {data[:64]} 64/{len(data)}")
-            logger.warning(f"decode failed: {url}\nerror: {e}")
-            #  put(f"decode failed: {url}")
-            html = data
-        if return_headers:
-            return html, res.headers
+        # if "text/plain" in res.headers['content-type']:
+        if "text" in res.headers['content-type']:
+          # return await res.text()
+          html = data.decode(errors='ignore')
         else:
-            return html
+          # html = data.decode(errors='ignore')
+          #  html = data.decode()
+          html = data
+    except ClientPayloadError as e:
+      try:
+        if "data" in locals():
+          html = data.decode(errors='ignore')
+        else:
+          html = None
+      except UnicodeDecodeError as e:
+        html = None
+    except UnicodeDecodeError as e:
+      print("res.headers: ",  res.headers)
+      print(f"res data: {data[:64]} 64/{len(data)}")
+      logger.warning(f"decode failed: {url}\nerror: {e}")
+      #  put(f"decode failed: {url}")
+      html = data
+    if return_headers:
+      return html, res.headers
+    else:
+      return html
 
 async def mt_send(*args, **kwargs):
   asyncio.create_task(_mt_send(*args, **kwargs))
@@ -2356,7 +2346,6 @@ async def mt_send_for_long_text(text, gateway="gateway1", name="C bot", *args, *
         break
       #  await mt_send(res, gateway=gateway, name="")
       name = ""
-
     if need_delete:
       os.remove(fn)
 
