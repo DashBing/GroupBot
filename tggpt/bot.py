@@ -1748,9 +1748,9 @@ async def send1(text, jid=None, client=None, room=None, correct=False, name=None
         orig = msg.to
         msg.to = msg.to.bare()
         logger.info(f"已修正地址错误: {orig} -> {msg=}")
-    elif gpm and msg.to.resource is None:
-      err(f"无法群私聊，地址错误: {msg.to}")
-      return False
+    #  elif gpm and msg.to.resource is None:
+    #    err(f"无法群私聊，地址错误: {msg.to}")
+    #    return False
 
     await add_id_to_msg(msg, correct)
 
