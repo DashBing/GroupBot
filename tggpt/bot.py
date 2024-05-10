@@ -1587,6 +1587,10 @@ async def _send(msg, client=None, room=None, gpm=False):
 
 async def send(text, jid=None, *args, **kwargs):
   muc = None
+  if 'name' in kwargs:
+    name = kwargs['name']
+  else:
+    name = "**C bot:** "
   if jid is None:
     if isinstance(text, aioxmpp.Message):
       if text.type_ == MessageType.GROUPCHAT:
@@ -1598,16 +1602,24 @@ async def send(text, jid=None, *args, **kwargs):
       return False
   else:
     muc = jid
+  if isinstance(text, aioxmpp.Message):
+    text0 = text.body[None]
+    text.body[None] = f"{name}{text.body[None]}"
+  else:
+    text0 = text
+    text = f"{name}{text}"
   if muc in my_groups:
     info(f"准备发送同步消息到: {get_mucs(muc)}")
     for m in get_mucs(muc):
-      if isinstance(text, aioxmpp.Message):
-        text0 = text.body[None]
       if await send1(text, jid=m, *args, **kwargs):
-        if isinstance(text, aioxmpp.Message):
-          text.body[None] = text0
+        #  if isinstance(text, aioxmpp.Message):
+        #    text.body[None] = text0
         continue
       return False
+    if len(name) > 4:
+      await mt_send(text0, name=name[2:-4])
+    else:
+      await mt_send(text0, name=name)
     return True
   else:
     info(f"准备发送到: {get_mucs(muc)}")
@@ -1616,8 +1628,8 @@ async def send(text, jid=None, *args, **kwargs):
 async def send1(text, jid=None, client=None, gpm=False, room=None, correct=False, name="**C bot:** "):
 
   if type(text) is str:
-    if name:
-      text = f"{name}{text}"
+    #  if name:
+    #    text = f"{name}{text}"
     if jid is None:
       jid = ME
     else:
@@ -1662,8 +1674,8 @@ async def send1(text, jid=None, client=None, gpm=False, room=None, correct=False
   elif isinstance(text, aioxmpp.Message):
     #  logger.info(f"send1: {jid=} {text=}")
     msg = text
-    if name:
-      msg.body[None] = f"{name}{msg.body[None]}"
+    #  if name:
+    #    msg.body[None] = f"{name}{msg.body[None]}"
     if msg.type_ == MessageType.GROUPCHAT:
     #    if msg.to.resource is not None:
       if jid is not None:
@@ -2074,10 +2086,10 @@ async def mt2tg(msg):
       res = await run_cmd(text, gateway, name)
       if res:
         await mt_send(res, gateway)
-      #  for m in get_mucs(main_group):
-      await send(text, main_group, name=name)
-      if res:
-        await send(res, main_group)
+      for m in get_mucs(main_group):
+        await send1(text, m, name=name)
+        if res:
+          await send1(res, m)
 
     return
     msgd.update({"chat_id": chat_id})
@@ -2321,9 +2333,12 @@ async def mt_send_for_long_text(text, gateway="gateway1", name="C bot", *args, *
   need_delete = False
   if os.path.exists(f"{SH_PATH}"):
     fn = f"{SH_PATH}/SM_LOCK_{gateway}"
-    while os.path.exists(fn):
-      logger.info(f"busy: {gateway} {fn}")
-      await asyncio.sleep(2)
+    for _ in range(5):
+      if os.path.exists(fn):
+        logger.info(f"busy: {gateway} {fn}")
+        await asyncio.sleep(2)
+      else:
+        break
 
     await write_file(text, fn, "w")
     need_delete = True
@@ -3057,8 +3072,8 @@ async def parse_xmpp_msg(msg):
 
       nick = msg.from_.resource
       ms = get_mucs(muc)
-      if main_group in ms:
-        await mt_send(text, name=f"X {nick}")
+      #  if main_group in ms:
+      #    await mt_send(text, name=f"X {nick}")
       for m in ms - {muc}:
         await send1(text, m, name=f"**X {nick}:** ")
 
@@ -3069,7 +3084,7 @@ async def parse_xmpp_msg(msg):
       reply = msg.make_reply()
       reply.body[None] = "pong"
       await send(reply)
-      await mt_send("pong")
+      #  await mt_send("pong")
     elif msg.type_ == MessageType.CHAT:
 
       reply = msg.make_reply()
@@ -3096,8 +3111,8 @@ async def parse_xmpp_msg(msg):
     nick = msg.from_.resource
 
     ms = get_mucs(muc)
-    if main_group in ms:
-      await mt_send(text, name=f"X {nick}")
+    #  if main_group in ms:
+    #    await mt_send(text, name=f"X {nick}")
     for m in ms - {muc}:
       await send1(text, m, name=f"**X {nick}:** ")
 
