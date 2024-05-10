@@ -2072,7 +2072,7 @@ async def mt2tg(msg):
       #  for m in get_mucs(main_group):
       await send(text, main_group, name=name)
       if res:
-        await sendg(res, main_group)
+        await send(res, main_group)
 
     return
     msgd.update({"chat_id": chat_id})
