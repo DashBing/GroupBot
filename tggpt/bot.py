@@ -3354,7 +3354,7 @@ async def add_cmd():
   cmd_funs["clear"] = _
 
 
-async def run_cmd(text, src, name="test", from_):
+async def run_cmd(text, src, name="test", from_=None):
   if text[0:1] == ".":
     if text[1:2] == " ":
       return
@@ -3367,6 +3367,9 @@ async def run_cmd(text, src, name="test", from_):
     logger.info("got cmds: {}".format(cmds))
     cmd = cmds[0]
     if cmd in cmd_for_admin:
+      if from_ is None
+        await send("not allowed", src)
+        return
       if src in me:
         pass
       elif src in rooms:
@@ -3376,7 +3379,7 @@ async def run_cmd(text, src, name="test", from_):
           if i.direct_jid is None:
             err("没有权限查看jid: {src}")
             return
-          if (i.direct_jid.bare()) in me:
+          if i.nick == from_.resource and (i.direct_jid.bare()) in me:
             is_me = True
             break
         if is_me:
