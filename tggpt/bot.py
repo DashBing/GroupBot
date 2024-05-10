@@ -3327,7 +3327,7 @@ async def run_cmd(text, src, name="test"):
     if cmd in cmd_funs:
       res = await cmd_funs[cmd](cmds, src)
       if type(res) is tuple:
-        if res[1] == 1:
+        if res[0] == 1:
           mtmsgsg[src][res[1]].append(name)
         return res[0]
       return "%s" % res
