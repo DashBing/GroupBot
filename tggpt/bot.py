@@ -1178,7 +1178,7 @@ async def my_eval(cmd, client=None, msg=None, **args):
 async def send_cmd_to_bash(msg):
   """run cmd of text msg from mt by bash(old)"""
   if isinstance(msg, str):
-    shell_cmd = ["bash -l", SH_PATH + "/bcmd.sh"]
+    shell_cmd = ["bash", SH_PATH + "/bcmd.sh"]
     shell_cmd.append("just_get_reply")
     shell_cmd.append(msg)
   else:
@@ -1189,7 +1189,7 @@ async def send_cmd_to_bash(msg):
         msg[1] = "X " + msg[1]
       msg_mt = {
         "text": msg[2],
-        "username": "{}: ".format(msg[1]),
+        "username": "{}".format(msg[1]),
         "gateway": msg[0]
       }
       msg = msg_mt
@@ -1233,11 +1233,6 @@ async def send_cmd_to_bash(msg):
   res = await my_popen(shell_cmd, shell=False)
   #  logger.info(res)
   return res
-
-
-
-
-
 
 #  @exceptions_handler
 #  async def send2mt(client, message):
@@ -2570,7 +2565,7 @@ async def parse_msg(event):
       music_bot_state[src] += 1
 
       #  logger.info(f"{mtmsgs[qid]}搜索结果(回复序号)\n{text}")
-      res = f"{mtmsgs[qid][0]}: 搜索结果(回复序号)\n{text}"
+      res = f"{mtmsgs[qid][0]}搜索结果(回复序号)\n{text}"
       #  await mt_send_for_long_text(res, src)
       await send(res, src)
 
@@ -2591,7 +2586,7 @@ async def parse_msg(event):
         #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
       #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
         path = "https://%s/%s" % (DOMAIN, (parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
-      res = f"{mtmsgs[qid][0]}: {path}\n{text}"
+      res = f"{mtmsgs[qid][0]}{path}\n{text}"
       if msg.buttons:
         for i in get_buttons(msg.buttons):
           #  if isinstance(i, KeyboardButtonUrl):
@@ -2650,7 +2645,7 @@ async def parse_msg(event):
     else:
       src = gid_src[qid]
       mtmsgs = mtmsgsg[src]
-      res = f"{mtmsgs[qid][0]}: {text}"
+      res = f"{mtmsgs[qid][0]}{text}"
       #  await mt_send_for_long_text(res, src)
       await send(res, src)
       gid_src.pop(qid)
@@ -3177,7 +3172,7 @@ async def parse_xmpp_msg(msg):
       nick = msg.from_.resource
     else:
       nick = msg.from_.localpart
-  res = await run_cmd(text, get_src(msg), f"X {nick}", is_admin)
+  res = await run_cmd(text, get_src(msg), f"X {nick}: ", is_admin)
   if res is True:
     return
   if res:
@@ -3244,10 +3239,10 @@ async def add_cmd():
     elif cmds[1] == "json":
       rc = XB.summon(aioxmpp.RosterClient)
       return "json:\n%s" % rc.export_as_json()
-    else:
-      #  pc = XB.summon(aioxmpp.PresenceClient)
-      res = XB.get_most_available_stanza(cmds[1])
-      return res
+    #  else:
+    #    #  pc = XB.summon(aioxmpp.PresenceClient)
+    #    #  res = XB.get_most_available_stanza(cmds[1])
+    #    return res
   cmd_funs["list"] = _
   cmd_for_admin.add('list')
 
@@ -3274,7 +3269,6 @@ async def add_cmd():
     if cmds[1] == "clear":
       await clear_history()
       return "ok"
-
     text = ' '.join(cmds[1:])
     music_bot_state[src] = 1
     text="/search "+text
@@ -3285,7 +3279,6 @@ async def add_cmd():
   async def _(cmds, src):
     if len(cmds) == 1:
       return f"gpt bot\n.{cmds[0]} $text\n--\n所有数据来自telegram机器人: https://t.me/littleb_gptBOT"
-
     text = ' '.join(cmds[1:])
     mid = await send_to_tg_bot(text, gpt_bot, src)
     return 1, mid
@@ -3319,7 +3312,7 @@ async def add_cmd():
 
   async def _(cmds, src):
     if len(cmds) == 1:
-      return f"HuggingChat\n.{cmd} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: hg/di/lb/kl/you/bd/ai"
+      return f"HuggingChat\n.{cmds[0]} $text\n\n--\nhttps://github.com/xtekky/gpt4free\n问答: hg/di/lb/kl/you/bd/ai"
     text = ' '.join(cmds[1:])
     return await hg(text, provider=Provider.HuggingChat)
   cmd_funs["hg"] = _
@@ -3403,7 +3396,10 @@ async def run_cmd(text, src, name="test", is_admin=False):
         if res[0] == 1:
           mtmsgsg[src][res[1]][0] = name
         return True
-      return res
+      if res:
+        return res
+      else:
+        return True
       #  reply = msg.make_reply()
       #  reply.body[None] = "%s" % res
       #  await send(reply)
