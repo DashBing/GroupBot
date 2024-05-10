@@ -1820,7 +1820,6 @@ async def mt2tg(msg):
       return
     name = msgd["username"]
     text = msgd["text"]
-    name = msgd["username"]
     gateway = msgd["gateway"]
     if gateway == 'me':
       if text:
@@ -2269,8 +2268,8 @@ async def http(url, method="GET", return_headers=False, **kwargs):
         else:
             return html
 
-#  async def mt_send(text="null", username="bot", gateway="test", qt=None):
-async def mt_send(text="null", gateway="gateway1", username="C bot", qt=None):
+#  async def mt_send(text="null", name="bot", gateway="test", qt=None):
+async def mt_send(text="null", gateway="gateway1", name="C bot", qt=None):
 
   MT_API_RES = "127.0.0.1:4247"
   #  if gateway == 'me':
@@ -2289,13 +2288,13 @@ async def mt_send(text="null", gateway="gateway1", username="C bot", qt=None):
 #    username = "T " + username
 
   if qt:
-    username = "{}\n\n{}".format("> " + "\n> ".join(qt.splitlines()), username)
+    username = "{}\n\n{}".format("> " + "\n> ".join(qt.splitlines()), name)
 
 
 #  gateway="gateway0"
   data = {
     "text": "{}".format(text),
-    "username": "{}".format(username),
+    "username": "{}".format(name),
     "gateway": "{}".format(gateway)
   }
   res = await http(url, method="POST", json=data)
@@ -2312,7 +2311,7 @@ async def mt_send(text="null", gateway="gateway1", username="C bot", qt=None):
 #      #  os.system(f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
 #      return await asyncio.to_thread(os.system, f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
 
-async def mt_send_for_long_text(text, gateway="gateway1", username="C bot", *args, **kwargs):
+async def mt_send_for_long_text(text, gateway="gateway1", name="C bot", *args, **kwargs):
   need_delete = False
   if os.path.exists(f"{SH_PATH}"):
     fn = f"{SH_PATH}/SM_LOCK_{gateway}"
@@ -2326,10 +2325,10 @@ async def mt_send_for_long_text(text, gateway="gateway1", username="C bot", *arg
   async with queue_lock:
     for i in split_long_text(text):
       #  if await send(i, *args, **kwargs) is not True:
-      if await mt_send(i, gateway=gateway, username=username, *args, **kwargs) is not True:
+      if await mt_send(i, gateway=gateway, name=username, *args, **kwargs) is not True:
         break
-      #  await mt_send(res, gateway=gateway, username="")
-      username = ""
+      #  await mt_send(res, gateway=gateway, name="")
+      name = ""
 
   if need_delete:
     os.remove(fn)
@@ -3083,7 +3082,7 @@ async def parse_xmpp_msg(msg):
 
     ms = get_mucs(muc)
     if main_group in ms:
-      await mt_send(text, username=f"**X {nick}:** ")
+      await mt_send(text, name=f"**X {nick}:** ")
     for m in ms - {muc}:
       await send1(text, m, name=f"**X {nick}:** ")
 
@@ -3257,7 +3256,7 @@ async def run_cmd(text, src, name="test"):
       res+="\n\n> %s\n%s" % (url, await get_title(url))
     if res is not None:
       return res
-      #  await mt_send(res, gateway=gateway, username="titlebot")
+      #  await mt_send(res, gateway=gateway, name="titlebot")
 
   return False
 
