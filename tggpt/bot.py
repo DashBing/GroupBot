@@ -1635,7 +1635,7 @@ async def send(text, jid=None, client=None, gpm=False, room=None, correct=False,
     #  info(f"send1: {jid=} {text=}")
     msg = text
     if name:
-      msg.body[None] = f"{name}{text}"
+      msg.body[None] = f"{name}{msg.body[None]}"
     if msg.type_ == MessageType.GROUPCHAT:
     #    if msg.to.resource is not None:
       if not msg.to.is_bare:
