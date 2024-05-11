@@ -1012,7 +1012,7 @@ async def update_stderr(data):
 
 async def my_popen(cmd,
            shell=True,
-           max_time=512,
+           max_time=64,
            client=None,
            msg=None,
            combine=True,
@@ -3437,7 +3437,8 @@ async def add_cmd():
   async def _(cmds, src):
     if len(cmds) == 1:
       return f"bash\n.{cmds[0]} $code"
-    cmds[0] = "bash"
+    #  cmds[0] = "bash"
+    cmds.pop(0)
     res = await my_popen(cmds, shell=True)
     return f"{res}"
   cmd_funs["sh"] = _
@@ -4374,7 +4375,7 @@ async def amain():
       asyncio.create_task(mt_read(), name="mt_read")
 
       logger.info(f"初始化完成")
-      send_log("启动成功，用时: {int(time.time()-start_time)}s")
+      send_log(f"启动成功，用时: {int(time.time()-start_time)}s")
 
       await UB.run_until_disconnected()
 
