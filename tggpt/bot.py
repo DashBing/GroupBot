@@ -164,7 +164,7 @@ def err(text):
   #  raise ValueError
 
 
-def warn(text, more=True):
+def warn(text, more=False):
   if type(text) is not str:
     text = "{text=}"
   #  lineno = currentframe().f_back.f_lineno
@@ -4226,7 +4226,7 @@ async def xmppbot():
       for i in done:
         if i.result() is False:
           groups.add(i.name)
-
+          warn(f"进群失败一次: {i.name}")
 
   global allright_task
   allright_task -= 1
