@@ -1614,7 +1614,8 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
       nick = fromname
       room = None
       muc = str(msg.to.bare())
-      if muc in rooms:
+      if False:
+      #  if muc in rooms:
         room = rooms[muc]
         #  await set_nick(room, fromname)
         if room.me.nick != fromname:
@@ -4183,7 +4184,7 @@ async def join(jid=None, nick=None, client=None):
           pass
         rooms[jid] = room
         room.on_muc_role_request.connect(on_muc_role_request)
-        room.on_nick_changed.connect(on_nick_changed)
+        #  room.on_nick_changed.connect(on_nick_changed)
         return room
       
       except TimeoutError as e:
