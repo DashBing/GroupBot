@@ -1817,6 +1817,7 @@ async def send1(text, jid=None, *args, **kwargs):
 #    #  return await client.send(msg)
 #    return await _send(msg, client, gpm=gpm)
 
+
 async def sendg(text, jid=None, room=None, client=None, name="**C bot:** "):
   if name:
     text = f"{name}{text}"
@@ -1832,13 +1833,13 @@ async def sendg(text, jid=None, room=None, client=None, name="**C bot:** "):
   msg.body[None] = text
 
   if room is not None:
-    return await _send(msg, room=room)
+    return await __send(msg, room=room)
 
   if client is None:
     client = XB
   #  return await client.send(msg)
   if client is not None:
-    return await _send(msg, client)
+    return await __send(msg, client)
     #  res = room.send_message(msg)
     #  # https://docs.zombofant.net/aioxmpp/devel/api/public/muc.html?highlight=room#aioxmpp.muc.Room.send_message
     #  if asyncio.iscoroutine(res):
@@ -3452,7 +3453,7 @@ async def add_cmd():
     if len(cmds) == 1:
       return f"python\n.{cmds[0]} $code"
     cmds.pop(0)
-    res = await my_exec(cmds)
+    res = await my_exec(' '.join(cmds))
     return f"{res}"
   cmd_funs["py"] = _
   cmd_for_admin.add('py')
