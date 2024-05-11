@@ -3158,12 +3158,14 @@ async def parse_xmpp_msg(msg):
     return
 
   if msg.xep0203_delay:
-    pprint(msg.xep0203_delay)
-    #  if time.time() - msg.xep0203_delay.stamp.timestamp() > 60:
-    #    print("跳过旧消息: %s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, msg.xep0203_delay))
-    #    return
-    #  else:
-    #    print("旧消息: %s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, time.time() - msg.xep0203_delay.stamp.timestamp()))
+    delay = msg.xep0203_delay[0]
+    pprint(delay)
+    await asyncio.sleep(1)
+    if time.time() - delay.stamp.timestamp() > 60:
+      print("跳过旧消息: %s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, delay))
+      return
+    else:
+      print("旧消息: %s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, time.time() - delay.stamp.timestamp()))
   if msg.type_ == MessageType.NORMAL:
     logger.info("normal msg")
   if msg.type_ == MessageType.GROUPCHAT:
