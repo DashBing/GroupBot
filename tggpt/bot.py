@@ -3235,7 +3235,7 @@ async def parse_xmpp_msg(msg):
       if i.direct_jid is None:
         err("没有权限查看jid: {muc}")
         return
-      if i.nick == msg.from_.resource and (i.direct_jid.bare()) in me:
+      if i.nick == msg.from_.resource and str(i.direct_jid.bare()) in me:
         is_admin = True
         logger.info(f"admin msg: {text[:16]}")
         break
