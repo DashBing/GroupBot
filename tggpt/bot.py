@@ -4046,7 +4046,7 @@ async def join(jid=None, nick=None, client=None):
         else:
           pass
         rooms[jid] = room
-        room.on_muc_role_request.connect()
+        room.on_muc_role_request.connect(on_muc_role_request)
         return room
       
       except TimeoutError as e:
