@@ -1062,7 +1062,7 @@ async def my_popen(cmd,
       errs = data[1]
 
       #  tmp = "...\n" + res + "\n==\nE: \n" + errs
-      tmp = "...\n%s\n==\nE: ?\n%s" % (res, errs)
+      tmp = "...\n%s\n---\nE: ?\n%s" % (res, errs)
       tmp = tmp.strip()
       #  if msg:
       #    if tmp != msg.text:
@@ -1094,7 +1094,12 @@ async def my_popen(cmd,
       if errs:
         errs = errs.decode("utf-8")
 
+
     logger.info(f"popen exit: {p.returncode} {res=} {errs=}")
+    if res:
+      res = res.strip()
+    if errs:
+      errs = errs.strip()
     #  if res:
     #    if isinstance(res, bytes):
     #      res = res.decode("utf-8")
@@ -1110,13 +1115,10 @@ async def my_popen(cmd,
     #    if return_msg:
     #      return msg
     if combine:
-      if p.returncode:
-        res = "%s\n==\nE: %s" % (res, p.returncode)
-        if errs:
-          res += "\n%s" % errs
-      else:
-        if errs:
-          res = "%s\n==\nE:\n%s" % (res, errs)
+      if errs:
+        res = "%s\n---\nE: %s\n%s" % (res, p.returncode, errs)
+      elif p.returncode:
+        res = "%s\n---\nE: %s" % (res, p.returncode)
       return res
     else:
       return p.returncode, res, errs
@@ -1207,7 +1209,8 @@ async def send_cmd_to_bash(msg):
     logger.info("run cmd: {}".format(msg))
     #  shell_cmd="{} {} {} {}"
     #  shell_cmd = ["bash -l", SH_PATH + "/bcmd.sh"]
-    shell_cmd = ["bash", SH_PATH + "/bcmd.sh"]
+    #  shell_cmd = ["bash", SH_PATH + "/bcmd.sh"]
+    shell_cmd = [SH_PATH + "/bcmd.sh"]
     shell_cmd.append(msg["gateway"])
     shell_cmd.append(msg["username"])
     shell_cmd.append(msg["text"])
