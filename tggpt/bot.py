@@ -1578,6 +1578,21 @@ def get_src(msg):
 
 
 
+#  async def set_nick(room, nick):
+  #  if msg.type_ == MessageType.GROUPCHAT:
+
+
+
+on_nick_changed_futures = {}
+
+async def on_nick_changed(member, old_nick, new_nick, *, muc_status_codes=set(), **kwargs):
+  #  jid = str(member.conversation_jid)
+  jid = str(member.direct_jid)
+  muc = str(member.conversation_jid.bare())
+  if (jid, muc) in on_nick_changed_futures:
+    on_nick_changed_futures[(jid, muc)].set_result(new_nick)
+  logger.info(f"nick changed: {jid} {str(member.conversation_jid)} {old_nick} -> {new_nick}")
+
 
 
 send_locks = {}
@@ -1593,21 +1608,29 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
     send_locks[jid] = asyncio.Lock()
   async with send_locks[jid]:
     msg.from_ = None
-    if name is not None or fromname is not None:
+    if fromname is None and name:
+      fromname = name
+    if fromname is not None:
+      nick = fromname
       room = None
-      if str(msg.to.bare()) in rooms:
-        room = rooms[str(msg.to.bare())]
-        #  if msg.type_ == MessageType.GROUPCHAT:
-        if fromname is not None and room.me.nick != fromname:
+      muc = str(msg.to.bare())
+      if muc in rooms:
+        room = rooms[muc]
+        #  await set_nick(room, fromname)
+        if room.me.nick != fromname:
+          fu = asyncio.Future()
+          #  jid = str(room.me.direct_jid)
+          on_fromname_changed_futures[(myjid, muc)] = fu
           await room.set_nick(fromname)
-          logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} -> {fromname}")
-        elif name is not None and room.me.nick != name:
-          await room.set_nick(name)
-          logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} -> {name}")
+          await fu
+          if fu.result() == fromname:
+            logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} -> {nick}")
+          else:
+            logger.info(f"failed: set nick: {str(msg.to.bare())} {room.me.nick} -> {nick}")
         else:
-          logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} = {name}")
-      #  else:
-      #    logger.info(f"not found room: {msg.to}")
+          logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
+        #  else:
+        #    logger.info(f"not found room: {msg.to}")
 
     text = None
     for i in msg.body:
@@ -4159,6 +4182,7 @@ async def join(jid=None, nick=None, client=None):
           pass
         rooms[jid] = room
         room.on_muc_role_request.connect(on_muc_role_request)
+        room.on_nick_changed(on_nick_changed)
         return room
       
       except TimeoutError as e:
