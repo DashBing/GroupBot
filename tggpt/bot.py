@@ -1585,7 +1585,7 @@ def get_src(msg):
 
 on_nick_changed_futures = {}
 
-def on_nick_changed(member, old_nick, new_nick, *, muc_status_codes=set(), **kwargs):
+async def on_nick_changed(member, old_nick, new_nick, *, muc_status_codes=set(), **kwargs):
   #  jid = str(member.conversation_jid)
   jid = str(member.direct_jid.bare())
   muc = str(member.conversation_jid.bare())
@@ -4183,7 +4183,7 @@ async def join(jid=None, nick=None, client=None):
           pass
         rooms[jid] = room
         room.on_muc_role_request.connect(on_muc_role_request)
-        room.on_nick_changed(on_nick_changed)
+        room.on_nick_changed.connect(on_nick_changed)
         return room
       
       except TimeoutError as e:
