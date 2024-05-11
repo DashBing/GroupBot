@@ -1181,7 +1181,7 @@ async def my_exec(cmd, client=None, msg=None, **args):
 async def my_eval(cmd, client=None, msg=None, **args):
   res = eval(cmd)
   logger.info(str(res) + "\n" + str(type(res)))
-  res = await cmd_answer(str(res), client=client, msg=msg, **args)
+  #  res = await cmd_answer(str(res), client=client, msg=msg, **args)
   return res
 
 
@@ -3442,8 +3442,8 @@ async def add_cmd():
       return f"bash\n.{cmds[0]} $code"
     #  cmds[0] = "bash"
     cmds.pop(0)
-    #  res = await my_popen(cmds, shell=True)
-    res = await my_popen(cmds)
+    #  res = await my_popen(cmds)
+    res = await my_popen(' '.join(cmds), shell=True)
     return f"{res}"
   cmd_funs["sh"] = _
   cmd_for_admin.add('sh')
@@ -3456,6 +3456,15 @@ async def add_cmd():
     return f"{res}"
   cmd_funs["py"] = _
   cmd_for_admin.add('py')
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"python eval()\n.{cmds[0]} $code"
+    cmds.pop(0)
+    res = await my_eval(' '.join(cmds))
+    return f"{res}"
+  cmd_funs["eval"] = _
+  cmd_for_admin.add('eval')
 
   async def _(cmds, src):
     if len(cmds) == 1:
