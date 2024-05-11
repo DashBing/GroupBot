@@ -2102,7 +2102,7 @@ async def mt2tg(msg):
       if res:
         await mt_send(res, gateway)
       if name:
-        await send(text, main_group, name=f"**{name[-2]}:** ")
+        await send(text, main_group, name=f"**{name[:-2]}:** ")
       else:
         await send(text, main_group, name=name)
       if res:
