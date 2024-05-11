@@ -1591,7 +1591,7 @@ def on_nick_changed(member, old_nick, new_nick, *, muc_status_codes=set(), **kwa
   muc = str(member.conversation_jid.bare())
   if (jid, muc) in on_nick_changed_futures:
     on_nick_changed_futures[(jid, muc)].set_result(new_nick)
-  logger.info(f"nick changed: {jid} {str(member.conversation_jid)} {old_nick} -> {new_nick}")
+  #  logger.info(f"nick changed: {jid} {muc} {old_nick} -> {new_nick}")
 
 
 
@@ -1620,7 +1620,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
         room = rooms[muc]
         #  await set_nick(room, fromname)
         if room.me.nick != fromname:
-          logger.info(f"set nick...: {muc} {room.me.nick} -> {nick}")
+          #  logger.info(f"set nick...: {muc} {room.me.nick} -> {nick}")
           fu = asyncio.Future()
           #  jid = str(room.me.direct_jid)
           on_nick_changed_futures[(myjid, muc)] = fu
@@ -1629,9 +1629,9 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
           if fu.result() == fromname:
             logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} -> {nick}")
           else:
-            logger.info(f"failed: set nick: {str(msg.to.bare())} {room.me.nick} -> {nick}")
+            #  logger.info(f"failed: set nick: {str(msg.to.bare())} {room.me.nick} -> {nick}")
         else:
-          logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
+          #  logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
         #  else:
         #    logger.info(f"not found room: {msg.to}")
 
@@ -4122,10 +4122,11 @@ async def _bypass(msg):
 
 
 
-async def on_muc_role_request(form, submission_future):
+def on_muc_role_request(form, submission_future):
   print(form)
   print(submission_future)
-  await send(f"发言申请: {form}")
+  #  await send(f"发言申请: {form}")
+  send_log(f"发言申请: {form}")
 
 
 #  test_group = 'ipfs@salas.suchat.org'
