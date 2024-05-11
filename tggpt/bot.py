@@ -3071,8 +3071,10 @@ def get_nick(msg):
     nick = msg.from_.localpart
   elif msg.type_ == MessageType.GROUPCHAT:
     nick = msg.from_.resource
+  elif msg.type_ == PresenceType.AVAILABLE:
+    nick = msg.from_.resource
   else:
-    return "{msg.type_=}"
+    return f"{msg.type_=}"
   if  re.match(r'^[a-zA-Z0-9_\.]+$', nick):
     pass
   elif len(nick) < 4:
