@@ -1019,7 +1019,7 @@ async def my_popen(cmd,
            **args):
   
   async with bash_lock:
-    logger.info(cmd)
+    #  logger.info(cmd)
     #    args=shlex.split(message.text.split(' ',1)[1])
 
     #    p=subprocess.Popen(message.text.split(' '))
@@ -1048,7 +1048,7 @@ async def my_popen(cmd,
     data = ["", "", p]
     asyncio.create_task(update_stdouterr(data))
     await asyncio.sleep(1)
-    logger.info(str(p.args))
+    logger.info(f"popen cmd: {p.args}")
     while True:
       #  if p.poll() == None and p.returncode == None:
       if p.poll() == None:
