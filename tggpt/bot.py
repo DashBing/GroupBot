@@ -151,7 +151,7 @@ def info2(s):
 
 def send_log(text):
   #  asyncio.create_task(mt_send_for_long_text(text))
-  asyncio.create_task(send1(text))
+  asyncio.create_task(send(text))
 
 def err(text):
   if type(text) is not str:
@@ -1685,7 +1685,7 @@ async def send(text, jid=None, *args, **kwargs):
     else:
       #  err(f"需要jid")
       #  return False
-      jid = log_channel
+      jid = log_group_private
   else:
     muc = jid
   if isinstance(text, aioxmpp.Message):
@@ -1726,8 +1726,7 @@ async def send1(text, jid=None, *args, **kwargs):
     #  if name:
     #    text = f"{name}{text}"
     if jid is None:
-      #  jid = ME
-      jid = log_channel
+      jid = ME
     else:
       if type(jid) is JID:
         jid = get_jid(jid, True)
