@@ -1587,7 +1587,7 @@ on_nick_changed_futures = {}
 
 async def on_nick_changed(member, old_nick, new_nick, *, muc_status_codes=set(), **kwargs):
   #  jid = str(member.conversation_jid)
-  jid = str(member.direct_jid)
+  jid = str(member.direct_jid.bare())
   muc = str(member.conversation_jid.bare())
   if (jid, muc) in on_nick_changed_futures:
     on_nick_changed_futures[(jid, muc)].set_result(new_nick)
@@ -1622,6 +1622,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
           #  jid = str(room.me.direct_jid)
           on_fromname_changed_futures[(myjid, muc)] = fu
           await room.set_nick(fromname)
+          logger.info(f"set nick...: {muc} {room.me.nick} -> {nick}")
           await fu
           if fu.result() == fromname:
             logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} -> {nick}")
