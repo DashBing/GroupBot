@@ -3237,6 +3237,7 @@ async def parse_xmpp_msg(msg):
         return
       if i.nick == msg.from_.resource and (i.direct_jid.bare()) in me:
         is_admin = True
+        logger.info(f"admin msg: {text[:16]}")
         break
     if msg.type_ == MessageType.CHAT:
       if is_admin is False:
@@ -3246,11 +3247,15 @@ async def parse_xmpp_msg(msg):
           await send(reply)
         logger.info("已忽略群内私聊: %s" % msg)
         return
+    if is_admin is False:
+      logger.info(f"group msg: {text[:16]}")
+
   elif muc == myjid:
     #  print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
     return
   elif muc in me:
     is_admin = True
+    logger.info(f"admin pm msg: {text[:16]}")
     pass
   else:
     print("未知来源的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
