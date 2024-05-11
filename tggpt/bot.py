@@ -1119,7 +1119,10 @@ async def my_popen(cmd,
         res = "%s\n---\nE: %s\n%s" % (res, p.returncode, errs)
       elif p.returncode:
         res = "%s\n---\nE: %s" % (res, p.returncode)
-      return res
+      if res:
+        return res
+      else:
+        return "None"
     else:
       return p.returncode, res, errs
 
@@ -3439,7 +3442,8 @@ async def add_cmd():
       return f"bash\n.{cmds[0]} $code"
     #  cmds[0] = "bash"
     cmds.pop(0)
-    res = await my_popen(cmds, shell=True)
+    #  res = await my_popen(cmds, shell=True)
+    res = await my_popen(cmds)
     return f"{res}"
   cmd_funs["sh"] = _
   cmd_for_admin.add('sh')
