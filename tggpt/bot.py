@@ -2106,7 +2106,7 @@ async def mt2tg(msg):
       else:
         await send(text, main_group, name=name)
       if res:
-        await send(f"{name}{res}", main_group)
+        await send(f"{res}", main_group)
       #  for m in get_mucs(main_group):
       #    if await send1(f"{name}{text}", m, name) is False:
       #      return
