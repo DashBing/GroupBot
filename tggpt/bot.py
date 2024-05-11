@@ -3436,7 +3436,7 @@ async def add_cmd():
 
   async def _(cmds, src):
     if len(cmds) == 1:
-      return f"bash\n.{cmds[0]} $jid/$nick"
+      return f"bash\n.{cmds[0]} $code"
     cmds[0] = "bash"
     res = await my_popen(cmds, shell=True)
     return f"{res}"
@@ -3445,7 +3445,7 @@ async def add_cmd():
 
   async def _(cmds, src):
     if len(cmds) == 1:
-      return f"python\n.{cmds[0]} $jid/$nick"
+      return f"python\n.{cmds[0]} $code"
     cmds.pop(0)
     res = await my_exec(cmds)
     return f"{res}"
