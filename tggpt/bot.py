@@ -46,6 +46,7 @@ import asyncio
 
 import logging
 from functools import wraps
+import pickle
 
 import os
 
@@ -1348,7 +1349,27 @@ async def load_config():
             config[i] = tmp
 
 
+
+
     globals().update(config)
+
+
+    global gd
+    try:
+      data = await read_file(f"{HOME}/xmpp.data", "rb")
+      if data:
+        gd = pickle.loads(data)
+        logger.info(f"loaded gd: {gd}")
+      else:
+        gd = {}
+    except Exception as e:
+      err(e)
+      gd = {}
+
+    if "users" not in gd:
+      gd["users"] = {}
+
+    globals().update(gd)
 
     return True
   except Exception as e:
@@ -1358,7 +1379,9 @@ async def load_config():
 #  asyncio.run(load_config())
 
 
-
+async def save_data():
+  data = pickle.dumps(gd)
+  return await write_file(data, f"{HOME}/xmpp.data", "wb")
 
 import aiohttp
 from aiohttp.client_exceptions import ClientPayloadError, ClientConnectorError
@@ -3043,6 +3066,20 @@ def msg_in(msg):
 
 
 
+def get_nick(msg):
+  if msg.type_ == MessageType.CHAT:
+    nick = msg.from_.localpart
+  elif msg.type_ == MessageType.GROUPCHAT:
+    nick = msg.from_.resource
+  else:
+    return "{msg.type_=}"
+  if  re.match(r'^[a-zA-Z0-9_\.]+$', nick):
+    pass
+  elif len(nick) < 4:
+    pass
+  else:
+    nick = f"{nick[:3]}..."
+  return nick
 
 
 @exceptions_handler
@@ -3066,6 +3103,17 @@ async def parse_xmpp_msg(msg):
       if msg.xep0045_muc_user:
         item = msg.xep0045_muc_user.items[0]
         print(f"上线: {msg.from_} {item.jid} {item.role} {item.affiliation} {msg.status}")
+        muc = str(msg.from_.bare())
+        if muc not in users:
+          users[muc] = {}
+        jids = users[muc]
+        jid = str(item.jid.bare())
+        if jid in jids:
+          pass
+        else:
+          welcome=f"欢迎 {get_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
+          await send(welcome, muc, correct=True)
+        jids[jid] = [msg.from_.resource, item.affiliation, item.role]
       else:
         print(f"上线: {msg.from_} {msg.status}")
       #  for i in msg.xep0045_muc_user.items:
@@ -4064,6 +4112,7 @@ async def amain():
   finally:
     logger.info("正在收尾...")
     await stop()
+    await save_data()
     #  loop.run_until_complete(stop())
     #  loop.run_until_complete(loop.shutdown_asyncgens())
     #  loop.close()
