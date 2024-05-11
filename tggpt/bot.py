@@ -3227,18 +3227,18 @@ async def parse_xmpp_msg(msg):
     if msg.from_.resource == rooms[muc].me.nick:
       #  print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
       return
-    if msg.type_ == MessageType.CHAT:
-      if muc not in rooms:
-        err("not found room: {muc}")
+    if muc not in rooms:
+      err("not found room: {muc}")
+      return
+    room = rooms[muc]
+    for i in room.members:
+      if i.direct_jid is None:
+        err("没有权限查看jid: {muc}")
         return
-      room = rooms[muc]
-      for i in room.members:
-        if i.direct_jid is None:
-          err("没有权限查看jid: {muc}")
-          return
-        if i.nick == msg.from_.resource and (i.direct_jid.bare()) in me:
-          is_admin = True
-          break
+      if i.nick == msg.from_.resource and (i.direct_jid.bare()) in me:
+        is_admin = True
+        break
+    if msg.type_ == MessageType.CHAT:
       if is_admin is False:
         if text == "ping":
           reply = msg.make_reply()
