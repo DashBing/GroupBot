@@ -230,7 +230,6 @@ def generand(N=4, M=None, *, no_uppercase=False):
   return ''.join(random.choice(l) for x in range(N))
 
 
-
 def split_long_text(text, msg_max_length=500):
   texts = []
   if len(text.encode()) > msg_max_length:
@@ -1573,8 +1572,28 @@ async def __send(msg, client=None, room=None, name=None, correct=False):
           logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} = {name}")
       #  else:
       #    logger.info(f"not found room: {msg.to}")
-    for text in split_long_text(msg.body[None], 2000):
 
+    text = None
+    for i in msg.body:
+      text = msg.body[i]
+      break
+
+    if text:
+      msgs = []
+      for text in split_long_text(text, 2000):
+        if msgs:
+          msg = aioxmpp.Message(
+              to=msg.to,
+              type_=msg.type_,
+          )
+        msg.body[None] = text
+        msgs.append(msg)
+        if correct:
+          break
+    else:
+      msgs = [msg]
+
+    for msg in msgs:
       add_id_to_msg(msg, correct)
 
       if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or str(msg.to.bare()) not in my_groups:
@@ -1615,11 +1634,6 @@ async def __send(msg, client=None, room=None, name=None, correct=False):
       else:
         warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
       return False
-      msg = aioxmpp.Message(
-          to=msg.to,
-          type_=msg.type_,
-      )
-      msg.body = msg.body
 
 
 async def send(text, jid=None, *args, **kwargs):
