@@ -3341,25 +3341,82 @@ def get_jid_room(cmds, src):
     if muc not in rooms:
       return f"没找到room: {muc}"
     room = rooms[muc]
+    jids = users[muc]
     jid = None
     for i in room.members:
-      if i.nick == nick:
-        jid = i.direct_jid
-        if jid:
-          break
-        else:
-          return f"空jid: {jid=}"
+      if i.direct_jid:
+        if str(i.direct_jid.bare()) not in jids:
+          jids[str(i.direct_jid.bare())] = [i.nick, i.affiliation, i.role]
+        if i.nick == nick:
+          jid = str(i.direct_jid.bare())
     if jid is None:
-      return f"没找到: {nick}"
+      return f"没找到: {nick}\nmuc: {muc}"
   elif "@" in cmds[1] and src in my_groups:
     jid = cmds[1]
     muc = src
     if muc not in rooms:
       return f"没找到room: {muc}"
     room = rooms[muc]
+    jids = users[muc]
+    if jid in jids:
+      pass
+    else:
+      for i in room.members:
+        if i.direct_jid:
+          if str(i.direct_jid.bare()) not in jids:
+            jids[str(i.direct_jid.bare())] = [i.nick, i.affiliation, i.role]
+      if jid not in jids:
+        return f"没找到该jid对应的nick: {jid}\nmuc: {muc}"
+      else:
+        pass
   else:
     return "格式不正确"
   return jid, room
+
+def get_nick_room(cmds, src):
+  if src in my_groups or '/' in cmds[1]:
+    muc = cmds[1].split('/', 1)[0]
+    if muc in my_groups:
+      nick = cmds[1].split('/', 1)[1]
+    else:
+      muc = src
+      nick = cmds[1]
+    if muc not in rooms:
+      return f"没找到room: {muc}"
+    room = rooms[muc]
+    is_ok = False
+    for i in room.members:
+      if i.nick == nick:
+        is_ok = True
+        break
+    if is_ok is False:
+      return f"没找到nick: {nick}\nmuc: {muc}"
+  elif "@" in cmds[1] and src in my_groups:
+    muc = src
+    if muc not in rooms:
+      return f"没找到room: {muc}"
+    jid = cmds[1]
+    room = rooms[muc]
+    jids = users[muc]
+    if jid in jids:
+      nick = jids[jid][0]
+    else:
+      for i in room.members:
+        if i.direct_jid:
+          if str(i.direct_jid.bare()) not in jids:
+            jids[str(i.direct_jid.bare())] = [i.nick, i.affiliation, i.role]
+      if jid not in jids:
+        return f"没找到该jid对应的nick: {jid}\nmuc: {muc}"
+      else:
+        nick = jids[jid][0]
+        
+  else:
+    return "格式不正确"
+  return nick, room
+
+
+
+
 
 
 
@@ -3376,19 +3433,12 @@ async def add_cmd():
   async def _(cmds, src):
     if len(cmds) == 1:
       return f"{cmds[0]}\n.{cmds[0]} $jid/$nick"
-    if src in my_groups or '/' in cmds[1]:
-      muc = cmds[1].split('/', 1)[0]
-      if muc in my_groups:
-        nick = cmds[1].split('/', 1)[1]
-      else:
-        muc = src
-        nick = cmds[1]
-    else:
-      return "格式不正确"
-    if muc not in rooms:
-      return f"没找到room: {muc}"
+    res = get_jid_room(cmds, src)
+    if type(res) is str:
+      return res
+    nick = res[0]
+    room = res[1]
     reason = "cmds[0]命令"
-    room = rooms[muc]
     for i in room.members:
       if i.nick == nick:
         res = await room.ban(i, reason)
@@ -3399,19 +3449,12 @@ async def add_cmd():
   async def _(cmds, src):
     if len(cmds) == 1:
       return f"临时踢出\n.{cmds[0]} $jid/$nick"
-    if src in my_groups or '/' in cmds[1]:
-      muc = cmds[1].split('/', 1)[0]
-      if muc in my_groups:
-        nick = cmds[1].split('/', 1)[1]
-      else:
-        muc = src
-        nick = cmds[1]
-    else:
-      return "格式不正确"
-    if muc not in rooms:
-      return f"没找到room: {muc}"
+    res = get_jid_room(cmds, src)
+    if type(res) is str:
+      return res
+    nick = res[0]
+    room = res[1]
     reason = "cmds[0]命令"
-    room = rooms[muc]
     for i in room.members:
       if i.nick == nick:
         res = await room.kick(i, reason)
@@ -3422,22 +3465,12 @@ async def add_cmd():
   async def _(cmds, src):
     if len(cmds) == 1:
       return f"禁言\n.{cmds[0]} $jid/$nick"
-    if src in my_groups or '/' in cmds[1]:
-      muc = cmds[1].split('/', 1)[0]
-      if muc in my_groups:
-        nick = cmds[1].split('/', 1)[1]
-      else:
-        muc = src
-        nick = cmds[1]
-    else:
-      return "格式不正确"
-    if muc not in rooms:
-      return f"没找到room: {muc}"
+    res = get_jid_room(cmds, src)
+    if type(res) is str:
+      return res
+    nick = res[0]
+    room = res[1]
     reason = "cmds[0]命令"
-
-    if muc not in rooms:
-      return f"没找到room: {muc}"
-    room = rooms[muc]
     #  if len(cmds) == 2 or cmds[2] == "v":
     #    role = "vistor"
     #  #  elif cmds[2] == "a":
@@ -3505,8 +3538,12 @@ async def add_cmd():
         if muc not in rooms:
           return f"没找到room: {muc}"
         room = rooms[muc]
+        jids = users[muc]
         tmp = []
         for i in room.members:
+          if i.direct_jid:
+            if str(i.direct_jid.bare()) not in jids:
+              jids[str(i.direct_jid.bare())] = [i.nick, i.affiliation, i.role]
           tmp.append(i.nick)
         return "列表(%s)\n%s" % (len(tmp), '\n'.join(tmp))
       else:
