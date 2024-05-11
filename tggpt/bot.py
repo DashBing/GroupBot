@@ -4247,7 +4247,7 @@ async def xmppbot():
           continue
         if len(tasks) == 0:
           break
-      warn(f"等待任务队列: {len(tasks)}/{len(groups)}")
+      logger.info(f"等待任务队列: {len(tasks)}/{len(groups)}")
       done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
       for i in done:
         if i.result() is False:
@@ -4375,7 +4375,6 @@ async def amain():
 
       logger.info(f"初始化完成")
       send_log("启动成功，用时: {int(time.time()-start_time)}s")
-      del start_time
 
       await UB.run_until_disconnected()
 
