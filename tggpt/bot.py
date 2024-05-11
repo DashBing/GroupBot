@@ -4219,6 +4219,17 @@ async def xmppbot():
 
 
 async def init():
+
+  #  LOGGER.addFilter(NoParsingFilter())
+
+  # https://stackoverflow.com/questions/17275334/what-is-a-correct-way-to-filter-different-loggers-using-python-logging
+  for handler in logging.root.handlers:
+    #  handler.addFilter(logging.Filter('foo'))
+    #  handler.addFilter(NoParsingFilter())
+    f = NoParsingFilter()
+    handler.addFilter(f)
+    logger.info(f"added filter to: {handler}")
+
   #  await init_aiohttp_session()
   global session
   session = aiohttp.ClientSession()
@@ -4235,16 +4246,6 @@ async def init():
 
   global loop
   loop = asyncio.get_event_loop()
-
-  #  #  LOGGER.addFilter(NoParsingFilter())
-  #
-  #  # https://stackoverflow.com/questions/17275334/what-is-a-correct-way-to-filter-different-loggers-using-python-logging
-  #  for handler in logging.root.handlers:
-  #    #  handler.addFilter(logging.Filter('foo'))
-  #    #  handler.addFilter(NoParsingFilter())
-  #    f = NoParsingFilter()
-  #    handler.addFilter(f)
-  #    logger.info(f"added filter to: {handler}")
 
 
   return True
