@@ -4195,7 +4195,7 @@ async def xmppbot():
     #  mucsv = client.summon(aioxmpp.MUCClient)
     ms = my_groups
     #  for coro in asyncio.as_completed(map(join, my_groups),
-    tasks = []
+    tasks = set()
     groups = my_groups.copy()
     while True:
       #  await join(test_group)
@@ -4217,7 +4217,7 @@ async def xmppbot():
         if groups:
           muc = groups.pop()
           t = asyncio.create_task(join(muc), name=muc)
-          tasks.append(t)
+          tasks.add(t)
           continue
         if len(tasks) == 0:
           break
