@@ -2100,14 +2100,21 @@ async def mt2tg(msg):
     if gateway == "gateway1":
       res = await run_cmd(text, gateway, name)
       if res:
-        await mt_send(res, gateway)
+        await mt_send_for_long_text(res, gateway)
+      #  if name:
+      #    await send(text, main_group, name=f"**{name[:-2]}:** ")
+      #  else:
+      #    await send(text, main_group, name=name)
+      #  if res:
+      #    await send(f"{res}", main_group)
       if name:
-        await send(text, main_group, name=f"**{name[:-2]}:** ")
-      else:
-        await send(text, main_group, name=name)
-      if res:
-        await send(f"{res}", main_group)
-      #  for m in get_mucs(main_group):
+        name = f"**{name[:-2]}:** "
+      for m in get_mucs(main_group):
+        if await send(text, m, name=name) is False:
+          return
+        if res:
+          if await send(f"{res}", m) is False:
+            return
       #    if await send1(f"{name}{text}", m, name) is False:
       #      return
       #    if res:
