@@ -1348,12 +1348,7 @@ async def load_config():
               tmp.append(set(j))
             config[i] = tmp
 
-
-
-
     globals().update(config)
-
-
     global gd
     try:
       data = await read_file(f"{HOME}/xmpp.data", "rb")
@@ -1859,41 +1854,42 @@ async def mt_read():
   #  session = await init_aiohttp_session()
   logger.info("start read msg from mt api...")
   while True:
-    line = ""
-    try:
-      #  async with session.get(url, timeout=0, read_bufsize=2**20) as resp:
-        #  print("N: mt api init ok")
-        #  resp.content.read()
-        #  async for line in resp.content:
-        #    #  logger.info("I: got a msg from mt api: %s", len(line))
-        #    #  print(f"I: original msg: %s" % line)
-        #    await mt2tg(line)
+    async with aiohttp.ClientSession() as session:
+      try:
+        line = ""
+        #  async with session.get(url, timeout=0, read_bufsize=2**20) as resp:
+          #  print("N: mt api init ok")
+          #  resp.content.read()
+          #  async for line in resp.content:
+          #    #  logger.info("I: got a msg from mt api: %s", len(line))
+          #    #  print(f"I: original msg: %s" % line)
+          #    await mt2tg(line)
 
-      async with session.get(url, timeout=0, read_bufsize=2**18*4, chunked=True) as resp:
-        logger.info("N: mt api init ok")
-        #  await mt_send("N: tggpt: mt read: init ok")
-        line = b""
-        async for data, end_of_http_chunk in resp.content.iter_chunks():
-          line += data
-          #  logger.info(f"read bytes: {len(data)}")
-          if end_of_http_chunk:
-            #  logger.info(f"read end: {len(line)}")
-            # # print(buffer)
-            # await send_mt_msg_to_queue(buffer, queue)
-            #  await mt2tg(line)
-            asyncio.create_task(mt2tg(line))
-            line = b""
+        async with session.get(url, timeout=0, read_bufsize=2**18*4, chunked=True) as resp:
+          logger.info("N: mt api init ok")
+          #  await mt_send("N: tggpt: mt read: init ok")
+          line = b""
+          async for data, end_of_http_chunk in resp.content.iter_chunks():
+            line += data
+            #  logger.info(f"read bytes: {len(data)}")
+            if end_of_http_chunk:
+              #  logger.info(f"read end: {len(line)}")
+              # # print(buffer)
+              # await send_mt_msg_to_queue(buffer, queue)
+              #  await mt2tg(line)
+              asyncio.create_task(mt2tg(line))
+              line = b""
 
-    except ClientPayloadError:
-      logger.warning("mt closed, data lost")
-    except ClientConnectorError:
-      logger.warning("mt api is not ok, retry...")
-    except ValueError as e:
-      #  print("W: maybe a msg is lost")
-      err(f"{e=}: {line}")
-    except Exception as e:
-      err(f"{e=}: {line}")
-    await asyncio.sleep(3)
+      except ClientPayloadError:
+        logger.warning("mt closed, data lost")
+      except ClientConnectorError:
+        logger.warning("mt api is not ok, retry...")
+      except ValueError as e:
+        #  print("W: maybe a msg is lost")
+        err(f"{e=}: {line}")
+      except Exception as e:
+        err(f"{e=}: {line}")
+      await asyncio.sleep(3)
 
 
 #  @exceptions_handler
@@ -2242,103 +2238,104 @@ async def http(url, method="GET", return_headers=False, *args, **kwargs):
   if "User-agent" not in headers:
     headers.update({'User-agent': UA})
 
-  try:
-    res = await session.request(url=url, method=method, *args, **kwargs)
-  except asyncio.TimeoutError as e:
-    #  raise
-    res = f"{e=}"
-  async with res:
-    # print("All:", res)
-#    res.raise_for_status()
-    if res.status == 304:
-      logger.warning(f"W: http status: {res.status} {res.reason} {res.url=}")
-      logger.warning("ignore: {}".format(await res.text()))
-      if return_headers:
-        return None, res.headers
-      else:
-        return
-    if res.status != 200:
-#      logger.error(res)
-#      put(str(res))
-      #  html = f"E: error http status: {res.status} {res.reason} url: {res.url} headers: {res.headers}"
-      html = f"E: error http status: {res.status} {res.reason} url: {res.url}"
+  async with aiohttp.ClientSession() as session:
+    try:
+      res = await session.request(url=url, method=method, *args, **kwargs)
+    except asyncio.TimeoutError as e:
+      #  raise
+      res = f"{e=}"
+    async with res:
+      # print("All:", res)
+  #    res.raise_for_status()
+      if res.status == 304:
+        logger.warning(f"W: http status: {res.status} {res.reason} {res.url=}")
+        logger.warning("ignore: {}".format(await res.text()))
+        if return_headers:
+          return None, res.headers
+        else:
+          return
+      if res.status != 200:
+  #      logger.error(res)
+  #      put(str(res))
+        #  html = f"E: error http status: {res.status} {res.reason} url: {res.url} headers: {res.headers}"
+        html = f"E: error http status: {res.status} {res.reason} url: {res.url}"
+        if return_headers:
+          return html, res.headers
+        else:
+          return html
+      # print(type(res))
+      # print("Status:", res.status)
+      # print("Content-type:", res.headers['content-type'])
+      # print("Content-Encoding:", res.headers['Content-Encoding'])
+      # print('Content-Length:', res.headers['Content-Length'])
+      # print('Content-Length:', res.headers['Content-Length'])
+        # print(res)
+        # print("q: ", res.request_info)
+        # print("a: ",  res.headers)
+
+      try:
+        data = None
+        html = None
+        if 'Content-Length' in res.headers and int(res.headers['Content-Length']) > HTTP_RES_MAX_BYTES:
+          logger.warning(f"skip: too big: {url}")
+        elif 'Transfer-Encoding' in res.headers and res.headers['Transfer-Encoding'] == "chunked":
+
+          #  async for data in res.content.iter_chunked(HTTP_RES_MAX_BYTES):
+          #    break
+          data = b""
+          async for tmp, _ in res.content.iter_chunks():
+            data += tmp
+            if len(data) > HTTP_RES_MAX_BYTES:
+              break
+        else:
+        # if res.headers['content-type'] == "text/plain; charset=utf-8":
+          #  data = await res.read()
+          data = await res.content.read(HTTP_RES_MAX_BYTES)
+
+        if data is not None:
+          try:
+            if "Content-Encoding" in res.headers:
+              if res.headers['Content-Encoding'] == "gzip":
+                logger.info("use gzip")
+                data = gzip.decompress(data)
+              elif res.headers['Content-Encoding'] == "deflate":
+                logger.info("use zlib")
+                data = zlib.decompress(data)
+              elif res.headers['Content-Encoding'] == "br":
+                logger.info("use br")
+                data = brotli.decompress(data)
+              elif res.headers['Content-Encoding']:
+                err("url: {}\nunknown encoding: {}".format(url, res.headers['Content-Encoding']))
+                #  return data
+          except Exception as e:
+            warn(f"解压时出现错误: {e=}")
+
+          # if "text/plain" in res.headers['content-type']:
+          if "text" in res.headers['content-type']:
+            # return await res.text()
+            html = data.decode(errors='ignore')
+          else:
+            # html = data.decode(errors='ignore')
+            #  html = data.decode()
+            html = data
+      except ClientPayloadError as e:
+        try:
+          if "data" in locals():
+            html = data.decode(errors='ignore')
+          else:
+            html = None
+        except UnicodeDecodeError as e:
+          html = None
+      except UnicodeDecodeError as e:
+        print("res.headers: ",  res.headers)
+        print(f"res data: {data[:64]} 64/{len(data)}")
+        logger.warning(f"decode failed: {url}\nerror: {e}")
+        #  put(f"decode failed: {url}")
+        html = data
       if return_headers:
         return html, res.headers
       else:
         return html
-    # print(type(res))
-    # print("Status:", res.status)
-    # print("Content-type:", res.headers['content-type'])
-    # print("Content-Encoding:", res.headers['Content-Encoding'])
-    # print('Content-Length:', res.headers['Content-Length'])
-    # print('Content-Length:', res.headers['Content-Length'])
-      # print(res)
-      # print("q: ", res.request_info)
-      # print("a: ",  res.headers)
-
-    try:
-      data = None
-      html = None
-      if 'Content-Length' in res.headers and int(res.headers['Content-Length']) > HTTP_RES_MAX_BYTES:
-        logger.warning(f"skip: too big: {url}")
-      elif 'Transfer-Encoding' in res.headers and res.headers['Transfer-Encoding'] == "chunked":
-
-        #  async for data in res.content.iter_chunked(HTTP_RES_MAX_BYTES):
-        #    break
-        data = b""
-        async for tmp, _ in res.content.iter_chunks():
-          data += tmp
-          if len(data) > HTTP_RES_MAX_BYTES:
-            break
-      else:
-      # if res.headers['content-type'] == "text/plain; charset=utf-8":
-        #  data = await res.read()
-        data = await res.content.read(HTTP_RES_MAX_BYTES)
-
-      if data is not None:
-        try:
-          if "Content-Encoding" in res.headers:
-            if res.headers['Content-Encoding'] == "gzip":
-              logger.info("use gzip")
-              data = gzip.decompress(data)
-            elif res.headers['Content-Encoding'] == "deflate":
-              logger.info("use zlib")
-              data = zlib.decompress(data)
-            elif res.headers['Content-Encoding'] == "br":
-              logger.info("use br")
-              data = brotli.decompress(data)
-            elif res.headers['Content-Encoding']:
-              err("url: {}\nunknown encoding: {}".format(url, res.headers['Content-Encoding']))
-              #  return data
-        except Exception as e:
-          warn(f"解压时出现错误: {e=}")
-
-        # if "text/plain" in res.headers['content-type']:
-        if "text" in res.headers['content-type']:
-          # return await res.text()
-          html = data.decode(errors='ignore')
-        else:
-          # html = data.decode(errors='ignore')
-          #  html = data.decode()
-          html = data
-    except ClientPayloadError as e:
-      try:
-        if "data" in locals():
-          html = data.decode(errors='ignore')
-        else:
-          html = None
-      except UnicodeDecodeError as e:
-        html = None
-    except UnicodeDecodeError as e:
-      print("res.headers: ",  res.headers)
-      print(f"res data: {data[:64]} 64/{len(data)}")
-      logger.warning(f"decode failed: {url}\nerror: {e}")
-      #  put(f"decode failed: {url}")
-      html = data
-    if return_headers:
-      return html, res.headers
-    else:
-      return html
 
 async def mt_send(*args, **kwargs):
   asyncio.create_task(_mt_send(*args, **kwargs))
@@ -3045,7 +3042,7 @@ def get_mucs(muc):
 @exceptions_handler
 def msg_out(msg):
   if not allright.is_set():
-    logger.info("skip msg: allright is not ok: {msg.from_}: {msg.body}")
+    #  logger.info("skip msg: allright is not ok: {msg.from_}: {msg.body}")
     return
   #  pprint(msg)
   j = get_msg_jid(msg)
@@ -3069,7 +3066,7 @@ def msg_out(msg):
 #  def gmsg(msg, member, source, **kwargs):
 def msg_in(msg):
   if not allright.is_set():
-    logger.info("skip msg: allright is not ok")
+    #  logger.info("skip msg: allright is not ok")
     return
   #  if hasattr(msg, "xep0203_delay"):
   #    pprint(msg.xep0203_delay)
@@ -4189,32 +4186,50 @@ async def xmppbot():
       aioxmpp.make_security_layer(password)
   )
   logger.info(f"已导入新账户: {myjid} password: {password[:4]}...")
-  if await load_config():
-    if await login():
-      logger.info(f"join all groups...\n%s" % my_groups)
-      #  await join()
-      global mucsv
-      #  mucsv = client.summon(aioxmpp.MUCClient)
-      ms = my_groups
-      while True:
-        #  await join(test_group)
-        #  break
-        tmp = []
-        for i in ms:
-          if await join(i):
-            continue
-          tmp.append(i)
-        if tmp:
-          logger.info(f"无法进入的群组: {tmp}")
-          #  await mt_send_for_long_text(f"无法进入的群组: {tmp}")
-          ms = tmp
-          await asyncio.sleep(5)
-        else:
+  t = asyncio.create_task(load_config())
+  if await login():
+    await t
+    logger.info(f"join all groups...\n%s" % my_groups)
+    #  await join()
+    global mucsv
+    #  mucsv = client.summon(aioxmpp.MUCClient)
+    ms = my_groups
+    #  for coro in asyncio.as_completed(map(join, my_groups),
+    tasks = []
+    groups = my_groups.copy()
+    while True:
+      #  await join(test_group)
+      #  break
+      #  tmp = []
+      #  for i in ms:
+      #    if await join(i):
+      #      continue
+      #    tmp.append(i)
+      #  if tmp:
+      #    logger.info(f"无法进入的群组: {tmp}")
+      #    #  await mt_send_for_long_text(f"无法进入的群组: {tmp}")
+      #    ms = tmp
+      #    await asyncio.sleep(5)
+      #  else:
+      #    break
+
+      if len(tasks) < 4:
+        if groups:
+          muc = groups.pop()
+          t = asyncio.create_task(join(muc), name=muc)
+          tasks.append(t)
+          continue
+        if len(tasks) == 0:
           break
+      done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+      for i in done:
+        if i.result() is False:
+          groups.add(i.name)
+
 
   global allright_task
   allright_task -= 1
-
+  await add_cmd()
 
 
 async def init():
@@ -4230,8 +4245,8 @@ async def init():
     logger.info(f"added filter to: {handler}")
 
   #  await init_aiohttp_session()
-  global session
-  session = aiohttp.ClientSession()
+  #  global session
+  #  session = aiohttp.ClientSession()
 
   global SH_PATH, DOMAIN
   SH_PATH = await read_file()
@@ -4245,8 +4260,6 @@ async def init():
 
   global loop
   loop = asyncio.get_event_loop()
-
-
   return True
 
 
@@ -4271,49 +4284,32 @@ async def amain():
       return
 
     global allright_task
+
     allright_task += 1
     asyncio.create_task(xmppbot(), name="xmppbot")
+
+    global UB
+    from telethon import TelegramClient
+    api_id = int(get_my_key("TELEGRAM_API_ID"))
+    api_hash = get_my_key("TELEGRAM_API_HASH")
+    #  client = TelegramClient('anon', api_id, api_hash)
+    #  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, proxy=("socks5", '172.23.176.1', 6084), loop=loop)
+    #  global loop
+    #  loop = asyncio.get_event_loop()
+    #  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=loop)
+    UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash)
+
+    #  del api_id
+    #  del api_hash
+    #  #  del bot_token
+
     #  allright_task += 1
     #  asyncio.create_task(other_init())
 
     # with UB:
     #  loop.run_until_complete(run())
 
-    global MY_NAME, MY_ID, UB
-
-    api_id = int(get_my_key("TELEGRAM_API_ID"))
-    api_hash = get_my_key("TELEGRAM_API_HASH")
-
-    from telethon import TelegramClient
-    #  client = TelegramClient('anon', api_id, api_hash)
-    #  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, proxy=("socks5", '172.23.176.1', 6084), loop=loop)
-
-    global UB
-    #  global loop
-    #  loop = asyncio.get_event_loop()
-    #  UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash, loop=loop)
-    UB = TelegramClient('%s/.ssh/%s.session' % (HOME, "telegram_userbot"), api_id, api_hash)
-
-    del api_id
-    del api_hash
-    #  del bot_token
-
-
-    @UB.on(events.NewMessage(incoming=True))
-    @UB.on(events.MessageEdited(incoming=True))
-    async def _(event):
-      if not allright.is_set():
-        logger.info("skip msg: allright is not ok")
-        return
-      asyncio.create_task(parse_tg_msg(event))
-
-    @UB.on(events.NewMessage(outgoing=True))
-    async def _(event):
-      if not allright.is_set():
-        logger.info("skip msg: allright is not ok")
-        return
-      asyncio.create_task(parse_tg_out_msg(event))
-
+    global MY_NAME, MY_ID
     #  await UB.start()
     async with UB:
       me = await UB.get_me()
@@ -4322,11 +4318,24 @@ async def amain():
       MY_NAME = me.username
       print(f"{MY_NAME}: {MY_ID}")
 
+      @UB.on(events.NewMessage(incoming=True))
+      @UB.on(events.MessageEdited(incoming=True))
+      async def _(event):
+        if not allright.is_set():
+          #  logger.info("skip msg: allright is not ok")
+          return
+        asyncio.create_task(parse_tg_msg(event))
+
+      @UB.on(events.NewMessage(outgoing=True))
+      async def _(event):
+        if not allright.is_set():
+          #  logger.info("skip msg: allright is not ok")
+          return
+        asyncio.create_task(parse_tg_out_msg(event))
+
       UB.parse_mode = 'md'
 
-      await add_cmd()
       #  await mt_send("gpt start")
-      asyncio.create_task(mt_read(), name="mt_read")
       while True:
         if allright_task > 0:
           logger.info(f"等待初始化完成，剩余任务数：{allright_task}")
@@ -4334,9 +4343,11 @@ async def amain():
           continue
         allright.set()
         break
-      logger.info(f"初始化完成")
-      send_log("已重启")
 
+      asyncio.create_task(mt_read(), name="mt_read")
+
+      logger.info(f"初始化完成")
+      send_log("hi")
 
       await UB.run_until_disconnected()
 
@@ -4351,6 +4362,7 @@ async def amain():
   #    raise e
   finally:
     logger.info("正在收尾...")
+    await send("bye")
     await stop()
     await save_data()
     #  loop.run_until_complete(stop())
