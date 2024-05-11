@@ -3663,7 +3663,7 @@ async def run_cmd(text, src, name="test", is_admin=False):
     res = False
     if cmd in cmd_for_admin:
       if is_admin is False:
-        return
+        return "仅管理可用"
       res = True
     elif cmd in cmd_funs:
       res = True
