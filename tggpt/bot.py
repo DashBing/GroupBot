@@ -432,9 +432,9 @@ def _exceptions_handler(e, *args, **kwargs):
   #  logger.warning(res)
   #  asyncio.create_task(mt_send(res))
   #  asyncio.create_task(send(res, ME))
-  send_log(res)
-  #  logger.warning(res)
   logger.warning(res, exc_info=True, stack_info=True)
+  #  logger.warning(res)
+  send_log(res)
   return res
 
 
@@ -1602,6 +1602,7 @@ async def _send(*args, **kwargs):
   asyncio.create_task(__send(*args, **kwargs))
   return True
 
+@exceptions_handler
 async def __send(msg, client=None, room=None, name=None, correct=False, fromname=None):
   jid = str(msg.to)
   if jid not in send_locks:
@@ -1614,16 +1615,16 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
       nick = fromname
       room = None
       muc = str(msg.to.bare())
-      if False:
-      #  if muc in rooms:
+      #  if False:
+      if muc in rooms:
         room = rooms[muc]
         #  await set_nick(room, fromname)
         if room.me.nick != fromname:
+          logger.info(f"set nick...: {muc} {room.me.nick} -> {nick}")
           fu = asyncio.Future()
           #  jid = str(room.me.direct_jid)
-          on_fromname_changed_futures[(myjid, muc)] = fu
+          on_nick_changed_futures[(myjid, muc)] = fu
           await room.set_nick(fromname)
-          logger.info(f"set nick...: {muc} {room.me.nick} -> {nick}")
           await fu
           if fu.result() == fromname:
             logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} -> {nick}")
@@ -4184,7 +4185,7 @@ async def join(jid=None, nick=None, client=None):
           pass
         rooms[jid] = room
         room.on_muc_role_request.connect(on_muc_role_request)
-        #  room.on_nick_changed.connect(on_nick_changed)
+        room.on_nick_changed.connect(on_nick_changed)
         return room
       
       except TimeoutError as e:
