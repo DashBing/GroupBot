@@ -1578,17 +1578,21 @@ async def _send(*args, **kwargs):
   asyncio.create_task(__send(*args, **kwargs))
   return True
 
-async def __send(msg, client=None, room=None, name=None, correct=False):
+async def __send(msg, client=None, room=None, name=None, correct=False, fromname=None):
   jid = str(msg.to)
   if jid not in send_locks:
     send_locks[jid] = asyncio.Lock()
   async with send_locks[jid]:
-    if name is not None:
+    msg.from_ = None
+    if name is not None or fromname is not None:
       room = None
       if str(msg.to.bare()) in rooms:
         room = rooms[str(msg.to.bare())]
         #  if msg.type_ == MessageType.GROUPCHAT:
-        if room.me.nick != name:
+        if fromname is not None and room.me.nick != fromname:
+          await room.set_nick(fromname)
+          logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} -> {fromname}")
+        elif name is not None and room.me.nick != name:
           await room.set_nick(name)
           logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} -> {name}")
         else:
@@ -3072,7 +3076,10 @@ def get_nick(msg):
   elif msg.type_ == MessageType.GROUPCHAT:
     nick = msg.from_.resource
   elif msg.type_ == PresenceType.AVAILABLE:
-    nick = msg.from_.resource
+    if str(msg.from_.bare()) in my_groups:
+      nick = msg.from_.resource
+    else:
+      nick = msg.from_.localpart
   else:
     return f"{msg.type_=}"
   if  re.match(r'^[a-zA-Z0-9_\.]+$', nick):
@@ -3082,7 +3089,6 @@ def get_nick(msg):
   else:
     nick = f"{nick[:3]}..."
   return nick
-
 
 @exceptions_handler
 async def parse_xmpp_msg(msg):
@@ -3106,16 +3112,19 @@ async def parse_xmpp_msg(msg):
         item = msg.xep0045_muc_user.items[0]
         print(f"上线: {msg.from_} {item.jid} {item.role} {item.affiliation} {msg.status}")
         muc = str(msg.from_.bare())
-        if muc not in users:
-          users[muc] = {}
-        jids = users[muc]
-        jid = str(item.jid.bare())
-        if jid in jids:
-          pass
-        else:
-          welcome=f"欢迎 {get_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
-          await send(welcome, muc, correct=True)
-        jids[jid] = [msg.from_.resource, item.affiliation, item.role]
+        if muc in my_groups:
+          if muc not in users:
+            users[muc] = {}
+          jids = users[muc]
+          jid = str(item.jid.bare())
+          if jid in jids:
+            j = jids[jid]
+            if i[0] != msg.from_.resource:
+              await send("改名通知: {i[0]} -> {get_nick(msg)}", muc, fromname=".ban {muc}/{msg.from_.resource}")
+          else:
+            welcome=f"欢迎 {get_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
+            await send(welcome, muc, fromname=".ban {muc}/{msg.from_.resource}")
+            jids[jid] = [msg.from_.resource, item.affiliation, item.role]
       else:
         print(f"上线: {msg.from_} {msg.status}")
       #  for i in msg.xep0045_muc_user.items:
