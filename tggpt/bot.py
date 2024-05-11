@@ -2101,7 +2101,10 @@ async def mt2tg(msg):
       res = await run_cmd(text, gateway, name)
       if res:
         await mt_send(res, gateway)
-      await send(f"{name}{text}", main_group, name=name.strip())
+      if name:
+        await send(text, main_group, name=f"**{name[-2]}:** ")
+      else:
+        await send(text, main_group, name=name)
       if res:
         await send(f"{name}{res}", main_group)
       #  for m in get_mucs(main_group):
@@ -4139,7 +4142,7 @@ async def xmppbot():
           tmp.append(i)
         if tmp:
           logger.info(f"无法进入的群组: {tmp}")
-          await mt_send_for_long_text(f"无法进入的群组: {tmp}")
+          #  await mt_send_for_long_text(f"无法进入的群组: {tmp}")
           ms = tmp
           await asyncio.sleep(5)
         else:
