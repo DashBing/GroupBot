@@ -1755,7 +1755,7 @@ async def send1(text, jid=None, *args, **kwargs):
     #  if len(texts) > 1:
     #    await add_id_to_msg(msg, False)
     #  else:
-    msg.body[None] = i
+    msg.body[None] = text
     if await _send(msg, *args, **kwargs) is not True:
       return False
     #  if correct:
