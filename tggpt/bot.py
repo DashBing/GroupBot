@@ -1451,7 +1451,7 @@ async def ai_img(prompt, model="gemini"):
       g4fclient = Client_g4f()
     #  response = client.images.generate(
       #  response = await client.images.generate(
-      response = await asyncio.to_thread(g4fclient.images.generate,
+    response = await asyncio.to_thread(g4fclient.images.generate,
       model=model,
       #  prompt="a white siamese cat",
       prompt=prompt,
@@ -1471,7 +1471,7 @@ async def ai(prompt, provider=Provider.You, model=models.default, proxy=None):
     #  response = client.chat.completions.create(
       #  response = await client.chat.completions.create(
       #  s = await asyncio.to_thread(run_ocr, img=res)
-      response = await asyncio.to_thread(g4fclient.chat.completions.create,
+    response = await asyncio.to_thread(g4fclient.chat.completions.create,
       model=model,
       messages=[{"role": "user", "content": prompt}],
       provider=provider,
@@ -1683,8 +1683,9 @@ async def send(text, jid=None, *args, **kwargs):
       else:
         pass
     else:
-      err(f"需要jid")
-      return False
+      #  err(f"需要jid")
+      #  return False
+      jid = log_channel
   else:
     muc = jid
   if isinstance(text, aioxmpp.Message):
@@ -1725,7 +1726,8 @@ async def send1(text, jid=None, *args, **kwargs):
     #  if name:
     #    text = f"{name}{text}"
     if jid is None:
-      jid = ME
+      #  jid = ME
+      jid = log_channel
     else:
       if type(jid) is JID:
         jid = get_jid(jid, True)
@@ -3070,8 +3072,10 @@ def msg_in(msg):
 
 
 
-def get_nick(msg):
-  if msg.type_ == MessageType.CHAT:
+def hide_nick(msg):
+  if type(msg) is str:
+    nick = msg
+  elif msg.type_ == MessageType.CHAT:
     nick = msg.from_.localpart
   elif msg.type_ == MessageType.GROUPCHAT:
     nick = msg.from_.resource
@@ -3119,12 +3123,14 @@ async def parse_xmpp_msg(msg):
           jid = str(item.jid.bare())
           if jid in jids:
             j = jids[jid]
-            if i[0] != msg.from_.resource:
-              await send("改名通知: {i[0]} -> {get_nick(msg)}", muc, fromname=".ban {muc}/{msg.from_.resource}")
+            if j[0] != msg.from_.resource:
+              await send("改名通知: hide_nick({j[0]}) -> {hide_nick(msg)}", muc, fromname=".ban {muc}/{msg.from_.resource}")
+              j[0] = msg.from_.resource
           else:
-            welcome=f"欢迎 {get_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
+            welcome=f"欢迎 {hide_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
             await send(welcome, muc, fromname=".ban {muc}/{msg.from_.resource}")
             jids[jid] = [msg.from_.resource, item.affiliation, item.role]
+          jids[jid][3] = int(time.time())
       else:
         print(f"上线: {msg.from_} {msg.status}")
       #  for i in msg.xep0045_muc_user.items:
@@ -3300,6 +3306,42 @@ async def parse_xmpp_msg(msg):
 
 
 
+def get_jid_room(cmds, src):
+  if len(cmds) == 1:
+    return f"{cmds[0]}\n.{cmds[0]} $jid/$nick"
+  if src in my_groups '/' in cmds[1]:
+    muc = cmds[1].split('/', 1)[0]
+    if muc in my_groups:
+      nick = cmds[1].split('/', 1)[1]
+    else:
+      muc = src
+      nick = cmds[1]
+    if muc not in rooms:
+      return f"没找到room: {muc}"
+    room = rooms[muc]
+    jid = None
+    for i in room.members:
+      if i.nick == nick:
+        jid = i.direct_jid
+        if jid:
+          break
+        else:
+          return f"空jid: {jid=}"
+    if jid is None:
+      return f"没找到: {nick}"
+  elif "@" in cmds[1] and src in my_groups:
+    jid = cmds[1]
+    muc = src
+    if muc not in rooms:
+      return f"没找到room: {muc}"
+    room = rooms[muc]
+  else:
+    return "格式不正确"
+  return jid, room
+
+
+
+
 cmd_funs = {}
 cmd_for_admin = set()
 
@@ -3308,6 +3350,112 @@ async def add_cmd():
   async def _(cmds, src):
     return "pong"
   cmd_funs["ping"] = _
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"{cmds[0]}\n.{cmds[0]} $jid/$nick"
+    if src in my_groups '/' in cmds[1]:
+      muc = cmds[1].split('/', 1)[0]
+      if muc in my_groups:
+        nick = cmds[1].split('/', 1)[1]
+      else:
+        muc = src
+        nick = cmds[1]
+    else:
+      return "格式不正确"
+    if muc not in rooms:
+      return f"没找到room: {muc}"
+    reason = "cmds[0]命令"
+    room = rooms[muc]
+    for i in room.members:
+      if i.nick == nick:
+        res = await room.ban(i, reason)
+        return f"ok: {res}"
+  cmd_funs["ban"] = _
+  cmd_for_admin.add('ban')
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"{cmds[0]}\n.{cmds[0]} $jid/$nick"
+    if src in my_groups '/' in cmds[1]:
+      muc = cmds[1].split('/', 1)[0]
+      if muc in my_groups:
+        nick = cmds[1].split('/', 1)[1]
+      else:
+        muc = src
+        nick = cmds[1]
+    else:
+      return "格式不正确"
+    if muc not in rooms:
+      return f"没找到room: {muc}"
+    reason = "cmds[0]命令"
+    room = rooms[muc]
+    for i in room.members:
+      if i.nick == nick:
+        res = await room.kick(i, reason)
+        return f"ok: {res}"
+  cmd_funs["kick"] = _
+  cmd_for_admin.add('kick')
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"{cmds[0]}\n.{cmds[0]} $jid/$nick"
+    if src in my_groups '/' in cmds[1]:
+      muc = cmds[1].split('/', 1)[0]
+      if muc in my_groups:
+        nick = cmds[1].split('/', 1)[1]
+      else:
+        muc = src
+        nick = cmds[1]
+    else:
+      return "格式不正确"
+    if muc not in rooms:
+      return f"没找到room: {muc}"
+    reason = "cmds[0]命令"
+
+    if muc not in rooms:
+      return f"没找到room: {muc}"
+    room = rooms[muc]
+    #  if len(cmds) == 2 or cmds[2] == "v":
+    #    role = "vistor"
+    #  #  elif cmds[2] == "a":
+    #  #    role = "moderator"
+    #  else:
+    #    role = "participant"
+    role = "vistor"
+    res = await room.muc_set_role(nick, role, reason)
+    return f"ok: {res}"
+  cmd_funs["wtf"] = _
+  cmd_for_admin.add('wtf')
+
+  async def _(cmds, src):
+    reason = "cmds[0]命令"
+    res = get_jid_room(cmds, src)
+    if type(res) is str:
+      return res
+    jid = res[0]
+    room = res[1]
+    affiliation = "outcast"
+    res = await room.muc_set_affiliation(jid, affiliation, reason)
+    return f"ok: {res}"
+  cmd_funs["sb"] = _
+  cmd_for_admin.add('sb')
+
+  async def _(cmds, src):
+    reason = "cmds[0]命令"
+    res = get_jid_room(cmds, src)
+    if type(res) is str:
+      return res
+    jid = res[0]
+    room = res[1]
+    affiliation = "member"
+    res = await room.muc_set_affiliation(jid, affiliation, reason)
+    return f"ok: {res}"
+  cmd_funs["op"] = _
+  cmd_for_admin.add('op')
+  cmd_funs["ub"] = _
+  cmd_for_admin.add('ub')
+
 
   async def _(cmds, src):
     if len(cmds) == 1:
@@ -3836,6 +3984,11 @@ async def _bypass(msg):
 
 
 
+async def on_muc_role_request(form, submission_future):
+  print(form)
+  print(submission_future)
+  await send(f"发言申请: {form}")
+
 
 #  test_group = 'ipfs@salas.suchat.org'
 rooms = {}
@@ -3893,6 +4046,7 @@ async def join(jid=None, nick=None, client=None):
         else:
           pass
         rooms[jid] = room
+        room.on_muc_role_request.connect()
         return room
       
       except TimeoutError as e:
