@@ -1209,8 +1209,8 @@ async def send_cmd_to_bash(msg):
     logger.info("run cmd: {}".format(msg))
     #  shell_cmd="{} {} {} {}"
     #  shell_cmd = ["bash -l", SH_PATH + "/bcmd.sh"]
-    #  shell_cmd = ["bash", SH_PATH + "/bcmd.sh"]
-    shell_cmd = [SH_PATH + "/bcmd.sh"]
+    shell_cmd = ["bash", SH_PATH + "/bcmd.sh"]
+    #  shell_cmd = [SH_PATH + "/bcmd.sh"]
     shell_cmd.append(msg["gateway"])
     shell_cmd.append(msg["username"])
     shell_cmd.append(msg["text"])
