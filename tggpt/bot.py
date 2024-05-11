@@ -3138,11 +3138,11 @@ async def parse_xmpp_msg(msg):
           if jid in jids:
             j = jids[jid]
             if j[0] != msg.from_.resource:
-              await send(f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}", muc, fromname=".ban {muc}/{msg.from_.resource}")
+              await send(f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}", muc, fromname=f".ban {muc}/{msg.from_.resource}")
               j[0] = msg.from_.resource
           else:
             welcome=f"欢迎 {hide_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
-            await send(welcome, muc, fromname=".ban {muc}/{msg.from_.resource}")
+            await send(welcome, muc, fromname=f".ban {muc}/{msg.from_.resource}")
             jids[jid] = [msg.from_.resource, item.affiliation, item.role]
           if len(jids[jid]) > 3:
             jids[jid][3] = int(time.time())
@@ -3326,8 +3326,6 @@ async def parse_xmpp_msg(msg):
 
 
 def get_jid_room(cmds, src):
-  if len(cmds) == 1:
-    return f"{cmds[0]}\n.{cmds[0]} $jid/$nick"
   if src in my_groups or '/' in cmds[1]:
     muc = cmds[1].split('/', 1)[0]
     if muc in my_groups:
@@ -3395,7 +3393,7 @@ async def add_cmd():
 
   async def _(cmds, src):
     if len(cmds) == 1:
-      return f"{cmds[0]}\n.{cmds[0]} $jid/$nick"
+      return f"临时踢出\n.{cmds[0]} $jid/$nick"
     if src in my_groups or '/' in cmds[1]:
       muc = cmds[1].split('/', 1)[0]
       if muc in my_groups:
@@ -3418,7 +3416,7 @@ async def add_cmd():
 
   async def _(cmds, src):
     if len(cmds) == 1:
-      return f"{cmds[0]}\n.{cmds[0]} $jid/$nick"
+      return f"禁言\n.{cmds[0]} $jid/$nick"
     if src in my_groups or '/' in cmds[1]:
       muc = cmds[1].split('/', 1)[0]
       if muc in my_groups:
@@ -3448,6 +3446,8 @@ async def add_cmd():
   cmd_for_admin.add('wtf')
 
   async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"驱逐\n.{cmds[0]} $jid/$nick"
     reason = "cmds[0]命令"
     res = get_jid_room(cmds, src)
     if type(res) is str:
@@ -3461,6 +3461,8 @@ async def add_cmd():
   cmd_for_admin.add('sb')
 
   async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"解除驱逐（添加成员身份）\n.{cmds[0]} $jid/$nick"
     reason = "cmds[0]命令"
     res = get_jid_room(cmds, src)
     if type(res) is str:
@@ -3493,8 +3495,19 @@ async def add_cmd():
 
   async def _(cmds, src):
     if len(cmds) == 1:
-      rc = XB.summon(aioxmpp.RosterClient)
-      return "items: %s" % rc.items
+      if src in my_groups:
+        muc = src
+        if muc not in rooms:
+          return f"没找到room: {muc}"
+        room = rooms[muc]
+        tmp = []
+        for i in room.members:
+          tmp.append(i.nick)
+        return "列表(%s)\n%s" % (len(tmp), '\n'.join(tmp))
+      else:
+        return "need muc"
+      #  rc = XB.summon(aioxmpp.RosterClient)
+      #  return "items: %s" % rc.items
     elif cmds[1] == "json":
       rc = XB.summon(aioxmpp.RosterClient)
       return "json:\n%s" % rc.export_as_json()
