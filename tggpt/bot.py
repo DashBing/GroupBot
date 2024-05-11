@@ -1573,47 +1573,53 @@ async def __send(msg, client=None, room=None, name=None, correct=False):
           logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} = {name}")
       #  else:
       #    logger.info(f"not found room: {msg.to}")
+    for text in split_long_text(msg.body[None], 2000):
 
-    add_id_to_msg(msg, correct)
+      add_id_to_msg(msg, correct)
 
-    if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or str(msg.to.bare()) not in my_groups:
-    #  if gpm is False:
-      if client is not None:
-        # https://docs.zombofant.net/aioxmpp/devel/api/public/node.html?highlight=client#aioxmpp.Client.send
-        res = client.send(msg)
-      elif room:
-        # https://docs.zombofant.net/aioxmpp/devel/api/public/muc.html?highlight=room#aioxmpp.muc.Room.send_message
-        res = room.send_message(msg)
+      if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or str(msg.to.bare()) not in my_groups:
+      #  if gpm is False:
+        if client is not None:
+          # https://docs.zombofant.net/aioxmpp/devel/api/public/node.html?highlight=client#aioxmpp.Client.send
+          res = client.send(msg)
+        elif room:
+          # https://docs.zombofant.net/aioxmpp/devel/api/public/muc.html?highlight=room#aioxmpp.muc.Room.send_message
+          res = room.send_message(msg)
+        else:
+          client = XB
+          res = client.send(msg)
       else:
-        client = XB
-        res = client.send(msg)
-    else:
-      # https://docs.zombofant.net/aioxmpp/devel/api/public/im.html#aioxmpp.im.conversation.AbstractConversation.send_message
-      if client is None:
-        client = XB
-      p2ps = client.summon(im.p2p.Service)
-      c = p2ps.get_conversation(msg.to)
-      #  stanza = c.send_message(msg)
-      res = c.send_message(msg)
-      #  return False
-    #  if isawaitable(res):
-    #  logger.info(f"{type(res)}: {res} {msg}")
-    if asyncio.iscoroutine(res) or type(res) is stream.StanzaToken:
-      #  dbg(f"client send: {res=}")
-      res2 = await res
-      if res2 is None:
-        dbg(f"send msg: finally: {res=}")
-        return True
-      #  elif hasattr(res, "stanza") and res.stanza and res.stanza.error is None:
-      #    # 群内私聊
-      #    logger.info(f"send gpm msg: finally: {res=}")
-      #    return True
+        # https://docs.zombofant.net/aioxmpp/devel/api/public/im.html#aioxmpp.im.conversation.AbstractConversation.send_message
+        if client is None:
+          client = XB
+        p2ps = client.summon(im.p2p.Service)
+        c = p2ps.get_conversation(msg.to)
+        #  stanza = c.send_message(msg)
+        res = c.send_message(msg)
+        #  return False
+      #  if isawaitable(res):
+      #  logger.info(f"{type(res)}: {res} {msg}")
+      if asyncio.iscoroutine(res) or type(res) is stream.StanzaToken:
+        #  dbg(f"client send: {res=}")
+        res2 = await res
+        if res2 is None:
+          dbg(f"send msg: finally: {res=}")
+          return True
+        #  elif hasattr(res, "stanza") and res.stanza and res.stanza.error is None:
+        #    # 群内私聊
+        #    logger.info(f"send gpm msg: finally: {res=}")
+        #    return True
+        else:
+          logger.info(f"send msg: finally: {res=} {res2=}")
+          return False
       else:
-        logger.info(f"send msg: finally: {res=} {res2=}")
-        return False
-    else:
-      warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
-    return False
+        warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
+      return False
+      msg = aioxmpp.Message(
+          to=msg.to,
+          type_=msg.type_,
+      )
+      msg.body = msg.body
 
 
 async def send(text, jid=None, *args, **kwargs):
@@ -1687,36 +1693,38 @@ async def send1(text, jid=None, *args, **kwargs):
       #    err(f"无法群私聊，地址错误: {jid}")
       #    return False
     texts = split_long_text(text, 4096)
-    for i in texts:
-      if jid in my_groups:
-        msg = aioxmpp.Message(
-            to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
-            type_=MessageType.GROUPCHAT,
-        )
-      else:
-        #  if '/' in jid and jid.split('/', 1)[0] in my_groups:
-        msg = aioxmpp.Message(
-            to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
-            type_=MessageType.CHAT,
-        )
-      #  j = get_msg_jid(msg)
-      #  if correct:
-      #    if j in last_outmsg:
-      #      #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
-      #      r = misc.Replace()
-      #      r.id_ = last_outmsg[j]
-      #      msg.xep0308_replace = r
-      #  else:
-      #    if j in last_outmsg:
-      #      last_outmsg.pop(j)
-      #  if len(texts) > 1:
-      #    await add_id_to_msg(msg, False)
-      #  else:
-      msg.body[None] = i
-      if await _send(msg, *args, **kwargs) is not True:
-        return False
-      if correct:
-        break
+    #  for i in texts:
+    if jid in my_groups:
+      msg = aioxmpp.Message(
+          to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
+          type_=MessageType.GROUPCHAT,
+      )
+    else:
+      #  if '/' in jid and jid.split('/', 1)[0] in my_groups:
+      msg = aioxmpp.Message(
+          to=JID.fromstr(jid),  # recipient_jid must be an aioxmpp.JID
+          type_=MessageType.CHAT,
+      )
+    #  j = get_msg_jid(msg)
+    #  if correct:
+    #    if j in last_outmsg:
+    #      #  msg.xep0308_replace = misc.Replace(last_outmsg[get_jid(msg.to, True)])
+    #      r = misc.Replace()
+    #      r.id_ = last_outmsg[j]
+    #      msg.xep0308_replace = r
+    #  else:
+    #    if j in last_outmsg:
+    #      last_outmsg.pop(j)
+    #  if len(texts) > 1:
+    #    await add_id_to_msg(msg, False)
+    #  else:
+    msg.body[None] = i
+    if await _send(msg, *args, **kwargs) is not True:
+      return False
+    #  if correct:
+    #  if msg.xep0308_replace:
+    #  if "correct" in kwargs and kwargs["correct"]:
+    #    break
 
     return True
   elif isinstance(text, aioxmpp.Message):
