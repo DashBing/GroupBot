@@ -1090,7 +1090,7 @@ async def my_popen(cmd,
       res = e.stdout
       errs = e.stderr
 
-    logger.info("popen exit")
+    logger.info("popen exit: {p.returncode} {res=} {errs=}")
     if res:
       if isinstance(res, bytes):
         res = res.decode()
@@ -1099,7 +1099,6 @@ async def my_popen(cmd,
         errs = errs.decode()
     if not res:
       return False
-      res = "null"
 
     #  if msg:
     #    #  msg = await cmd_answer(res, client, msg, **args)
@@ -1111,6 +1110,9 @@ async def my_popen(cmd,
         res = "%s\n==\nE: %s" % (res, p.returncode)
         if errs:
           res += "\n%s" % errs
+      else:
+        if errs:
+          res = "%s\n==\nE:\n%s" % (res, errs)
       return res
     else:
       return p.returncode, res, errs
