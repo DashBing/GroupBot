@@ -1088,17 +1088,21 @@ async def my_popen(cmd,
     except subprocess.TimeoutExpired as e:
       logger.error("timeout")
       res = e.stdout
+      if res:
+        res = res.decode("utf-8")
       errs = e.stderr
+      if errs:
+        errs = errs.decode("utf-8")
 
-    logger.info("popen exit: {p.returncode} {res=} {errs=}")
-    if res:
-      if isinstance(res, bytes):
-        res = res.decode()
-    if errs:
-      if isinstance(errs, bytes):
-        errs = errs.decode()
-    if not res:
-      return False
+    logger.info(f"popen exit: {p.returncode} {res=} {errs=}")
+    #  if res:
+    #    if isinstance(res, bytes):
+    #      res = res.decode("utf-8")
+    #  if errs:
+    #    if isinstance(errs, bytes):
+    #      errs = errs.decode("utf-8")
+    #  if not res:
+    #    return False
 
     #  if msg:
     #    #  msg = await cmd_answer(res, client, msg, **args)
