@@ -3354,7 +3354,7 @@ async def add_cmd():
   async def _(cmds, src):
     if len(cmds) == 1:
       return f"{cmds[0]}\n.{cmds[0]} $jid/$nick"
-    if src in my_groups '/' in cmds[1]:
+    if src in my_groups or '/' in cmds[1]:
       muc = cmds[1].split('/', 1)[0]
       if muc in my_groups:
         nick = cmds[1].split('/', 1)[1]
@@ -3377,7 +3377,7 @@ async def add_cmd():
   async def _(cmds, src):
     if len(cmds) == 1:
       return f"{cmds[0]}\n.{cmds[0]} $jid/$nick"
-    if src in my_groups '/' in cmds[1]:
+    if src in my_groups or '/' in cmds[1]:
       muc = cmds[1].split('/', 1)[0]
       if muc in my_groups:
         nick = cmds[1].split('/', 1)[1]
@@ -3400,7 +3400,7 @@ async def add_cmd():
   async def _(cmds, src):
     if len(cmds) == 1:
       return f"{cmds[0]}\n.{cmds[0]} $jid/$nick"
-    if src in my_groups '/' in cmds[1]:
+    if src in my_groups or '/' in cmds[1]:
       muc = cmds[1].split('/', 1)[0]
       if muc in my_groups:
         nick = cmds[1].split('/', 1)[1]
