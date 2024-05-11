@@ -4335,7 +4335,7 @@ async def amain():
         allright.set()
         break
       logger.info(f"初始化完成")
-      send_log("重新启动")
+      send_log("已重启")
 
 
       await UB.run_until_disconnected()
