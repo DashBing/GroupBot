@@ -3121,10 +3121,10 @@ async def parse_xmpp_msg(msg):
             users[muc] = {}
           jids = users[muc]
           jid = str(item.jid.bare())
+          if jid == myjid:
+            logger.info(f"不记录bot: {jid}")
+            return
           if jid in jids:
-            if jid == myjid:
-              logger.info(f"不记录bot: {jid}")
-              return
             j = jids[jid]
             if j[0] != msg.from_.resource:
               await send(f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}", muc, fromname=".ban {muc}/{msg.from_.resource}")
