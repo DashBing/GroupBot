@@ -1014,7 +1014,7 @@ async def my_popen(cmd,
            shell=True,
            max_time=64,
            client=None,
-           msg=None,
+           src=None,
            combine=True,
            return_msg=False,
            executable='/bin/bash',
@@ -1064,16 +1064,18 @@ async def my_popen(cmd,
       #  tmp = "...\n" + res + "\n==\nE: \n" + errs
       tmp = "...\n%s\n---\nE: ?\n%s" % (res, errs)
       tmp = tmp.strip()
+      logger.info(f"临时输出: {tmp}")
       #  if msg:
       #    if tmp != msg.text:
-      if True:
+      if src:
           try:
             #  msg = await cmd_answer(tmp, client, msg, **args)
-            logger.info(f"临时输出: {tmp}")
+            #  logger.info(f"临时输出: {tmp}")
+            await send(tmp, src, correct=True)
           except Exception as e:
-            logger.error(f"can not send tmp: {e=}")
+            #  logger.error(f"can not send tmp: {e=}")
             #  msg = await client.send_message(MY_ID, tmp)
-            logger.info(f"临时输出: {tmp} {e=}")
+            logger.info(f"无法发送临时输出: {tmp} {e=}")
       await asyncio.sleep(2)
       if time.time() - start_time > max_time:
         p.kill()
@@ -1093,7 +1095,6 @@ async def my_popen(cmd,
       errs = e.stderr
       if errs:
         errs = errs.decode("utf-8")
-
 
     logger.info(f"popen exit: {p.returncode} {res=} {errs=}")
     if res:
@@ -1164,7 +1165,7 @@ async def run_my_bash(cmd, shell=True, max_time=64):
   return res
 
 
-async def my_exec(cmd, client=None, msg=None, **args):
+async def my_exec(cmd, src=None, client=None, **args):
   #  exec(cmd) #return always is None
   #  p=Popen("my_exec.py "+message.text.split(' ',1)[1],shell=True,stdout=PIPE, stderr=PIPE,text=True,encoding="utf-8",errors="ignore")
   #  await my_popen(["python3", "my_exec.py", cmd], shell=False, msg=msg)
@@ -1172,13 +1173,13 @@ async def my_exec(cmd, client=None, msg=None, **args):
   res = await my_popen(cmd,
              shell=True,
              client=client, 
-             msg=msg,
+             src=src,
              executable="/usr/bin/python3",
              **args)
   return res
 
 
-async def my_eval(cmd, client=None, msg=None, **args):
+async def my_eval(cmd):
   res = eval(cmd)
   logger.info(str(res) + "\n" + str(type(res)))
   #  res = await cmd_answer(str(res), client=client, msg=msg, **args)
@@ -3444,7 +3445,7 @@ async def add_cmd():
     #  cmds[0] = "bash"
     cmds.pop(0)
     #  res = await my_popen(cmds)
-    res = await my_popen(' '.join(cmds), shell=True)
+    res = await my_popen(' '.join(cmds), src=src, shell=True)
     return f"{res}"
   cmd_funs["sh"] = _
   cmd_for_admin.add('sh')
@@ -3453,7 +3454,7 @@ async def add_cmd():
     if len(cmds) == 1:
       return f"python\n.{cmds[0]} $code"
     cmds.pop(0)
-    res = await my_exec(' '.join(cmds))
+    res = await my_exec(' '.join(cmds), src)
     return f"{res}"
   cmd_funs["py"] = _
   cmd_for_admin.add('py')
