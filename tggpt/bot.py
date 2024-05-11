@@ -1183,57 +1183,57 @@ async def my_eval(cmd, client=None, msg=None, **args):
 
 
 async def send_cmd_to_bash(msg):
-  """run cmd of text msg from mt by bash(old)"""
   if isinstance(msg, str):
     shell_cmd = ["bash", SH_PATH + "/bcmd.sh"]
     shell_cmd.append("just_get_reply")
     shell_cmd.append(msg)
   else:
     # [gateway, username, text]
-    if type(msg) == list:
+    #  if type(msg) == list:
       #  if not " " in msg[1]:
-      if len(msg[1]) < 2 or msg[1][1] != ' ':
-        msg[1] = "X " + msg[1]
-      msg_mt = {
-        "text": msg[2],
-        "username": "{}".format(msg[1]),
-        "gateway": msg[0]
-      }
-      msg = msg_mt
-    text = msg["text"]
-    name = msg["username"]
+    if len(msg[1]) < 2 or msg[1][1] != ' ':
+      msg[1] = "X " + msg[1]
+    msg_mt = {
+      "text": msg[2],
+      "username": "{}".format(msg[1]),
+      "gateway": msg[0]
+    }
+    text = msg[2]
+    name = msg[1]
+    gateway = msg[0]
     if not text:
+      logger.warning("skip bash cmd, text is empty: {}".format(msg))
       return
     if name.startswith("C "):
       return
-    logger.info("run cmd: {}".format(msg))
+    logger.info("msg_mt: {}".format(msg_mt))
     #  shell_cmd="{} {} {} {}"
     #  shell_cmd = ["bash -l", SH_PATH + "/bcmd.sh"]
     shell_cmd = ["bash", SH_PATH + "/bcmd.sh"]
     #  shell_cmd = [SH_PATH + "/bcmd.sh"]
-    shell_cmd.append(msg["gateway"])
-    shell_cmd.append(msg["username"])
-    shell_cmd.append(msg["text"])
-    shell_cmd.append(repr(msg))
+    shell_cmd.append(gateway)
+    shell_cmd.append(name)
+    shell_cmd.append(text)
+    shell_cmd.append(repr(msg_mt))
 
-    if shell_cmd[1] == "gateway1":
-      #  if my_host_re.match(shell_cmd[3]):
-      if urlre.match(shell_cmd[3]):
-        print("my url")
-        shell_cmd[3] = ".ipfs {} only".format(shell_cmd[3])
-        #  shell_cmd[1] = "gateway4"
-      elif tw_re.match(shell_cmd[3]):
-        print("a twitter")
-        shell_cmd[3] = ".tw {}".format(shell_cmd[3])
-        #  shell_cmd[1] = "gateway4"
-      elif pic_re.match(shell_cmd[3]):
-        print("a pic")
-        shell_cmd[3] = ".ipfs {} only".format(shell_cmd[3])
-        #  shell_cmd[1] = "gateway4"
-      elif url_only_re.match(shell_cmd[3]):
-        print("a url")
-        shell_cmd[3] = ".ipfs {} autocheck".format(shell_cmd[3])
-        #  shell_cmd[1] = "gateway4"
+    #  if shell_cmd[1] == "gateway1":
+    #    #  if my_host_re.match(shell_cmd[3]):
+    #    if urlre.match(shell_cmd[3]):
+    #      print("my url")
+    #      shell_cmd[3] = ".ipfs {} only".format(shell_cmd[3])
+    #      #  shell_cmd[1] = "gateway4"
+    #    elif tw_re.match(shell_cmd[3]):
+    #      print("a twitter")
+    #      shell_cmd[3] = ".tw {}".format(shell_cmd[3])
+    #      #  shell_cmd[1] = "gateway4"
+    #    elif pic_re.match(shell_cmd[3]):
+    #      print("a pic")
+    #      shell_cmd[3] = ".ipfs {} only".format(shell_cmd[3])
+    #      #  shell_cmd[1] = "gateway4"
+    #    elif url_only_re.match(shell_cmd[3]):
+    #      print("a url")
+    #      shell_cmd[3] = ".ipfs {} autocheck".format(shell_cmd[3])
+    #      #  shell_cmd[1] = "gateway4"
   logger.warning("bash cmd: {}".format(shell_cmd))
   #  await run_my_bash(shell_cmd, shell=False)
   #  await my_popen(shell_cmd, shell=False)
@@ -1819,7 +1819,7 @@ async def sendg(text, jid=None, room=None, client=None, name="**C bot:** "):
     text = f"{name}{text}"
   logger.info(f"send group msg: {jid} {text}")
   if jid is None:
-    jid = test_group
+    jid = log_group_private
   recipient_jid = JID.fromstr(jid)
   msg = aioxmpp.Message(
       to=recipient_jid,  # recipient_jid must be an aioxmpp.JID
@@ -1852,8 +1852,6 @@ async def sendg(text, jid=None, room=None, client=None, name="**C bot:** "):
   else:
     warn(f"need client or room")
     return False
-
-
 
 
 @exceptions_handler
@@ -3438,6 +3436,24 @@ async def add_cmd():
 
   async def _(cmds, src):
     if len(cmds) == 1:
+      return f"bash\n.{cmds[0]} $jid/$nick"
+    cmds[0] = "bash"
+    res = await my_popen(cmds, shell=True)
+    return f"{res}"
+  cmd_funs["sh"] = _
+  cmd_for_admin.add('sh')
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"python\n.{cmds[0]} $jid/$nick"
+    cmds.pop(0)
+    res = await my_exec(cmds)
+    return f"{res}"
+  cmd_funs["py"] = _
+  cmd_for_admin.add('py')
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
       return f"{cmds[0]}\n.{cmds[0]} $jid/$nick"
     res = get_jid_room(cmds, src)
     if type(res) is str:
@@ -4231,11 +4247,12 @@ async def xmppbot():
           continue
         if len(tasks) == 0:
           break
+      warn(f"等待任务队列: {len(tasks)}/{len(groups)}")
       done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
       for i in done:
         if i.result() is False:
           groups.add(i.name)
-          warn(f"进群失败一次: {i.name}")
+          warn(f"进群失败一次: {i.name} {len(tasks)}/{len(groups)}")
 
   global allright_task
   allright_task -= 1
@@ -4357,7 +4374,8 @@ async def amain():
       asyncio.create_task(mt_read(), name="mt_read")
 
       logger.info(f"初始化完成")
-      send_log("hi")
+      send_log("启动成功，用时: {int(time.time()-start_time)}s")
+      del start_time
 
       await UB.run_until_disconnected()
 
@@ -4371,8 +4389,8 @@ async def amain():
   #    logger.error("error: stop...", exc_info=True, stack_info=True)
   #    raise e
   finally:
+    await sendg("正在停止")
     logger.info("正在收尾...")
-    await send("bye")
     await stop()
     await save_data()
     #  loop.run_until_complete(stop())
@@ -4381,7 +4399,7 @@ async def amain():
     logger.info("正在退出...")
 
 
-
+start_time=time.time()
 
 def main():
   try:
