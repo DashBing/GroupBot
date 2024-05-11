@@ -431,7 +431,8 @@ def _exceptions_handler(e, *args, **kwargs):
   #  log(res)
   #  logger.warning(res)
   #  asyncio.create_task(mt_send(res))
-  asyncio.create_task(send(res, ME))
+  #  asyncio.create_task(send(res, ME))
+  send_log(res)
   #  logger.warning(res)
   logger.warning(res, exc_info=True, stack_info=True)
   return res
