@@ -1898,8 +1898,8 @@ async def mt_read():
   #  session = await init_aiohttp_session()
   logger.info("start read msg from mt api...")
   while True:
-    async with aiohttp.ClientSession() as session:
-      try:
+    try:
+      async with aiohttp.ClientSession() as session:
         line = ""
         #  async with session.get(url, timeout=0, read_bufsize=2**20) as resp:
           #  print("N: mt api init ok")
@@ -1924,16 +1924,16 @@ async def mt_read():
               asyncio.create_task(mt2tg(line))
               line = b""
 
-      except ClientPayloadError:
-        logger.warning("mt closed, data lost")
-      except ClientConnectorError:
-        logger.warning("mt api is not ok, retry...")
-      except ValueError as e:
-        #  print("W: maybe a msg is lost")
-        err(f"{e=}: {line}")
-      except Exception as e:
-        err(f"{e=}: {line}")
-      await asyncio.sleep(3)
+    except ClientPayloadError:
+      logger.warning("mt closed, data lost")
+    except ClientConnectorError:
+      logger.warning("mt api is not ok, retry...")
+    except ValueError as e:
+      #  print("W: maybe a msg is lost")
+      err(f"{e=}: {line}")
+    except Exception as e:
+      err(f"{e=}: {line}")
+    await asyncio.sleep(3)
 
 
 #  @exceptions_handler
