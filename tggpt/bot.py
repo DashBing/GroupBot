@@ -1123,6 +1123,7 @@ async def my_popen(cmd,
       if res:
         return res
       else:
+        return
         return "None"
     else:
       return p.returncode, res, errs
@@ -3821,15 +3822,13 @@ async def run_cmd(text, src, name="test", is_admin=False):
     return
   else:
     # tilebot
-    res = await send_cmd_to_bash([src, name, text])
-    if res:
-      return res
     tmp=""
     for i in text.splitlines():
       if not i.startswith("> ") and  i != ">":
         tmp += i+"\n"
+
     urls=urlre.findall(qre.sub("", tmp))
-    res=None
+    res=""
     #  M=' 🔗 '
     #  M='- '
     #  M=' ⤷ '
@@ -3848,8 +3847,14 @@ async def run_cmd(text, src, name="test", is_admin=False):
           break
         res="[ %s urls ]" % len(urls)
       res+="\n\n> %s\n%s" % (url, await get_title(url))
+
+    res2 = await send_cmd_to_bash([src, name, text])
     if res:
+      if res2:
+        res += "\n\n{res2}"
       return name + res
+    else:
+      return res2
       #  await mt_send(res, gateway=gateway, name="titlebot")
 
   return False
