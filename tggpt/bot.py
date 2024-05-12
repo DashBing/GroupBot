@@ -2138,15 +2138,14 @@ async def mt2tg(msg):
 
     logger.info("got msg from mt: {}".format(msgd))
     #      if name == "C Telegram: ":
-    if name:
-      name = name[:-2]
     if gateway == "gateway1":
-      res = await run_cmd(text, gateway, f"{name}: ")
+      res = await run_cmd(text, gateway, name)
       if res:
         await mt_send_for_long_text(res, gateway)
-      if name:
-        text = f"**{name}:** {text}"
         res = f"**C bot:** {res}"
+      if name:
+        name = name[:-2]
+        text = f"**{name}:** {text}"
       for m in get_mucs(main_group):
         if await send1(text, m, nick=name) is False:
           return
