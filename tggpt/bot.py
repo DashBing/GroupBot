@@ -1619,17 +1619,17 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
       if muc in rooms:
         room = rooms[muc]
         #  await set_nick(room, fromname)
-        if room.me.nick != fromname:
+        if room.me.nick != nick:
           #  logger.info(f"set nick...: {muc} {room.me.nick} -> {nick}")
           fu = asyncio.Future()
           #  jid = str(room.me.direct_jid)
           on_nick_changed_futures[(myjid, muc)] = fu
           await room.set_nick(fromname)
           await fu
-          if fu.result() == fromname:
+          if fu.result() == nick:
             logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} -> {nick}")
           else:
-            warn(f"失败: set nick: {str(msg.to.bare())} {room.me.nick} -> {nick}")
+            warn(f"改名失败: {str(msg.to.bare())} {room.me.nick=} != {nick=}")
         #  else:
         #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
         #  else:
@@ -2131,24 +2131,20 @@ async def mt2tg(msg):
 
     logger.info("got msg from mt: {}".format(msgd))
     #      if name == "C Telegram: ":
+    if name:
+      name = name[:-2]
     if gateway == "gateway1":
-      res = await run_cmd(text, gateway, name)
+      res = await run_cmd(text, gateway, f"{name}: ")
       if res:
         await mt_send_for_long_text(res, gateway)
-      #  if name:
-      #    await send(text, main_group, name=f"**{name[:-2]}:** ")
-      #  else:
-      #    await send(text, main_group, name=name)
-      #  if res:
-      #    await send(f"{res}", main_group)
       if name:
-        text = f"**{name[:-2]}:** {text}"
-        res = f"**{name[:-2]}:** {res}"
+        text = f"**{name}:** {text}"
+        res = f"**{name}:** {res}"
       for m in get_mucs(main_group):
         if await send1(text, m, name=name) is False:
           return
         if res:
-          if await send1(res, m) is False:
+          if await send1(res, m, name="C bot") is False:
             return
       #    if await send1(f"{name}{text}", m, name) is False:
       #      return
