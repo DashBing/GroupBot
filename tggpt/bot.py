@@ -4453,7 +4453,7 @@ async def amain():
   #    raise e
   finally:
     logger.info("正在收尾...")
-    mt_read_task.cancle()
+    mt_read_task.cancel()
     await sendg("正在停止")
     await stop()
     await save_data()
