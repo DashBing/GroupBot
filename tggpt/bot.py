@@ -3851,7 +3851,7 @@ async def run_cmd(text, src, name="test", is_admin=False):
     res2 = await send_cmd_to_bash([src, name, text])
     if res:
       if res2:
-        res += "\n\n{res2}"
+        res += f"\n\n{res2}"
       return name + res
     else:
       return res2
