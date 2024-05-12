@@ -1603,19 +1603,23 @@ async def _send(*args, **kwargs):
   return True
 
 @exceptions_handler
-async def __send(msg, client=None, room=None, name=None, correct=False, fromname=None):
+async def __send(msg, client=None, room=None, name=None, correct=False, fromname=None, nick=None):
   jid = str(msg.to)
   if jid not in send_locks:
     send_locks[jid] = asyncio.Lock()
   async with send_locks[jid]:
     msg.from_ = None
-    if fromname is None and name:
-      fromname = name
-    if fromname is not None:
-      nick = fromname
+    if nick is None:
+      if fromname is None:
+        if name is None:
+          pass
+        else:
+          nick = name
+      else:
+        nick = fromname
+    if nick is not None:
       room = None
       muc = str(msg.to.bare())
-      #  if False:
       if muc in rooms:
         room = rooms[muc]
         #  await set_nick(room, fromname)
@@ -2139,12 +2143,12 @@ async def mt2tg(msg):
         await mt_send_for_long_text(res, gateway)
       if name:
         text = f"**{name}:** {text}"
-        res = f"**{name}:** {res}"
+        res = f"**C bot:** {res}"
       for m in get_mucs(main_group):
-        if await send1(text, m, name=name) is False:
+        if await send1(text, m, nick=name) is False:
           return
         if res:
-          if await send1(res, m, name="C bot") is False:
+          if await send1(res, m, nick="C bot") is False:
             return
       #    if await send1(f"{name}{text}", m, name) is False:
       #      return
