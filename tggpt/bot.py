@@ -1606,7 +1606,7 @@ async def _send(*args, **kwargs):
   return True
 
 @exceptions_handler
-async def __send(msg, client=None, room=None, name=None, correct=False, fromname=None, nick=None):
+async def __send(msg, client=None, room=None, name=None, correct=False, fromname=None, nick=None, delay=None):
   jid = str(msg.to)
   if jid not in send_locks:
     send_locks[jid] = asyncio.Lock()
@@ -1664,7 +1664,6 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
 
     for msg in msgs:
       add_id_to_msg(msg, correct)
-
       if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or str(msg.to.bare()) not in my_groups:
       #  if gpm is False:
         if client is not None:
@@ -1692,7 +1691,6 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
         res2 = await res
         if res2 is None:
           dbg(f"send msg: finally: {res=}")
-          return True
         #  elif hasattr(res, "stanza") and res.stanza and res.stanza.error is None:
         #    # 群内私聊
         #    logger.info(f"send gpm msg: finally: {res=}")
@@ -1703,6 +1701,9 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
       else:
         warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
       return False
+    if delay:
+      await asyncio.sleep(delay)
+    return True
 
 
 async def send(text, jid=None, *args, **kwargs):
@@ -1892,7 +1893,7 @@ async def sendg(text, jid=None, room=None, client=None, name="**C bot:** "):
     return False
 
 
-@exceptions_handler
+#  @exceptions_handler
 async def mt_read():
   # api.xmpp
   MT_API = "127.0.0.1:4247"
@@ -1926,6 +1927,9 @@ async def mt_read():
               asyncio.create_task(mt2tg(line))
               line = b""
 
+    except asyncio.CancelledError as e:
+      warn(f"该任务被要求中止")
+      raise
     except ClientPayloadError:
       logger.warning("mt closed, data lost")
       raise
@@ -3202,8 +3206,8 @@ async def parse_xmpp_msg(msg):
 
   if msg.xep0203_delay:
     delay = msg.xep0203_delay[0]
-    pprint(delay)
-    await asyncio.sleep(1)
+    #  pprint(delay)
+    #  await asyncio.sleep(1)
     if time.time() - delay.stamp.timestamp() > 60:
       print("跳过旧消息: %s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, delay))
       return
@@ -3311,7 +3315,10 @@ async def parse_xmpp_msg(msg):
   print("%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
   if msg.type_ == MessageType.GROUPCHAT:
     if muc == acg_channel:
-      await send(text, rssbot, name="")
+      if is_admin:
+        await send(text, rssbot, name="")
+      else:
+        await send("仅管理可用", src)
       return
     nick = msg.from_.resource
     ms = get_mucs(muc)
@@ -3324,7 +3331,7 @@ async def parse_xmpp_msg(msg):
 
   else:
     if muc == rssbot:
-      await send(text, acg_channel, name="")
+      await send(text, acg_channel, name="", delay=5)
       return
     if get_jid(msg.to) in my_groups:
       nick = msg.from_.resource
@@ -4428,7 +4435,7 @@ async def amain():
         allright.set()
         break
 
-      asyncio.create_task(mt_read(), name="mt_read")
+      mt_read_task = asyncio.create_task(mt_read(), name="mt_read")
 
       logger.info(f"初始化完成")
       send_log(f"启动成功，用时: {int(time.time()-start_time)}s")
@@ -4445,8 +4452,9 @@ async def amain():
   #    logger.error("error: stop...", exc_info=True, stack_info=True)
   #    raise e
   finally:
-    await sendg("正在停止")
     logger.info("正在收尾...")
+    mt_read_task.cancle()
+    await sendg("正在停止")
     await stop()
     await save_data()
     #  loop.run_until_complete(stop())
