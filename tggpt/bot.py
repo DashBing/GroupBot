@@ -316,6 +316,7 @@ CLEAN = "/new_chat"
 queues = {}
 nids = {}
 mt_send_lock = asyncio.Lock()
+mt_send_lock2 = asyncio.Lock()
 downlaod_lock = asyncio.Lock()
 bash_lock = asyncio.Lock()
 
@@ -2403,14 +2404,15 @@ async def _mt_send(text="null", gateway="gateway1", name="C bot", qt=None):
 #    username = "T " + username
 
   if qt:
-    username = "{}\n\n{}".format("> " + "\n> ".join(qt.splitlines()), name)
+    name = "{}\n\n{}".format("> " + "\n> ".join(qt.splitlines()), name)
 #  gateway="gateway0"
   data = {
     "text": "{}".format(text),
     "username": "{}".format(name),
     "gateway": "{}".format(gateway)
   }
-  res = await http(url, method="POST", json=data)
+  async with mt_send_lock:
+    res = await http(url, method="POST", json=data)
   logger.info("res of mt_send: {}".format(res))
   return True
   return res
