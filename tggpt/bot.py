@@ -1900,9 +1900,9 @@ async def mt_read():
   #  session = await init_aiohttp_session()
   logger.info("start read msg from mt api...")
   while True:
+    line = ""
     try:
       async with aiohttp.ClientSession() as session:
-        line = ""
         #  async with session.get(url, timeout=0, read_bufsize=2**20) as resp:
           #  print("N: mt api init ok")
           #  resp.content.read()
@@ -1928,13 +1928,17 @@ async def mt_read():
 
     except ClientPayloadError:
       logger.warning("mt closed, data lost")
+      raise
     except ClientConnectorError:
       logger.warning("mt api is not ok, retry...")
+      raise
     except ValueError as e:
       #  print("W: maybe a msg is lost")
-      err(f"{e=}: {line}")
+      err(f"{e=} line: {line}")
+      raise
     except Exception as e:
-      err(f"{e=}: {line}")
+      err(f"{e=} line: {line}")
+      raise
     await asyncio.sleep(3)
 
 
@@ -3752,7 +3756,7 @@ async def add_cmd():
   cmd_funs["clear"] = _
 
 
-async def run_cmd(text, src, name="test", is_admin=False):
+async def run_cmd(text, src, name="X test", is_admin=False):
   if text[0:1] == ".":
     if text[1:2] == " ":
       return
@@ -3850,13 +3854,15 @@ async def run_cmd(text, src, name="test", is_admin=False):
         res="[ %s urls ]" % len(urls)
       res+="\n\n> %s\n%s" % (url, await get_title(url))
 
-    res2 = await send_cmd_to_bash([src, name, text])
     if res:
+      res = "{name}{res}"
+      res2 = await send_cmd_to_bash([src, "", text])
       if res2:
-        res += f"\n\n{res2}"
-      return name + res
+        res += "\n{res2}"
+      return res
     else:
-      return res2
+      res = await send_cmd_to_bash([src, name, text])
+      return res
       #  await mt_send(res, gateway=gateway, name="titlebot")
 
   return False
