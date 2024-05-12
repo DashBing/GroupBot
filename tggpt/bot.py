@@ -1628,7 +1628,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
           fu = asyncio.Future()
           #  jid = str(room.me.direct_jid)
           on_nick_changed_futures[(myjid, muc)] = fu
-          await room.set_nick(fromname)
+          await room.set_nick(nick)
           await fu
           if fu.result() == nick:
             logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} -> {nick}")
@@ -3173,11 +3173,11 @@ async def parse_xmpp_msg(msg):
           if jid in jids:
             j = jids[jid]
             if j[0] != msg.from_.resource:
-              await send(f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}", muc, fromname=f".ban {muc}/{msg.from_.resource}")
+              await send(f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}", muc, nick=f".ban {muc}/{msg.from_.resource}")
               j[0] = msg.from_.resource
           else:
             welcome=f"欢迎 {hide_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
-            await send(welcome, muc, fromname=f".ban {muc}/{msg.from_.resource}")
+            await send(welcome, muc, nick=f".ban {muc}/{msg.from_.resource}")
             jids[jid] = [msg.from_.resource, item.affiliation, item.role]
           if len(jids[jid]) > 3:
             jids[jid][3] = int(time.time())
