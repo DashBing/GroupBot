@@ -2792,6 +2792,7 @@ async def parse_tg_msg(event):
     #  print("W: skip unknown chat_id: %s %s" % (event.chat_id, msg.text[:64]))
     res, nick, delay = await print_tg_msg(event)
     if event.chat_id in bridges:
+      logger.info(f"转发桥接消息: {event.chat_id} -> {bridges[event.chat_id]}: {res}")
       await send(msg.text, jid=bridges[event.chat_id], name=nick, nick=nick, delay=delay)
     else:
       await send(res, name="", nick=nick, delay=delay)
