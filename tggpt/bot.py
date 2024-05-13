@@ -1690,15 +1690,21 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
           except ValueError as e:
             warn(f"改名失败, 不支持特殊字符: {nick=} {e=}")
           else:
-            await fu
-            if fu.result() == nick:
-              logger.info(f"set nick: {muc} {nick_old} -> {nick}")
+            #  await fu
+            try:
+              await asyncio.wait_for(fu, timeout=5)
+            #  except Exception as e:
+            except TimeoutError as e:
+              warn(f"改名失败(超时)：{muc} {nick_old} -> {nick} {e=}")
             else:
-              warn(f"改名失败: {muc} {fu.result()} != {nick}")
-          #  else:
-          #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
-          #  else:
-          #    logger.info(f"not found room: {msg.to}")
+              if fu.result() == nick:
+                logger.info(f"set nick: {muc} {nick_old} -> {nick}")
+              else:
+                warn(f"改名失败: {muc} {fu.result()} != {nick}")
+            #  else:
+            #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
+            #  else:
+            #    logger.info(f"not found room: {msg.to}")
 
     text = None
     for i in msg.body:
