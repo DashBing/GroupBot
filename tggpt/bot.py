@@ -1614,6 +1614,7 @@ send_locks = {}
 
 
 async def _send(*args, **kwargs):
+  info(f"{args=} {kwargs=}")
   asyncio.create_task(__send(*args, **kwargs))
   return True
 
