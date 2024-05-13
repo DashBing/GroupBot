@@ -156,9 +156,9 @@ def err(text):
   #  lineno = currentframe().f_back.f_lineno
   lineno = sys._getframe(1).f_lineno
   text = f"E: {lineno}: {text}"
-  send_log(text)
   logger.error(text, exc_info=True, stack_info=True)
   #  raise ValueError
+  send_log(text)
 
 
 def warn(text, more=False):
@@ -167,11 +167,11 @@ def warn(text, more=False):
   #  lineno = currentframe().f_back.f_lineno
   lineno = sys._getframe(1).f_lineno
   text = f"W: {lineno}: {text}"
-  send_log(text)
   if more:
     logger.warning(text, exc_info=True, stack_info=True)
   else:
     logger.warning(text)
+  send_log(text)
 
 def info(text):
   if type(text) is not str:
@@ -1646,7 +1646,6 @@ async def _send(*args, **kwargs):
   asyncio.create_task(__send(*args, **kwargs))
   return True
 
-@exceptions_handler
 async def __send(msg, client=None, room=None, name=None, correct=False, fromname=None, nick=None, delay=None):
   #  info(f"{msg}")
   jid = str(msg.to)
@@ -1663,8 +1662,8 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
       else:
         nick = fromname
     # https://stackoverflow.com/questions/69778194/how-can-i-check-whether-a-unicode-codepoint-is-assigned-or-not
-    #  if nick is not None:
-    if None:
+    if nick is not None:
+    #  if None:
       tmp=[]
       for c in nick:
         #  if ud.category(c) in ('Cn', 'Cs', 'Co'):
@@ -1683,7 +1682,6 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
         #  await set_nick(room, fromname)
         nick_old = room.me.nick
         if nick_old != nick:
-          #  logger.info(f"set nick...: {muc} {room.me.nick} -> {nick}")
           fu = asyncio.Future()
           #  jid = str(room.me.direct_jid)
           on_nick_changed_futures[(myjid, muc)] = fu
@@ -1976,7 +1974,7 @@ async def mt_read():
           #    await mt2tg(line)
 
         async with session.get(url, timeout=0, read_bufsize=2**18*4, chunked=True) as resp:
-          logger.info("N: mt api init ok")
+          info("N: mt api init ok")
           #  await mt_send("N: tggpt: mt read: init ok")
           line = b""
           async for data, end_of_http_chunk in resp.content.iter_chunks():
@@ -3276,10 +3274,19 @@ async def parse_xmpp_msg(msg):
               await send(f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}\njid: {jid}", nick=f".ban {muc}/{msg.from_.resource}")
               j[0] = msg.from_.resource
           else:
-            jids[jid] = [msg.from_.resource, item.affiliation, item.role]
-            welcome=f"欢迎 {hide_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
+            j = [msg.from_.resource, item.affiliation, item.role]
+            jids[jid] = j
+            if muc in bot_groups:
+              welcome = f"欢迎 {hide_nick(msg)} ,这里是bot频道，专门用来测试bot，避免干扰主群。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
+            elif muc in rss_groups or muc == acg_group:
+              welcome = f"欢迎 {hide_nick(msg)} ,这里是rss频道，机器人推送消息很频繁。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
+            elif muc == "wtfipfs@salas.suchat.org":
+              welcome = f"欢迎 {hide_nick(msg)} ,该群新人默认不能发言。\n如果没有发言权，建议使用gajim或cheogram客户端申请。conversations不支持xmpp原生的申请方式。也可以群内私信bot：“申请发言权”，然后等管理批准。也可以改群内名字，添加“申请发言权”。\n建议经常在该群保持在线，管理看到就会给成员身份和发言权。\n该消息来自机器人(bot)，可不予理会。"
+            else:
+              welcome = f"欢迎 {hide_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
             await send(welcome, muc, nick=f".ban {muc}/{msg.from_.resource}")
-            await send(f"new {jids[jid]}\nmuc: {muc}\njid: {jid}", nick=f".ban {muc}/{msg.from_.resource}")
+            await send(f"有新人入群: {j[0]}\n身份: {j[1]}\n角色: {j[2]}\nmuc: {muc}\njid: {jid}", nick=f".ban {muc}/{msg.from_.resource}")
+
           if len(jids[jid]) > 3:
             jids[jid][3] = int(time.time())
           else:
