@@ -4338,7 +4338,8 @@ async def xmppbot():
       #  else:
       #    break
 
-      if len(tasks) < 4:
+      how_long = int(time.time()-start_time)
+      if len(tasks) < (how_long-1)*4 if how_long > 2 else 4:
         if groups:
           muc = groups.pop()
           t = asyncio.create_task(join(muc), name=muc)
