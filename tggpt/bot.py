@@ -3184,7 +3184,8 @@ async def parse_xmpp_msg(msg):
     elif msg.type_ == PresenceType.AVAILABLE:
       if msg.xep0045_muc_user:
         item = msg.xep0045_muc_user.items[0]
-        print(f"上线: {msg.from_} {item.jid} {item.role} {item.affiliation} {msg.status}")
+        if str(item.jid.bare()) != myjid:
+          print(f"上线: {msg.from_} {item.jid} {item.role} {item.affiliation} {msg.status}")
         muc = str(msg.from_.bare())
         if muc in my_groups:
           if muc not in users:
