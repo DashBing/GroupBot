@@ -1373,7 +1373,7 @@ async def load_config():
     config["sync_groups_all"].append(config["public_groups"])
     config["sync_groups_all"].append(config["bot_groups"])
 
-    config["public_groups"] = config["public_groups"] + config["rss_groups"] + config["bot_groups"] + config["extra_groups"]
+    config["public_groups"] = config["public_groups"] + config["rss_groups"] + config["bot_groups"] + config["extra_groups"] + [config["acg_channel", config["log_group"]]
 
     config["my_groups"] = config["my_groups"] + config["public_groups"]
 
@@ -3218,8 +3218,8 @@ def hide_nick(msg):
 
 @exceptions_handler
 async def parse_xmpp_msg(msg):
-  if str(msg.from_.bare()) == rssbot:
-    pprint(msg)
+  #  if str(msg.from_.bare()) == rssbot:
+  #    pprint(msg)
   if not hasattr(msg, "body"):
     #  print("%s %s" % (type(msg), msg.type_))
     if msg.type_ == PresenceType.SUBSCRIBE:
@@ -3284,6 +3284,7 @@ async def parse_xmpp_msg(msg):
       return
     else:
       print("旧消息: %s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, time.time() - delay.stamp.timestamp()))
+
   if msg.type_ == MessageType.NORMAL:
     logger.info("normal msg")
   if msg.type_ == MessageType.GROUPCHAT:
