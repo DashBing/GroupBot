@@ -2593,12 +2593,14 @@ async def get_entity(peer):
 async def print_msg(event):
   msg = event.message
   res = ''
+  name= "None"
   if event.is_private:
     res += "@"
     #  peer = await get_entity(event.chat_id)
     peer = await event.get_chat()
     if peer is not None:
       res += " [%s %s]" % (peer.first_name, peer.last_name)
+      name = " [%s %s]" % (peer.first_name, peer.last_name)
   else:
     if event.is_group:
       res += "+"
@@ -2616,10 +2618,13 @@ async def print_msg(event):
       if peer is not None:
         if isinstance(peer, User):
           res += " [%s %s]" % (peer.first_name, peer.last_name)
+          name = " [%s %s]" % (peer.first_name, peer.last_name)
         else:
         #  if isinstance(peer, Channel):
           res += " [# %s]" % peer.title
+  res2 = None
   if msg.text:
+    res2 = "{res}: {msg.text}"
     res += ": %s" % msg.text.splitlines()[0][:64]
   else:
     res += ": "
@@ -2627,6 +2632,9 @@ async def print_msg(event):
     res += " %s" % msg.file
     if msg.file.name:
       res += " %s" % msg.file.name
+      res2 += " (%s)" % msg.file.name
+  if res2:
+    await send(res2, nick="G %s" % name)
   print(res)
 
 
