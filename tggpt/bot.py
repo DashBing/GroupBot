@@ -3374,7 +3374,10 @@ async def parse_xmpp_msg(msg):
   elif muc in me:
     is_admin = True
     logger.info(f"admin pm msg: {text[:16]}")
-    pass
+  elif muc == rssbot:
+    #  if msg.type_ == None:
+    await send(text, acg_channel, name="", delay=5)
+    return
   else:
     print("未知来源的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
     if text == "ping":
@@ -3402,9 +3405,6 @@ async def parse_xmpp_msg(msg):
         return
 
   else:
-    if muc == rssbot:
-      await send(text, acg_channel, name="", delay=5)
-      return
     if get_jid(msg.to) in my_groups:
       nick = msg.from_.resource
     else:
