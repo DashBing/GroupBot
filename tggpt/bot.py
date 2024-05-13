@@ -1990,13 +1990,13 @@ async def mt_read():
               asyncio.create_task(mt2tg(line))
               line = b""
 
-    except asyncio.CancelledError as e:
-      info(f"该任务被要求中止")
-      raise
     except ClientPayloadError:
       err("mt closed, data lost")
     except ClientConnectorError:
       warn("mt api is not ok, retry...")
+    except asyncio.CancelledError as e:
+      info(f"该任务被要求中止")
+      raise
     except ValueError as e:
       #  print("W: maybe a msg is lost")
       err(f"{e=} line: {line}")
@@ -4573,7 +4573,7 @@ async def amain():
     #        #  loop.run_until_complete(j)
     #        await j
     mt_read_task.cancel()
-    await sendg("正在停止")
+    #  await sendg("正在停止")
     await stop()
     await save_data()
     #  loop.run_until_complete(stop())
