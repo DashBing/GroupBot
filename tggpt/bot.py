@@ -1633,7 +1633,10 @@ def on_nick_changed(member, old_nick, new_nick, *, muc_status_codes=set(), **kwa
   jid = str(member.direct_jid.bare())
   muc = str(member.conversation_jid.bare())
   if (jid, muc) in on_nick_changed_futures:
-    on_nick_changed_futures[(jid, muc)].set_result(new_nick)
+    try:
+      on_nick_changed_futures[(jid, muc)].set_result(new_nick)
+    except asyncio.exceptions.InvalidStateError as e:
+      err(e)
   #  logger.info(f"nick changed: {jid} {muc} {old_nick} -> {new_nick}")
 
 
