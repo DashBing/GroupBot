@@ -2620,7 +2620,8 @@ async def get_entity(peer):
   peer = await UB.get_input_entity(peer)
   if peer:
     entity = await UB.get_entity(peer)
-    return entity
+    if entity:
+      return entity
   raise ValueError(f"无法获取chat信息: {peer}")
 
 
@@ -3588,6 +3589,16 @@ def get_nick_room(cmds, src):
 
 
 
+def get_addr(s):
+  if s.startswith('-'):
+    if s.isnumeric():
+      s = s[1:]
+      return -1*int(s)
+  if s.isnumeric():
+    return int(s)
+  return s
+  #  raise ValueError("需要数字")
+
 
 
 
@@ -3716,13 +3727,34 @@ async def add_cmd():
   cmd_for_admin.add('ub')
 
   async def _(cmds, src):
+    res = None
     if len(cmds) == 1:
-      return f"管理桥接\n.{cmds[0]} add $from $dst"
-    res = ""
-    if cmds[1] == "add":
-      if cmds[2].isnumeric():
-        bridges[int(cmds[2])] = cmds[3]
-        res += f"added: {int(cmds[2])} -> {bridges[int(cmds[2])]}"
+      res = f"管理桥接\n.{cmds[0]} add $from $dst"
+      res += "\n--\n%s" % json.dumps(bridges, indent='  '))
+    elif cmds[1] == "add":
+      if len(cmds) != 4:
+        res = "参数数量不对"
+      else:
+        #  if cmds[2].isnumeric():
+        bridges[get_add(cmds[2])] = get_add(cmds[3])
+        res = f"added: {get_addr(cmds[2])} -> {get_add(cmds[3])}"
+    elif cmds[1] == "del":
+      if len(cmds) != 3:
+        res = "参数数量不对"
+      else:
+        if get_add(cmds[2]) not in bridges:
+          res = "没找打"
+        else:
+          bridges.pop(get_add(cmds[2]))
+          res = f"deleted: {get_addr(cmds[2])} -> {bridges[get_add(cmds[2])]}"
+    elif cmds[1] == "se":
+      res = ''
+      addr = get_add(cmds[2])
+      if type(addr) is int:
+        peer = await get_entity(addr)
+        res += "%s: %s\n--\n%s" % (type(peer), peer, peer.stringify())
+      if addr in bridges:
+        res = f"existed: {get_addr(cmds[2])} -> {bridges[get_add(cmds[2])]}"
     await send(f"{res}", src)
   cmd_funs["br"] = _
   cmd_for_admin.add('br')
