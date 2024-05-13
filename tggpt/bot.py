@@ -1665,7 +1665,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
       tmp=[]
       for c in nick:
         #  if ud.category(c) in ('Cn', 'Cs', 'Co'):
-        if ud.category(c) in ('Cn', 'Cs', 'Co', 'Cf', 'So'):
+        if ud.category(c) in ('Cn', 'Cs', 'Co', 'Cf', 'So', 'Ll'):
         #  if ud.category(c) not in ('Cn', 'Cs', 'Co',  'So'):
           #  nick = repr(nick)
           #  break
@@ -2615,7 +2615,7 @@ async def get_entity(peer):
 
 
 
-async def print_msg(event):
+async def print_tg_msg(event, to_xmpp=False):
   msg = event.message
   res = ''
   nick= "G None"
@@ -2637,6 +2637,7 @@ async def print_msg(event):
     peer = await event.get_chat()
     if peer is not None:
       res += " %s" % peer.title
+      nick = "G %s" % peer.title
     if event.from_id:
       #  peer = await get_entity(event.from_id)
       peer = await event.get_sender()
@@ -2646,10 +2647,11 @@ async def print_msg(event):
           nick = "G [%s %s]" % (peer.first_name, peer.last_name)
         else:
         #  if isinstance(peer, Channel):
-          res += " [# %s]" % peer.title
+          res += " %s" % peer.title
   res2 = None
   if msg.text:
-    res2 = f"{res}: {msg.text}"
+    if not event.is_private:
+      res2 = f"{res}: {msg.text}"
     res += ": %s" % msg.text.splitlines()[0][:64]
   else:
     res += ": "
@@ -2660,6 +2662,7 @@ async def print_msg(event):
       if res2:
         res2 += "\n%s" % msg.file.name
   if res2:
+    #  await send(res2, jid=log_group, name="", nick=nick, delay=1)
     await send(res2, name="", nick=nick, delay=1)
   print(res)
 
@@ -2776,7 +2779,7 @@ async def parse_tg_msg(event):
     #  print("N: skip: %s != %s" % (event.chat_id, gpt_bot))
   else:
     #  print("W: skip unknown chat_id: %s %s" % (event.chat_id, msg.text[:64]))
-    await print_msg(event)
+    await print_tg_msg(event)
     return
 
 
