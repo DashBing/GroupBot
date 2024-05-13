@@ -2654,7 +2654,7 @@ async def print_msg(event):
     if msg.file.name:
       res += " %s" % msg.file.name
       if res2:
-        res2 += " (%s)" % msg.file.name
+        res2 += "\n%s" % msg.file.name
   if res2:
     await send(res2, name="", nick=nick, delay=1)
   print(res)
