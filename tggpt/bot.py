@@ -3218,6 +3218,8 @@ def hide_nick(msg):
 
 @exceptions_handler
 async def parse_xmpp_msg(msg):
+  if str(msg.from_.bare()) == rssbot:
+    pprint(msg)
   if not hasattr(msg, "body"):
     #  print("%s %s" % (type(msg), msg.type_))
     if msg.type_ == PresenceType.SUBSCRIBE:
