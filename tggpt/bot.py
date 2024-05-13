@@ -122,10 +122,6 @@ gpt_bot_name = 'littleb_gptBOT'
 rss_bot = 284403259
 music_bot = 1404457467
 music_bot_name = 'Music163bot'
-id2gateway = {
-    rss_bot: "rss",
-    gpt_bot: "gateway1",
-    }
 
 
 
@@ -1375,7 +1371,7 @@ async def load_config():
     config["sync_groups_all"].append(config["public_groups"])
     config["sync_groups_all"].append(config["bot_groups"])
 
-    config["public_groups"] = config["public_groups"] + config["rss_groups"] + config["bot_groups"] + config["extra_groups"] + [config["acg_channel"], config["log_group"]]
+    config["public_groups"] = config["public_groups"] + config["rss_groups"] + config["bot_groups"] + config["extra_groups"] + [config["acg_group"], config["log_group"]]
 
     config["my_groups"] = config["my_groups"] + config["public_groups"]
 
@@ -1397,7 +1393,6 @@ async def load_config():
               tmp.append(set(j))
             config[i] = tmp
 
-
     globals().update(config)
     global gd
     try:
@@ -1414,12 +1409,20 @@ async def load_config():
     if "users" not in gd:
       gd["users"] = {}
 
+    if "bridges" not in gd:
+      gd["bridges"] = {
+          -1001577701755: acg_group,
+          rss_bot: rss_group,
+          #  gpt_bot: "gateway1",
+          }
+
     logger.info("loaded gd\n%s" % json.dumps(gd, indent='  '))
     globals().update(gd)
 
     for muc in my_groups:
       if muc not in users:
         users[muc] = {}
+
 
     return True
   except Exception as e:
@@ -2620,6 +2623,7 @@ async def print_tg_msg(event, to_xmpp=False):
   res = ''
   nick= "G None"
   if event.is_private:
+    delay = None
     res += "@"
     #  peer = await get_entity(event.chat_id)
     peer = await event.get_chat()
@@ -2628,8 +2632,10 @@ async def print_tg_msg(event, to_xmpp=False):
       nick = "G [%s %s]" % (peer.first_name, peer.last_name)
   else:
     if event.is_group:
+      delay = 1
       res += "+"
     else:
+      delay = 5
       #  if event.is_channel:
       res += "#"
 
@@ -2661,10 +2667,11 @@ async def print_tg_msg(event, to_xmpp=False):
       res += " %s" % msg.file.name
       if res2:
         res2 += "\n%s" % msg.file.name
-  if res2:
-    #  await send(res2, jid=log_group, name="", nick=nick, delay=1)
-    await send(res2, name="", nick=nick, delay=1)
+  #  if res2:
+  #    #  await send(res2, jid=log_group, name="", nick=nick, delay=1)
+  #    await send(res2, name="", nick=nick, delay=1)
   print(res)
+  return res2, nick, delay
 
 
 
@@ -2769,17 +2776,26 @@ async def parse_tg_msg(event):
 
     return
 
-  elif event.chat_id == rss_bot:
-    async with rss_lock:
-      #  await mt_send(msg.text, "C rss2tg_bot", id2gateway[rss_bot])
-      #  await mt_send_for_long_text(msg.text, id2gateway[rss_bot])
-      await send(msg.text, rss_channel, name="")
-      await asyncio.sleep(5)
-    return
+  #  elif event.chat_id == rss_bot:
+  #    async with rss_lock:
+  #      #  await mt_send(msg.text, "C rss2tg_bot", id2gateway[rss_bot])
+  #      #  await mt_send_for_long_text(msg.text, id2gateway[rss_bot])
+  #      await send(msg.text, rss_group, name="")
+  #      await asyncio.sleep(5)
+  #    return
+  #  elif event.chat_id in bridges:
+  #    await send(msg.text, bridges[event.chat_id], name="")
+  #    await asyncio.sleep(5)
+  #    return
     #  print("N: skip: %s != %s" % (event.chat_id, gpt_bot))
   else:
     #  print("W: skip unknown chat_id: %s %s" % (event.chat_id, msg.text[:64]))
-    await print_tg_msg(event)
+    res, nick, delay = await print_tg_msg(event)
+    if event.chat_id in bridges:
+      await send(msg.text, jid=bridges[event.chat_id], name=nick, nick=nick, delay=delay)
+    else:
+      await send(res, name="", nick=nick, delay=delay)
+
     return
 
 
@@ -3381,7 +3397,7 @@ async def parse_xmpp_msg(msg):
     logger.info(f"admin pm msg: {text[:16]}")
   elif muc == rssbot:
     #  if msg.type_ == None:
-    await send(text, acg_channel, name="", delay=5)
+    await send(text, acg_group, name="", delay=5)
     return
   else:
     print("未知来源的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
@@ -3394,7 +3410,7 @@ async def parse_xmpp_msg(msg):
 
   print("%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
   if msg.type_ == MessageType.GROUPCHAT:
-    if muc == acg_channel:
+    if muc == acg_group:
       if is_admin:
         await send(text, rssbot, name="")
       else:
@@ -3670,6 +3686,17 @@ async def add_cmd():
   cmd_funs["ub"] = _
   cmd_for_admin.add('ub')
 
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"管理桥接\n.{cmds[0]} add $from $dst"
+    res = ""
+    if cmds[1] == "add":
+      if cmds[2].isnumeric():
+        bridges[int(cmds[2])] = cmds[3]
+        res += f"added: {int(cmds[2])} -> {bridges[int(cmds[2])]}"
+    await send(f"{res}", src)
+  cmd_funs["br"] = _
+  cmd_for_admin.add('br')
 
   async def _(cmds, src):
     if len(cmds) == 1:
