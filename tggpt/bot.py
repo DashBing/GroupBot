@@ -1094,7 +1094,7 @@ async def my_popen(cmd,
         else:
           res = '...'
         #  tmp = "...\n" + res + "\n==\nE: \n" + errs
-        tmp = "正在执行(%ss): %s\n--\n%s\n--\nE: ?\n%s\n" % (int(time.time()-start_time), cmd_str, res, errs)
+        tmp = "正在执行(%ss): %s\n%s\nE: ?\n%s" % (int(time.time()-start_time), cmd_str, res, errs)
         tmp = tmp.strip()
         logger.info(f"临时输出: {tmp}")
         if tmp != tmp_last:
@@ -1148,9 +1148,9 @@ async def my_popen(cmd,
     #      return msg
     if combine:
       if errs:
-        res = "%s\n---\nE: %s\n%s" % (res, p.returncode, errs)
+        res = "%s\n--\nE: %s\n%s" % (res, p.returncode, errs)
       elif p.returncode:
-        res = "%s\n---\nE: %s" % (res, p.returncode)
+        res = "%s\n--\nE: %s" % (res, p.returncode)
       if res:
         return res
       else:
@@ -4350,9 +4350,10 @@ async def xmppbot():
       logger.info(f"等待任务队列: {len(tasks)}/{len(groups)}")
       done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
       for i in done:
-        if i.result() is False:
+        #  if i.result() is False:
+        if i.result() is not True:
           groups.add(i.name)
-          warn(f"进群失败一次: {i.name} {len(tasks)}/{len(groups)}")
+          warn(f"进群失败一次: {i.result()} {i.name} {len(tasks)}/{len(groups)}")
 
   global allright_task
   allright_task -= 1
