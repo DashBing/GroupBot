@@ -1941,14 +1941,12 @@ async def mt_read():
               line = b""
 
     except asyncio.CancelledError as e:
-      warn(f"该任务被要求中止")
+      info(f"该任务被要求中止")
       raise
     except ClientPayloadError:
-      logger.warning("mt closed, data lost")
-      raise
+      err("mt closed, data lost")
     except ClientConnectorError:
-      logger.warning("mt api is not ok, retry...")
-      raise
+      warn("mt api is not ok, retry...")
     except ValueError as e:
       #  print("W: maybe a msg is lost")
       err(f"{e=} line: {line}")
@@ -4466,6 +4464,16 @@ async def amain():
   #    raise e
   finally:
     logger.info("正在收尾...")
+    #  for j in asyncio.all_tasks(loop):
+    #    if not j.done():
+    #      if "@" in j.get_name():
+    #        j.cancel()
+    #  for j in asyncio.all_tasks(loop):
+    #    if not j.done():
+    #      if "@" in j.get_name():
+    #        logger.info(f"正在关闭task, {j}")
+    #        #  loop.run_until_complete(j)
+    #        await j
     mt_read_task.cancel()
     await sendg("正在停止")
     await stop()
