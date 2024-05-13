@@ -4353,7 +4353,7 @@ async def xmppbot():
         #  if i.result() is False:
         if i.result() is not True:
           groups.add(i.get_name())
-          warn(f"进群失败一次: {i.result()} {i.name} {len(tasks)}/{len(groups)}")
+          warn(f"进群失败一次: {i.result()} {i.get_name()} {len(tasks)}/{len(groups)}")
 
   global allright_task
   allright_task -= 1
