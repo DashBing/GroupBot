@@ -3199,11 +3199,13 @@ async def parse_xmpp_msg(msg):
             j = jids[jid]
             if j[0] != msg.from_.resource:
               await send(f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}", muc, nick=f".ban {muc}/{msg.from_.resource}")
+              await send(f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}\njid: {jid}", nick=f".ban {muc}/{msg.from_.resource}")
               j[0] = msg.from_.resource
           else:
+            jids[jid] = [msg.from_.resource, item.affiliation, item.role]
             welcome=f"欢迎 {hide_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
             await send(welcome, muc, nick=f".ban {muc}/{msg.from_.resource}")
-            jids[jid] = [msg.from_.resource, item.affiliation, item.role]
+            await send(f"new {jids[jid]}\nmuc: {muc}\njid: {jid}", nick=f".ban {muc}/{msg.from_.resource}")
           if len(jids[jid]) > 3:
             jids[jid][3] = int(time.time())
           else:
