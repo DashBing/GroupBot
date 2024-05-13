@@ -3286,8 +3286,8 @@ async def parse_xmpp_msg(msg):
       print("旧消息: %s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, time.time() - delay.stamp.timestamp()))
 
   if msg.type_ == MessageType.NORMAL:
-    logger.info("normal msg")
-  if msg.type_ == MessageType.GROUPCHAT:
+    logger.info(f"normal msg: {msg}")
+  elif msg.type_ == MessageType.GROUPCHAT:
     pass
   elif msg.type_ == MessageType.CHAT:
     pass
