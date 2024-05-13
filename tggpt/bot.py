@@ -3384,14 +3384,22 @@ async def parse_xmpp_msg(msg):
       err("not found room: {muc}")
       return
     room = rooms[muc]
+    existed = False
     for i in room.members:
       if i.direct_jid is None:
         err("没有权限查看jid: {muc}")
         return
-      if i.nick == msg.from_.resource and str(i.direct_jid.bare()) in me:
-        is_admin = True
-        logger.info(f"admin msg: {text[:16]}")
-        break
+      if i.nick == msg.from_.resource:
+        existed = True
+        if str(i.direct_jid.bare()) == myjid:
+          return
+        if str(i.direct_jid.bare()) in me:
+          is_admin = True
+          logger.info(f"admin msg: {text[:16]}")
+          break
+    if not existed:
+      print("忽略幽灵发言%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+      return
     if msg.type_ == MessageType.CHAT:
       if is_admin is False:
         if text == "ping":
