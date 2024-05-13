@@ -110,6 +110,7 @@ import sys, os
 #  from time import time
 #  from asyncio import sleep
 from collections import deque
+import unicodedata as ud
 
 
 
@@ -1652,6 +1653,9 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
           nick = name
       else:
         nick = fromname
+    # https://stackoverflow.com/questions/69778194/how-can-i-check-whether-a-unicode-codepoint-is-assigned-or-not
+    if ud.category(name) not in ('Cn', 'Cs', 'Co'):
+      name = repr(name)
     if nick is not None:
       room = None
       muc = str(msg.to.bare())
@@ -2624,7 +2628,7 @@ async def print_msg(event):
           res += " [# %s]" % peer.title
   res2 = None
   if msg.text:
-    res2 = "{res}: {msg.text}"
+    res2 = f"{res}: {msg.text}"
     res += ": %s" % msg.text.splitlines()[0][:64]
   else:
     res += ": "
@@ -2632,7 +2636,8 @@ async def print_msg(event):
     res += " %s" % msg.file
     if msg.file.name:
       res += " %s" % msg.file.name
-      res2 += " (%s)" % msg.file.name
+      if res2:
+        res2 += " (%s)" % msg.file.name
   if res2:
     await send(res2, nick="G %s" % name)
   print(res)
