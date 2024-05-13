@@ -1655,10 +1655,14 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
         nick = fromname
     # https://stackoverflow.com/questions/69778194/how-can-i-check-whether-a-unicode-codepoint-is-assigned-or-not
     if nick is not None:
+      tmp=[]
       for c in nick:
         if ud.category(c) not in ('Cn', 'Cs', 'Co'):
-          nick = repr(nick)
-          break
+          #  nick = repr(nick)
+          #  break
+          tmp.append(c.encode("unicode-escape").decode())
+        tmp.append(c)
+      nick = "".join(tmp)
       room = None
       muc = str(msg.to.bare())
       if muc in rooms:
@@ -2641,7 +2645,7 @@ async def print_msg(event):
       if res2:
         res2 += " (%s)" % msg.file.name
   if res2:
-    await send(res2, nick="G %s" % name)
+    await send(res2, name="", nick="G %s" % name)
   print(res)
 
 
