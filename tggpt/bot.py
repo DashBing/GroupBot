@@ -1066,11 +1066,15 @@ async def my_popen(cmd,
     await asyncio.sleep(1)
     logger.info(f"popen cmd: {p.args}")
     if type(cmd) == list:
-      cmd_str = " ".join(cmd)
+      if len(cmd) == 6 and "bcmd.sh" in cmd[0]:
+        cmd_str = cmd[4]
+      else:
+        cmd_str = " ".join(cmd)
     else:
       cmd_str = cmd
-    if len(str(cmd)) > 512:
+    if len(str(cmd_str)) > 512:
       cmd_str = "%s..." % cmd_str[:512]
+    tmp_last = None
     while True:
       #  if p.poll() == None and p.returncode == None:
       if p.poll() == None:
@@ -1083,7 +1087,6 @@ async def my_popen(cmd,
 
       #  if msg:
       #    if tmp != msg.text:
-      tmp_last = None
       if src:
         if res:
           if len(res) > 512:
@@ -1103,7 +1106,7 @@ async def my_popen(cmd,
           except Exception as e:
             #  logger.error(f"can not send tmp: {e=}")
             #  msg = await client.send_message(MY_ID, tmp)
-            logger.info(f"无法发送临时输出: {tmp} {e=}")
+            warn(f"无法发送临时输出: {tmp} {e=}")
       await asyncio.sleep(2)
       if time.time() - start_time > max_time:
         p.kill()
