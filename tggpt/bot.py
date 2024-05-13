@@ -1373,7 +1373,7 @@ async def load_config():
     config["sync_groups_all"].append(config["public_groups"])
     config["sync_groups_all"].append(config["bot_groups"])
 
-    config["public_groups"] = config["public_groups"] + config["rss_groups"] + config["bot_groups"] + config["extra_groups"] + [config["acg_channel", config["log_group"]]
+    config["public_groups"] = config["public_groups"] + config["rss_groups"] + config["bot_groups"] + config["extra_groups"] + [config["acg_channel"], config["log_group"]]
 
     config["my_groups"] = config["my_groups"] + config["public_groups"]
 
