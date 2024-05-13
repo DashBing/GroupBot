@@ -4351,7 +4351,9 @@ async def xmppbot():
       done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
       for i in done:
         #  if i.result() is False:
-        if i.result() is not True:
+        if i.result():
+          pass
+        else:
           groups.add(i.get_name())
           warn(f"进群失败一次: {i.result()} {i.get_name()} {len(tasks)}/{len(groups)}")
 
