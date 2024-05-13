@@ -1663,7 +1663,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
       tmp=[]
       for c in nick:
         #  if ud.category(c) in ('Cn', 'Cs', 'Co'):
-        if ud.category(c) in ('Cn', 'Cs', 'Co', 'Cf'):
+        if ud.category(c) in ('Cn', 'Cs', 'Co', 'Cf', 'So'):
         #  if ud.category(c) not in ('Cn', 'Cs', 'Co',  'So'):
           #  nick = repr(nick)
           #  break
