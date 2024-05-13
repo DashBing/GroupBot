@@ -1663,7 +1663,8 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
       else:
         nick = fromname
     # https://stackoverflow.com/questions/69778194/how-can-i-check-whether-a-unicode-codepoint-is-assigned-or-not
-    if nick is not None:
+    #  if nick is not None:
+    if None:
       tmp=[]
       for c in nick:
         #  if ud.category(c) in ('Cn', 'Cs', 'Co'):
