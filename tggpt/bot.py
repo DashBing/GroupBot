@@ -1673,16 +1673,20 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
           fu = asyncio.Future()
           #  jid = str(room.me.direct_jid)
           on_nick_changed_futures[(myjid, muc)] = fu
-          await room.set_nick(nick)
-          await fu
-          if fu.result() == nick:
-            logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} -> {nick}")
+          try:
+            await room.set_nick(nick)
+          except ValueError as e:
+            warn(f"改名失败: {nick=} {e=}")
           else:
-            warn(f"改名失败: {str(msg.to.bare())} {room.me.nick=} != {nick=}")
-        #  else:
-        #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
-        #  else:
-        #    logger.info(f"not found room: {msg.to}")
+            await fu
+            if fu.result() == nick:
+              logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} -> {nick}")
+            else:
+              warn(f"改名失败: {str(msg.to.bare())} {room.me.nick=} != {nick=}")
+          #  else:
+          #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
+          #  else:
+          #    logger.info(f"not found room: {msg.to}")
 
     text = None
     for i in msg.body:
@@ -2645,7 +2649,7 @@ async def print_msg(event):
       if res2:
         res2 += " (%s)" % msg.file.name
   if res2:
-    await send(res2, name="", nick="G %s" % name)
+    await send(res2, name="", nick="G %s" % name, delay=1)
   print(res)
 
 
