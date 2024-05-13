@@ -1395,6 +1395,7 @@ async def load_config():
               tmp.append(set(j))
             config[i] = tmp
 
+
     globals().update(config)
     global gd
     try:
@@ -1413,6 +1414,10 @@ async def load_config():
 
     logger.info("loaded gd\n%s" % json.dumps(gd, indent='  '))
     globals().update(gd)
+
+    for muc in my_groups:
+      if muc not in users:
+        users[muc] = {}
 
     return True
   except Exception as e:
@@ -3233,12 +3238,10 @@ async def parse_xmpp_msg(msg):
           print(f"上线: {msg.from_} {item.jid} {item.role} {item.affiliation} {msg.status}")
         muc = str(msg.from_.bare())
         if muc in my_groups:
-          if muc not in users:
-            users[muc] = {}
           jids = users[muc]
           jid = str(item.jid.bare())
           if jid == myjid:
-            logger.info(f"不记录bot: {jid}")
+            #  logger.info(f"不记录bot: {jid}")
             return
           if jid in jids:
             j = jids[jid]
@@ -3255,7 +3258,10 @@ async def parse_xmpp_msg(msg):
             jids[jid][3] = int(time.time())
           else:
             jids[jid].append(int(time.time()))
+        else:
+          await send1(f"上线: {msg.from_} {item.jid} {item.role} {item.affiliation} {msg.status}")
       else:
+        await send1(f"上线: {msg.from_} {msg.status}")
         print(f"上线: {msg.from_} {msg.status}")
       #  for i in msg.xep0045_muc_user.items:
       #    pprint(i)
