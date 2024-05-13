@@ -1644,7 +1644,7 @@ async def _send(*args, **kwargs):
 
 @exceptions_handler
 async def __send(msg, client=None, room=None, name=None, correct=False, fromname=None, nick=None, delay=None):
-  info(f"{msg}")
+  #  info(f"{msg}")
   jid = str(msg.to)
   if jid not in send_locks:
     send_locks[jid] = asyncio.Lock()
@@ -1675,7 +1675,8 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
       if muc in rooms:
         room = rooms[muc]
         #  await set_nick(room, fromname)
-        if room.me.nick != nick:
+        nick_old = room.me.nick
+        if nick_old != nick:
           #  logger.info(f"set nick...: {muc} {room.me.nick} -> {nick}")
           fu = asyncio.Future()
           #  jid = str(room.me.direct_jid)
@@ -1687,9 +1688,9 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
           else:
             await fu
             if fu.result() == nick:
-              logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} -> {nick}")
+              logger.info(f"set nick: {muc} {nick_old} -> {nick}")
             else:
-              warn(f"改名失败: {str(msg.to.bare())} {room.me.nick=} != {nick=}")
+              warn(f"改名失败: {muc} {fu.result()} != {nick=}")
           #  else:
           #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
           #  else:
