@@ -1707,15 +1707,15 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
         #    # 群内私聊
         #    logger.info(f"send gpm msg: finally: {res=}")
         #    return True
+          if delay:
+            await asyncio.sleep(delay)
+          return True
         else:
           logger.info(f"send msg: finally: {res=} {res2=}")
           return False
       else:
         warn(f"send msg: res is not coroutine: {res=} {client=} {room=} {msg=}")
       return False
-    if delay:
-      await asyncio.sleep(delay)
-    return True
 
 
 @exceptions_handler
@@ -1914,7 +1914,6 @@ async def mt_read():
   #  session = await init_aiohttp_session()
   logger.info("start read msg from mt api...")
   while True:
-    line = ""
     try:
       async with aiohttp.ClientSession() as session:
         #  async with session.get(url, timeout=0, read_bufsize=2**20) as resp:
