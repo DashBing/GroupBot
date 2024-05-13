@@ -1065,6 +1065,12 @@ async def my_popen(cmd,
     asyncio.create_task(update_stdouterr(data))
     await asyncio.sleep(1)
     logger.info(f"popen cmd: {p.args}")
+    if type(cmd) == list:
+      cmd_str = " ".join(cmd)
+    else:
+      cmd_str = cmd
+    if len(str(cmd)) > 512:
+      cmd_str = "%s..." % cmd_str[:512]
     while True:
       #  if p.poll() == None and p.returncode == None:
       if p.poll() == None:
@@ -1075,17 +1081,25 @@ async def my_popen(cmd,
       res = data[0]
       errs = data[1]
 
-      #  tmp = "...\n" + res + "\n==\nE: \n" + errs
-      tmp = "...\n%s\n---\nE: ?\n%s" % (res, errs)
-      tmp = tmp.strip()
-      logger.info(f"临时输出: {tmp}")
       #  if msg:
       #    if tmp != msg.text:
+      tmp_last = None
       if src:
+        if res:
+          if len(res) > 512:
+            res = "%s..." % res[:512]
+        else:
+          res = '...'
+        #  tmp = "...\n" + res + "\n==\nE: \n" + errs
+        tmp = "正在执行(%ss): %s\n--\n%s\n--\nE: ?\n%s\n" % (int(time.time()-start_time), cmd_str, res, errs)
+        tmp = tmp.strip()
+        logger.info(f"临时输出: {tmp}")
+        if tmp != tmp_last:
           try:
             #  msg = await cmd_answer(tmp, client, msg, **args)
             #  logger.info(f"临时输出: {tmp}")
             await send(tmp, src, correct=True)
+            tmp_last = tmp
           except Exception as e:
             #  logger.error(f"can not send tmp: {e=}")
             #  msg = await client.send_message(MY_ID, tmp)
@@ -1200,65 +1214,64 @@ async def my_eval(cmd):
   #  res = await cmd_answer(str(res), client=client, msg=msg, **args)
   return res
 
+async def send_cmd_to_bash(gateway, name, text):
+  #  if not text:
+  #    logger.warning("skip bash cmd, text is empty: {}".format(msg))
+  #    return
+    #  text = msg[2]
+    #  name = msg[1]
+    #  gateway = msg[0]
+  msg = {
+    "gateway": gateway,
+    "username": "{}".format(name),
+    "text": "{}".format(text),
+  }
+  #  if isinstance(msg, str):
+  #    shell_cmd = ["bash", SH_PATH + "/bcmd.sh"]
+  #    shell_cmd.append("just_get_reply")
+  #    shell_cmd.append(msg_mt)
+  #  else:
+  # [gateway, username, text]
+  #  if type(msg) == list:
+    #  if not " " in msg[1]:
+  #  if msg[1]:
+  #    if len(msg[1]) < 2 or msg[1][1] != ' ':
+  #      msg[1] = "X " + msg[1]
+  #  if name.startswith("C "):
+  #    return
+  #  logger.info("msg_mt: {}".format(msg))
+  #  shell_cmd="{} {} {} {}"
+  #  shell_cmd = ["bash -l", SH_PATH + "/bcmd.sh"]
+  shell_cmd = ["bash", SH_PATH + "/bcmd.sh"]
+  #  shell_cmd = [SH_PATH + "/bcmd.sh"]
+  shell_cmd.append(gateway)
+  shell_cmd.append(name)
+  shell_cmd.append(text)
+  shell_cmd.append(repr(msg))
 
-async def send_cmd_to_bash(msg):
-  if isinstance(msg, str):
-    shell_cmd = ["bash", SH_PATH + "/bcmd.sh"]
-    shell_cmd.append("just_get_reply")
-    shell_cmd.append(msg)
-  else:
-    # [gateway, username, text]
-    #  if type(msg) == list:
-      #  if not " " in msg[1]:
-    if msg[1]:
-      if len(msg[1]) < 2 or msg[1][1] != ' ':
-        msg[1] = "X " + msg[1]
-    msg_mt = {
-      "text": msg[2],
-      "username": "{}".format(msg[1]),
-      "gateway": msg[0]
-    }
-    text = msg[2]
-    name = msg[1]
-    gateway = msg[0]
-    if not text:
-      logger.warning("skip bash cmd, text is empty: {}".format(msg))
-      return
-    if name.startswith("C "):
-      return
-    logger.info("msg_mt: {}".format(msg_mt))
-    #  shell_cmd="{} {} {} {}"
-    #  shell_cmd = ["bash -l", SH_PATH + "/bcmd.sh"]
-    shell_cmd = ["bash", SH_PATH + "/bcmd.sh"]
-    #  shell_cmd = [SH_PATH + "/bcmd.sh"]
-    shell_cmd.append(gateway)
-    shell_cmd.append(name)
-    shell_cmd.append(text)
-    shell_cmd.append(repr(msg_mt))
-
-    #  if shell_cmd[1] == "gateway1":
-    #    #  if my_host_re.match(shell_cmd[3]):
-    #    if urlre.match(shell_cmd[3]):
-    #      print("my url")
-    #      shell_cmd[3] = ".ipfs {} only".format(shell_cmd[3])
-    #      #  shell_cmd[1] = "gateway4"
-    #    elif tw_re.match(shell_cmd[3]):
-    #      print("a twitter")
-    #      shell_cmd[3] = ".tw {}".format(shell_cmd[3])
-    #      #  shell_cmd[1] = "gateway4"
-    #    elif pic_re.match(shell_cmd[3]):
-    #      print("a pic")
-    #      shell_cmd[3] = ".ipfs {} only".format(shell_cmd[3])
-    #      #  shell_cmd[1] = "gateway4"
-    #    elif url_only_re.match(shell_cmd[3]):
-    #      print("a url")
-    #      shell_cmd[3] = ".ipfs {} autocheck".format(shell_cmd[3])
-    #      #  shell_cmd[1] = "gateway4"
-  logger.warning("bash cmd: {}".format(shell_cmd))
+  #  if shell_cmd[1] == "gateway1":
+  #    #  if my_host_re.match(shell_cmd[3]):
+  #    if urlre.match(shell_cmd[3]):
+  #      print("my url")
+  #      shell_cmd[3] = ".ipfs {} only".format(shell_cmd[3])
+  #      #  shell_cmd[1] = "gateway4"
+  #    elif tw_re.match(shell_cmd[3]):
+  #      print("a twitter")
+  #      shell_cmd[3] = ".tw {}".format(shell_cmd[3])
+  #      #  shell_cmd[1] = "gateway4"
+  #    elif pic_re.match(shell_cmd[3]):
+  #      print("a pic")
+  #      shell_cmd[3] = ".ipfs {} only".format(shell_cmd[3])
+  #      #  shell_cmd[1] = "gateway4"
+  #    elif url_only_re.match(shell_cmd[3]):
+  #      print("a url")
+  #      shell_cmd[3] = ".ipfs {} autocheck".format(shell_cmd[3])
+  #      #  shell_cmd[1] = "gateway4"
+  #  logger.warning("bash cmd: {}".format(shell_cmd))
   #  await run_my_bash(shell_cmd, shell=False)
   #  await my_popen(shell_cmd, shell=False)
   #  await my_popen(" ".join(shell_cmd))
-  res = await my_popen(shell_cmd, shell=False)
+  res = await my_popen(shell_cmd, shell=False, src=gateway)
   #  logger.info(res)
   return res
 
@@ -1746,6 +1759,8 @@ async def send(text, jid=None, *args, **kwargs):
       #  err(f"需要jid")
       #  return False
       jid = log_group_private
+  elif jid == "gateway1":
+    jid = main_group
   else:
     muc = jid
   if isinstance(text, aioxmpp.Message):
@@ -3814,7 +3829,7 @@ async def run_cmd(text, src, name="X test", is_admin=False):
       #  await send(reply)
       #  return True
     else:
-      res = await send_cmd_to_bash([src, name, text])
+      res = await send_cmd_to_bash(src, name, text)
       if res:
         return res
   elif text.isnumeric() and music_bot_state[src] == 2:
@@ -3880,12 +3895,12 @@ async def run_cmd(text, src, name="X test", is_admin=False):
 
     if res:
       res = f"{name}{res}"
-      res2 = await send_cmd_to_bash([src, "", text])
+      res2 = await send_cmd_to_bash(src, "", text)
       if res2:
         res += f"\n{res2}"
       return res
     else:
-      res = await send_cmd_to_bash([src, name, text])
+      res = await send_cmd_to_bash(src, name, text)
       return res
       #  await mt_send(res, gateway=gateway, name="titlebot")
 
@@ -4387,7 +4402,7 @@ async def amain():
         res = await my_popen(' '.join(sys.argv[2:]))
         print(res)
       elif sys.argv[1] == 'cmd2':
-        res = await send_cmd_to_bash(["gateway1", "X test", ' '.join(sys.argv[2:])])
+        res = await send_cmd_to_bash("gateway1", "X test", ' '.join(sys.argv[2:]))
         print(res)
       return
 
