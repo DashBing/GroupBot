@@ -391,6 +391,7 @@ def exceptions_handler(func):
 
 
 def _exceptions_handler(e, *args, **kwargs):
+  more = True
   #  res = f'内部错误: {e=} line: {e.__traceback__.tb_next.tb_lineno}'
   tb = e.__traceback__
   lineno = "%s" % tb.tb_lineno
@@ -421,9 +422,13 @@ def _exceptions_handler(e, *args, **kwargs):
       res += ' some other error happened'
   except socket.timeout:
     res += ' socket timed out'
+  except ConnectionError as e:
+    if e.args[0] == 'stream is not ready':
+      more = False
+    else:
+      pass
   except UnicodeDecodeError:
     pass
-
   except Exception:
     pass
     #  logger.error(f"W: {repr(e)} line: {e.__traceback__.tb_lineno}", exc_info=True, stack_info=True)
@@ -434,9 +439,12 @@ def _exceptions_handler(e, *args, **kwargs):
   #  logger.warning(res)
   #  asyncio.create_task(mt_send(res))
   #  asyncio.create_task(send(res, ME))
-  logger.warning(res, exc_info=True, stack_info=True)
+  if more:
+    logger.error(res, exc_info=True, stack_info=True)
+    send_log(res)
+  else:
+    logger.warning(res)
   #  logger.warning(res)
-  send_log(res)
   return res
 
 
@@ -1706,6 +1714,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
     return True
 
 
+@exceptions_handler
 async def send(text, jid=None, *args, **kwargs):
   muc = None
   if 'name' in kwargs:
