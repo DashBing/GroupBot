@@ -424,6 +424,10 @@ def _exceptions_handler(e, *args, **kwargs):
     res += ' socket timed out'
   except ConnectionError as e:
     if e.args[0] == 'stream is not ready':
+      # sending xmpp msg
+      more = False
+    elif e.args[0] == 'disconnected':
+      # sending xmpp msg
       more = False
     else:
       pass
