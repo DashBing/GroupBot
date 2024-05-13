@@ -1614,12 +1614,13 @@ send_locks = {}
 
 
 async def _send(*args, **kwargs):
-  info(f"{args=} {kwargs=}")
+  #  info(f"{args=} {kwargs=}")
   asyncio.create_task(__send(*args, **kwargs))
   return True
 
 @exceptions_handler
 async def __send(msg, client=None, room=None, name=None, correct=False, fromname=None, nick=None, delay=None):
+  info(f"{msg}")
   jid = str(msg.to)
   if jid not in send_locks:
     send_locks[jid] = asyncio.Lock()
@@ -1649,7 +1650,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
           if fu.result() == nick:
             logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} -> {nick}")
           else:
-            warn(f"改名失败: {str(msg.to.bare())} {room.me.nick=} != {nick=}")
+            info(f"改名失败: {str(msg.to.bare())} {room.me.nick=} != {nick=}")
         #  else:
         #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
         #  else:
@@ -1709,6 +1710,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
         #    logger.info(f"send gpm msg: finally: {res=}")
         #    return True
           if delay:
+            info(f"delay: {delay}s")
             await asyncio.sleep(delay)
           return True
         else:
