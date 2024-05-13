@@ -1210,8 +1210,9 @@ async def send_cmd_to_bash(msg):
     # [gateway, username, text]
     #  if type(msg) == list:
       #  if not " " in msg[1]:
-    if len(msg[1]) < 2 or msg[1][1] != ' ':
-      msg[1] = "X " + msg[1]
+    if msg[1]:
+      if len(msg[1]) < 2 or msg[1][1] != ' ':
+        msg[1] = "X " + msg[1]
     msg_mt = {
       "text": msg[2],
       "username": "{}".format(msg[1]),
