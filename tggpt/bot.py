@@ -3878,10 +3878,10 @@ async def run_cmd(text, src, name="X test", is_admin=False):
       res+="\n\n> %s\n%s" % (url, await get_title(url))
 
     if res:
-      res = "{name}{res}"
+      res = f"{name}{res}"
       res2 = await send_cmd_to_bash([src, "", text])
       if res2:
-        res += "\n{res2}"
+        res += f"\n{res2}"
       return res
     else:
       res = await send_cmd_to_bash([src, name, text])
