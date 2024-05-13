@@ -1410,6 +1410,7 @@ async def load_config():
     if "users" not in gd:
       gd["users"] = {}
 
+    logger.info("loaded gd\n%s" % json.dumps(gd, indent='  '))
     globals().update(gd)
 
     return True
