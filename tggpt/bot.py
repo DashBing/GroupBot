@@ -1678,7 +1678,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
           if fu.result() == nick:
             logger.info(f"set nick: {str(msg.to.bare())} {room.me.nick} -> {nick}")
           else:
-            info(f"改名失败: {str(msg.to.bare())} {room.me.nick=} != {nick=}")
+            warn(f"改名失败: {str(msg.to.bare())} {room.me.nick=} != {nick=}")
         #  else:
         #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
         #  else:
