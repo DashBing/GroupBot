@@ -1676,7 +1676,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
           try:
             await room.set_nick(nick)
           except ValueError as e:
-            warn(f"改名失败: {nick=} {e=}")
+            warn(f"改名失败, 不支持特殊字符: {nick=} {e=}")
           else:
             await fu
             if fu.result() == nick:
