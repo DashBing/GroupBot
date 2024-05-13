@@ -1662,7 +1662,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
     if nick is not None:
       tmp=[]
       for c in nick:
-        if ud.category(c) not in ('Cn', 'Cs', 'Co'):
+        if ud.category(c) in ('Cn', 'Cs', 'Co'):
         #  if ud.category(c) not in ('Cn', 'Cs', 'Co',  'So'):
           #  nick = repr(nick)
           #  break
