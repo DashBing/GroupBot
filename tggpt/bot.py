@@ -197,6 +197,8 @@ def log(text):
   logger.warning(text)
 
 def get_cmd(text):
+  if text.endswith(": "):
+    text = text[:-2]
   cmd = text.split(' ')
   tmp = []
   for i in cmd:
