@@ -1066,7 +1066,7 @@ async def my_popen(cmd,
     await asyncio.sleep(1)
     logger.info(f"popen cmd: {p.args}")
     if type(cmd) == list:
-      if len(cmd) == 6 and "bcmd.sh" in cmd[0]:
+      if len(cmd) == 6 and "bcmd.sh" in cmd[1]:
         cmd_str = cmd[4]
       else:
         cmd_str = " ".join(cmd)
