@@ -1655,9 +1655,9 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
         nick = fromname
     # https://stackoverflow.com/questions/69778194/how-can-i-check-whether-a-unicode-codepoint-is-assigned-or-not
     if nick is not None:
-      for c in name:
-        if ud.category(name) not in ('Cn', 'Cs', 'Co'):
-          name = repr(name)
+      for c in nick:
+        if ud.category(c) not in ('Cn', 'Cs', 'Co'):
+          nick = repr(nick)
           break
       room = None
       muc = str(msg.to.bare())
