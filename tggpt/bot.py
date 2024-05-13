@@ -3276,6 +3276,10 @@ async def parse_xmpp_msg(msg):
           if jid == myjid:
             #  logger.info(f"不记录bot: {jid}")
             return
+          if jid in me:
+            j = [msg.from_.resource, item.affiliation, item.role]
+            jids[jid] = j
+            return
           if jid in jids:
             j = jids[jid]
             if j[0] != msg.from_.resource:
