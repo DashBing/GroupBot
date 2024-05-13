@@ -1662,8 +1662,8 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
           #  nick = repr(nick)
           #  break
           tmp.append(c.encode("unicode-escape").decode())
-          continue
-        tmp.append(c)
+        else:
+          tmp.append(c)
       nick = "".join(tmp)
       room = None
       muc = str(msg.to.bare())
@@ -2609,14 +2609,14 @@ async def get_entity(peer):
 async def print_msg(event):
   msg = event.message
   res = ''
-  name= "None"
+  nick= "G None"
   if event.is_private:
     res += "@"
     #  peer = await get_entity(event.chat_id)
     peer = await event.get_chat()
     if peer is not None:
       res += " [%s %s]" % (peer.first_name, peer.last_name)
-      name = "G [%s %s]" % (peer.first_name, peer.last_name)
+      nick = "G [%s %s]" % (peer.first_name, peer.last_name)
   else:
     if event.is_group:
       res += "+"
@@ -2634,7 +2634,7 @@ async def print_msg(event):
       if peer is not None:
         if isinstance(peer, User):
           res += " [%s %s]" % (peer.first_name, peer.last_name)
-          name = "G [%s %s]" % (peer.first_name, peer.last_name)
+          nick = "G [%s %s]" % (peer.first_name, peer.last_name)
         else:
         #  if isinstance(peer, Channel):
           res += " [# %s]" % peer.title
@@ -2651,7 +2651,7 @@ async def print_msg(event):
       if res2:
         res2 += " (%s)" % msg.file.name
   if res2:
-    await send(res2, name="", nick=name, delay=2)
+    await send(res2, name="", nick=nick, delay=1)
   print(res)
 
 
