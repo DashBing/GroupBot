@@ -1375,7 +1375,6 @@ async def load_config():
 
     config["my_groups"] = config["my_groups"] + config["public_groups"]
 
-    
 
     #  jid = get_my_key("JID")
     #  config['ME'] = jid
