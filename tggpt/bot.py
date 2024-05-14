@@ -3737,7 +3737,7 @@ async def add_cmd():
     res = None
     if len(cmds) == 1:
       res = f"管理桥接\n.{cmds[0]} add $from $dst\n.{cmds[0]} del $id/$jid\n.{cmds[0]} se $id/$jid"
-      res += "\n--\n%s" % json.dumps(bridges, indent='  '))
+      res += "\n--\n%s" % json.dumps(bridges, indent='  ')
     elif cmds[1] == "add":
       if len(cmds) != 4:
         res = "参数数量不对"
