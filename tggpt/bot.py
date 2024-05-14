@@ -152,7 +152,7 @@ def send_log(text):
 
 def err(text):
   if type(text) is not str:
-    text = "{text=}"
+    text = f"{text=}"
   #  lineno = currentframe().f_back.f_lineno
   lineno = sys._getframe(1).f_lineno
   text = f"E: {lineno}: {text}"
@@ -163,7 +163,7 @@ def err(text):
 
 def warn(text, more=False):
   if type(text) is not str:
-    text = "{text=}"
+    text = f"{text=}"
   #  lineno = currentframe().f_back.f_lineno
   lineno = sys._getframe(1).f_lineno
   text = f"W: {lineno}: {text}"
@@ -175,7 +175,7 @@ def warn(text, more=False):
 
 def info(text):
   if type(text) is not str:
-    text = "{text=}"
+    text = f"{text=}"
   lineno = sys._getframe(1).f_lineno
   text = f"{lineno}: {text}"
   logger.info(text)
@@ -185,7 +185,7 @@ def dbg(text):
 
 def log(text):
   if type(text) is not str:
-    text = "{text=}"
+    text = f"{text=}"
   #  lineno = currentframe().f_back.f_lineno
   lineno = sys._getframe(1).f_lineno
   text = f"{lineno}: {text}"
@@ -1606,10 +1606,6 @@ async def qw2(text):
     res = f"{e=}"
   return res
 
-
-
-
-
 def get_src(msg):
   if msg.type_ == MessageType.GROUPCHAT:
     return str(msg.from_.bare())
@@ -1619,12 +1615,8 @@ def get_src(msg):
     return str(msg.from_)
   return str(msg.from_.bare())
 
-
-
 #  async def set_nick(room, nick):
   #  if msg.type_ == MessageType.GROUPCHAT:
-
-
 
 on_nick_changed_futures = {}
 
@@ -1639,10 +1631,7 @@ def on_nick_changed(member, old_nick, new_nick, *, muc_status_codes=set(), **kwa
       err(e)
   #  logger.info(f"nick changed: {jid} {muc} {old_nick} -> {new_nick}")
 
-
-
 send_locks = {}
-
 
 async def _send(*args, **kwargs):
   #  info(f"{args=} {kwargs=}")
@@ -2604,7 +2593,7 @@ def get_buttons(bs):
       tmp.append(i)
   return tmp
 
-async def get_entity(peer):
+async def get_entity(chat_id):
   #  if isinstance(peer, PeerUser):
   #    #  logger.info(f"PeerUser: {peer}")
   #    peer = await UB.get_input_entity(peer)
@@ -2617,12 +2606,25 @@ async def get_entity(peer):
   #  elif isinstance(peer, str):
   #    peer = await UB.get_input_entity(peer)
   #  else:
-  peer = await UB.get_input_entity(peer)
-  if peer:
-    entity = await UB.get_entity(peer)
-    if entity:
-      return entity
-  raise ValueError(f"无法获取chat信息: {peer}")
+  try:
+    url = chat_id
+    #  chat_id = get_addr(chat_id)
+    if url.startswith("https://t.me/"):
+      peer = url.rsplit('/',1)[1]
+    elif url.startswith("@"):
+      peer = url[1:]
+    elif type(chat_id) is int:
+      peer = await UB.get_input_entity(chat_id)
+    else:
+      return False
+    if peer:
+      entity = await UB.get_entity(peer)
+      if entity:
+        return entity
+  except Exception as e:
+    err(e)
+    return f"E: {e=}"
+  raise ValueError(f"无法获取chat信息: {chat_id} {peer}")
 
 
 
@@ -3267,49 +3269,54 @@ async def parse_xmpp_msg(msg):
         await send("not allowed", msg.from_)
     elif msg.type_ == PresenceType.AVAILABLE:
       if msg.xep0045_muc_user:
-        item = msg.xep0045_muc_user.items[0]
-        if str(item.jid.bare()) != myjid:
-          print(f"上线: {msg.from_} {item.jid} {item.role} {item.affiliation} {msg.status}")
-        muc = str(msg.from_.bare())
-        if muc in my_groups:
-          jids = users[muc]
+        #  item = msg.xep0045_muc_user.items[0]
+        for item in msg.xep0045_muc_user.items:
+          res = f"上线: {msg.from_} {item.jid} {item.role} {item.affiliation} {msg.status}")
           jid = str(item.jid.bare())
           if jid == myjid:
-            #  logger.info(f"不记录bot: {jid}")
             return
-          if jid in me:
-            j = [msg.from_.resource, item.affiliation, item.role]
-            jids[jid] = j
-            return
-          if jid in jids:
-            j = jids[jid]
-            if j[0] != msg.from_.resource:
-              await send(f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}", muc, nick=f".ban {muc}/{msg.from_.resource}")
-              await send(f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}\njid: {jid}", nick=f".ban {muc}/{msg.from_.resource}")
-              j[0] = msg.from_.resource
-          else:
-            j = [msg.from_.resource, item.affiliation, item.role]
-            jids[jid] = j
-            if muc in bot_groups:
-              welcome = f"欢迎 {hide_nick(msg)} ,这里是bot频道，专门用来测试bot，避免干扰主群。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
-            elif muc in rss_groups or muc == acg_group:
-              welcome = f"欢迎 {hide_nick(msg)} ,这里是rss频道，机器人推送消息很频繁。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
-            elif muc == "wtfipfs@salas.suchat.org":
-              welcome = f"欢迎 {hide_nick(msg)} ,该群新人默认不能发言。\n如果没有发言权，建议使用gajim或cheogram客户端申请。conversations不支持xmpp原生的申请方式。也可以群内私信bot：“申请发言权”，然后等管理批准。也可以改群内名字，添加“申请发言权”。\n建议经常在该群保持在线，管理看到就会给成员身份和发言权。\n该消息来自机器人(bot)，可不予理会。"
+          print(res)
+          muc = str(msg.from_.bare())
+          if muc in my_groups:
+            if jid == myjid:
+              #  logger.info(f"不记录bot: {jid}")
+              return
+            jids = users[muc]
+            if jid in me:
+              j = [msg.from_.resource, item.affiliation, item.role]
+              jids[jid] = j
+              return
+            nick = f".ban {muc}/{msg.from_.resource}"
+            if jid in jids:
+              j = jids[jid]
+              if j[0] != msg.from_.resource:
+                res = f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}"
+                j[0] = msg.from_.resource
+                await send(res, muc, nick=nick)
+                await send(f"{res}\nmuc: {muc}", nick=nick)
             else:
-              welcome = f"欢迎 {hide_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
-            await send(welcome, muc, nick=f".ban {muc}/{msg.from_.resource}")
-            await send(f"有新人入群: {j[0]}\n身份: {j[1]}\n角色: {j[2]}\nmuc: {muc}\njid: {jid}", nick=f".ban {muc}/{msg.from_.resource}")
+              j = [msg.from_.resource, item.affiliation, item.role]
+              jids[jid] = j
+              if muc in bot_groups:
+                welcome = f"欢迎 {hide_nick(msg)} ,这里是bot频道，专门用来测试bot，避免干扰主群。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
+              elif muc in rss_groups or muc == acg_group:
+                welcome = f"欢迎 {hide_nick(msg)} ,这里是rss频道，机器人推送消息很频繁。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
+              elif muc == "wtfipfs@salas.suchat.org":
+                welcome = f"欢迎 {hide_nick(msg)} ,该群新人默认不能发言。\n如果没有发言权，建议使用gajim或cheogram客户端申请。conversations不支持xmpp原生的申请方式。也可以群内私信bot：“申请发言权”，然后等管理批准。也可以改群内名字，添加“申请发言权”。\n建议经常在该群保持在线，管理看到就会给成员身份和发言权。\n该消息来自机器人(bot)，可不予理会。"
+              else:
+                welcome = f"欢迎 {hide_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
+              await send(welcome, muc, nick=nick)
+              await send(f"有新人入群: {j[0]}\n身份: {j[1]}\n角色: {j[2]}\njid: {jid}\nmuc: {muc}", nick=nick)
 
-          if len(jids[jid]) > 3:
-            jids[jid][3] = int(time.time())
+            if len(jids[jid]) > 3:
+              jids[jid][3] = int(time.time())
+            else:
+              jids[jid].append(int(time.time()))
           else:
-            jids[jid].append(int(time.time()))
-        else:
-          await send1(f"上线: {msg.from_} {item.jid} {item.role} {item.affiliation} {msg.status}")
+            await send(res)
       else:
-        await send1(f"上线: {msg.from_} {msg.status}")
         print(f"上线: {msg.from_} {msg.status}")
+        await send(f"上线: {msg.from_} {msg.status}")
       #  for i in msg.xep0045_muc_user.items:
       #    pprint(i)
     elif msg.type_ == PresenceType.UNAVAILABLE:
@@ -3729,7 +3736,7 @@ async def add_cmd():
   async def _(cmds, src):
     res = None
     if len(cmds) == 1:
-      res = f"管理桥接\n.{cmds[0]} add $from $dst"
+      res = f"管理桥接\n.{cmds[0]} add $from $dst\n.{cmds[0]} del $id/$jid\n.{cmds[0]} se $id/$jid"
       res += "\n--\n%s" % json.dumps(bridges, indent='  '))
     elif cmds[1] == "add":
       if len(cmds) != 4:
@@ -3743,18 +3750,18 @@ async def add_cmd():
         res = "参数数量不对"
       else:
         if get_add(cmds[2]) not in bridges:
-          res = "没找打"
+          res = "没找到"
         else:
           bridges.pop(get_add(cmds[2]))
           res = f"deleted: {get_addr(cmds[2])} -> {bridges[get_add(cmds[2])]}"
     elif cmds[1] == "se":
       res = ''
       addr = get_add(cmds[2])
-      if type(addr) is int:
-        peer = await get_entity(addr)
+      peer = await get_entity(addr)
+      if peer:
         res += "%s: %s\n--\n%s" % (type(peer), peer, peer.stringify())
       if addr in bridges:
-        res = f"existed: {get_addr(cmds[2])} -> {bridges[get_add(cmds[2])]}"
+        res += f"existed: {get_addr(cmds[2])} -> {bridges[get_add(cmds[2])]}"
     await send(f"{res}", src)
   cmd_funs["br"] = _
   cmd_for_admin.add('br')
@@ -3928,6 +3935,7 @@ async def add_cmd():
   cmd_funs["clear"] = _
 
 
+@exceptions_handler
 async def run_cmd(text, src, name="X test", is_admin=False):
   if text[0:1] == ".":
     if text[1:2] == " ":
