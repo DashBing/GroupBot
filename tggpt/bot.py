@@ -1212,7 +1212,7 @@ async def my_exec(cmd, src=None, client=None, **args):
 
 async def my_eval(cmd):
   res = eval(cmd)
-  logger.info(str(res) + "\n" + str(type(res)))
+  logger.info("%s %s" % (res, type(res)))
   #  res = await cmd_answer(str(res), client=client, msg=msg, **args)
   return res
 
@@ -1656,17 +1656,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
     # https://stackoverflow.com/questions/69778194/how-can-i-check-whether-a-unicode-codepoint-is-assigned-or-not
     if nick is not None:
     #  if None:
-      tmp=[]
-      for c in nick:
-        #  if ud.category(c) in ('Cn', 'Cs', 'Co'):
-        if ud.category(c) in ('Cn', 'Cs', 'Co', 'Cf', 'So', 'Ll'):
-        #  if ud.category(c) not in ('Cn', 'Cs', 'Co',  'So'):
-          #  nick = repr(nick)
-          #  break
-          tmp.append(c.encode("unicode-escape").decode())
-        else:
-          tmp.append(c)
-      nick = "".join(tmp)
+      nick = wtf_str(name)
       room = None
       muc = str(msg.to.bare())
       if muc in rooms:
@@ -3186,6 +3176,30 @@ def get_mucs(muc):
       return s
   return set([muc])
 
+def wtf_str(s, for_what="nick"):
+  if for_what == "nick":
+    ok = []
+    no = ('Cn', 'Cs', 'Co', 'Cf', 'So', 'Ll', 'Cc')
+  elif for_what == "xmpp":
+    ok = ['\n']
+    no = ('Cc', )
+  else:
+    ok = ['\n']
+    no = ('Cc', )
+  tmp=[]
+  for c in s:
+    if c in ok:
+      tmp.append(c)
+    #  if ud.category(c) in ('Cn', 'Cs', 'Co'):
+    elif ud.category(c) in no:
+    #  if ud.category(c) not in ('Cn', 'Cs', 'Co',  'So'):
+      #  nick = repr(nick)
+      #  break
+      tmp.append(c.encode("unicode-escape").decode())
+    else:
+      tmp.append(c)
+  return "".join(tmp)
+
 @exceptions_handler
 def msg_out(msg):
   if not allright.is_set():
@@ -3944,7 +3958,13 @@ async def add_cmd():
 
 
 @exceptions_handler
-async def run_cmd(text, src, name="X test", is_admin=False):
+async def run_cmd(*args, **kwargs):
+  res = await _run_cmd(*args, **kwargs)
+  if type(res) is str:
+    res = wtf_str(res, "xmpp")
+  return res
+
+async def _run_cmd(text, src, name="X test", is_admin=False):
   if text[0:1] == ".":
     if text[1:2] == " ":
       return
