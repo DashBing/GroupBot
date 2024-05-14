@@ -3271,7 +3271,7 @@ async def parse_xmpp_msg(msg):
       if msg.xep0045_muc_user:
         #  item = msg.xep0045_muc_user.items[0]
         for item in msg.xep0045_muc_user.items:
-          res = f"上线: {msg.from_} {item.jid} {item.role} {item.affiliation} {msg.status}")
+          res = f"上线: {msg.from_} {item.jid} {item.role} {item.affiliation} {msg.status}"
           jid = str(item.jid.bare())
           if jid == myjid:
             return
