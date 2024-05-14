@@ -3756,7 +3756,7 @@ async def add_cmd():
           res = f"deleted: {get_addr(cmds[2])} -> {bridges[get_add(cmds[2])]}"
     elif cmds[1] == "se":
       res = ''
-      addr = get_add(cmds[2])
+      addr = get_addr(cmds[2])
       peer = await get_entity(addr)
       if peer:
         res += "%s: %s\n--\n%s" % (type(peer), peer, peer.stringify())
