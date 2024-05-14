@@ -3745,9 +3745,12 @@ async def add_cmd():
         #  if cmds[2].isnumeric():
         addr = get_addr(cmds[2])
         #  bridges[get_addr(cmds[2])] = get_addr(cmds[3])
-        bridges[addr] = get_addr(cmds[3])
-        #  res = f"added: {get_addr(cmds[2])} -> {get_addr(cmds[3])}"
-        res = f"added: {addr} -> {bridges[addr]}"
+        if addr in bridges:
+          res = "existed"
+        else:
+          bridges[addr] = get_addr(cmds[3])
+          #  res = f"added: {get_addr(cmds[2])} -> {get_addr(cmds[3])}"
+          res = f"added: {addr} -> {bridges[addr]}"
     elif cmds[1] == "del":
       if len(cmds) != 3:
         res = "参数数量不对"
@@ -3761,12 +3764,12 @@ async def add_cmd():
     elif cmds[1] == "se":
       res = ''
       addr = get_addr(cmds[2])
-      peer = await get_entity(addr)
-      if peer:
-        res += "peer id: %s" % await UB.get_peer_id(peer)
-        res += "%s: %s\n--\n%s" % (type(peer), peer, peer.stringify())
       if addr in bridges:
         res += f"existed: {addr} -> {bridges[addr]}"
+      peer = await get_entity(addr)
+      if peer:
+        res += "\npeer id: %s" % await UB.get_peer_id(peer)
+        res += "\n%s: %s\n--\n%s" % (type(peer), peer.stringify(), peer)
     await send(f"{res}", src)
   cmd_funs["br"] = _
   cmd_for_admin.add('br')
