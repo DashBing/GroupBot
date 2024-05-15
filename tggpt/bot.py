@@ -3365,6 +3365,16 @@ async def parse_xmpp_msg(msg):
       #    pprint(i)
     elif msg.type_ == PresenceType.UNAVAILABLE:
       print(f"离线: {msg.from_} {msg.status}")
+      muc = str(msg.from_.bare())
+      if muc in my_groups:
+        pass
+      else:
+        sendg(f"离线: {msg.from_} {msg.status}")
+      if hasattr(msg, "xep0045_muc_user"):
+        #  if msg.xep0045_muc_user:
+        pprint(msg.xep0045_muc_user)
+      else:
+        pprint(msg)
     else:
       pprint(msg)
     return
