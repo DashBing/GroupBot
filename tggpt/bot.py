@@ -1624,11 +1624,12 @@ def on_nick_changed(member, old_nick, new_nick, *, muc_status_codes=set(), **kwa
   #  jid = str(member.conversation_jid)
   jid = str(member.direct_jid.bare())
   muc = str(member.conversation_jid.bare())
+  info(f"nick changed: {muc} {jid} {old_nick} -> {new_nick} {member.conversation_jid}")
   if (jid, muc) in on_nick_changed_futures:
     try:
       on_nick_changed_futures[(jid, muc)].set_result(new_nick)
     except asyncio.exceptions.InvalidStateError as e:
-      err(e)
+      err(f"无法保存nick到future: {on_nick_changed_futures[(jid, muc)]} {e=}")
   #  logger.info(f"nick changed: {jid} {muc} {old_nick} -> {new_nick}")
 
 send_locks = {}
@@ -1674,9 +1675,11 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
           else:
             #  await fu
             try:
-              await asyncio.wait_for(fu, timeout=5)
+              #  await asyncio.wait_for(await asyncio.shield(fu), timeout=8)
+              await asyncio.wait_for(fu, timeout=8)
             #  except Exception as e:
             except TimeoutError as e:
+              on_nick_changed_futures.pop((myjid, muc))
               warn(f"改名失败(超时)：{muc} {nick_old} -> {nick} {e=}")
             else:
               if fu.result() == nick:
@@ -3289,7 +3292,7 @@ async def parse_xmpp_msg(msg):
             pprint(msg)
             pprint(msg.xep0045_muc_user.items)
             pprint(item)
-            info(f"item.jid is None: {msg}")
+            err(f"item.jid is None: {msg} {item}")
             break
           res = f"上线: {msg.from_} {item.jid} {item.role} {item.affiliation} {msg.status}"
           jid = str(item.jid.bare())
@@ -3313,7 +3316,7 @@ async def parse_xmpp_msg(msg):
                 res = f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}"
                 j[0] = msg.from_.resource
                 await send(res, muc, nick=nick)
-                await send(f"{res}\nmuc: {muc}", nick=nick)
+                await send(f"{res}\njid: {jid}\nmuc: {muc}", nick=nick)
             else:
               j = [msg.from_.resource, item.affiliation, item.role]
               jids[jid] = j
