@@ -1097,9 +1097,10 @@ async def my_popen(cmd,
         #  tmp = "...\n" + res + "\n==\nE: \n" + errs
         tmp = "正在执行(%ss): %s\n%s\nE: ?\n%s" % (int(time.time()-start_time), cmd_str, res, errs)
         tmp = tmp.strip()
-        logger.info(f"临时输出: {tmp}")
         if tmp != tmp_last:
           try:
+            tmp = re.sub(shell_color_re,  "", tmp)
+            logger.info(f"临时输出: {tmp}")
             #  msg = await cmd_answer(tmp, client, msg, **args)
             #  logger.info(f"临时输出: {tmp}")
             await send(tmp, src, correct=True)
@@ -1276,6 +1277,8 @@ async def send_cmd_to_bash(gateway, name, text):
   #  await my_popen(shell_cmd, shell=False)
   #  await my_popen(" ".join(shell_cmd))
   res = await my_popen(shell_cmd, shell=False, src=gateway)
+  if res:
+    return re.sub(shell_color_re,  "", res)
   #  logger.info(res)
   return res
 
@@ -4096,8 +4099,6 @@ async def _run_cmd(text, src, name="X test", is_admin=False):
       return res
     else:
       res = await send_cmd_to_bash(src, name, text)
-      if res:
-        return re.sub(shell_color_re,  "", res)
       return res
       #  await mt_send(res, gateway=gateway, name="titlebot")
 
