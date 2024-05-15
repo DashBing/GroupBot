@@ -1650,55 +1650,56 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
     send_locks[jid] = asyncio.Lock()
   async with send_locks[jid]:
     msg.from_ = None
-    if nick is None:
-      if fromname is None:
-        if name is None:
-          pass
-        else:
-          nick = name
-      else:
-        nick = fromname
-    # https://stackoverflow.com/questions/69778194/how-can-i-check-whether-a-unicode-codepoint-is-assigned-or-not
-    if nick is not None:
-    #  if None:
-      muc = str(msg.to.bare())
-      room = rooms[muc]
-      #  if muc in rooms:
-      if room is not None:
-        room = rooms[muc]
-        #  await set_nick(room, fromname)
-        nick = wtf_str(name)
-        nick_old = room.me.nick
-        if nick_old != nick:
-          fu = asyncio.Future()
-          #  jid = str(room.me.direct_jid)
-          on_nick_changed_futures[muc] = fu
-          try:
-            await room.set_nick(nick)
-          except ValueError as e:
-            warn(f"改名失败, 不支持特殊字符: {nick=} {e=}")
+    if msg.type_ == MessageType.GROUPCHAT:
+      if nick is None:
+        if fromname is None:
+          if name is None:
+            pass
           else:
-            #  await fu
+            nick = name
+        else:
+          nick = fromname
+      # https://stackoverflow.com/questions/69778194/how-can-i-check-whether-a-unicode-codepoint-is-assigned-or-not
+      if nick is not None:
+      #  if None:
+        muc = str(msg.to.bare())
+        room = rooms[muc]
+        #  if muc in rooms:
+        if room is not None:
+          room = rooms[muc]
+          #  await set_nick(room, fromname)
+          nick = wtf_str(name)
+          nick_old = room.me.nick
+          if nick_old != nick:
+            fu = asyncio.Future()
+            #  jid = str(room.me.direct_jid)
+            on_nick_changed_futures[muc] = fu
             try:
-              #  await asyncio.wait_for(await asyncio.shield(fu), timeout=8)
-              await asyncio.wait_for(fu, timeout=8)
-            #  except Exception as e:
-            except TimeoutError as e:
-              on_nick_changed_futures.pop(muc)
-              warn(f"改名失败(超时)：{muc} {nick_old} -> {nick} {e=}")
+              await room.set_nick(nick)
+            except ValueError as e:
+              warn(f"改名失败, 不支持特殊字符: {nick=} {e=}")
             else:
-              on_nick_changed_futures.pop(muc)
-              if fu.result() == nick:
-                logger.info(f"set nick: {muc} {nick_old} -> {nick}")
+              #  await fu
+              try:
+                #  await asyncio.wait_for(await asyncio.shield(fu), timeout=8)
+                await asyncio.wait_for(fu, timeout=8)
+              #  except Exception as e:
+              except TimeoutError as e:
+                on_nick_changed_futures.pop(muc)
+                warn(f"改名失败(超时)：{muc} {nick_old} -> {nick} {e=}")
               else:
-                warn(f"改名失败: {muc} {fu.result()} != {nick}")
-            #  else:
-            #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
-            #  else:
-            #    logger.info(f"not found room: {msg.to}")
-      else:
-        await send(f"fixme: not found room: {muc}")
-        return
+                on_nick_changed_futures.pop(muc)
+                if fu.result() == nick:
+                  logger.info(f"set nick: {muc} {nick_old} -> {nick}")
+                else:
+                  warn(f"改名失败: {muc} {fu.result()} != {nick}")
+              #  else:
+              #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
+              #  else:
+              #    logger.info(f"not found room: {msg.to}")
+        else:
+          await send(f"fixme: not found room: {muc}")
+          return
 
     text = None
     for i in msg.body:
@@ -1754,7 +1755,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
         #    logger.info(f"send gpm msg: finally: {res=}")
         #    return True
           if delay:
-            info(f"delay: {delay}s")
+            #  info(f"delay: {delay}s")
             await asyncio.sleep(delay)
           return True
         else:
@@ -2646,7 +2647,7 @@ async def print_tg_msg(event, to_xmpp=False):
       nick = "G [%s %s]" % (peer.first_name, peer.last_name)
   else:
     if event.is_group:
-      delay = 1
+      delay = 2
       res += "+"
     else:
       delay = 5
