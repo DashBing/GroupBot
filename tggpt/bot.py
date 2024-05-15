@@ -1983,7 +1983,7 @@ async def mt_read():
           #    await mt2tg(line)
 
         async with session.get(url, timeout=0, read_bufsize=2**18*4, chunked=True) as resp:
-          info("N: mt api init ok")
+          send_log("N: mt api init ok")
           #  await mt_send("N: tggpt: mt read: init ok")
           line = b""
           async for data, end_of_http_chunk in resp.content.iter_chunks():
