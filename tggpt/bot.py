@@ -2616,12 +2616,12 @@ async def get_entity(chat_id):
   try:
     url = chat_id
     #  chat_id = get_addr(chat_id)
-    if url.startswith("https://t.me/"):
+    if type(chat_id) is int:
+      peer = await UB.get_input_entity(chat_id)
+    elif url.startswith("https://t.me/"):
       peer = url.rsplit('/',1)[1]
     elif url.startswith("@"):
       peer = url[1:]
-    elif type(chat_id) is int:
-      peer = await UB.get_input_entity(chat_id)
     else:
       return False
     if peer:
@@ -2629,8 +2629,8 @@ async def get_entity(chat_id):
       if entity:
         return entity
   except Exception as e:
-    err(e)
-    return f"E: {e=}"
+    err(f"E: {e=}")
+    return
   raise ValueError(f"无法获取chat信息: {chat_id} {peer}")
 
 
