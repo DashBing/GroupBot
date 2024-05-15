@@ -1794,14 +1794,16 @@ async def send(text, jid=None, *args, **kwargs):
     jid = main_group
   else:
     muc = jid
+
   if isinstance(text, aioxmpp.Message):
     text0 = text.body[None]
     text.body[None] = f"{name}{text.body[None]}"
   else:
     text0 = text
     text = f"{name}{text}"
+
   if muc in my_groups:
-    info(f"准备发送同步消息到: {get_mucs(muc)} {text=} {text0=}")
+    #  info(f"准备发送同步消息到: {get_mucs(muc)} {text=} {text0=}")
     ms = get_mucs(muc)
     for m in ms:
       if await send1(text, jid=m, *args, **kwargs):
@@ -1823,7 +1825,7 @@ async def send(text, jid=None, *args, **kwargs):
         await mt_send_for_long_text(text0, name=name)
     return True
   else:
-    info(f"准备发送到: {muc=} {jid=}")
+    #  info(f"准备发送到: {muc=} {jid=}")
     return await send1(text, jid=jid, *args, **kwargs)
 
 async def send1(text, jid=None, *args, **kwargs):
@@ -2807,10 +2809,10 @@ async def parse_tg_msg(event):
     #  print("W: skip unknown chat_id: %s %s" % (event.chat_id, msg.text[:64]))
     res, nick, delay = await print_tg_msg(event)
     if event.chat_id in bridges:
-      logger.info(f"转发桥接消息: {event.chat_id} -> {bridges[event.chat_id]}: {res}")
+      logger.info(f"转发桥接消息: {event.chat_id} -> {bridges[event.chat_id]}: {msg.text}")
       await send(msg.text, jid=bridges[event.chat_id], name=f"**{nick}:** ", nick=nick, delay=delay)
-    #  else:
-    #    await send(res, name="", nick=nick, delay=delay)
+    else:
+      await send(res, jid=log_group, name="", nick=nick, delay=delay)
 
     return
 
