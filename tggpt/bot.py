@@ -3199,11 +3199,11 @@ def wtf_str(s, for_what="nick"):
   if for_what == "nick":
     ok = []
     no = ('Cn', 'Cs', 'Co', 'Cf', 'So', 'Ll', 'Cc', 'Mn', 'Po', 'Lo')
-  elif for_what == "xmpp":
-    ok = ['\n']
-    no = ('Cc', )
+  #  elif for_what == "xmpp":
+  #    ok = ['\n', '\t']
+  #    no = ('Cc', )
   else:
-    ok = ['\n']
+    ok = ['\n', '\t']
     no = ('Cc', )
   tmp=[]
   for c in s:
