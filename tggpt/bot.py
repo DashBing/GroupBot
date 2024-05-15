@@ -3198,7 +3198,7 @@ def get_mucs(muc):
 def wtf_str(s, for_what="nick"):
   if for_what == "nick":
     ok = []
-    no = ('Cn', 'Cs', 'Co', 'Cf', 'So', 'Ll', 'Cc', 'Mn', 'Po')
+    no = ('Cn', 'Cs', 'Co', 'Cf', 'So', 'Ll', 'Cc', 'Mn', 'Po', 'Lo')
   elif for_what == "xmpp":
     ok = ['\n']
     no = ('Cc', )
