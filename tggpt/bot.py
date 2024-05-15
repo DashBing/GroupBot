@@ -1668,7 +1668,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
         if room is not None:
           room = rooms[muc]
           #  await set_nick(room, fromname)
-          nick = wtf_str(name)
+          nick = wtf_str(nick)
           nick_old = room.me.nick
           if nick_old != nick:
             fu = asyncio.Future()
