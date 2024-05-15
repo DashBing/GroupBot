@@ -2811,6 +2811,8 @@ async def parse_tg_msg(event):
     if event.chat_id in bridges:
       logger.info(f"转发桥接消息: {event.chat_id} -> {bridges[event.chat_id]}: {msg.text}")
       await send(msg.text, jid=bridges[event.chat_id], name=f"**{nick}:** ", nick=nick, delay=delay)
+    elif event.is_private:
+      pass
     else:
       await send(res, jid=log_group, name="", nick=nick, delay=delay)
 
