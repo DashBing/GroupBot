@@ -148,7 +148,8 @@ def info2(s):
 
 def send_log(text):
   #  asyncio.create_task(mt_send_for_long_text(text))
-  asyncio.create_task(send(text))
+  #  asyncio.create_task(send(text))
+  asyncio.create_task(sendg(text))
 
 def err(text):
   if type(text) is not str:
@@ -1421,6 +1422,7 @@ async def load_config():
     for muc in my_groups:
       if muc not in users:
         users[muc] = {}
+      rooms[muc] = None
 
 
     return True
@@ -1622,14 +1624,15 @@ on_nick_changed_futures = {}
 
 def on_nick_changed(member, old_nick, new_nick, *, muc_status_codes=set(), **kwargs):
   #  jid = str(member.conversation_jid)
-  jid = str(member.direct_jid.bare())
+  #  jid = str(member.direct_jid.bare())
   muc = str(member.conversation_jid.bare())
-  info(f"nick changed: {muc} {jid} {old_nick} -> {new_nick} {member.conversation_jid}")
-  if (jid, muc) in on_nick_changed_futures:
+  #  info(f"nick changed: {muc} {jid} {old_nick} -> {new_nick} {member.conversation_jid}")
+  #  if (jid, muc) in on_nick_changed_futures:
+  if muc in on_nick_changed_futures:
     try:
-      on_nick_changed_futures[(jid, muc)].set_result(new_nick)
+      on_nick_changed_futures[muc].set_result(new_nick)
     except asyncio.exceptions.InvalidStateError as e:
-      err(f"无法保存nick到future: {on_nick_changed_futures[(jid, muc)]} {e=}")
+      err(f"无法保存nick到future: {on_nick_changed_futures[muc]} {e=}")
   #  logger.info(f"nick changed: {jid} {muc} {old_nick} -> {new_nick}")
 
 send_locks = {}
@@ -1639,6 +1642,7 @@ async def _send(*args, **kwargs):
   asyncio.create_task(__send(*args, **kwargs))
   return True
 
+@exceptions_handler
 async def __send(msg, client=None, room=None, name=None, correct=False, fromname=None, nick=None, delay=None):
   #  info(f"{msg}")
   jid = str(msg.to)
@@ -1657,17 +1661,18 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
     # https://stackoverflow.com/questions/69778194/how-can-i-check-whether-a-unicode-codepoint-is-assigned-or-not
     if nick is not None:
     #  if None:
-      nick = wtf_str(name)
-      room = None
       muc = str(msg.to.bare())
-      if muc in rooms:
+      room = rooms[muc]
+      #  if muc in rooms:
+      if room is not None:
         room = rooms[muc]
         #  await set_nick(room, fromname)
+        nick = wtf_str(name)
         nick_old = room.me.nick
         if nick_old != nick:
           fu = asyncio.Future()
           #  jid = str(room.me.direct_jid)
-          on_nick_changed_futures[(myjid, muc)] = fu
+          on_nick_changed_futures[muc] = fu
           try:
             await room.set_nick(nick)
           except ValueError as e:
@@ -1679,9 +1684,10 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
               await asyncio.wait_for(fu, timeout=8)
             #  except Exception as e:
             except TimeoutError as e:
-              on_nick_changed_futures.pop((myjid, muc))
+              on_nick_changed_futures.pop(muc)
               warn(f"改名失败(超时)：{muc} {nick_old} -> {nick} {e=}")
             else:
+              on_nick_changed_futures.pop(muc)
               if fu.result() == nick:
                 logger.info(f"set nick: {muc} {nick_old} -> {nick}")
               else:
@@ -1690,6 +1696,9 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
             #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
             #  else:
             #    logger.info(f"not found room: {msg.to}")
+      else:
+        await send(f"fixme: not found room: {muc}")
+        return
 
     text = None
     for i in msg.body:
@@ -1906,7 +1915,7 @@ async def send1(text, jid=None, *args, **kwargs):
 #    return await _send(msg, client, gpm=gpm)
 
 
-async def sendg(text, jid=None, room=None, client=None, name="**C bot:** "):
+async def sendg(text, jid=None, room=None, client=None, name="**C bot:** ", **kwargs):
   if name:
     text = f"{name}{text}"
   logger.info(f"send group msg: {jid} {text}")
@@ -1920,14 +1929,15 @@ async def sendg(text, jid=None, room=None, client=None, name="**C bot:** "):
   # None is for "default language"
   msg.body[None] = text
 
+  room = rooms[jid]
   if room is not None:
-    return await __send(msg, room=room)
+    return await __send(msg, room=room, **kwargs)
 
   if client is None:
     client = XB
   #  return await client.send(msg)
-  if client is not None:
-    return await __send(msg, client)
+  #  if client is not None:
+  return await __send(msg, client, **kwargs)
     #  res = room.send_message(msg)
     #  # https://docs.zombofant.net/aioxmpp/devel/api/public/muc.html?highlight=room#aioxmpp.muc.Room.send_message
     #  if asyncio.iscoroutine(res):
@@ -1941,9 +1951,9 @@ async def sendg(text, jid=None, room=None, client=None, name="**C bot:** "):
     #  else:
     #    logger.info(f"room send res is not coroutine: {res=}")
     #    return False
-  else:
-    warn(f"need client or room")
-    return False
+  #  else:
+  #    warn(f"need client or room")
+  #    return False
 
 
 #  @exceptions_handler
