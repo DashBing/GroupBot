@@ -2818,7 +2818,8 @@ async def parse_tg_msg(event):
     #  elif event.is_private:
     #    pass
     elif res:
-      await send(res, jid=log_group, name="", nick=nick, delay=delay)
+      #  await send(res, jid=log_group, name="", nick=nick, delay=delay)
+      await send(res, jid=log_group, name="", delay=delay)
 
     return
 
