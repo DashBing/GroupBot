@@ -1929,15 +1929,16 @@ async def sendg(text, jid=None, room=None, client=None, name="**C bot:** ", **kw
   # None is for "default language"
   msg.body[None] = text
 
-  room = rooms[jid]
-  if room is not None:
-    return await __send(msg, room=room, **kwargs)
-
-  if client is None:
-    client = XB
-  #  return await client.send(msg)
-  #  if client is not None:
-  return await __send(msg, client, **kwargs)
+  return await __send(msg, client=client, room=rooms[jid], **kwargs)
+  #  room = rooms[jid]
+  #  if room is not None:
+  #    return await __send(msg, client=client, room=room, **kwargs)
+  #
+  #  if client is None:
+  #    client = XB
+  #  #  return await client.send(msg)
+  #  #  if client is not None:
+  #  return await __send(msg, client, **kwargs)
     #  res = room.send_message(msg)
     #  # https://docs.zombofant.net/aioxmpp/devel/api/public/muc.html?highlight=room#aioxmpp.muc.Room.send_message
     #  if asyncio.iscoroutine(res):
