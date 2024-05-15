@@ -4669,6 +4669,7 @@ async def amain():
 
       logger.info(f"初始化完成")
       send_log(f"启动成功，用时: {int(time.time()-start_time)}s")
+      await send(f"启动成功，用时: {int(time.time()-start_time)}s", jid=main_group)
 
       await UB.run_until_disconnected()
 
@@ -4694,7 +4695,8 @@ async def amain():
     #        #  loop.run_until_complete(j)
     #        await j
     mt_read_task.cancel()
-    #  await sendg("正在停止")
+    await sendg("正在停止")
+    await sendg("正在停止", jid=main_group)
     await stop()
     await save_data()
     #  loop.run_until_complete(stop())
