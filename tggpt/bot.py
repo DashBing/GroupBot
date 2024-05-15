@@ -1277,7 +1277,6 @@ async def send_cmd_to_bash(gateway, name, text):
   #  await my_popen(" ".join(shell_cmd))
   res = await my_popen(shell_cmd, shell=False, src=gateway)
   #  logger.info(res)
-  return re.sub(shell_color_re,  "", res)
   return res
 
 #  @exceptions_handler
@@ -4097,6 +4096,8 @@ async def _run_cmd(text, src, name="X test", is_admin=False):
       return res
     else:
       res = await send_cmd_to_bash(src, name, text)
+      if res:
+        return re.sub(shell_color_re,  "", res)
       return res
       #  await mt_send(res, gateway=gateway, name="titlebot")
 
