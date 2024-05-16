@@ -1695,8 +1695,8 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
                 warn(f"改名失败(超时)：{muc} {nick_old} -> {nick} {e=}")
               else:
                 on_nick_changed_futures.pop(muc)
+                users[muc][myjid][0] = fu.result()
                 if fu.result() != nick:
-                  users[muc][myjid][0] = fu.result()
                   warn(f"改名结果有问题: {muc} {fu.result()=} != {nick=}")
                 else:
                   logger.info(f"set nick: {muc} {nick_old} -> {nick}")
