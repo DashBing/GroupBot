@@ -4043,7 +4043,7 @@ async def _run_cmd(text, src, name="X test", is_admin=False):
       res = await send_cmd_to_bash(src, name, text)
       if res:
         return res
-  elif text.isnumeric() and music_bot_state[src] == 2:
+  elif text.isnumeric() and src in music_bot_state and music_bot_state[src] == 2:
     mtmsgs = mtmsgsg[src]
     tmp = []
     for i in gid_src:
