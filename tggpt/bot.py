@@ -1673,7 +1673,8 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
           room = rooms[muc]
           #  await set_nick(room, fromname)
           nick = wtf_str(nick)
-          nick_old = room.me.nick
+          #  nick_old = room.me.nick
+          nick_old = users[muc][myjid][0]
           if nick_old != nick:
             fu = asyncio.Future()
             #  jid = str(room.me.direct_jid)
@@ -1690,13 +1691,15 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
               #  except Exception as e:
               except TimeoutError as e:
                 on_nick_changed_futures.pop(muc)
+                users[muc][myjid][0] = nick
                 warn(f"改名失败(超时)：{muc} {nick_old} -> {nick} {e=}")
               else:
                 on_nick_changed_futures.pop(muc)
-                if fu.result() == nick:
-                  logger.info(f"set nick: {muc} {nick_old} -> {nick}")
+                if fu.result() != nick:
+                  users[muc][myjid][0] = fu.result()
+                  warn(f"改名结果有问题: {muc} {fu.result()=} != {nick=}")
                 else:
-                  warn(f"改名失败: {muc} {fu.result()=} != {nick=}")
+                  logger.info(f"set nick: {muc} {nick_old} -> {nick}")
               #  else:
               #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
               #  else:
@@ -3203,7 +3206,8 @@ def get_mucs(muc):
 def wtf_str(s, for_what="nick"):
   if for_what == "nick":
     ok = []
-    no = ('Cn', 'Cs', 'Co', 'Cf', 'So', 'Ll', 'Cc', 'Mn', 'Po', 'Lo', 'Sm', 'Ps', 'Lu')
+    #  no = ('Cn', 'Cs', 'Co', 'Cf', 'So', 'Ll', 'Cc', 'Mn', 'Po', 'Lo', 'Sm', 'Ps', 'Lu')
+    no = ('Cn', 'Cs', 'Co', 'Cf', 'So', 'Ll', 'Cc', 'Mn', 'Sm', 'Ps', 'Lu')
   #  elif for_what == "xmpp":
   #    ok = ['\n', '\t']
   #    no = ('Cc', )
@@ -3307,25 +3311,31 @@ async def parse_xmpp_msg(msg):
         await send("not allowed", msg.from_)
     elif msg.type_ == PresenceType.AVAILABLE:
       if msg.xep0045_muc_user:
-        #  item = msg.xep0045_muc_user.items[0]
-        for item in msg.xep0045_muc_user.items:
-          if item.jid is None:
-            pprint(msg)
-            pprint(msg.xep0045_muc_user.items)
-            pprint(item)
-            err(f"item.jid is None: {msg} {item}")
-            break
-          res = f"上线: {msg.from_} {item.jid} {item.role} {item.affiliation} {msg.status}"
-          jid = str(item.jid.bare())
-          if jid == myjid:
-            return
-          print(res)
-          muc = str(msg.from_.bare())
-          if muc in my_groups:
+        muc = str(msg.from_.bare())
+        if muc in my_groups:
+          jids = users[muc]
+          room = rooms[muc]
+          #  item = msg.xep0045_muc_user.items[0]
+          for item in msg.xep0045_muc_user.items:
+            if item.jid is None:
+              #  pprint(msg)
+              #  pprint(msg.xep0045_muc_user.items)
+              #  pprint(item)
+              err(f"item.jid is None: {msg} {item}")
+              break
+            jid = str(item.jid.bare())
+            res = f"上线: {msg.from_} {jid} {item.role} {item.affiliation} {msg.status}"
+            print(res)
+            if jid == myjid:
+              if jid not in jids:
+                j = [room.me.nick, room.me.affiliation, room.me.role]
+                jids[jid] = j
+              else:
+                info(f"已存在nick记录: {jids[jid]}")
+              return
             if jid == myjid:
               #  logger.info(f"不记录bot: {jid}")
               return
-            jids = users[muc]
             if jid in me:
               j = [msg.from_.resource, item.affiliation, item.role]
               jids[jid] = j
@@ -3356,8 +3366,9 @@ async def parse_xmpp_msg(msg):
               jids[jid][3] = int(time.time())
             else:
               jids[jid].append(int(time.time()))
-          else:
-            await send(res)
+        else:
+          pprint(msg)
+          await send(f"未知群组消息: {msg}")
       else:
         print(f"上线: {msg.from_} {msg.status}")
         await send(f"上线: {msg.from_} {msg.status}")
