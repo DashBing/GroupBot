@@ -3300,6 +3300,8 @@ def hide_nick(msg):
     nick = f"{nick[:3]}..."
   return nick
 
+
+
 @exceptions_handler
 async def parse_xmpp_msg(msg):
   #  if str(msg.from_.bare()) == rssbot:
@@ -3350,16 +3352,45 @@ async def parse_xmpp_msg(msg):
               #  logger.info(f"不记录bot: {jid}")
               continue
             if jid in me:
-              j = [msg.from_.resource, item.affiliation, item.role]
+              #  j = [msg.from_.resource, item.affiliation, item.role]
+              j = [item.nick, item.affiliation, item.role]
               jids[jid] = j
               continue
             nick = f".ban {muc}/{msg.from_.resource}"
             if jid in jids:
               j = jids[jid]
-              if j[0] != msg.from_.resource:
+              if type(j[2]) is int:
+                if j[2] > 99 and j[2] < time.time():
+                  if member_only_mode is False or item.affiliation == "member":
+                    await room.muc_set_role(item.nick, "participant", "临时禁言结束")
+                    j[2] = "participant"
+                  else:
+                    j[2] = 1
+                else:
+                  if j[2] == 1:
+                    reason = "非成员暂时禁止发言"
+                  else:
+                    reason = "重新进群没用哦"
+                  if item.role == "participant":
+                    if j[2] > 99:
+                      if item.affiliation == "member":
+                        await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
+                      await room.muc_set_role(item.nick, "vistor", reason)
+                    else:
+                      await room.muc_set_role(item.nick, "vistor", reason)
+              elif member_only_mode:
+                reason = "非成员暂时禁止发言"
+                if item.affiliation == "none":
+                  if item.role == "participant":
+                    await room.muc_set_role(item.nick, "vistor", reason)
+                    j[2] = 1
+              #  if j[0] != msg.from_.resource:
+              if j[0] != item.nick:
                 res = f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}"
-                j[0] = msg.from_.resource
-                await send(res, muc, nick=nick)
+                #  j[0] = msg.from_.resource
+                j[0] = item.nick
+                if item.role == "participant":
+                  await send(res, muc, nick=nick)
                 await send(f"{res}\njid: {jid}\nmuc: {muc}", nick=nick)
             else:
               j = [msg.from_.resource, item.affiliation, item.role]
@@ -3689,6 +3720,7 @@ def get_addr(s):
 
 
 
+member_only_mode = False
 
 cmd_funs = {}
 cmd_for_admin = set()
@@ -3743,6 +3775,34 @@ async def add_cmd():
         return f"ok: {res}"
   cmd_funs["ban"] = _
   cmd_for_admin.add('ban')
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"{cmds[0]}\n.{cmds[0]}"
+    if member_only_mode is False:
+      reason = "非成员暂时禁止发言"
+      for room in rooms:
+        muc = str(room.jid.bare())
+        jids = users[muc]
+        for m in room.members:
+          jid = str(m.jid.bare())
+          if m.affiliation == "none" and m.role == "participant":
+            await room.muc_set_role(m.nick, "vistor", reason)
+            jids[jid][2] = 1
+      return reason
+    else:
+      reason = "非成员允许发言"
+      for room in rooms:
+        muc = str(room.jid.bare())
+        jids = users[muc]
+        for m in room.members:
+          jid = str(m.jid.bare())
+          if jids[jid][2] == 1:
+            await room.muc_set_role(m.nick, "participant", reason)
+            jids[jid][2] = "participant"
+      return reason
+  cmd_funs["mo"] = _
+  cmd_for_admin.add('mo')
 
   async def _(cmds, src):
     if len(cmds) == 1:
