@@ -3327,13 +3327,13 @@ async def parse_xmpp_msg(msg):
               #  pprint(msg)
               #  pprint(msg.xep0045_muc_user.items)
               #  pprint(item)
-              err(f"item.jid is None: {msg} {item}")
+              err(f"item.jid is None: {msg} {msg.xep0045_muc_user.items} {item}")
               break
             jid = str(item.jid.bare())
             if jid == myjid:
               if jid not in jids:
                 #  j = [room.me.nick, room.me.affiliation, room.me.role]
-                j = [tiem.nick, item.affiliation, item.role]
+                j = [item.nick, item.affiliation, item.role]
                 jids[jid] = j
               if room.me.role != 'moderator':
                 err(f"没有管理权限: {muc} {item.affiliation} {item.role}")
