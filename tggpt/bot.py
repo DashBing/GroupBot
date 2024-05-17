@@ -1682,7 +1682,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
             nick_old = jids[myjid][0]
           else:
             nick_old = room.me.nick
-            jids[myjid].appent([nick_old, room.me.affiliation, room.me.role])
+            jids[myjid] = [nick_old, room.me.affiliation, room.me.role]
             err(f"不存在nick记录，已添加: {muc} {myjid} {msg} {jids[jid]}")
           if nick_old != nick:
             fu = asyncio.Future()
