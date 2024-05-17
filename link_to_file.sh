@@ -34,6 +34,7 @@ link_to_file() {
   fn=${fn##*:}
   fn=${fn##*\?}
   fn=${fn##*=}
+  fn=${fn%%#*}
   fn=${fn#-}
   fn=${fn#-}
   fn=${fn#-}
