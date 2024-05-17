@@ -1685,24 +1685,25 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
               try:
                 await room.set_nick(nick)
               except ValueError as e:
+                jids[myjid][0] = nick
                 warn(f"改名失败, 不支持特殊字符: {nick=} {e=}")
               else:
                 #  await fu
                 try:
                   #  await asyncio.wait_for(await asyncio.shield(fu), timeout=8)
-                  await asyncio.wait_for(fu, timeout=8)
+                  await asyncio.wait_for(fu, timeout=5)
                 #  except Exception as e:
                 except TimeoutError as e:
                   on_nick_changed_futures.pop(muc)
-                  users[muc][myjid][0] = nick
+                  jids[myjid][0] = nick
                   warn(f"改名失败(超时)：{muc} {nick_old} -> {nick} {e=}")
                 else:
                   on_nick_changed_futures.pop(muc)
-                  users[muc][myjid][0] = fu.result()
+                  jids[myjid][0] = fu.result()
                   if fu.result() != nick:
                     warn(f"改名结果有问题: {muc} {fu.result()=} != {nick=}")
-                  else:
-                    logger.info(f"set nick: {muc} {nick_old} -> {nick}")
+                  #  else:
+                  #    logger.info(f"set nick: {muc} {nick_old} -> {nick}")
                 #  else:
                 #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
                 #  else:
