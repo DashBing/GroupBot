@@ -1677,39 +1677,41 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
 
           jids = users[muc]
           if myjid in jids:
-            nick_old = users[muc][myjid][0]
-            if nick_old != nick:
-              fu = asyncio.Future()
-              #  jid = str(room.me.direct_jid)
-              on_nick_changed_futures[muc] = fu
-              try:
-                await room.set_nick(nick)
-              except ValueError as e:
-                jids[myjid][0] = nick
-                warn(f"改名失败, 不支持特殊字符: {nick=} {e=}")
-              else:
-                #  await fu
-                try:
-                  #  await asyncio.wait_for(await asyncio.shield(fu), timeout=8)
-                  await asyncio.wait_for(fu, timeout=5)
-                #  except Exception as e:
-                except TimeoutError as e:
-                  on_nick_changed_futures.pop(muc)
-                  jids[myjid][0] = nick
-                  warn(f"改名失败(超时)：{muc} {nick_old} -> {nick} {e=}")
-                else:
-                  on_nick_changed_futures.pop(muc)
-                  jids[myjid][0] = fu.result()
-                  if fu.result() != nick:
-                    warn(f"改名结果有问题: {muc} {fu.result()=} != {nick=}")
-                  #  else:
-                  #    logger.info(f"set nick: {muc} {nick_old} -> {nick}")
-                #  else:
-                #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
-                #  else:
-                #    logger.info(f"not found room: {msg.to}")
+            nick_old = jids[myjid][0]
           else:
-            err(f"不存在nick记录: {muc} {myjid} {msg}")
+            nick_old = room.me.nick
+            jids[myjid].appent([nick_old, room.me.affiliation, room.me.role])
+            err(f"不存在nick记录，已添加: {muc} {myjid} {msg} {jids[jid]}")
+          if nick_old != nick:
+            fu = asyncio.Future()
+            #  jid = str(room.me.direct_jid)
+            on_nick_changed_futures[muc] = fu
+            try:
+              await room.set_nick(nick)
+            except ValueError as e:
+              jids[myjid][0] = nick
+              warn(f"改名失败, 不支持特殊字符: {nick=} {e=}")
+            else:
+              #  await fu
+              try:
+                #  await asyncio.wait_for(await asyncio.shield(fu), timeout=8)
+                await asyncio.wait_for(fu, timeout=5)
+              #  except Exception as e:
+              except TimeoutError as e:
+                on_nick_changed_futures.pop(muc)
+                jids[myjid][0] = nick
+                warn(f"改名失败(超时)：{muc} {nick_old} -> {nick} {e=}")
+              else:
+                on_nick_changed_futures.pop(muc)
+                jids[myjid][0] = fu.result()
+                if fu.result() != nick:
+                  warn(f"改名结果有问题: {muc} {fu.result()=} != {nick=}")
+                #  else:
+                #    logger.info(f"set nick: {muc} {nick_old} -> {nick}")
+              #  else:
+              #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
+              #  else:
+              #    logger.info(f"not found room: {msg.to}")
         else:
           await send(f"fixme: not found room: {muc}")
           #  return False
@@ -3328,7 +3330,7 @@ async def parse_xmpp_msg(msg):
               #  pprint(msg.xep0045_muc_user.items)
               #  pprint(item)
               err(f"item.jid is None: {msg} {msg.xep0045_muc_user.items} {item}")
-              break
+              continue
             jid = str(item.jid.bare())
             if jid == myjid:
               if jid not in jids:
@@ -3339,16 +3341,16 @@ async def parse_xmpp_msg(msg):
                 err(f"没有管理权限: {muc} {item.affiliation} {item.role}")
               #  else:
               #    info(f"已存在nick记录: {jids[jid]}")
-              return
+              continue
             res = f"上线: {msg.from_} {jid} {item.role} {item.affiliation} {msg.status}"
             print(res)
             if jid == myjid:
               #  logger.info(f"不记录bot: {jid}")
-              return
+              continue
             if jid in me:
               j = [msg.from_.resource, item.affiliation, item.role]
               jids[jid] = j
-              return
+              continue
             nick = f".ban {muc}/{msg.from_.resource}"
             if jid in jids:
               j = jids[jid]
