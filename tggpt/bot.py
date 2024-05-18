@@ -3383,7 +3383,10 @@ async def parse_xmpp_msg(msg):
   #  for i in msg.body:
   #    text = msg.body[i]
   #    break
-  text = msg.body.any()
+  if msg.body:
+    text = msg.body.any()
+  else:
+    return
   if text is None:
     #  print("跳过空消息: %s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
     return
