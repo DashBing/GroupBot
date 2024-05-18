@@ -3360,7 +3360,7 @@ async def parse_xmpp_msg(msg):
               info(f"空nick：{item} -> {rnick} {msg}")
             else:
               rnick = item.nick
-            if rnick = None:
+            if rnick is None:
               info(f"空rnick：{item} -> {rnick} {msg}")
               continue
             if jid in me:
