@@ -3360,6 +3360,9 @@ async def parse_xmpp_msg(msg):
               info(f"空nick：{item} -> {rnick} {msg}")
             else:
               rnick = item.nick
+            if rnick = None:
+              info(f"空rnick：{item} -> {rnick} {msg}")
+              continue
             if jid in me:
               #  j = [msg.from_.resource, item.affiliation, item.role]
               j = [rnick, item.affiliation, item.role]
@@ -3369,6 +3372,8 @@ async def parse_xmpp_msg(msg):
             nick = f".ban {muc}/{msg.from_.resource}"
             if jid in jids:
               j = jids[jid]
+              if j[0] is None:
+                j[0] = rnick
               if type(j[2]) is int:
                 if j[2] > 99 and j[2] < time.time():
                   if member_only_mode is False or item.affiliation == "member":
