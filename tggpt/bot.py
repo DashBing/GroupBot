@@ -3789,8 +3789,8 @@ async def add_cmd():
   cmd_for_admin.add('ban')
 
   async def _(cmds, src):
-    if len(cmds) == 1:
-      return f"{cmds[0]}\n.{cmds[0]}"
+    #  if len(cmds) == 1:
+    #    return f"{cmds[0]}\n.{cmds[0]}"
     if member_only_mode is False:
       reason = "非成员暂时禁止发言"
       i = 0
