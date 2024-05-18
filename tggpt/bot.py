@@ -39,6 +39,9 @@ class NoParsingFilter(logging.Filter):
     return True
 
 
+
+
+
 import asyncio
 
 
@@ -123,6 +126,8 @@ rss_bot = 284403259
 music_bot = 1404457467
 music_bot_name = 'Music163bot'
 
+
+interval = 3
 
 
 
@@ -1111,7 +1116,7 @@ async def my_popen(cmd,
             #  logger.error(f"can not send tmp: {e=}")
             #  msg = await client.send_message(MY_ID, tmp)
             warn(f"无法发送临时输出: {tmp} {e=}")
-      await asyncio.sleep(2)
+      await asyncio.sleep(interval)
       if time.time() - start_time > max_time:
         p.kill()
         res = "my_popen: timeout, killed, cmd: {}\nres: {}".format(cmd, res)
@@ -1642,7 +1647,8 @@ def on_nick_changed(member, old_nick, new_nick, *, muc_status_codes=set(), **kwa
     try:
       on_nick_changed_futures[muc].set_result(new_nick)
     except asyncio.exceptions.InvalidStateError as e:
-      err(f"无法保存nick到future: {on_nick_changed_futures[muc]} {e=}")
+      info(f"无法保存nick到future: {muc} {on_nick_changed_futures[muc]} {e=}")
+      #  on_nick_changed_futures.pop(muc)
   #  logger.info(f"nick changed: {jid} {muc} {old_nick} -> {new_nick}")
 
 send_locks = {}
@@ -1676,7 +1682,6 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
         room = rooms[muc]
         #  if muc in rooms:
         if room is not None:
-          room = rooms[muc]
           #  await set_nick(room, fromname)
           nick = wtf_str(nick)
           #  nick_old = room.me.nick
@@ -1706,12 +1711,12 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
               except TimeoutError as e:
                 on_nick_changed_futures.pop(muc)
                 jids[myjid][0] = nick
-                warn(f"改名失败(超时)：{muc} {nick_old} -> {nick} {e=}")
+                info(f"改名失败(超时)：{muc} {nick_old} -> {nick} {e=}")
               else:
                 on_nick_changed_futures.pop(muc)
                 jids[myjid][0] = fu.result()
                 if fu.result() != nick:
-                  warn(f"改名结果有问题: {muc} {fu.result()=} != {nick=}")
+                  info(f"改名结果有问题: {muc} {fu.result()=} != {nick=}")
                 #  else:
                 #    logger.info(f"set nick: {muc} {nick_old} -> {nick}")
               #  else:
@@ -2569,12 +2574,11 @@ async def mt_send_for_long_text(text, gateway="gateway1", name="C bot", *args, *
 
 
 
-last_time = {}
+#  last_time = {}
 
 async def download_media(msg, src='gateway1', path=f"{DOWNLOAD_PATH}/", in_memory=False):
 #  await client.download_media(message, progress_callback=callback)
   async with downlaod_lock:
-
     if msg.file and msg.file.name:
       res = f"{msg.file.name}"
     else:
@@ -2588,26 +2592,31 @@ async def download_media(msg, src='gateway1', path=f"{DOWNLOAD_PATH}/", in_memor
         else:
           logger.info(f"ignore button: {i}")
     #  await mt_send(f"{res} 下载中...", gateway=gateway)
-    await send(f"{res} 下载中...", src, correct=True)
-    last_time[src] = time.time()
+    res = f"{res} 下载中..."
+    await send(res, src, correct=True)
+    #  last_time[src] = time.time()
+    last_time = [time.time(), 0]
 
     # Printing download progress
     def download_media_callback(current, total):
-      print('Downloaded', current, 'out of', total,
-        'bytes: {:.2%}'.format(current / total))
-      if time.time() - last_time[src] > 5:
+      #  print('Downloaded', current, 'out of', total,
+      #    'bytes: {:.2%}'.format(current / total))
+      #  if time.time() - last_time[src] > interval:
+      if time.time() - last_time[0] > interval:
         #  await mt_send("{:.2%} %s/%s".format(current / total, current, total), gateway=gateway)
         #  asyncio.create_task(mt_send("{:.2%} {}/{} bytes".format(current / total, current, total), gateway=gateway))
-        asyncio.create_task(send("{:.2%} {}/{} bytes".format(current / total, current, total), src, correct=True))
-        last_time[src] = time.time()
+        asyncio.create_task(send("{res} {:.2%} {}/{}bytes {:.1%}MB/s".format(current / total, current, total, (current-last_time[1])/(time.time()-last_time[0])), src, correct=True))
+        #  last_time[src] = time.time()
+        last_time[0] = time.time()
+        last_time[1] = current
 
     path = await msg.download_media(path, progress_callback=download_media_callback)
     if path:
       return path
     else:
-      warn(f"下载失败: {path}")
+      warn(f"{res}\n下载失败: {path}")
       #  await mt_send(f"下载失败: {path}", gateway=gateway)
-      await send(f"下载失败: {path}", src)
+      await send(f"{res}\n下载失败: {path}", src)
 
 
 
@@ -3312,10 +3321,12 @@ async def parse_xmpp_msg(msg):
   #    pprint(msg)
   if not hasattr(msg, "body"):
     #  print("%s %s" % (type(msg), msg.type_))
+    muc = str(msg.from_.bare())
     if msg.type_ == PresenceType.SUBSCRIBE:
       #  pprint(msg)
       log(f"状态订阅请求：{msg.from_}")
-      if get_jid(msg.from_) in me:
+      #  if get_jid(msg.from_) in me:
+      if muc in me:
         rc = XB.summon(aioxmpp.RosterClient)
         #  pprint(rc)
         res = rc.approve(msg.from_)
@@ -3327,7 +3338,6 @@ async def parse_xmpp_msg(msg):
         await send("not allowed", msg.from_)
     elif msg.type_ == PresenceType.AVAILABLE:
       if msg.xep0045_muc_user:
-        muc = str(msg.from_.bare())
         if muc in my_groups:
           jids = users[muc]
           room = rooms[muc]
@@ -3344,11 +3354,11 @@ async def parse_xmpp_msg(msg):
             print(res)
             if item.nick is None:
               rnick = msg.from_.resource
-              info(f"空nick：{item.jid} {item.nick} -> {rnick} {msg}")
+              #  info(f"空nick：{item.jid} {item.nick} -> {rnick} {msg}")
             else:
               rnick = item.nick
             if rnick is None:
-              info(f"没找到nick：{item.jid} {item.nick} -> {rnick} {msg}")
+              warn(f"没找到nick：{item.jid} {item.nick} -> {rnick} {msg}")
               continue
             if jid == myjid:
               if jid not in jids:
@@ -3377,29 +3387,37 @@ async def parse_xmpp_msg(msg):
               if j[0] is None:
                 j[0] = rnick
               if type(j[2]) is int:
-                if j[2] > 99 and j[2] < time.time():
-                  if member_only_mode is False or item.affiliation == "member":
-                    res = await room.muc_set_role(rnick, "participant", reason="临时禁言结束")
-                    j[2] = "participant"
-                  else:
-                    # 不用解除禁言
-                    j[2] = 1
-                else:
-                  if j[2] == 1:
-                    reason = "非成员暂时禁止发言"
-                  else:
-                    reason = "重新进群没用哦"
-                  if item.role == "participant":
-                    if j[2] > 99:
-                      if item.affiliation == "member":
-                        await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
-                      await room.muc_set_role(rnick, "visitor", reason=reason)
+                reason = "重新进群没用哦"
+                if j[2] > 99:
+                  if j[2] < time.time():
+                    if member_only_mode is False or item.affiliation == "member":
+                      res = await room.muc_set_role(rnick, "participant", reason="临时禁言结束")
+                      j[2] = "participant"
                     else:
-                      if member_only_mode:
+                      # 不用解除禁言
+                      j[2] = 1
+                  else:
+                      #  if j[2] > 99:
+                    if item.role == "participant":
+                        if item.affiliation == "member":
+                          await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
                         await room.muc_set_role(rnick, "visitor", reason=reason)
-                      else:
-                        res = await room.muc_set_role(rnick, "participant", reason="禁言结束")
-                        j[2] = "participant"
+                elif j[2] == 1:
+                  if member_only_mode:
+                    reason = "非成员暂时禁止发言"
+                    if item.role == "participant":
+                      await room.muc_set_role(rnick, "visitor", reason=reason)
+                  else:
+                    reason = "非成员允许发言"
+                    j[2] = "participant"
+                    if item.role == "visitor":
+                      res = await room.muc_set_role(rnick, "participant", reason=reason)
+                elif j[2] == 0:
+                  if item.role == "participant":
+                    if item.affiliation == "member":
+                      await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
+                    await room.muc_set_role(rnick, "visitor", reason=reason)
+                  #  res = await room.muc_set_role(rnick, "participant", reason="禁言结束")
               elif member_only_mode:
                 reason = "非成员暂时禁止发言"
                 if item.affiliation == "none":
@@ -3414,6 +3432,7 @@ async def parse_xmpp_msg(msg):
                 if item.role == "participant":
                   await send(res, muc, nick=nick)
                 await send(f"{res}\njid: {jid}\nmuc: {muc}", nick=nick)
+              j[1] = item.affiliation
             else:
               j = [rnick, item.affiliation, item.role]
               jids[jid] = j
@@ -3437,12 +3456,12 @@ async def parse_xmpp_msg(msg):
           await send(f"未知群组消息: {msg}")
       else:
         print(f"上线: {msg.from_} {msg.status}")
-        await send(f"上线: {msg.from_} {msg.status}")
+        if muc != rssbot:
+          await send(f"上线: {msg.from_} {msg.status}")
       #  for i in msg.xep0045_muc_user.items:
       #    pprint(i)
     elif msg.type_ == PresenceType.UNAVAILABLE:
       print(f"离线: {msg.from_} {msg.status}")
-      muc = str(msg.from_.bare())
       if muc in my_groups:
         pass
       else:
@@ -3831,10 +3850,10 @@ async def add_cmd():
             info(f"{jid} not in jids({muc})")
             continue
           if m.affiliation == "none" and m.role == "participant":
-            jids[jid][2] = 1
             res = await room.muc_set_role(m.nick, role, reason=reason)
             info(res)
             i += 1
+            jids[jid][2] = 1
       return "%s, 禁言账户总数：%s" % (reason, i)
     else:
       member_only_mode = False

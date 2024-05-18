@@ -59,5 +59,26 @@ def _exceptions_handler(e, *args, **kwargs):
 def t():
   raise ValueError
 
+import time
 
-t()
+async def t():
+  a = 1
+  b=[0]
+  def f():
+    #  print(a)
+    b[0] += 1
+    print(b[0])
+  f()
+  await asyncio.sleep(3)
+  a = time.time()
+  f()
+
+#  t()
+#  t()
+async def main():
+  t1 = asyncio.create_task(t())
+  t2 = asyncio.create_task(t())
+  await t1
+  await t2
+
+asyncio.run(main())
