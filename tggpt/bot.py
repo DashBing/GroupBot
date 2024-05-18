@@ -3355,18 +3355,24 @@ async def parse_xmpp_msg(msg):
             if jid == myjid:
               #  logger.info(f"不记录bot: {jid}")
               continue
+            if item.nick is None:
+              rnick = msg.from_.resource
+              info(f"空nick：{item} -> {rnick} {msg}")
+            else:
+              rnick = item.nick
             if jid in me:
               #  j = [msg.from_.resource, item.affiliation, item.role]
-              j = [item.nick, item.affiliation, item.role]
+              j = [rnick, item.affiliation, item.role]
               jids[jid] = j
               continue
+
             nick = f".ban {muc}/{msg.from_.resource}"
             if jid in jids:
               j = jids[jid]
               if type(j[2]) is int:
                 if j[2] > 99 and j[2] < time.time():
                   if member_only_mode is False or item.affiliation == "member":
-                    res = await room.muc_set_role(item.nick, "participant", reason="临时禁言结束")
+                    res = await room.muc_set_role(rnick, "participant", reason="临时禁言结束")
                     j[2] = "participant"
                   else:
                     j[2] = 1
@@ -3379,20 +3385,20 @@ async def parse_xmpp_msg(msg):
                     if j[2] > 99:
                       if item.affiliation == "member":
                         await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
-                      await room.muc_set_role(item.nick, "visitor", reason=reason)
+                      await room.muc_set_role(rnick, "visitor", reason=reason)
                     else:
-                      await room.muc_set_role(item.nick, "visitor", reason=reason)
+                      await room.muc_set_role(rnick, "visitor", reason=reason)
               elif member_only_mode:
                 reason = "非成员暂时禁止发言"
                 if item.affiliation == "none":
                   if item.role == "participant":
-                    await room.muc_set_role(item.nick, "visitor", reason=reason)
+                    await room.muc_set_role(rnick, "visitor", reason=reason)
                     j[2] = 1
               #  if j[0] != msg.from_.resource:
-              if j[0] != item.nick:
+              if j[0] != rnick:
                 res = f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}"
                 #  j[0] = msg.from_.resource
-                j[0] = item.nick
+                j[0] = rnick
                 if item.role == "participant":
                   await send(res, muc, nick=nick)
                 await send(f"{res}\njid: {jid}\nmuc: {muc}", nick=nick)
