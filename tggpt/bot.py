@@ -3375,14 +3375,14 @@ async def parse_xmpp_msg(msg):
                     if j[2] > 99:
                       if item.affiliation == "member":
                         await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
-                      await room.muc_set_role(item.nick, "vistor", reason=reason)
+                      await room.muc_set_role(item.nick, "visitor", reason=reason)
                     else:
-                      await room.muc_set_role(item.nick, "vistor", reason=reason)
+                      await room.muc_set_role(item.nick, "visitor", reason=reason)
               elif member_only_mode:
                 reason = "非成员暂时禁止发言"
                 if item.affiliation == "none":
                   if item.role == "participant":
-                    await room.muc_set_role(item.nick, "vistor", reason=reason)
+                    await room.muc_set_role(item.nick, "visitor", reason=reason)
                     j[2] = 1
               #  if j[0] != msg.from_.resource:
               if j[0] != item.nick:
@@ -3522,7 +3522,7 @@ async def parse_xmpp_msg(msg):
           reason = "非成员暂时禁止发言"
           if i.affiliation == 'none':
             jids = users[muc]
-            await room.muc_set_role(i.nick, "vistor", reason=reason)
+            await room.muc_set_role(i.nick, "visitor", reason=reason)
             jids[jid][2] = 1
             return
         #  if str(i.direct_jid.bare()) == myjid:
@@ -3793,6 +3793,7 @@ async def add_cmd():
     #    return f"{cmds[0]}\n.{cmds[0]}"
     if member_only_mode is False:
       reason = "非成员暂时禁止发言"
+      role = "visitor"
       i = 0
       for muc in rooms:
         #  muc = str(room.jid.bare())
@@ -3801,13 +3802,14 @@ async def add_cmd():
         for m in room.members:
           jid = str(m.direct_jid.bare())
           if m.affiliation == "none" and m.role == "participant":
-            res = await room.muc_set_role(m.nick, "vistor", reason=reason)
+            res = await room.muc_set_role(m.nick, role, reason=reason)
             info(res)
             jids[jid][2] = 1
             i += 1
       return "%s, 禁言账户总数：%s" % (reason, i)
     else:
       reason = "非成员允许发言"
+      role = "participant"
       i = 0
       for muc in rooms:
         #  muc = str(room.jid.bare())
@@ -3816,7 +3818,8 @@ async def add_cmd():
         for m in room.members:
           jid = str(m.direct_jid.bare())
           if jids[jid][2] == 1:
-            await room.muc_set_role(m.nick, "participant", reason)
+            res = await room.muc_set_role(m.nick, role, reason=reason)
+            info(res)
             jids[jid][2] = "participant"
             i += 1
       return "%s, 禁言解除账户数：%s" % (reason, i)
@@ -3849,12 +3852,12 @@ async def add_cmd():
     room = res[1]
     reason = "cmds[0]命令"
     #  if len(cmds) == 2 or cmds[2] == "v":
-    #    role = "vistor"
+    #    role = "visitor"
     #  #  elif cmds[2] == "a":
     #  #    role = "moderator"
     #  else:
     #    role = "participant"
-    role = "vistor"
+    role = "visitor"
     res = await room.muc_set_role(nick, role, reason=reason)
     return f"ok: {res}"
   cmd_funs["wtf"] = _
