@@ -3340,6 +3340,8 @@ async def parse_xmpp_msg(msg):
               err(f"item.jid is None: {msg} {msg.xep0045_muc_user.items} {item}")
               continue
             jid = str(item.jid.bare())
+            res = f"上线: {msg.from_} {jid} {item.nick} {item.role} {item.affiliation} {msg.status}"
+            print(res)
             if item.nick is None:
               rnick = msg.from_.resource
               info(f"空nick：{item.jid} {item.nick} -> {rnick} {msg}")
@@ -3358,11 +3360,9 @@ async def parse_xmpp_msg(msg):
               #  else:
               #    info(f"已存在nick记录: {jids[jid]}")
               continue
-            res = f"上线: {msg.from_} {jid} {item.role} {item.affiliation} {msg.status}"
-            print(res)
-            if jid == myjid:
-              #  logger.info(f"不记录bot: {jid}")
-              continue
+            #  if jid == myjid:
+            #    #  logger.info(f"不记录bot: {jid}")
+            #    continue
             if jid in me:
               #  j = [msg.from_.resource, item.affiliation, item.role]
               j = [rnick, item.affiliation, item.role]
