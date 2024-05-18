@@ -3363,14 +3363,16 @@ async def parse_xmpp_msg(msg):
             #  if jid == myjid:
             #    #  logger.info(f"不记录bot: {jid}")
             #    continue
+            #  nick = f".ban {muc}/{msg.from_.resource}"
+
+            nick = f".ban {muc}/{rnick}"
             if jid in me:
               #  j = [msg.from_.resource, item.affiliation, item.role]
               j = [rnick, item.affiliation, item.role]
               jids[jid] = j
-              continue
+              #  continue
 
-            nick = f".ban {muc}/{msg.from_.resource}"
-            if jid in jids:
+            elif jid in jids:
               j = jids[jid]
               if j[0] is None:
                 j[0] = rnick
