@@ -3517,15 +3517,27 @@ async def parse_xmpp_msg(msg):
         return
       if i.nick == msg.from_.resource:
         existed = True
-        if str(i.direct_jid.bare()) == myjid:
+        jid = str(i.direct_jid.bare())
+        if member_only_mode:
+          reason = "非成员暂时禁止发言"
+          if i.affiliation == 'none':
+            jids = users[muc]
+            await room.muc_set_role(i.nick, "vistor", reason)
+            jids[jid][2] = 1
+            return
+        #  if str(i.direct_jid.bare()) == myjid:
+        if jid == myjid:
           return
-        if str(i.direct_jid.bare()) in me:
+        #  if str(i.direct_jid.bare()) in me:
+        if jid in me:
           is_admin = True
           logger.info(f"admin msg: {text[:16]}")
           break
+        break
     if not existed:
       print("忽略幽灵发言%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
       return
+
     if msg.type_ == MessageType.CHAT:
       if is_admin is False:
         if text == "ping":
@@ -3781,6 +3793,7 @@ async def add_cmd():
       return f"{cmds[0]}\n.{cmds[0]}"
     if member_only_mode is False:
       reason = "非成员暂时禁止发言"
+      i = 0
       for room in rooms:
         muc = str(room.jid.bare())
         jids = users[muc]
@@ -3789,9 +3802,11 @@ async def add_cmd():
           if m.affiliation == "none" and m.role == "participant":
             await room.muc_set_role(m.nick, "vistor", reason)
             jids[jid][2] = 1
-      return reason
+            i += 1
+      return "%s, 禁言账户总数：%s" % (reason, i)
     else:
       reason = "非成员允许发言"
+      i = 0
       for room in rooms:
         muc = str(room.jid.bare())
         jids = users[muc]
@@ -3800,7 +3815,8 @@ async def add_cmd():
           if jids[jid][2] == 1:
             await room.muc_set_role(m.nick, "participant", reason)
             jids[jid][2] = "participant"
-      return reason
+            i += 1
+      return "%s, 禁言解除账户数：%s" % (reason, i)
   cmd_funs["mo"] = _
   cmd_for_admin.add('mo')
 
