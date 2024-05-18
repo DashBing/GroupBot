@@ -4,14 +4,86 @@
 
 
 #  from . import *  # noqa: F403
-from enum import auto
+#  from enum import auto
 from . import debug, WORK_DIR, PARENT_DIR, LOG_FILE, get_my_key, HOME, LOGGER
+
+
+
 #  from tg.telegram import DOWNLOAD_PATH
 from telethon.tl.types import KeyboardButton, KeyboardButtonUrl, PeerUser, PeerChannel, PeerChat, User, Channel, Chat
+from telethon import events
 
 #  import aioxmpp
 from aioxmpp import stream, ibr, protocol, node, dispatcher, connector, JID, im, errors, MessageType, PresenceType, misc
+
+import aiofiles
+#  from aiofile import async_open
+import aiofiles, aioxmpp, aiohttp
+
+import zstandard
+
+from  urltitle.urltitle import URLTitleError
+from urltitle import URLTitleReader
+
+from aiohttp import FormData
+from aiohttp.client_exceptions import ClientPayloadError
+from io import BufferedReader, TextIOWrapper, BytesIO
+
+from aiohttp.client_exceptions import ClientPayloadError, ClientConnectorError
+
+
+
 from inspect import isawaitable, currentframe
+
+from functools import wraps
+import pickle
+
+import os
+import sys
+
+import json
+import base64
+import re
+import ast
+
+import socket
+import urllib
+import urllib.request
+import urllib.error
+from urllib import request
+from urllib import parse
+
+import io
+import mimetypes
+import uuid
+
+import binascii
+import traceback
+
+import zlib
+import gzip
+import brotli
+
+
+import threading
+import subprocess
+from subprocess import Popen, PIPE
+
+import getpass, random, string
+import unicodedata
+
+
+from collections import deque
+from os.path import isdir
+
+
+import time
+#  from time import time, sleep
+#  from time import time
+#  from asyncio import sleep
+import asyncio
+
+
 
 
 #  HOME = os.environ.get("HOME")
@@ -39,81 +111,6 @@ class NoParsingFilter(logging.Filter):
     return True
 
 
-
-
-
-import asyncio
-
-
-
-
-import logging
-from functools import wraps
-import pickle
-
-import os
-
-import json
-import base64
-
-
-import re
-import base64
-import zstandard
-import ast
-import socket
-import sys
-import io
-
-import urllib
-import urllib.request
-import urllib.error
-from urllib import request
-from urllib import parse
-
-import io
-import mimetypes
-import uuid
-
-import binascii
-import traceback
-
-import zlib
-import gzip
-import brotli
-import time
-
-import threading
-import subprocess
-from subprocess import Popen, PIPE
-
-from telethon import events
-
-import aiofiles
-#  from aiofile import async_open
-
-from  urltitle.urltitle import URLTitleError
-from urltitle import URLTitleReader
-
-
-from collections import deque
-
-
-import asyncio
-
-
-
-
-from os.path import isdir
-import aiofiles, aioxmpp, aiohttp
-
-import asyncio, logging, json, ast, getpass, random, string, re
-import sys, os
-#  from time import time, sleep
-#  from time import time
-#  from asyncio import sleep
-from collections import deque
-import unicodedata as ud
 
 
 
@@ -296,6 +293,8 @@ DOWNLOAD_PATH = "/var/www/dav/tmp"
 
 SH_PATH='/run/user/1000/bot'
 
+DATA_PATH=f"{HOME}/xmpp.data"
+
 #  gpt_chat=None
 
 #  UA = 'Chrome Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) Apple    WebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36'
@@ -386,14 +385,16 @@ def exceptions_handler(func):
     async def wrapper(*args, **kwargs):
       try:
         return await func(*args, **kwargs)
-      except Exception as e:
+      #  except Exception as e:
+      except BaseException as e:
         return  _exceptions_handler(e, *args, **kwargs)
   else:
     @wraps(func)
     def wrapper(*args, **kwargs):
       try:
         return func(*args, **kwargs)
-      except Exception as e:
+      #  except Exception as e:
+      except BaseException as e:
          return  _exceptions_handler(e, *args, **kwargs)
   return wrapper
 
@@ -652,9 +653,6 @@ def decompress(data):
     return zstandard.decompress(data)
 
 
-from aiohttp import FormData
-from aiohttp.client_exceptions import ClientPayloadError
-from io import BufferedReader, TextIOWrapper, BytesIO
 
 pb_list = {
         "anon": ["https://api.anonfiles.com/upload", "file"],
@@ -1409,7 +1407,7 @@ async def load_config():
     globals().update(config)
     global gd
     try:
-      data = await read_file(f"{HOME}/xmpp.data", "rb")
+      data = await read_file(DATA_PATH, "rb")
       if data:
         gd = pickle.loads(data)
         logger.info(f"loaded gd: {gd}")
@@ -1448,14 +1446,15 @@ async def load_config():
 
 async def save_data():
   data = pickle.dumps(gd)
-  if await write_file(data, f"{HOME}/xmpp.data", "wb"):
+  if await write_file(data, DATA_PATH, "wb"):
     info("已保存临时数据")
     return True
   else:
     warn("保存失败")
 
-import aiohttp
-from aiohttp.client_exceptions import ClientPayloadError, ClientConnectorError
+
+
+
 
 
 # Titles for HTML content
@@ -2054,262 +2053,261 @@ async def mt2tg(msg):
   2024-05-07 17:26:25,778 [INFO] tggpt.bot [bot.mt_send:1806]: res of mt_send: {"text":"pong. now tasks: 0/0","channel":"api","username":"C bot","userid":"","avatar":"","account":"api.cmdres","event":"","protocol":"api","gateway":"test","parent_id":"","timestamp":"2024-05-07T17:26:25.367596549+08:00","id":"","Extra":null}
   '''
   try:
-    try:
-        msg = msg.decode()
-        if not msg or msg.startswith("HTTP/1.1"):
-          logger.info("I: ignore init msg")
-          return
-
-        msgd = json.loads(msg)
-    except json.decoder.JSONDecodeError:
-        logger.error("fail to decode msg from mt")
-        print("################")
-        print(msg)
-        print("################")
-        #  info = "E: {}\n==\n{}\n==\n{}".format(sys.exc_info()[1], traceback.format_exc(), sys.exc_info())
-        #  logger.error(info)
-        logger.error("E: failed to decode msg from mt...", exc_info=True, stack_info=True)
+      msg = msg.decode()
+      if not msg or msg.startswith("HTTP/1.1"):
+        logger.info("I: ignore init msg")
         return
 
-    account = msgd["account"]
-    if account == "api.cmdres":
-      logger.info("I: ignore msg from cmdres")
-      return
-    name = msgd["username"]
-    text = msgd["text"]
-    gateway = msgd["gateway"]
-    if gateway == 'me':
-      if text:
-        global last_mt_res_jid
-        if text.startswith("X "):
-          tmp = text.splitlines()[0]
-          if ': ' in tmp:
-            tmp = tmp.split(': ', 1)[0]
-            if ' ' in tmp:
-              tmp = tmp.split(' ', 1)[1]
-              if tmp in me:
-                last_mt_res_jid = tmp
-                text = text.split(': ', 1)[1]
-        warn(f"reply to {last_mt_res_jid}")
-        if last_mt_res_jid:
-          await send(text, last_mt_res_jid)
+      msgd = json.loads(msg)
+  except json.decoder.JSONDecodeError:
+      logger.error("fail to decode msg from mt")
+      print("################")
+      print(msg)
+      print("################")
+      #  info = "E: {}\n==\n{}\n==\n{}".format(sys.exc_info()[1], traceback.format_exc(), sys.exc_info())
+      #  logger.error(info)
+      logger.error("E: failed to decode msg from mt...", exc_info=True, stack_info=True)
       return
 
-    #  print(f"I: got msg: {name}: {text}")
-    if not text:
-      logger.info("I: ignore msg: no text")
-      return
-    if not name:
-      logger.info("I: ignore msg: no name")
-      return
+  account = msgd["account"]
+  if account == "api.cmdres":
+    logger.info("I: ignore msg from cmdres")
+    return
+  name = msgd["username"]
+  text = msgd["text"]
+  gateway = msgd["gateway"]
+  if gateway == 'me':
+    if text:
+      global last_mt_res_jid
+      if text.startswith("X "):
+        tmp = text.splitlines()[0]
+        if ': ' in tmp:
+          tmp = tmp.split(': ', 1)[0]
+          if ' ' in tmp:
+            tmp = tmp.split(' ', 1)[1]
+            if tmp in me:
+              last_mt_res_jid = tmp
+              text = text.split(': ', 1)[1]
+      warn(f"reply to {last_mt_res_jid}")
+      if last_mt_res_jid:
+        await send(text, last_mt_res_jid)
+    return
 
-    #  if name == "C twitter: ":
-    #      return
-    if name.startswith("C "):
-      logger.info("I: ignore msg: C ")
-      return
-    if name.startswith("X "):
-      logger.info("I: ignore msg: X ")
-      return
-    if name.startswith("**C "):
-      logger.info("I: ignore msg: **C ")
-      return
+  #  print(f"I: got msg: {name}: {text}")
+  if not text:
+    logger.info("I: ignore msg: no text")
+    return
+  if not name:
+    logger.info("I: ignore msg: no name")
+    return
 
-    #  if len(username.splitlines()) > 1:
-    #    pass
-    #  # need fix
-    #  if "gateway11" in MT_GATEWAY_LIST:
-    #      if gateway == "gateway1":
-    #          gateway = "gateway11"
+  #  if name == "C twitter: ":
+  #      return
+  if name.startswith("C "):
+    logger.info("I: ignore msg: C ")
+    return
+  if name.startswith("X "):
+    logger.info("I: ignore msg: X ")
+    return
+  if name.startswith("**C "):
+    logger.info("I: ignore msg: **C ")
+    return
 
-    #  if gateway == "test":
-    #    pass
-    #  else:
-    #    return
-    logger.info("msg of mt_read: %s" % msgd)
+  #  if len(username.splitlines()) > 1:
+  #    pass
+  #  # need fix
+  #  if "gateway11" in MT_GATEWAY_LIST:
+  #      if gateway == "gateway1":
+  #          gateway = "gateway11"
+
+  #  if gateway == "test":
+  #    pass
+  #  else:
+  #    return
+  logger.info("msg of mt_read: %s" % msgd)
 
 
-    global queue
-    need_clean = False
-    chat_id = gpt_bot
+  global queue
+  need_clean = False
+  chat_id = gpt_bot
 
-    if gateway not in mtmsgsg:
-      mtmsgsg[gateway] = {}
-    #  if gateway not in queues:
-    #    queues[gateway] = asyncio.PriorityQueue(maxsize=512)
-      #  asyncio.create_task(tg2mt_loop(gateway))
+  if gateway not in mtmsgsg:
+    mtmsgsg[gateway] = {}
+  #  if gateway not in queues:
+  #    queues[gateway] = asyncio.PriorityQueue(maxsize=512)
+    #  asyncio.create_task(tg2mt_loop(gateway))
 
-    #  if text == "ping":
-    #    all = 0
-    #    for i in mtmsgsg:
-    #      all += len(mtmsgsg[i])
-    #    #  await mt_send(f"pong. now tasks: {here}/{all} {mtmsgsg}", gateway=gateway)
-    #    here = len(mtmsgsg[gateway])
-    #    await mt_send(f"pong. now tasks: {here}/{all}", gateway=gateway)
-    #    return
+  #  if text == "ping":
+  #    all = 0
+  #    for i in mtmsgsg:
+  #      all += len(mtmsgsg[i])
+  #    #  await mt_send(f"pong. now tasks: {here}/{all} {mtmsgsg}", gateway=gateway)
+  #    here = len(mtmsgsg[gateway])
+  #    await mt_send(f"pong. now tasks: {here}/{all}", gateway=gateway)
+  #    return
 
-    #  if text.startswith(".py "):
-    #    text = "." + text[4:]
-    #  if text[0:1] == ".":
-    #  if 1 > 2:
-    #    if text[1:2] == " ":
-    #      return
-    #    #  cmds = deque(text[1:].split(' '))
-    #    #  cmds = text[1:].split(' ')
-    #    cmds = get_cmd(text[1:])
-    #    if cmds:
-    #      pass
-    #    else:
-    #      return
-    #    #  print(f"> I: {cmds}")
-    #    logger.info("got cmds: {}".format(cmds))
-    #    cmd = cmds[0]
-    #    length = len(cmds)
-    #    here = len(mtmsgsg[gateway])
-    #    if text == ".gtpmode":
-    #      if gateway in gptmode:
-    #        gptmode.remove(gateway)
-    #        await mt_send("gtp mode off", gateway=gateway)
-    #        return
-    #      else:
-    #        gptmode.append(gateway)
-    #        await mt_send("gtp mode on", gateway=gateway)
-    #        return
-    #    elif text == ".gtg reset":
-    #      if allright.is_set():
-    #        await mt_send(f"now tasks: {here}, waiting...", gateway=gateway)
-    #        #  for g in mtmsgsg:
-    #        #  for g in queues:
-    #        #    await mt_send(f"clean {g}...", gateway="test")
-    #        #    await queues[g].put((0,0,0))
-    #        text= CLEAN
-    #      else:
-    #        await mt_send("waiting...", gateway=gateway)
-    #        await allright.wait()
-    #        here = len(mtmsgsg[gateway])
-    #        await mt_send(f"reset ok, now tasks: {here}", gateway=gateway)
-    #        return
-    #    #  elif text == ".gpt" or text.startswith(".gpt ") or text.startswith(".gpt\n"):
-    #    #  elif text == ".se" or text.startswith(".se "):
-    #    elif cmd == "gse":
-    #      #  need_clean = True
-    #      text = ' '.join(cmds[1:])
-    #      if not text:
-    #        await mt_send(".gse $text", gateway=gateway)
-    #        return
-    #      text="/search "+text
-    #    #  elif text == ".img" or text.startswith(".img "):
-    #    #  elif text.startswith(".gtz"):
-    #    elif cmd == "gptr":
-    #      #  text=text[6:]
-    #      text = ' '.join(cmds[1:])
-    #      if not text:
-    #        await mt_send("gpt translate with short prompt", gateway=gateway)
-    #        return
-    #      #  need_clean = True
-    #      text = f'{PROMPT_TR_MY_S}“{text}”'
-    #
-    #    else:
-    #      return
-    #  elif gateway in gptmode:
-    #    pass
-    #    return
-    #  if gateway in MT_GATEWAY_LIST:
-    #      chat_id = MT_GATEWAY_LIST[gateway][0]
-    #  else:
-    #      # first msg is empty
-    #      logger.warning("unkonwon gateway: {}".format(gateway))
-    #      logger.warning("received data: {}".format(msg))
-    #      return
+  #  if text.startswith(".py "):
+  #    text = "." + text[4:]
+  #  if text[0:1] == ".":
+  #  if 1 > 2:
+  #    if text[1:2] == " ":
+  #      return
+  #    #  cmds = deque(text[1:].split(' '))
+  #    #  cmds = text[1:].split(' ')
+  #    cmds = get_cmd(text[1:])
+  #    if cmds:
+  #      pass
+  #    else:
+  #      return
+  #    #  print(f"> I: {cmds}")
+  #    logger.info("got cmds: {}".format(cmds))
+  #    cmd = cmds[0]
+  #    length = len(cmds)
+  #    here = len(mtmsgsg[gateway])
+  #    if text == ".gtpmode":
+  #      if gateway in gptmode:
+  #        gptmode.remove(gateway)
+  #        await mt_send("gtp mode off", gateway=gateway)
+  #        return
+  #      else:
+  #        gptmode.append(gateway)
+  #        await mt_send("gtp mode on", gateway=gateway)
+  #        return
+  #    elif text == ".gtg reset":
+  #      if allright.is_set():
+  #        await mt_send(f"now tasks: {here}, waiting...", gateway=gateway)
+  #        #  for g in mtmsgsg:
+  #        #  for g in queues:
+  #        #    await mt_send(f"clean {g}...", gateway="test")
+  #        #    await queues[g].put((0,0,0))
+  #        text= CLEAN
+  #      else:
+  #        await mt_send("waiting...", gateway=gateway)
+  #        await allright.wait()
+  #        here = len(mtmsgsg[gateway])
+  #        await mt_send(f"reset ok, now tasks: {here}", gateway=gateway)
+  #        return
+  #    #  elif text == ".gpt" or text.startswith(".gpt ") or text.startswith(".gpt\n"):
+  #    #  elif text == ".se" or text.startswith(".se "):
+  #    elif cmd == "gse":
+  #      #  need_clean = True
+  #      text = ' '.join(cmds[1:])
+  #      if not text:
+  #        await mt_send(".gse $text", gateway=gateway)
+  #        return
+  #      text="/search "+text
+  #    #  elif text == ".img" or text.startswith(".img "):
+  #    #  elif text.startswith(".gtz"):
+  #    elif cmd == "gptr":
+  #      #  text=text[6:]
+  #      text = ' '.join(cmds[1:])
+  #      if not text:
+  #        await mt_send("gpt translate with short prompt", gateway=gateway)
+  #        return
+  #      #  need_clean = True
+  #      text = f'{PROMPT_TR_MY_S}“{text}”'
+  #
+  #    else:
+  #      return
+  #  elif gateway in gptmode:
+  #    pass
+  #    return
+  #  if gateway in MT_GATEWAY_LIST:
+  #      chat_id = MT_GATEWAY_LIST[gateway][0]
+  #  else:
+  #      # first msg is empty
+  #      logger.warning("unkonwon gateway: {}".format(gateway))
+  #      logger.warning("received data: {}".format(msg))
+  #      return
 
-    if msgd["Extra"]:
-        # file
-        #,"id":"","Extra":{"file":[{"Name":"proxy-image.jpg","Data":"/9j/4AAQSkZJRgABAQAAAQABAAD/4gIoSUNDX1BST0ZJTEUAAQEAA ... 6P9ZgOT6tI33Ff5p/MAOfNnzPzQAN4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAAAGQAAYAkAAGTGAAAAAAAAwsAAHLAAAK//9k=","Comment":"","URL":"https://liuu.tk/ddb833ad/proxy_image.jpg","Size":0,"Avatar":false,"SHA":"ddb833ad"}]}}\n\r\n'
-        for file in msgd["Extra"]["file"]:
-            if text:
-                if text == file["Name"]:
-                    text = ""
-                else:
-                    text += "\n\n"
-            text += "[{}]({})".format(file["Name"], file["URL"])
-    else:
-        msgd.pop("Extra")
-        logger.warning("removed file info from mt api")
+  if msgd["Extra"]:
+      # file
+      #,"id":"","Extra":{"file":[{"Name":"proxy-image.jpg","Data":"/9j/4AAQSkZJRgABAQAAAQABAAD/4gIoSUNDX1BST0ZJTEUAAQEAA ... 6P9ZgOT6tI33Ff5p/MAOfNnzPzQAN4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAAAGQAAYAkAAGTGAAAAAAAAwsAAHLAAAK//9k=","Comment":"","URL":"https://liuu.tk/ddb833ad/proxy_image.jpg","Size":0,"Avatar":false,"SHA":"ddb833ad"}]}}\n\r\n'
+      for file in msgd["Extra"]["file"]:
+          if text:
+              if text == file["Name"]:
+                  text = ""
+              else:
+                  text += "\n\n"
+          text += "[{}]({})".format(file["Name"], file["URL"])
+  else:
+      msgd.pop("Extra")
+      logger.warning("removed file info from mt api")
 
-    logger.info("got msg from mt: {}".format(msgd))
-    #      if name == "C Telegram: ":
-    if gateway == "gateway1":
-      res = await run_cmd(text, gateway, name)
+  logger.info("got msg from mt: {}".format(msgd))
+  #      if name == "C Telegram: ":
+  if gateway == "gateway1":
+    res = await run_cmd(text, gateway, name)
+    if res:
+      await mt_send_for_long_text(res, gateway)
+      res = f"**C bot:** {res}"
+    if name:
+      name = name[:-2]
+      text = f"**{name}:** {text}"
+    for m in get_mucs(main_group):
+      if await send1(text, m, nick=name) is False:
+        return
       if res:
-        await mt_send_for_long_text(res, gateway)
-        res = f"**C bot:** {res}"
-      if name:
-        name = name[:-2]
-        text = f"**{name}:** {text}"
-      for m in get_mucs(main_group):
-        if await send1(text, m, nick=name) is False:
+        if await send1(res, m, nick="C bot") is False:
           return
-        if res:
-          if await send1(res, m, nick="C bot") is False:
-            return
-      #    if await send1(f"{name}{text}", m, name) is False:
-      #      return
-      #    if res:
-      #      if await send1(f"{name}{res}", m, "C bot") is False:
-      #        return
+    #    if await send1(f"{name}{text}", m, name) is False:
+    #      return
+    #    if res:
+    #      if await send1(f"{name}{res}", m, "C bot") is False:
+    #        return
 
+  return
+  if 1 < 2:
     return
-    if 1 < 2:
-      return
-    msgd.update({"chat_id": chat_id})
-    msgd.update({"text": text})
+  msgd.update({"chat_id": chat_id})
+  msgd.update({"text": text})
 
-    #  global chat
-    #  if not chat:
-    chat = await get_entity(chat_id)
-    #  print(f">{chat.user_id}: {text}")
-    print(f"I: send {text} to gpt")
-    if text != CLEAN:
-      if need_clean is True:
-        await UB.send_message(chat, CLEAN)
+  #  global chat
+  #  if not chat:
+  chat = await get_entity(chat_id)
+  #  print(f">{chat.user_id}: {text}")
+  print(f"I: send {text} to gpt")
+  if text != CLEAN:
+    if need_clean is True:
+      await UB.send_message(chat, CLEAN)
 
-    #    while len(queue.keys()) > 0:
-    #      print("W: waiting to reset...")
-    #      await asyncio.sleep(1)
-    msg = await UB.send_message(chat, text)
-    #  await queue.put({msg.id: [msgd, msg]})
-    #  await queue.put([msg, msgd])
-    if text != CLEAN:
-      #  async with queue_lock:
-      #  queues[gateway] = {msg.id: [msgd, None]}
-      #  if gateway not in nids:
-        #  nids[gateway] = msg.id
-      gid_src[msg.id] = gateway
-      #  mtmsgs[msg.id] = [msgd,None]
-      #  if gateway not in mtmsgs:
-      #  mtmsgsg[gateway][msg.id] = [msgd, None]
-      mtmsgsg[gateway][msg.id] = [msgd]
-    else:
-      await clear_history()
-      here = len(mtmsgsg[gateway])
-      all = 0
-      for i in mtmsgsg:
-        all += len(mtmsgsg[i])
-      await mt_send(f"reset ok, now tasks: {here}/{all}", gateway=gateway)
-    return
+  #    while len(queue.keys()) > 0:
+  #      print("W: waiting to reset...")
+  #      await asyncio.sleep(1)
+  msg = await UB.send_message(chat, text)
+  #  await queue.put({msg.id: [msgd, msg]})
+  #  await queue.put([msg, msgd])
+  if text != CLEAN:
+    #  async with queue_lock:
+    #  queues[gateway] = {msg.id: [msgd, None]}
+    #  if gateway not in nids:
+      #  nids[gateway] = msg.id
+    gid_src[msg.id] = gateway
+    #  mtmsgs[msg.id] = [msgd,None]
+    #  if gateway not in mtmsgs:
+    #  mtmsgsg[gateway][msg.id] = [msgd, None]
+    mtmsgsg[gateway][msg.id] = [msgd]
+  else:
+    await clear_history()
+    here = len(mtmsgsg[gateway])
+    all = 0
+    for i in mtmsgsg:
+      all += len(mtmsgsg[i])
+    await mt_send(f"reset ok, now tasks: {here}/{all}", gateway=gateway)
+  return
 
-    #  text = name + text
-    #  #    await NB.send_message(chat_id, text, reply_to=reply_to)
-    #  #    return [0, chat_id, text, {"reply_to":reply_to}]
-    #  msg = [0, chat_id, text, {"reply_to": reply_to}]
-    #  await queue.put(msg)
+  #  text = name + text
+  #  #    await NB.send_message(chat_id, text, reply_to=reply_to)
+  #  #    return [0, chat_id, text, {"reply_to":reply_to}]
+  #  msg = [0, chat_id, text, {"reply_to": reply_to}]
+  #  await queue.put(msg)
 
-  except:
-    #  info = "E: " + str(sys.exc_info()[1]) + "\n==\n" + traceback.format_exc() + "\n==\n" + str(sys.exc_info())
-    #  logger.error(info)
-    logger.error("error: msg from mt to tg: ", exc_info=True, stack_info=True)
-    #  await NB.send_message(MY_ID, info)
-    await asyncio.sleep(5)
+  #  except Exception as e:
+  #    #  info = "E: " + str(sys.exc_info()[1]) + "\n==\n" + traceback.format_exc() + "\n==\n" + str(sys.exc_info())
+  #    #  logger.error(info)
+  #    logger.error("error: msg from mt to tg: ", exc_info=True, stack_info=True)
+  #    #  await NB.send_message(MY_ID, info)
+  #    await asyncio.sleep(5)
 
 
 
@@ -3244,7 +3242,7 @@ def wtf_str(s, for_what="nick"):
     if c in ok:
       tmp.append(c)
     #  if ud.category(c) in ('Cn', 'Cs', 'Co'):
-    elif ud.category(c) in no:
+    elif unicodedata.category(c) in no:
     #  if ud.category(c) not in ('Cn', 'Cs', 'Co',  'So'):
       #  nick = repr(nick)
       #  break
