@@ -3796,6 +3796,8 @@ async def add_cmd():
       role = "visitor"
       i = 0
       for muc in rooms:
+        if muc not in public_groups:
+          continue
         #  muc = str(room.jid.bare())
         room = rooms[muc]
         jids = users[muc]
@@ -3806,22 +3808,27 @@ async def add_cmd():
             info(res)
             jids[jid][2] = 1
             i += 1
+      member_only_mode = True
       return "%s, 禁言账户总数：%s" % (reason, i)
     else:
       reason = "非成员允许发言"
       role = "participant"
       i = 0
       for muc in rooms:
+        if muc not in public_groups:
+          continue
         #  muc = str(room.jid.bare())
         room = rooms[muc]
         jids = users[muc]
         for m in room.members:
           jid = str(m.direct_jid.bare())
-          if jids[jid][2] == 1:
+          #  if jids[jid][2] == 1 or ( m.affiliation == "none" and m.role == "visitor" ):
+          if jids[jid][2] == 1 or jids[jid][2] == "visitor":
             res = await room.muc_set_role(m.nick, role, reason=reason)
             info(res)
             jids[jid][2] = "participant"
             i += 1
+      member_only_mode = False
       return "%s, 禁言解除账户数：%s" % (reason, i)
   cmd_funs["mo"] = _
   cmd_for_admin.add('mo')
