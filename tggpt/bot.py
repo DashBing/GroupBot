@@ -1441,7 +1441,11 @@ async def load_config():
 
 async def save_data():
   data = pickle.dumps(gd)
-  return await write_file(data, f"{HOME}/xmpp.data", "wb")
+  if await write_file(data, f"{HOME}/xmpp.data", "wb"):
+    info("已保存临时数据")
+    return True
+  else:
+    warn("保存失败")
 
 import aiohttp
 from aiohttp.client_exceptions import ClientPayloadError, ClientConnectorError
@@ -3791,6 +3795,7 @@ async def add_cmd():
   async def _(cmds, src):
     #  if len(cmds) == 1:
     #    return f"{cmds[0]}\n.{cmds[0]}"
+    global member_only_mode
     if member_only_mode is False:
       reason = "非成员暂时禁止发言"
       role = "visitor"
