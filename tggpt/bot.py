@@ -2605,7 +2605,7 @@ async def download_media(msg, src='gateway1', path=f"{DOWNLOAD_PATH}/", in_memor
       if time.time() - last_time[0] > interval:
         #  await mt_send("{:.2%} %s/%s".format(current / total, current, total), gateway=gateway)
         #  asyncio.create_task(mt_send("{:.2%} {}/{} bytes".format(current / total, current, total), gateway=gateway))
-        asyncio.create_task(send("{} {:.2%} {}/{}bytes {:.1f}MB/s".format(res, current / total, current, total, (current-last_time[1])/(time.time()-last_time[0])/1024/1024), src, correct=True))
+        asyncio.create_task(send("{} {:.2%} {:.2f}/{:.2f}MB {:.1f}MB/s".format(res, current / total, current/1024/1024, total/1024/1024, (current-last_time[1])/(time.time()-last_time[0])/1024/1024), src, correct=True))
         #  last_time[src] = time.time()
         last_time[0] = time.time()
         last_time[1] = current
