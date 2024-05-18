@@ -2146,26 +2146,27 @@ async def mt2tg(msg):
   #      if name == "C Telegram: ":
   if gateway == "gateway1":
 
+    text0 = text
     if '\n' in name:
       ls = name.splitlines()
       name = ls[-1]
+      rname = name[:-2]
       qt = '\n'.join(ls[:-1])
-      text2 = f"{text}\n\n{qt}"
+      text = f"{text}\n\n{qt}"
       qt = '\n> '.join(ls[:-1])
-      name2 = f"> {qt}\n**{name}:** "
+      name2 = f"> {qt}\n**{rname}:** "
     else:
-      text2 =text
-      name2 = f"**{name}:** "
+      rname = name[:-2]
+      name2 = f"**{rname}:** "
 
-
-    res = await run_cmd(text2, gateway, f"{name}: ")
+    res = await run_cmd(text, gateway, name)
     if res:
       await mt_send_for_long_text(res, gateway)
       res = f"**C bot:** {res}"
 
-    text = f"{name2}{text}"
+    text = f"{name2}{text0}"
     for m in get_mucs(main_group):
-      if await send1(text, m, nick=name) is False:
+      if await send1(text, m, nick=rname) is False:
         return
       if res:
         if await send1(res, m, nick="C bot") is False:
@@ -3544,7 +3545,7 @@ async def parse_xmpp_msg(msg):
     ms = get_mucs(muc)
     for m in ms - {muc}:
       #  if await send1(f"**X {nick}:** {text}", m, name=f"X {nick}") is False:
-      if await send1(f"{username}{text}", m, name=name) is False:
+      if await send1(f"{username}{text0}", m, name=name) is False:
         return
     if main_group in ms:
       #  if await mt_send_for_long_text(text, name=f"X {nick}") is False:
