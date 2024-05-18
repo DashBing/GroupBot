@@ -3799,7 +3799,7 @@ async def add_cmd():
         room = rooms[muc]
         jids = users[muc]
         for m in room.members:
-          jid = str(m.jid.bare())
+          jid = str(m.direct_jid.bare())
           if m.affiliation == "none" and m.role == "participant":
             await room.muc_set_role(m.nick, "vistor", reason)
             jids[jid][2] = 1
@@ -3813,7 +3813,7 @@ async def add_cmd():
         room = rooms[muc]
         jids = users[muc]
         for m in room.members:
-          jid = str(m.jid.bare())
+          jid = str(m.direct_jid.bare())
           if jids[jid][2] == 1:
             await room.muc_set_role(m.nick, "participant", reason)
             jids[jid][2] = "participant"
