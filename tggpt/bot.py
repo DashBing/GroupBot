@@ -3340,10 +3340,18 @@ async def parse_xmpp_msg(msg):
               err(f"item.jid is None: {msg} {msg.xep0045_muc_user.items} {item}")
               continue
             jid = str(item.jid.bare())
+            if item.nick is None:
+              rnick = msg.from_.resource
+              info(f"空nick：{item.jid} {item.nick} -> {rnick} {msg}")
+            else:
+              rnick = item.nick
+            if rnick is None:
+              info(f"没找到nick：{item.jid} {item.nick} -> {rnick} {msg}")
+              continue
             if jid == myjid:
               if jid not in jids:
                 #  j = [room.me.nick, room.me.affiliation, room.me.role]
-                j = [item.nick, item.affiliation, item.role]
+                j = [rnick, item.affiliation, item.role]
                 jids[jid] = j
               if room.me.role != 'moderator':
                 err(f"没有管理权限: {muc} {item.affiliation} {item.role}")
@@ -3354,14 +3362,6 @@ async def parse_xmpp_msg(msg):
             print(res)
             if jid == myjid:
               #  logger.info(f"不记录bot: {jid}")
-              continue
-            if item.nick is None:
-              rnick = msg.from_.resource
-              info(f"空nick：{item} -> {rnick} {msg}")
-            else:
-              rnick = item.nick
-            if rnick is None:
-              info(f"空rnick：{item} -> {rnick} {msg}")
               continue
             if jid in me:
               #  j = [msg.from_.resource, item.affiliation, item.role]
@@ -3380,6 +3380,7 @@ async def parse_xmpp_msg(msg):
                     res = await room.muc_set_role(rnick, "participant", reason="临时禁言结束")
                     j[2] = "participant"
                   else:
+                    # 不用解除禁言
                     j[2] = 1
                 else:
                   if j[2] == 1:
@@ -3392,7 +3393,11 @@ async def parse_xmpp_msg(msg):
                         await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
                       await room.muc_set_role(rnick, "visitor", reason=reason)
                     else:
-                      await room.muc_set_role(rnick, "visitor", reason=reason)
+                      if member_only_mode:
+                        await room.muc_set_role(rnick, "visitor", reason=reason)
+                      else:
+                        res = await room.muc_set_role(rnick, "participant", reason="禁言结束")
+                        j[2] = "participant"
               elif member_only_mode:
                 reason = "非成员暂时禁止发言"
                 if item.affiliation == "none":
@@ -3408,7 +3413,7 @@ async def parse_xmpp_msg(msg):
                   await send(res, muc, nick=nick)
                 await send(f"{res}\njid: {jid}\nmuc: {muc}", nick=nick)
             else:
-              j = [msg.from_.resource, item.affiliation, item.role]
+              j = [rnick, item.affiliation, item.role]
               jids[jid] = j
               if muc in bot_groups:
                 welcome = f"欢迎 {hide_nick(msg)} ,这里是bot频道，专门用来测试bot，避免干扰主群。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
@@ -3808,6 +3813,7 @@ async def add_cmd():
     #    return f"{cmds[0]}\n.{cmds[0]}"
     global member_only_mode
     if member_only_mode is False:
+      member_only_mode = True
       reason = "非成员暂时禁止发言"
       role = "visitor"
       i = 0
@@ -3823,13 +3829,13 @@ async def add_cmd():
             info(f"{jid} not in jids({muc})")
             continue
           if m.affiliation == "none" and m.role == "participant":
+            jids[jid][2] = 1
             res = await room.muc_set_role(m.nick, role, reason=reason)
             info(res)
-            jids[jid][2] = 1
             i += 1
-      member_only_mode = True
       return "%s, 禁言账户总数：%s" % (reason, i)
     else:
+      member_only_mode = False
       reason = "非成员允许发言"
       role = "participant"
       i = 0
@@ -3846,11 +3852,10 @@ async def add_cmd():
             info(f"{jid} not in jids({muc})")
             continue
           if jids[jid][2] == 1 or jids[jid][2] == "visitor":
+            jids[jid][2] = "participant"
             res = await room.muc_set_role(m.nick, role, reason=reason)
             info(res)
-            jids[jid][2] = "participant"
             i += 1
-      member_only_mode = False
       return "%s, 禁言解除账户数：%s" % (reason, i)
   cmd_funs["mo"] = _
   cmd_for_admin.add('mo')
