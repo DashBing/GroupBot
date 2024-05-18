@@ -875,7 +875,7 @@ $M *$NAME*: "
         if [[ -n "$qt" ]]; then
           text="$TEXT
 
-  $qt"
+$qt"
         else
           text="$TEXT"
         fi
@@ -893,7 +893,7 @@ $M *$NAME*: "
       # qt=$(echo "$QT" | sed -e 's/^> //')
       if [[ -n "$QT" ]]; then
         NAME="$QT
-  ${NAME}"
+${NAME}"
       fi
       newline
     else
