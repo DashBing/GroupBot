@@ -3808,8 +3808,9 @@ async def add_cmd():
     else:
       reason = "非成员允许发言"
       i = 0
-      for room in rooms:
-        muc = str(room.jid.bare())
+      for muc in rooms:
+        #  muc = str(room.jid.bare())
+        room = rooms[muc]
         jids = users[muc]
         for m in room.members:
           jid = str(m.jid.bare())
