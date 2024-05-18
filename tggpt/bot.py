@@ -437,6 +437,8 @@ def _exceptions_handler(e, *args, **kwargs):
     elif e.args[0] == 'disconnected':
       # sending xmpp msg
       more = False
+    elif e.args[0] == 'client is not running':
+      more = False
     else:
       pass
   except UnicodeDecodeError:
