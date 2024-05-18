@@ -3808,6 +3808,9 @@ async def add_cmd():
         jids = users[muc]
         for m in room.members:
           jid = str(m.direct_jid.bare())
+          if jid not in jids:
+            info(f"{jid} not in jids({muc})")
+            continue
           if m.affiliation == "none" and m.role == "participant":
             res = await room.muc_set_role(m.nick, role, reason=reason)
             info(res)
@@ -3828,6 +3831,9 @@ async def add_cmd():
         for m in room.members:
           jid = str(m.direct_jid.bare())
           #  if jids[jid][2] == 1 or ( m.affiliation == "none" and m.role == "visitor" ):
+          if jid not in jids:
+            info(f"{jid} not in jids({muc})")
+            continue
           if jids[jid][2] == 1 or jids[jid][2] == "visitor":
             res = await room.muc_set_role(m.nick, role, reason=reason)
             info(res)
