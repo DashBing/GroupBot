@@ -143,7 +143,7 @@ cmds() {
     shift
     bash "$SH_PATH/ai.sh" "$@" || echo "E: $?"
     ;;
-  py|img|di|lb|kl|you|hg|qw|qw2)
+  py|img|di|lb|kl|you|hg|qw|qw2|music)
     return 0
     ;;
   gtg|gptr|gtr|gtz|gse|voice)
@@ -449,6 +449,10 @@ cmds() {
     elif [[ "$e" -eq 127 ]]; then
       # echo "E: unknown cmd > $*"
       echo "你输错了命令: .$cmd"
+      return $e
+    else
+      echo "wtf: $e: .$cmd"
+      return $e
     fi
     ;;
   esac
@@ -535,6 +539,7 @@ if [[ $e -eq 0 ]]; then
 # echo "$text" >> $LOG
 echo "$text"
 else
-exit "E: $e"
+# exit "E: $e"
 echo "$text"
+exit $e
 fi

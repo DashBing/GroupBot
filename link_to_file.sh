@@ -25,7 +25,6 @@ MAX_SHARE_FILE_SIZE=${MAX_SHARE_FILE_SIZE:-64000000}
 export http_proxy="http://127.0.0.1:6080"
 export https_proxy="http://127.0.0.1:6080"
 
-
 link_to_file() {
   local URL="$1"
 
@@ -35,36 +34,51 @@ link_to_file() {
   fn=${fn##*:}
   fn=${fn##*\?}
   fn=${fn##*=}
+  fn=${fn%%#*}
   fn=${fn#-}
   fn=${fn#-}
   fn=${fn#-}
-  [[ -z "$fn" ]] && {
+  if [[ -z "$fn" ]]; then
     fn=$(date "+%Y%m%d_%H%M%S").html
     fe=html
     local fn_en=$fn
-  } || {
+  else
     local fn_en=$fn
     fn=$(bash "$SH_PATH/"urldecode.sh "$fn")
     local fe=${fn##*\.}
   #  [[ "$fe" == "$fn" ]] && fe=""
     [[ "$fe" == "$fn" ]] && fe="" || fe=$(bash "$SH_PATH/"urldecode.sh "$fe")
-  }
-
-
+  fi
 
 
   local flag=0
   local error=0
-#  spider_res=$(wget -T 8 --spider "$URL" 2>&1 | grep Length) || ( error=$?; flag=512 )
-  spider_res=$(wget -T 8 --spider "$URL" 2>&1) || { error=$?; flag=512; } || local spider_res="$?: $spider_res"
   cd $LP
-  [[ "$flag" -eq 512  ]] && {
-    local curl_res=$(curl -L -m 8 --max-filesize $MAX_SHARE_FILE_SIZE -s -o "$fn" -w '%{http_code}'  "$URL") || error=$?
-      [[ "$curl_res" != "200" ]] && curl_res=$(curl -L -m 8 --max-filesize $MAX_SHARE_FILE_SIZE -s -o "$fn" -w '%{http_code}'  "$URL" -A 'Mozilla/5.0 (Linux; Android 11; KB2000) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.56 Mobile Safari/537.36' )
-    [[ "$curl_res" == "200" ]] && { spider_res="fake_Length: $error [text/html]"; flag=0; error=5; 
-  } || local spider_res="$spider_res
+
+  # local curl_res=$(curl -L -m 8 --max-filesize $MAX_SHARE_FILE_SIZE -s -o "$fn" -w '%{http_code}'  "$URL") || error=$?
+    local curl_res=$(curl -L -m 8 --max-filesize $MAX_SHARE_FILE_SIZE -s -o "$fn" -w '%{http_code}'  "$URL" -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' ) || error=$?
+    # [[ "$curl_res" != "200" ]] && curl_res=$(curl -L -m 8 --max-filesize $MAX_SHARE_FILE_SIZE -s -o "$fn" -w '%{http_code}'  "$URL" -A 'Mozilla/5.0 (Linux; Android 11; KB2000) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.56 Mobile Safari/537.36' )
+    [[ "$curl_res" != "200" ]] && local curl_res=$(curl -L -m 8 --max-filesize $MAX_SHARE_FILE_SIZE -s -o "$fn" -w '%{http_code}'  "$URL") || error=$?
+
+  if [[ "$curl_res" == "200" ]]; then
+    if [[ -e "$fn" ]]; then
+      spider_res="fake_Length: $(du -b -- "$fn" | cut -f1) [$(file --mime-type -b -- "${fn}")]"; flag=0; error=5; 
+    else
+      spider_res="fake_Length: 0 [text/html]"; flag=0; error=5; 
+    fi
+  else
+    local spider_res="$spider_res
 curl_exit: $error: $curl_res"
-  }
+  fi
+
+  # if [[ "$flag" -eq 512  ]]; then
+  if [[ "$flag" -ne 0  ]]; then
+  #  spider_res=$(wget -T 8 --spider "$URL" 2>&1 | grep Length) || ( error=$?; flag=512 )
+    # spider_res=$(wget -T 8 --spider "$URL" 2>&1) || { error=$?; flag=512; } || local spider_res="$?: $spider_res"
+    spider_res=$(wget -T 8 --spider "$URL" 2>&1) || { error=$?; flag=512; }
+
+
+  fi
   #spider_res="Length: 56161 (55K) [image/jpeg]"
   #  if [[ "$spider_res" == "" || $( echo "$URL" | wc -l ) -ne 1 ]] ; then
 #  if [[ "$error" -ne 0 ]]; then
@@ -100,19 +114,12 @@ curl_exit: $error: $curl_res"
       
 
       if [[ -e "$fn" ]]; then
-        # ctime=$(ls --full-time "$fn" | cut -d " " -f6,7)
-        # ctime=$(date -d "$ctime" "+%s")
-        # ntime=$(date "+%s")
-        #        if [[ $(( ntime - ctime )) -le 36000 && "$(du -b "$fn" | cut -f1)" -gt 0  ]]; then
-        # if [[ $(du -b "$fn" | cut -f1) -gt 0 ]]; then
         if [[ "${URL:0:$((9 + ${#DOMAIN}))}" == "https://$DOMAIN/" || -n "$fe"  ]]; then
           my_url="https://$DOMAIN/${sub_dir_en}$fn_en"
         else
           [[ "$error" -eq 0 ]] && rm -f -- "$fn" # don't delete file downloaded by curl -o
         fi
       fi
-
-
 
       if [[ -e "$fn" ]]; then
         :
@@ -140,8 +147,8 @@ curl_exit: $error: $curl_res"
         fe=$(file --extension -- "${fn}" | grep -o -P "[^\s/]+$")
       fi
       [[ -e "$fn" ]] && {
-      mv "${fn}" "${fn}.${fe}"
-      fn="${fn}.${fe}"
+        mv "${fn}" "${fn}.${fe}"
+        fn="${fn}.${fe}"
       }
       my_url="https://$DOMAIN/${sub_dir_en}${fn_en}.${fe}"
     fi

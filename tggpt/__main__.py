@@ -1,44 +1,22 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 from . import *  # noqa: F403
+#  import sys
+#  import asyncio
+#  loop = asyncio.get_event_loop()
 
+#  async def _init():
+
+#loop.run_until_complete(init())
+#  if loop.is_running():
+#    LOGGER.error("loop running...")
+#  else:
+#    LOGGER.error("loop stoped...")
+#
+#  if loop.is_closed():
+#    LOGGER.error("loop closed, this may be a error")
 
 logger = logging.getLogger(__name__)
-
-
-async def run():
-  #  from . import init
-  await init()
-
-  from . import bot
-  #  from .bot import mt_read
-  #  asyncio.create_task(mt_read(MSG_QUEUE), name="mt_read")
-  asyncio.create_task(bot.mt_read(), name="mt_read")
-
-
-  logger.warning("init ok, loop...")
-  #  from pyrogram import idle
-  #  if "idle" in locals():
-  #    await idle()
-  await UB.run_until_disconnected()
-
-
-def main():
-  try:
-    # with UB:
-    loop.run_until_complete(run())
-  except KeyboardInterrupt as e:
-    logger.info("I: 手动终止")
-    #  raise e
-  except SystemExit as e:
-    raise e
-  except Exception as e:
-    logger.error("error: stop...", exc_info=True, stack_info=True)
-    raise e
-  finally:
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
-
 
 if __name__ == '__main__':
   print('{} 作为主程序运行'.format(__file__))
@@ -46,6 +24,12 @@ if __name__ == '__main__':
   logger.info("test info")
   logger.warning("test warn")
   logger.error("test err")
-  main()
+  #  main()
+  from . import bot
+  #  await bot.run()
+  bot.main()
+
+elif __package__ == "":
+  print('{} 运行, empty package'.format(__file__))
 else:
-  print('{} 运行 :('.format(__file__))
+  print('{} 运行, package: {}'.format(__file__, __package__))

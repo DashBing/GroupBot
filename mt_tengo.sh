@@ -20,9 +20,9 @@ block_msg(){
 if [[ -z "$2" ]]; then
   case $8 in
     discord.*)
-      if [[ "${3}" == "api.gpt" ]] ; then
+      if [[ "${3}" == "api.xmpp" ]] ; then
         # echo -n "C gpt: "
-        NAME="bot"
+        NAME="C bot"
       elif [[ "${3}" == "api.cmdres" ]] ; then
         # echo -n "C bot: "
         NAME="C bot"
@@ -32,9 +32,9 @@ if [[ -z "$2" ]]; then
       fi
       ;;
     irc.*)
-      if [[ "${3}" == "api.gpt" ]] ; then
+      if [[ "${3}" == "api.xmpp" ]] ; then
         # echo -n "C gpt: "
-        NAME="gpt"
+        NAME="C bot"
       fi
       ;;
     # telegram.*)
@@ -56,7 +56,6 @@ newline(){
 $TEXT"
   fi
 }
-
 
 
 # [[ "${NAME:0:1}" == ">" ]] && orig_msg
@@ -202,7 +201,7 @@ xmpp.*)
     TEXT=$( echo "$TEXT" | sed '/^[^»]/,$!d')
 
   fi
-  if [[ "$NAME" == "wtfipfs" ]] || [[ "${NAME::2}" == "X " ]] || [[ "${NAME::2}" == "C " ]] || [[ "${NAME::5}" == ".ban " ]]; then
+  if [[ "$NAME" == "wtfipfs" ]] || [[ "${NAME::2}" == "X " ]] || [[ "${NAME::2}" == "C " ]] || [[ "${NAME::5}" == ".ban " ]] || [[ "${NAME::4}" == ".ub " ]]; then
     # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ \S+?:\*\* ')
     # NAME=$( echo "$TEXT" | grep -o -P '^\*\*\w+ [^\s]+?:\*\* ')
     # NAME=${NAME:2}
@@ -238,7 +237,11 @@ xmpp.*)
       if [[ "$NAME" == "wtfipfs" ]]; then
         NAME="C xmppbot"
       elif [[ "${NAME::5}" == ".ban " ]]; then
-        NAME=${NAME#.ban }
+        # NAME=${NAME#.ban }
+        NAME="C xmppbot"
+      elif [[ "${NAME::4}" == ".ub " ]]; then
+        # NAME=${NAME#.ub }
+        NAME="C xmppbot"
       fi
       # if [[ -z "$QT" ]]; then
       #   unset QT
@@ -527,7 +530,8 @@ api.gpt)
   LABLE="C"
   ;;
 api.xmpp)
-  LABLE="X"
+  # LABLE="X"
+  LABLE="0"
   ;;
 # api.simplex)
 #   LABLE="S"
@@ -602,7 +606,8 @@ get_full_text(){
       # rm "$SM_LOCK2"
       is_ok=1
       # echo "iii: change TEXT" >> ~/mt.log
-      bash "$SH_PATH/sm.sh" "C cmd" "I: got full text for $8: $NAME${TEXT::64}" 4249 test
+      # bash "$SH_PATH/sm.sh" "C cmd" "I: got full text for $8: $NAME${TEXT::64}" 4249 test
+      echo "I: got full text for $8: $NAME${TEXT::64}" &>> ~/mt.log
     fi
   # else
     # echo "iii: no SM_LOCK2" >> ~/mt.log
@@ -626,31 +631,31 @@ if [[ -n "$4" ]] ; then
     # elif [[ "$NAME" == "C bot: " && "$( echo ${1} | cut -d":" -f2 )" == " twitter to text" ]]; then
     #   TEXT=$(echo "$TEXT" | sed '2,$s/^/> /')
     # fi
-  if [[ -n "$NAME" ]]; then
-    if [[ "$NAME" == "M rssbot: " ]] || [[ "$NAME" == "M feeds: " ]]; then
-      # forbid msg from ipfsrss sent by rssbot
-      # if [[ "${11}" == "gateway1" ]]; then
-      #   block_msg
-      # fi
-      # NAME=$(echo "$TEXT"  | cut -z -d ":" -f 1)
-      # TEXT=$(echo "$TEXT" | cut -z -d ":" -f 2-)
-      # NAME=$(echo "$TEXT" | head -n1 | cut -d ":" -f 1)
-      NAME=${TEXT%%:*}
-      # TEXT=$(echo "$TEXT" | sed '1s/[^:]*://')
-      TEXT=${TEXT#*: }
-    else
-      # md_name
-    # [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(echo "$NAME" | sed '/^[^>]/d'; echo )
-    # [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(echo "$NAME" | sed '$d')
-    # NAME=$(echo "$NAME" | tail -n1)
-    # NAME=$(echo "$NAME" | cut -d ":" -f 1)
-    # NAME=${NAME%: }
-    NAME="**${NAME% }** "
-    if [[ -n "$QT" ]]; then
-      NAME="$QT
-${NAME}"
-    fi
-  fi
+    if [[ -n "$NAME" ]]; then
+      if [[ "$NAME" == "M rssbot: " ]] || [[ "$NAME" == "M feeds: " ]]; then
+        # forbid msg from ipfsrss sent by rssbot
+        # if [[ "${11}" == "gateway1" ]]; then
+        #   block_msg
+        # fi
+        # NAME=$(echo "$TEXT"  | cut -z -d ":" -f 1)
+        # TEXT=$(echo "$TEXT" | cut -z -d ":" -f 2-)
+        # NAME=$(echo "$TEXT" | head -n1 | cut -d ":" -f 1)
+        NAME=${TEXT%%:*}
+        # TEXT=$(echo "$TEXT" | sed '1s/[^:]*://')
+        TEXT=${TEXT#*: }
+      else
+          # md_name
+        # [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(echo "$NAME" | sed '/^[^>]/d'; echo )
+        # [[ $(echo "$NAME" | wc -l) -ge 3 ]] && QT=$(echo "$NAME" | sed '$d')
+        # NAME=$(echo "$NAME" | tail -n1)
+        # NAME=$(echo "$NAME" | cut -d ":" -f 1)
+        # NAME=${NAME%: }
+        NAME="**${NAME% }** "
+        if [[ -n "$QT" ]]; then
+          NAME="$QT
+    ${NAME}"
+        fi
+      fi
     fi
     newline
     ;;
@@ -858,23 +863,38 @@ $M *$NAME*: "
   api.cmd)
     if [[ -n "$NAME" ]]; then
       get_full_text
-    # username=$(echo "$NAME" | tail -n1)
-    username="$NAME"
-    [[ "${username:0:2}" != "C " ]] && [[ "${username: -5}" != "bot: " ]] && {
-      # QT=$(echo "$NAME" | sed -e '/^> [^>]/!d')
-      qt=$(echo "$QT" | sed -e 's/^> //')
-      if [[ -n "$qt" ]]; then
-        text="$TEXT
+      # username=$(echo "$NAME" | tail -n1)
+      username="$NAME"
+      [[ "${username:0:2}" != "C " ]] && [[ "${username: -5}" != "bot: " ]] && {
+        # QT=$(echo "$NAME" | sed -e '/^> [^>]/!d')
+        qt=$(echo "$QT" | sed -e 's/^> //')
+        if [[ -n "$qt" ]]; then
+          text="$TEXT
 
-$qt"
-      else
-        text="$TEXT"
-      fi
-      # nohup bash "$SH_PATH/cmd2.sh" "$gateway" "$username" "$text" &>/dev/null &
-      nohup bash "$SH_PATH/cmd2.sh" "${11}" "$username" "$text" &>/dev/null &
-    }
+  $qt"
+        else
+          text="$TEXT"
+        fi
+        # nohup bash "$SH_PATH/cmd2.sh" "$gateway" "$username" "$text" &>/dev/null &
+        nohup bash "$SH_PATH/cmd2.sh" "${11}" "$username" "$text" &>/dev/null &
+      }
     fi
     block_msg
+    ;;
+  api.xmpp)
+    if [[ -n "$NAME" ]]; then
+      get_full_text
+      # username=$(echo "$NAME" | tail -n1)
+      NAME="**${NAME% }** "
+      # qt=$(echo "$QT" | sed -e 's/^> //')
+      if [[ -n "$QT" ]]; then
+        NAME="$QT
+  ${NAME}"
+      fi
+      newline
+    else
+      block_msg
+    fi
     ;;
   api.*)
     :
