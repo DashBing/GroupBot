@@ -3794,8 +3794,9 @@ async def add_cmd():
     if member_only_mode is False:
       reason = "非成员暂时禁止发言"
       i = 0
-      for room in rooms:
-        muc = str(room.jid.bare())
+      for muc in rooms:
+        #  muc = str(room.jid.bare())
+        room = rooms[muc]
         jids = users[muc]
         for m in room.members:
           jid = str(m.jid.bare())
