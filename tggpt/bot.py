@@ -3515,6 +3515,7 @@ async def parse_xmpp_msg(msg):
     username=f"**X {nick}:** "
     name=f"X {nick}"
     qt=None
+    text2 = text
     #  if text.startswith('> ') or text.startswith('>> '):
     if text.startswith('>'):
       qt=[]
@@ -3534,8 +3535,6 @@ async def parse_xmpp_msg(msg):
         text2 = f"{text}\n\n{qt1}"
         qt2 = '\n> '.join(qt0)
         username = f"> {qt2}\n{username}"
-    else:
-      text2 = text
 
     ms = get_mucs(muc)
     for m in ms - {muc}:
