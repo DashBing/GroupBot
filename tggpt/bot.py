@@ -2070,28 +2070,28 @@ async def mt2tg(msg):
       return
 
   account = msgd["account"]
-  if account == "api.cmdres":
-    logger.info("I: ignore msg from cmdres")
-    return
+  #  if account == "api.cmdres":
+  #    logger.info("I: ignore msg from cmdres")
+  #    return
   name = msgd["username"]
   text = msgd["text"]
   gateway = msgd["gateway"]
-  if gateway == 'me':
-    if text:
-      global last_mt_res_jid
-      if text.startswith("X "):
-        tmp = text.splitlines()[0]
-        if ': ' in tmp:
-          tmp = tmp.split(': ', 1)[0]
-          if ' ' in tmp:
-            tmp = tmp.split(' ', 1)[1]
-            if tmp in me:
-              last_mt_res_jid = tmp
-              text = text.split(': ', 1)[1]
-      warn(f"reply to {last_mt_res_jid}")
-      if last_mt_res_jid:
-        await send(text, last_mt_res_jid)
-    return
+  #  if gateway == 'me':
+  #    if text:
+  #      global last_mt_res_jid
+  #      if text.startswith("X "):
+  #        tmp = text.splitlines()[0]
+  #        if ': ' in tmp:
+  #          tmp = tmp.split(': ', 1)[0]
+  #          if ' ' in tmp:
+  #            tmp = tmp.split(' ', 1)[1]
+  #            if tmp in me:
+  #              last_mt_res_jid = tmp
+  #              text = text.split(': ', 1)[1]
+  #      warn(f"reply to {last_mt_res_jid}")
+  #      if last_mt_res_jid:
+  #        await send(text, last_mt_res_jid)
+  #    return
 
   #  print(f"I: got msg: {name}: {text}")
   if not text:
@@ -2103,15 +2103,15 @@ async def mt2tg(msg):
 
   #  if name == "C twitter: ":
   #      return
-  if name.startswith("C "):
-    logger.info("I: ignore msg: C ")
-    return
-  if name.startswith("X "):
-    logger.info("I: ignore msg: X ")
-    return
-  if name.startswith("**C "):
-    logger.info("I: ignore msg: **C ")
-    return
+  #  if name.startswith("C "):
+  #    logger.info("I: ignore msg: C ")
+  #    return
+  #  if name.startswith("X "):
+  #    logger.info("I: ignore msg: X ")
+  #    return
+  #  if name.startswith("**C "):
+  #    logger.info("I: ignore msg: **C ")
+  #    return
 
   #  if len(username.splitlines()) > 1:
   #    pass
@@ -2127,98 +2127,6 @@ async def mt2tg(msg):
   logger.info("msg of mt_read: %s" % msgd)
 
 
-  global queue
-  need_clean = False
-  chat_id = gpt_bot
-
-  if gateway not in mtmsgsg:
-    mtmsgsg[gateway] = {}
-  #  if gateway not in queues:
-  #    queues[gateway] = asyncio.PriorityQueue(maxsize=512)
-    #  asyncio.create_task(tg2mt_loop(gateway))
-
-  #  if text == "ping":
-  #    all = 0
-  #    for i in mtmsgsg:
-  #      all += len(mtmsgsg[i])
-  #    #  await mt_send(f"pong. now tasks: {here}/{all} {mtmsgsg}", gateway=gateway)
-  #    here = len(mtmsgsg[gateway])
-  #    await mt_send(f"pong. now tasks: {here}/{all}", gateway=gateway)
-  #    return
-
-  #  if text.startswith(".py "):
-  #    text = "." + text[4:]
-  #  if text[0:1] == ".":
-  #  if 1 > 2:
-  #    if text[1:2] == " ":
-  #      return
-  #    #  cmds = deque(text[1:].split(' '))
-  #    #  cmds = text[1:].split(' ')
-  #    cmds = get_cmd(text[1:])
-  #    if cmds:
-  #      pass
-  #    else:
-  #      return
-  #    #  print(f"> I: {cmds}")
-  #    logger.info("got cmds: {}".format(cmds))
-  #    cmd = cmds[0]
-  #    length = len(cmds)
-  #    here = len(mtmsgsg[gateway])
-  #    if text == ".gtpmode":
-  #      if gateway in gptmode:
-  #        gptmode.remove(gateway)
-  #        await mt_send("gtp mode off", gateway=gateway)
-  #        return
-  #      else:
-  #        gptmode.append(gateway)
-  #        await mt_send("gtp mode on", gateway=gateway)
-  #        return
-  #    elif text == ".gtg reset":
-  #      if allright.is_set():
-  #        await mt_send(f"now tasks: {here}, waiting...", gateway=gateway)
-  #        #  for g in mtmsgsg:
-  #        #  for g in queues:
-  #        #    await mt_send(f"clean {g}...", gateway="test")
-  #        #    await queues[g].put((0,0,0))
-  #        text= CLEAN
-  #      else:
-  #        await mt_send("waiting...", gateway=gateway)
-  #        await allright.wait()
-  #        here = len(mtmsgsg[gateway])
-  #        await mt_send(f"reset ok, now tasks: {here}", gateway=gateway)
-  #        return
-  #    #  elif text == ".gpt" or text.startswith(".gpt ") or text.startswith(".gpt\n"):
-  #    #  elif text == ".se" or text.startswith(".se "):
-  #    elif cmd == "gse":
-  #      #  need_clean = True
-  #      text = ' '.join(cmds[1:])
-  #      if not text:
-  #        await mt_send(".gse $text", gateway=gateway)
-  #        return
-  #      text="/search "+text
-  #    #  elif text == ".img" or text.startswith(".img "):
-  #    #  elif text.startswith(".gtz"):
-  #    elif cmd == "gptr":
-  #      #  text=text[6:]
-  #      text = ' '.join(cmds[1:])
-  #      if not text:
-  #        await mt_send("gpt translate with short prompt", gateway=gateway)
-  #        return
-  #      #  need_clean = True
-  #      text = f'{PROMPT_TR_MY_S}“{text}”'
-  #
-  #    else:
-  #      return
-  #  elif gateway in gptmode:
-  #    pass
-  #    return
-  #  if gateway in MT_GATEWAY_LIST:
-  #      chat_id = MT_GATEWAY_LIST[gateway][0]
-  #  else:
-  #      # first msg is empty
-  #      logger.warning("unkonwon gateway: {}".format(gateway))
-  #      logger.warning("received data: {}".format(msg))
-  #      return
 
   if msgd["Extra"]:
       # file
@@ -2237,15 +2145,28 @@ async def mt2tg(msg):
   logger.info("got msg from mt: {}".format(msgd))
   #      if name == "C Telegram: ":
   if gateway == "gateway1":
-    res = await run_cmd(text, gateway, name)
+
+    if '\n' in name:
+      ls = name.splitlines()
+      qt = '\n'.join(ls[:-1])
+      name = ls[-1]
+      #  tmp = []
+      #  for i in qt:
+      #    tmp.append(i[2:])
+      text2 = f"{text}\n\n{qt}"
+    else:
+      text2 =text
+
+    rname = name[2:-4]
+
+    res = await run_cmd(text2, gateway, f"{rname}: ")
     if res:
       await mt_send_for_long_text(res, gateway)
       res = f"**C bot:** {res}"
-    if name:
-      name = name[:-2]
-      text = f"**{name}:** {text}"
+
+    text = f"{name}{text}"
     for m in get_mucs(main_group):
-      if await send1(text, m, nick=name) is False:
+      if await send1(text, m, nick=rname) is False:
         return
       if res:
         if await send1(res, m, nick="C bot") is False:
@@ -2256,51 +2177,6 @@ async def mt2tg(msg):
     #      if await send1(f"{name}{res}", m, "C bot") is False:
     #        return
 
-  return
-  if 1 < 2:
-    return
-  msgd.update({"chat_id": chat_id})
-  msgd.update({"text": text})
-
-  #  global chat
-  #  if not chat:
-  chat = await get_entity(chat_id)
-  #  print(f">{chat.user_id}: {text}")
-  print(f"I: send {text} to gpt")
-  if text != CLEAN:
-    if need_clean is True:
-      await UB.send_message(chat, CLEAN)
-
-  #    while len(queue.keys()) > 0:
-  #      print("W: waiting to reset...")
-  #      await asyncio.sleep(1)
-  msg = await UB.send_message(chat, text)
-  #  await queue.put({msg.id: [msgd, msg]})
-  #  await queue.put([msg, msgd])
-  if text != CLEAN:
-    #  async with queue_lock:
-    #  queues[gateway] = {msg.id: [msgd, None]}
-    #  if gateway not in nids:
-      #  nids[gateway] = msg.id
-    gid_src[msg.id] = gateway
-    #  mtmsgs[msg.id] = [msgd,None]
-    #  if gateway not in mtmsgs:
-    #  mtmsgsg[gateway][msg.id] = [msgd, None]
-    mtmsgsg[gateway][msg.id] = [msgd]
-  else:
-    await clear_history()
-    here = len(mtmsgsg[gateway])
-    all = 0
-    for i in mtmsgsg:
-      all += len(mtmsgsg[i])
-    await mt_send(f"reset ok, now tasks: {here}/{all}", gateway=gateway)
-  return
-
-  #  text = name + text
-  #  #    await NB.send_message(chat_id, text, reply_to=reply_to)
-  #  #    return [0, chat_id, text, {"reply_to":reply_to}]
-  #  msg = [0, chat_id, text, {"reply_to": reply_to}]
-  #  await queue.put(msg)
 
   #  except Exception as e:
   #    #  info = "E: " + str(sys.exc_info()[1]) + "\n==\n" + traceback.format_exc() + "\n==\n" + str(sys.exc_info())
@@ -3620,12 +3496,47 @@ async def parse_xmpp_msg(msg):
         await send("仅管理可用", src)
       return
     nick = msg.from_.resource
+
+    #  if nick == "bot":
+    #    #  if muc not in check_bot_groups:
+    #    #  if muc != "ipfs@salas.suchat.org":
+    #    #  if muc != "wtfipfs@muc.pimux.de":
+    #    #    return
+    #    #  if send_by_me(text):
+    #    #    return
+    #    #  username=""
+    #    username=f"**C bot:** "
+    #    name=f"C bot"
+    #    qt=None
+    #  else:
+    username=f"**X {nick}:** "
+    name=f"X {nick}"
+    qt=None
+    #  if text.startswith('> ') or text.startswith('>> '):
+    if text.startswith('>'):
+      qt=[]
+      tmp=text.splitlines()
+      for i in tmp:
+        if i.startswith('> ') or i == '' or i.startswith('>> '):
+          qt.append("> %s" % i.split(' ', 1)[1])
+        elif text.startswith('>'):
+          qt.append("> %s" % i[1:])
+        else:
+          break
+      if len(tmp) != len(qt):
+        tmp = tmp[len(qt):]
+        text='\n'.join(tmp)
+        qt='\n'.join(qt)
+        username = f"{qt}\n{username}"
+
     ms = get_mucs(muc)
     for m in ms - {muc}:
-      if await send1(f"**X {nick}:** {text}", m, name=f"X {nick}") is False:
+      #  if await send1(f"**X {nick}:** {text}", m, name=f"X {nick}") is False:
+      if await send1(f"{username}{text}", m, name=name) is False:
         return
     if main_group in ms:
-      if await mt_send_for_long_text(text, name=f"X {nick}") is False:
+      #  if await mt_send_for_long_text(text, name=f"X {nick}") is False:
+      if await mt_send_for_long_text(text, name=name, qt=qt) is False:
         return
 
   else:
@@ -4169,7 +4080,7 @@ async def run_cmd(*args, **kwargs):
     res = wtf_str(res, "xmpp")
   return res
 
-async def _run_cmd(text, src, name="X test", is_admin=False):
+async def _run_cmd(text, src, name="X test: ", is_admin=False):
   if text[0:1] == ".":
     if text[1:2] == " ":
       return
