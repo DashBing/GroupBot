@@ -3536,6 +3536,7 @@ async def parse_xmpp_msg(msg):
         qt2 = '\n> '.join(qt0)
         username = f"> {qt2}\n{username}"
 
+    info(f"{text=} {text2=}")
     ms = get_mucs(muc)
     for m in ms - {muc}:
       #  if await send1(f"**X {nick}:** {text}", m, name=f"X {nick}") is False:
