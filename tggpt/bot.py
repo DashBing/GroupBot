@@ -3515,7 +3515,7 @@ async def parse_xmpp_msg(msg):
     username=f"**X {nick}:** "
     name=f"X {nick}"
     qt=None
-    text2 = text
+    text0 = text
     #  if text.startswith('> ') or text.startswith('>> '):
     if text.startswith('>'):
       qt=[]
@@ -3531,11 +3531,11 @@ async def parse_xmpp_msg(msg):
           break
       if len(tmp) != len(qt):
         tmp = tmp[len(qt):]
-        text='\n'.join(tmp)
-        qt0 = qt
+        text0='\n'.join(tmp)
+        tmp = qt
         qt='\n'.join(qt)
-        text2 = f"{text}\n\n{qt1}"
-        qt2 = '\n> '.join(qt0)
+        text = f"{text0}\n\n{qt}"
+        qt2 = '\n> '.join(tmp)
         username = f"> {qt2}\n{username}"
     #    else:
     #      info(f"{tmp=} {qt=}")
@@ -3548,10 +3548,10 @@ async def parse_xmpp_msg(msg):
         return
     if main_group in ms:
       #  if await mt_send_for_long_text(text, name=f"X {nick}") is False:
-      if await mt_send_for_long_text(text, name=name, qt=qt) is False:
+      if await mt_send_for_long_text(text0, name=name, qt=qt) is False:
         return
 
-    text = text2
+    #  text = text2
 
   else:
     if get_jid(msg.to) in my_groups:
