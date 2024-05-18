@@ -3521,10 +3521,12 @@ async def parse_xmpp_msg(msg):
       qt=[]
       tmp=text.splitlines()
       for i in tmp:
-        if i.startswith('> ') or i == '' or i.startswith('>> '):
+        if i.startswith('> ') or i.startswith('>> '):
           qt.append("%s" % i.split(' ', 1)[1])
-        elif text.startswith('>'):
+        elif i.startswith('>'):
           qt.append("%s" % i[1:])
+        elif i == "":
+          qt.append(i)
         else:
           break
       if len(tmp) != len(qt):
@@ -3535,10 +3537,10 @@ async def parse_xmpp_msg(msg):
         text2 = f"{text}\n\n{qt1}"
         qt2 = '\n> '.join(qt0)
         username = f"> {qt2}\n{username}"
-      else:
-        info(f"{tmp=} {qt=}")
-
-    info(f"{text=} {text2=}")
+    #    else:
+    #      info(f"{tmp=} {qt=}")
+    #
+    #  info(f"{text=} {text2=}")
     ms = get_mucs(muc)
     for m in ms - {muc}:
       #  if await send1(f"**X {nick}:** {text}", m, name=f"X {nick}") is False:
