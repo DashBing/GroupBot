@@ -890,9 +890,9 @@ $qt"
       get_full_text
       # username=$(echo "$NAME" | tail -n1)
       # NAME="**${NAME% }** "
-      # qt=$(echo "$QT" | sed -e 's/^> //')
-      if [[ -n "$QT" ]]; then
-        NAME="$QT
+      qt=$(echo "$QT" | sed -e 's/^> //')
+      if [[ -n "$qt" ]]; then
+        NAME="$qt
 ${NAME}"
       fi
       newline
