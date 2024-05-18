@@ -532,6 +532,10 @@ api.gpt)
 api.xmpp)
   # LABLE="X"
   LABLE="0"
+  if [[ "$(echo "$NAME" | wc -l)" -ge 2 ]]; then
+    QT=$( echo "$NAME" | sed '/^[^>]/,$!d')
+    NAME=$( echo "$NAME" | tail -n1)
+  fi
   ;;
 # api.simplex)
 #   LABLE="S"
@@ -885,7 +889,7 @@ $M *$NAME*: "
     if [[ -n "$NAME" ]]; then
       get_full_text
       # username=$(echo "$NAME" | tail -n1)
-      NAME="**${NAME% }** "
+      # NAME="**${NAME% }** "
       # qt=$(echo "$QT" | sed -e 's/^> //')
       if [[ -n "$QT" ]]; then
         NAME="$QT

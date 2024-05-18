@@ -2148,25 +2148,24 @@ async def mt2tg(msg):
 
     if '\n' in name:
       ls = name.splitlines()
-      qt = '\n'.join(ls[:-1])
       name = ls[-1]
-      #  tmp = []
-      #  for i in qt:
-      #    tmp.append(i[2:])
+      qt = '\n'.join(ls[:-1])
       text2 = f"{text}\n\n{qt}"
+      qt = '\n> '.join(ls[:-1])
+      name2 = f"> {qt}\n**{name}:** "
     else:
       text2 =text
+      name2 = f"**{name}:** "
 
-    rname = name[2:-4]
 
-    res = await run_cmd(text2, gateway, f"{rname}: ")
+    res = await run_cmd(text2, gateway, f"{name}: ")
     if res:
       await mt_send_for_long_text(res, gateway)
       res = f"**C bot:** {res}"
 
-    text = f"{name}{text}"
+    text = f"{name2}{text}"
     for m in get_mucs(main_group):
-      if await send1(text, m, nick=rname) is False:
+      if await send1(text, m, nick=name) is False:
         return
       if res:
         if await send1(res, m, nick="C bot") is False:
@@ -3380,10 +3379,11 @@ async def parse_xmpp_msg(msg):
 
   #  clear_msg_jid(msg)
 
-  text = None
-  for i in msg.body:
-    text = msg.body[i]
-    break
+  #  text = None
+  #  for i in msg.body:
+  #    text = msg.body[i]
+  #    break
+  text = msg.body.any()
   if text is None:
     #  print("跳过空消息: %s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
     return
@@ -3518,16 +3518,21 @@ async def parse_xmpp_msg(msg):
       tmp=text.splitlines()
       for i in tmp:
         if i.startswith('> ') or i == '' or i.startswith('>> '):
-          qt.append("> %s" % i.split(' ', 1)[1])
+          qt.append("%s" % i.split(' ', 1)[1])
         elif text.startswith('>'):
-          qt.append("> %s" % i[1:])
+          qt.append("%s" % i[1:])
         else:
           break
       if len(tmp) != len(qt):
         tmp = tmp[len(qt):]
         text='\n'.join(tmp)
+        qt0 = qt
         qt='\n'.join(qt)
-        username = f"{qt}\n{username}"
+        text2 = f"{text}\n\n{qt1}"
+        qt2 = '\n> '.join(qt0)
+        username = f"> {qt2}\n{username}"
+    else:
+      text2 = text
 
     ms = get_mucs(muc)
     for m in ms - {muc}:
@@ -3538,6 +3543,8 @@ async def parse_xmpp_msg(msg):
       #  if await mt_send_for_long_text(text, name=f"X {nick}") is False:
       if await mt_send_for_long_text(text, name=name, qt=qt) is False:
         return
+
+    text = text2
 
   else:
     if get_jid(msg.to) in my_groups:
@@ -3550,6 +3557,7 @@ async def parse_xmpp_msg(msg):
     reply.body[None] = "pong"
     await send(reply)
     return
+
   res = await run_cmd(text, get_src(msg), f"X {nick}: ", is_admin)
   if res is True:
     return
