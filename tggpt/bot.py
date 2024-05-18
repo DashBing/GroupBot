@@ -3535,6 +3535,8 @@ async def parse_xmpp_msg(msg):
         text2 = f"{text}\n\n{qt1}"
         qt2 = '\n> '.join(qt0)
         username = f"> {qt2}\n{username}"
+      else:
+        info(f"{tmp=} {qt=}")
 
     info(f"{text=} {text2=}")
     ms = get_mucs(muc)
