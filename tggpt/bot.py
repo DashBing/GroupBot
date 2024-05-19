@@ -1472,13 +1472,12 @@ async def load_config():
 #  asyncio.run(load_config())
 
 
-
 def set_default_value(j):
   if len(j) < 4:
     j.append( time.time() )
   if len(j) < 5:
     #  j.append( [2*wtf_time/(time.time()-j[3]), 0] )
-    j.append( [-wtf_time/3, 0] )
+    j.append( [wtf_time/5, 0] )
 
 
 async def save_data():
@@ -3349,7 +3348,6 @@ async def parse_xmpp_msg(msg):
               j[3] = time.time()
             else:
               j = [rnick, item.affiliation, item.role]
-              set_default_value(j)
               jids[jid] = j
               if muc in bot_groups:
                 welcome = f"欢迎 {hide_nick(msg)} ,这里是bot频道，专门用来测试bot，避免干扰主群。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
@@ -3362,6 +3360,7 @@ async def parse_xmpp_msg(msg):
               await send(welcome, muc, nick=nick)
               await send(f"有新人入群: {j[0]}\n身份: {j[1]}\n角色: {j[2]}\njid: {jid}\nmuc: {muc}", nick=nick)
 
+            set_default_value(j)
             #  if len(jids[jid]) > 3:
             #    jids[jid][3] = int(time.time())
             #  else:
