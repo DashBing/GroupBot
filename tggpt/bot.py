@@ -3526,7 +3526,7 @@ async def parse_xmpp_msg(msg):
       #    last /= 2
       #  w[0] += long
       w[0] += long*wtf_time/last
-      if last > wtf_time:
+      if last > wtf_time * 100:
         if w[0] > 0:
           w[0] /= 2
       w[1] += 1
