@@ -130,13 +130,13 @@ async def wtf_loop():
   while True:
     await asyncio.sleep(wtf_time)
     for muc in users:
+      if muc not in public_groups:
+        continue
       jids = users[muc]
       for jid in jids:
         j = jids[jid]
-        if len(j) == 4:
-          pass
-        else:
-          w = j[4]
+        w = j[4]
+        if w[0] > 1:
           w[0] = w[0]/2
     info("wtf_loop is running...")
 
@@ -1445,6 +1445,25 @@ async def load_config():
       if muc not in users:
         users[muc] = {}
       rooms[muc] = None
+
+    for muc in users:
+      #  if muc not in public_groups:
+      #    continue
+      jids = users[muc]
+      tmp = []
+      for jid in jids:
+        j = jids[jid]
+        if len(j) < 3:
+          tmp.append(jid)
+        else:
+          if len(j) < 4:
+            j.append( time.time() )
+          if len(j) < 5:
+            #  j.append( [2*wtf_time/(time.time()-j[3]), 0] )
+            j.append( [-wtf_time/3, 0] )
+
+      for jid in tmp:
+        jids.pop(jid)
 
 
     return True
@@ -3334,10 +3353,11 @@ async def parse_xmpp_msg(msg):
               await send(welcome, muc, nick=nick)
               await send(f"有新人入群: {j[0]}\n身份: {j[1]}\n角色: {j[2]}\njid: {jid}\nmuc: {muc}", nick=nick)
 
-            if len(jids[jid]) > 3:
-              jids[jid][3] = int(time.time())
-            else:
-              jids[jid].append(int(time.time()))
+            jids[jid][3] = int(time.time())
+            #  if len(jids[jid]) > 3:
+            #    jids[jid][3] = int(time.time())
+            #  else:
+            #    jids[jid].append(int(time.time()))
         else:
           pprint(msg)
           await send(f"未知群组消息: {msg}")
@@ -3518,14 +3538,15 @@ async def parse_xmpp_msg(msg):
       if len(j) < 4:
         err(f"缺少记录: {j}")
       else:
-        if len(j) == 4:
-          #  j.append( 2*wtf_time/(time.time()-j[3]) )
-          #  j.append( time.time() )
-          #  j.append( 0 )
-          j.append( [2*wtf_time/(time.time()-j[3]), 0] )
         #  j[4] = ( j[4] + (text.count('\n') + len(text)/wtf_line)*wtf_time/(time.time()-j[5]) ) / 2
         w = j[4]
-        w[0] = ( w[0] + text.count('\n') + len(text)/wtf_line ) / 2
+        last = time.time() - j[3]
+        #  if last > wtf_time:
+        #    last *= 2
+        w[0] += text.count('\n') + len(text)/wtf_line
+        w[0] = w[0]*wtf_time/last
+        w[1] += 1
+        j[3] = time.time()
 
         if is_admin:
           await send(f"now: {w[0]}", jid=muc)
@@ -4747,7 +4768,7 @@ async def amain():
     allright_task += 1
     asyncio.create_task(xmppbot(), name="xmppbot")
 
-    asyncio.create_task(wtf_loop())
+    #  asyncio.create_task(wtf_loop())
 
     global UB
     from telethon import TelegramClient
