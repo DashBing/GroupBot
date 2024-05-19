@@ -3516,8 +3516,8 @@ async def parse_xmpp_msg(msg):
     if is_admin is False:
       logger.info(f"group msg: {text[:16]}")
 
-    #  if not is_admin:
-    if True:
+    if not is_admin:
+    #  if True:
       jids = users[muc]
       j = jids[jid]
       #  if len(j) < 4:
@@ -3553,9 +3553,9 @@ async def parse_xmpp_msg(msg):
 
       j[3] = time.time()
 
-      if is_admin:
-        await send(f"now: {w[0]} / {wtf_limit}", jid=muc)
-      elif w[0] > wtf_limit/2:
+      #  if is_admin:
+      #    await send(f"now: {w[0]} / {wtf_limit}", jid=muc)
+      if w[0] > wtf_limit/2:
         await send(f"{nick}, 不要发消息太快 {w[0]} / {wtf_limit}", jid=muc)
       elif w[0] > wtf_limit:
         role = "visitor"
