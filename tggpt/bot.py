@@ -121,8 +121,9 @@ music_bot_name = 'Music163bot'
 
 interval = 3
 
-wtf_time = 10
+wtf_time = 5
 wtf_line = 20
+wtf_line_max = 300
 
 wtf_limit = 64
 
@@ -3547,10 +3548,16 @@ async def parse_xmpp_msg(msg):
         #  j[4] = ( j[4] + (text.count('\n') + len(text)/wtf_line)*wtf_time/(time.time()-j[5]) ) / 2
         w = j[4]
         last = time.time() - j[3]
+        long = text.count('\n') + len(text)/wtf_line
+        #  if long > 300:
+        #    last /= 2
         #  if last > wtf_time:
         #    last *= 2
-        w[0] += text.count('\n') + len(text)/wtf_line
-        w[0] = w[0]*wtf_time/last
+        w[0] += long
+        if w[0] < 1:
+          w[0] = (w[0]-1)*last/wtf_time
+        else:
+          w[0] = w[0]*wtf_time/last
         w[1] += 1
         j[3] = time.time()
 
