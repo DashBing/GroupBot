@@ -27,6 +27,7 @@ from urltitle import URLTitleReader
 
 from aiohttp import FormData
 from aiohttp.client_exceptions import ClientPayloadError
+import io
 from io import BufferedReader, TextIOWrapper, BytesIO
 
 from aiohttp.client_exceptions import ClientPayloadError, ClientConnectorError
@@ -45,17 +46,17 @@ import json
 import base64
 import re
 import ast
+import mimetypes
+import uuid
 
 import socket
 import urllib
 import urllib.request
 import urllib.error
-from urllib import request
-from urllib import parse
+#  from urllib import request
+#  from urllib import parse
+import urllib.parse
 
-import io
-import mimetypes
-import uuid
 
 import binascii
 import traceback
@@ -83,9 +84,6 @@ import time
 #  from asyncio import sleep
 import asyncio
 
-
-
-
 #  HOME = os.environ.get("HOME")
 
 import logging
@@ -112,9 +110,6 @@ class NoParsingFilter(logging.Filter):
 
 
 
-
-
-
 gpt_bot = int(get_my_key("TELEGRAM_GPT_ID"))
 gpt_bot_name = 'littleb_gptBOT'
 
@@ -126,8 +121,23 @@ music_bot_name = 'Music163bot'
 
 interval = 3
 
+wtf_time = 10
+wtf_line = 20
 
+wtf_limit = 64
 
+async def wtf_loop():
+  while True:
+    await asyncio.sleep(wtf_time)
+    for muc in users:
+      jids = users[muc]
+      for jid in jids:
+        j = jids[jid]
+        if len(j) == 4:
+          continue
+        w = j[4]
+        w[0] = w[0]/2
+    info(f"wtf_loop is running...")
 
 
 def pprint(e):
@@ -819,7 +829,7 @@ async def ipfs_add(data, filename=None, url="https://ipfs.pixura.io/api/v0/add",
   url = "https://ipfs.pixura.io/ipfs/{}".format(url["Hash"])
   if filename:
   #  url += "?filename={}".format(parse.urlencode(filename))
-    url += "?filename={}".format(parse.quote(filename))
+    url += "?filename={}".format(urllib.parse.quote(filename))
 #  await session.close()
   return url
 
@@ -2678,7 +2688,7 @@ async def parse_tg_msg(event):
       if path is not None:
         #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
       #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
-        path = "https://%s/%s" % (DOMAIN, (parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
+        path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
       res = f"{mtmsgs[qid][0]}{path}\n{text}"
       if msg.buttons:
         for i in get_buttons(msg.buttons):
@@ -3388,9 +3398,9 @@ async def parse_xmpp_msg(msg):
     text = msg.body.any()
   else:
     return
-  if text is None:
-    #  print("跳过空消息: %s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
-    return
+  #  if text is None:
+  #    #  print("跳过空消息: %s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
+  #    return
 
   muc = str(msg.from_.bare())
 
@@ -3455,7 +3465,6 @@ async def parse_xmpp_msg(msg):
         if jid in me:
           is_admin = True
           logger.info(f"admin msg: {text[:16]}")
-          break
         break
     if not existed:
       print("忽略幽灵发言%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
@@ -3500,6 +3509,26 @@ async def parse_xmpp_msg(msg):
         await send("仅管理可用", src)
       return
     nick = msg.from_.resource
+
+    #  if not is_admin:
+    if True:
+      jids = users[muc]
+      j = jids[jid]
+      if len(j) < 4:
+        err(f"缺少记录: {j}")
+      else:
+        if len(j) == 4:
+          #  j.appent( 2*wtf_time/(time.time()-j[3]) )
+          #  j.appent( time.time() )
+          #  j.appent( 0 )
+          j.appent( [2*wtf_time/(time.time()-j[3]), 0] )
+        #  j[4] = ( j[4] + (text.count('\n') + len(text)/wtf_line)*wtf_time/(time.time()-j[5]) ) / 2
+        w = j[4]
+        w[0] = ( w[0] + text.count('\n') + len(text)/wtf_line ) / 2
+
+        if is_admin:
+          await send(f"now: {w[0]}")
+
 
     #  if nick == "bot":
     #    #  if muc not in check_bot_groups:
@@ -4716,6 +4745,8 @@ async def amain():
     allright_task += 1
     asyncio.create_task(xmppbot(), name="xmppbot")
 
+    asyncio.create_task(wtf_loop())
+
     global UB
     from telethon import TelegramClient
     api_id = int(get_my_key("TELEGRAM_API_ID"))
@@ -4774,6 +4805,7 @@ async def amain():
 
       mt_read_task = asyncio.create_task(mt_read(), name="mt_read")
 
+
       logger.info(f"初始化完成")
       send_log(f"启动成功，用时: {int(time.time()-start_time)}s")
       await send(f"启动成功，用时: {int(time.time()-start_time)}s", jid=main_group)
@@ -4801,7 +4833,7 @@ async def amain():
     #        logger.info(f"正在关闭task, {j}")
     #        #  loop.run_until_complete(j)
     #        await j
-    mt_read_task.cancel()
+    #  mt_read_task.cancel()
     await sendg("正在停止")
     await sendg("正在停止", jid=main_group)
     await stop()
