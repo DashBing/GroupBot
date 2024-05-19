@@ -3521,14 +3521,14 @@ async def parse_xmpp_msg(msg):
       #  j[4] = ( j[4] + (text.count('\n') + len(text)/wtf_line)*wtf_time/(time.time()-j[5]) ) / 2
       w = j[4]
       last = time.time() - j[3]
+      if last > wtf_time * 100:
+        if w[0] > 0:
+          w[0] /= 2*last/wtf_time/100
       long = text.count('\n') + len(text)/wtf_line
       #  if long > 300:
       #    last /= 2
       #  w[0] += long
       w[0] += long*wtf_time/last
-      if last > wtf_time * 100:
-        if w[0] > 0:
-          w[0] /= 2
       w[1] += 1
       j[3] = time.time()
 
