@@ -1459,6 +1459,8 @@ async def load_config():
           tmp.append(jid)
         else:
           set_default_value(j)
+          if j[4][0] < 0:
+            j[4][0] = 0
 
       for jid in tmp:
         jids.pop(jid)
@@ -3528,20 +3530,25 @@ async def parse_xmpp_msg(msg):
       last = time.time() - j[3]
       score = w[0]
 
+      long = text.count('\n') + len(text)//wtf_line + 2
+
       #  if last > wtf_time_max:
-      #    if score > 0:
-      #      score /= 3*last/wtf_time_max
-      #      w[1] = 1
+      #    #  if score > 0:
+      #      #  score /= 3*last/wtf_time_max
+      #    #  score = 0
+      #    w[1] = 1
+      #    w[0] = long*wtf_time_max/last
+      #  else:
+      tmp = min(last, w[1], wtf_limit)
+      w[0] = score + long*wtf_time/last - tmp
       #  if last > wtf_time:
       #    score -= last
       #  if last < 1:
       #    score += wtf_limit/5
 
-      long = text.count('\n') + len(text)//wtf_line + 2
       #  if long > 300:
       #    last /= 2
       #  w[0] += long
-      w[0] = score + long*wtf_time/last - last
       w[1] += 1
 
       j[3] = time.time()
