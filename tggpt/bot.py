@@ -1456,11 +1456,7 @@ async def load_config():
         if len(j) < 3:
           tmp.append(jid)
         else:
-          if len(j) < 4:
-            j.append( time.time() )
-          if len(j) < 5:
-            #  j.append( [2*wtf_time/(time.time()-j[3]), 0] )
-            j.append( [-wtf_time/3, 0] )
+          set_default_value(j)
 
       for jid in tmp:
         jids.pop(jid)
@@ -1472,6 +1468,15 @@ async def load_config():
     raise e
 
 #  asyncio.run(load_config())
+
+
+
+def set_default_value(j):
+  if len(j) < 4:
+    j.append( time.time() )
+  if len(j) < 5:
+    #  j.append( [2*wtf_time/(time.time()-j[3]), 0] )
+    j.append( [-wtf_time/3, 0] )
 
 
 async def save_data():
@@ -3341,7 +3346,8 @@ async def parse_xmpp_msg(msg):
               j[1] = item.affiliation
               j[3] = time.time()
             else:
-              j = [rnick, item.affiliation, item.role, time.time()]
+              j = [rnick, item.affiliation, item.role]
+              set_default_value(j)
               jids[jid] = j
               if muc in bot_groups:
                 welcome = f"欢迎 {hide_nick(msg)} ,这里是bot频道，专门用来测试bot，避免干扰主群。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
