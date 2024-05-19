@@ -134,10 +134,11 @@ async def wtf_loop():
       for jid in jids:
         j = jids[jid]
         if len(j) == 4:
-          continue
-        w = j[4]
-        w[0] = w[0]/2
-    info(f"wtf_loop is running...")
+          pass
+        else:
+          w = j[4]
+          w[0] = w[0]/2
+    info("wtf_loop is running...")
 
 
 def pprint(e):
@@ -3527,7 +3528,7 @@ async def parse_xmpp_msg(msg):
         w[0] = ( w[0] + text.count('\n') + len(text)/wtf_line ) / 2
 
         if is_admin:
-          await send(f"now: {w[0]}")
+          await send(f"now: {w[0]}", jid=muc)
 
 
     #  if nick == "bot":
@@ -4739,6 +4740,7 @@ async def amain():
         res = await send_cmd_to_bash("gateway1", "X test", ' '.join(sys.argv[2:]))
         print(res)
       return
+
 
     global allright_task
 
