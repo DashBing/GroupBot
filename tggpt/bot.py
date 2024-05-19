@@ -3339,8 +3339,9 @@ async def parse_xmpp_msg(msg):
                   await send(res, muc, nick=nick)
                 await send(f"{res}\njid: {jid}\nmuc: {muc}", nick=nick)
               j[1] = item.affiliation
+              j[3] = time.time()
             else:
-              j = [rnick, item.affiliation, item.role]
+              j = [rnick, item.affiliation, item.role, time.time()]
               jids[jid] = j
               if muc in bot_groups:
                 welcome = f"欢迎 {hide_nick(msg)} ,这里是bot频道，专门用来测试bot，避免干扰主群。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
@@ -3353,7 +3354,6 @@ async def parse_xmpp_msg(msg):
               await send(welcome, muc, nick=nick)
               await send(f"有新人入群: {j[0]}\n身份: {j[1]}\n角色: {j[2]}\njid: {jid}\nmuc: {muc}", nick=nick)
 
-            jids[jid][3] = int(time.time())
             #  if len(jids[jid]) > 3:
             #    jids[jid][3] = int(time.time())
             #  else:
