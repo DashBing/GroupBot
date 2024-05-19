@@ -3542,27 +3542,28 @@ async def parse_xmpp_msg(msg):
     if True:
       jids = users[muc]
       j = jids[jid]
-      if len(j) < 4:
-        err(f"缺少记录: {j}")
-      else:
-        #  j[4] = ( j[4] + (text.count('\n') + len(text)/wtf_line)*wtf_time/(time.time()-j[5]) ) / 2
-        w = j[4]
-        last = time.time() - j[3]
-        long = text.count('\n') + len(text)/wtf_line
-        #  if long > 300:
-        #    last /= 2
-        #  if last > wtf_time:
-        #    last *= 2
-        w[0] += long
-        if w[0] < 1:
-          w[0] = (w[0]-1)*last/wtf_time
-        else:
-          w[0] = w[0]*wtf_time/last
-        w[1] += 1
-        j[3] = time.time()
+      #  if len(j) < 4:
+      #    err(f"缺少记录: {j}")
+      #  else:
 
-        if is_admin:
-          await send(f"now: {w[0]}", jid=muc)
+      #  j[4] = ( j[4] + (text.count('\n') + len(text)/wtf_line)*wtf_time/(time.time()-j[5]) ) / 2
+      w = j[4]
+      last = time.time() - j[3]
+      long = text.count('\n') + len(text)/wtf_line
+      #  if long > 300:
+      #    last /= 2
+      #  if last > wtf_time:
+      #    last *= 2
+      w[0] += long
+      if w[0] < 1:
+        w[0] = (w[0]-1)*last/wtf_time
+      else:
+        w[0] = w[0]*wtf_time/last
+      w[1] += 1
+      j[3] = time.time()
+
+      if is_admin:
+        await send(f"now: {w[0]}", jid=muc)
 
 
     #  if nick == "bot":
