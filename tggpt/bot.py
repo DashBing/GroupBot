@@ -4879,10 +4879,11 @@ async def amain():
     #        #  loop.run_until_complete(j)
     #        await j
     #  mt_read_task.cancel()
+    await mt_send("正在停止")
     await sendg("正在停止")
     await sendg("正在停止", jid=main_group)
-    await stop()
     await save_data()
+    await stop()
     #  loop.run_until_complete(stop())
     #  loop.run_until_complete(loop.shutdown_asyncgens())
     #  loop.close()
