@@ -3504,10 +3504,36 @@ async def parse_xmpp_msg(msg):
           reply = msg.make_reply()
           reply.body[None] = "pong"
           await send(reply)
+          return
         logger.info("已忽略群内私聊: %s" % msg)
         return
     if is_admin is False:
       logger.info(f"group msg: {text[:16]}")
+
+    #  if not is_admin:
+    if True:
+      jids = users[muc]
+      j = jids[jid]
+      #  if len(j) < 4:
+      #    err(f"缺少记录: {j}")
+      #  else:
+
+      #  j[4] = ( j[4] + (text.count('\n') + len(text)/wtf_line)*wtf_time/(time.time()-j[5]) ) / 2
+      w = j[4]
+      last = time.time() - j[3]
+      long = text.count('\n') + len(text)/wtf_line
+      #  if long > 300:
+      #    last /= 2
+      #  w[0] += long
+      w[0] += long*wtf_time/last
+      if last > wtf_time:
+        if w[0] > 0:
+          w[0] /= 2
+      w[1] += 1
+      j[3] = time.time()
+
+      if is_admin:
+        await send(f"now: {w[0]}", jid=muc)
 
   elif muc == myjid:
     #  print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
@@ -3538,32 +3564,6 @@ async def parse_xmpp_msg(msg):
       return
     nick = msg.from_.resource
 
-    #  if not is_admin:
-    if True:
-      jids = users[muc]
-      j = jids[jid]
-      #  if len(j) < 4:
-      #    err(f"缺少记录: {j}")
-      #  else:
-
-      #  j[4] = ( j[4] + (text.count('\n') + len(text)/wtf_line)*wtf_time/(time.time()-j[5]) ) / 2
-      w = j[4]
-      last = time.time() - j[3]
-      long = text.count('\n') + len(text)/wtf_line
-      #  if long > 300:
-      #    last /= 2
-      #  if last > wtf_time:
-      #    last *= 2
-      w[0] += long
-      if w[0] < 1:
-        w[0] = (w[0]-1)*last/wtf_time
-      else:
-        w[0] = w[0]*wtf_time/last
-      w[1] += 1
-      j[3] = time.time()
-
-      if is_admin:
-        await send(f"now: {w[0]}", jid=muc)
 
 
     #  if nick == "bot":
