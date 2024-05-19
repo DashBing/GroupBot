@@ -126,7 +126,7 @@ wtf_time_max = 3600
 wtf_line = 20
 wtf_line_max = 300
 
-wtf_limit = 64
+wtf_limit = 80
 
 async def wtf_loop():
   while True:
@@ -3465,8 +3465,10 @@ async def parse_xmpp_msg(msg):
 
   is_admin = False
   if muc in my_groups:
+    nick = msg.from_.resource
     #  if str(msg.from_) == str(rooms[muc].me.conversation_jid.bare()):
-    if msg.from_.resource == rooms[muc].me.nick:
+    #  if msg.from_.resource == rooms[muc].me.nick:
+    if nick == rooms[muc].me.nick:
       #  print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
       return
     if muc not in rooms:
@@ -3522,26 +3524,39 @@ async def parse_xmpp_msg(msg):
 
       #  j[4] = ( j[4] + (text.count('\n') + len(text)/wtf_line)*wtf_time/(time.time()-j[5]) ) / 2
       w = j[4]
+
       last = time.time() - j[3]
       score = w[0]
 
-      if last > wtf_time_max:
-        if score > 0:
-          score /= 3*last/wtf_time_max
-          w[1] = 1
-      elif last < 1:
-        score += wtf_limit/5
+      #  if last > wtf_time_max:
+      #    if score > 0:
+      #      score /= 3*last/wtf_time_max
+      #      w[1] = 1
+      #  if last > wtf_time:
+      #    score -= last
+      #  if last < 1:
+      #    score += wtf_limit/5
 
       long = text.count('\n') + len(text)//wtf_line + 2
       #  if long > 300:
       #    last /= 2
       #  w[0] += long
-      w[0] = score + long*wtf_time/last
+      w[0] = score + long*wtf_time/last - last
       w[1] += 1
+
       j[3] = time.time()
 
       if is_admin:
-        await send(f"now: {w[0]}", jid=muc)
+        await send(f"now: {w[0]} / {wtf_limit}", jid=muc)
+      elif w[0] > wtf_limit/2:
+        await send(f"{nick}, 不要发消息太快 {w[0]} / {wtf_limit}", jid=muc)
+      elif w[0] > wtf_limit:
+        role = "visitor"
+        reason = "不要刷屏"
+        j[2] = int(time.time() + 600)
+        res = await room.muc_set_role(nick, role, reason=reason)
+        warn("有人刷屏: {nick}\njid: {jid}\nmuc: {muc}\n{res}")
+        
 
   elif muc == myjid:
     #  print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
@@ -3570,7 +3585,6 @@ async def parse_xmpp_msg(msg):
       else:
         await send("仅管理可用", src)
       return
-    nick = msg.from_.resource
 
 
 
