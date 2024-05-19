@@ -3518,10 +3518,10 @@ async def parse_xmpp_msg(msg):
         err(f"缺少记录: {j}")
       else:
         if len(j) == 4:
-          #  j.appent( 2*wtf_time/(time.time()-j[3]) )
-          #  j.appent( time.time() )
-          #  j.appent( 0 )
-          j.appent( [2*wtf_time/(time.time()-j[3]), 0] )
+          #  j.append( 2*wtf_time/(time.time()-j[3]) )
+          #  j.append( time.time() )
+          #  j.append( 0 )
+          j.append( [2*wtf_time/(time.time()-j[3]), 0] )
         #  j[4] = ( j[4] + (text.count('\n') + len(text)/wtf_line)*wtf_time/(time.time()-j[5]) ) / 2
         w = j[4]
         w[0] = ( w[0] + text.count('\n') + len(text)/wtf_line ) / 2
