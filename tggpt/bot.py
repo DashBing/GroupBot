@@ -3533,8 +3533,11 @@ async def parse_xmpp_msg(msg):
       w = j[4]
       score = w[0]
       if score > wtf_limit:
-        info(f"跳过已禁言用户的消息{int(j[2]-time.time())}: {muc} {nick} {text[:64]}")
-        j[2] = int(j[2] + wtf_ban_time)
+        if type(j[2]) is str:
+          pass
+        else:
+          info(f"跳过已禁言用户的消息{int(j[2]-time.time())}: {muc} {nick} {text[:64]}")
+          j[2] = int(j[2] + wtf_ban_time)
       else:
         if score < wtf_limit/2:
           need_warn = True
@@ -3993,7 +3996,7 @@ async def add_cmd():
       muc = str(room.jid)
       jids = users[muc]
       j = jids[jid]
-      #  w = j[4]
+      w = j[4]
       res = f"{j}\n\n{w}"
     else:
       reason = "cmds[0]命令"
