@@ -3339,12 +3339,18 @@ async def parse_xmpp_msg(msg):
                       await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
                     await room.muc_set_role(rnick, "visitor", reason=reason)
                   #  res = await room.muc_set_role(rnick, "participant", reason="禁言结束")
-              elif member_only_mode:
-                reason = "非成员暂时禁止发言"
-                if item.affiliation == "none":
-                  if item.role == "participant":
-                    await room.muc_set_role(rnick, "visitor", reason=reason)
-                    j[2] = 1
+              else:
+                if member_only_mode:
+                  reason = "非成员暂时禁止发言"
+                  if item.affiliation == "none":
+                    if item.role == "participant":
+                      await room.muc_set_role(rnick, "visitor", reason=reason)
+                      j[2] = 1
+                else:
+                  if item.role == "visitor":
+                    if muc in public_groups:
+                      reason = "不限制新人发言"
+                      res = await room.muc_set_role(rnick, "participant", reason=reason)
               #  if j[0] != msg.from_.resource:
               if j[0] != rnick:
                 res = f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}"
@@ -3356,6 +3362,10 @@ async def parse_xmpp_msg(msg):
               j[1] = item.affiliation
               j[3] = time.time()
             else:
+              if item.role == "visitor":
+                if muc in public_groups:
+                  reason = "该群不限制新人发言"
+                  res = await room.muc_set_role(rnick, "participant", reason=reason)
               j = [rnick, item.affiliation, item.role]
               jids[jid] = j
               if muc in bot_groups:
