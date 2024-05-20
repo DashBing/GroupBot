@@ -1475,12 +1475,25 @@ async def load_config():
 #  asyncio.run(load_config())
 
 
-def set_default_value(j):
+def set_default_value(j=None, m=None):
+  if j is None:
+    j = []
+  elif type(j) is not list:
+    m = j
+    j = []
+  if m is not None:
+    if j:
+      j[0] = m.nick
+      j[1] = m.affiliation
+      j[2] = m.role
+    else:
+      j.extend([m.nick, m.affiliation, m.role])
   if len(j) < 4:
     j.append( time.time() )
   if len(j) < 5:
     #  j.append( [2*wtf_time/(time.time()-j[3]), 0] )
     j.append( [wtf_time/5, 0] )
+  return j
 
 
 async def save_data():
@@ -4018,8 +4031,7 @@ async def add_cmd():
         for m in room.members:
           jid = str(m.direct_jid.bare())
           if jid not in jids:
-            j = [m.nick, m.affiliation, m.role]
-            set_default_value(j)
+            j = set_default_value(m)
             jids[jid] = j
             res += f"\nW: {jid} not in jids({muc})"
             continue
