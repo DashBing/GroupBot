@@ -3347,10 +3347,12 @@ async def parse_xmpp_msg(msg):
                       await room.muc_set_role(rnick, "visitor", reason=reason)
                       j[2] = 1
                 else:
+                  j[2] = item.role
                   if item.role == "visitor":
                     if muc in public_groups:
                       reason = "不限制新人发言"
                       res = await room.muc_set_role(rnick, "participant", reason=reason)
+                      j[2] = "participant"
               #  if j[0] != msg.from_.resource:
               if j[0] != rnick:
                 res = f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}"
@@ -3917,8 +3919,9 @@ async def add_cmd():
           if jid not in jids:
             info(f"{jid} not in jids({muc})")
             continue
-          if jids[jid][2] == 1 or jids[jid][2] == "visitor":
-            jids[jid][2] = "participant"
+          j = jids[jid]
+          if j[2] == 1 or j[2] == "visitor":
+            j[2] = "participant"
             res = await room.muc_set_role(m.nick, role, reason=reason)
             info(res)
             i += 1
