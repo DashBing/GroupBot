@@ -127,6 +127,7 @@ wtf_line = 20
 wtf_line_max = 300
 
 wtf_limit = 80
+wtf_ban_time = 300
 
 async def wtf_loop():
   while True:
@@ -3526,43 +3527,55 @@ async def parse_xmpp_msg(msg):
 
       #  j[4] = ( j[4] + (text.count('\n') + len(text)/wtf_line)*wtf_time/(time.time()-j[5]) ) / 2
       w = j[4]
-
-      last = time.time() - j[3]
       score = w[0]
+      if score > wtf_limit:
+        info(f"跳过已禁言用户的消息{int(j[2]-time.time())}: {muc} {nick} {text[:64]}")
+        j[2] = int(j[2] + wtf_ban_time)
+      else:
+        if score < wtf_limit/2:
+          need_warn = True
+        else:
+          need_warn = False
 
-      long = text.count('\n') + len(text)//wtf_line + 2
+        last = time.time() - j[3]
 
-      #  if last > wtf_time_max:
-      #    #  if score > 0:
-      #      #  score /= 3*last/wtf_time_max
-      #    #  score = 0
-      #    w[1] = 1
-      #    w[0] = long*wtf_time_max/last
-      #  else:
-      tmp = min(last, w[1], wtf_limit)
-      w[0] = score + long*wtf_time/last - tmp
-      #  if last > wtf_time:
-      #    score -= last
-      #  if last < 1:
-      #    score += wtf_limit/5
+        long = text.count('\n') + len(text)//wtf_line + 2
 
-      #  if long > 300:
-      #    last /= 2
-      #  w[0] += long
-      w[1] += 1
+        if last > wtf_time_max:
+          #  if score > 0:
+          #  score /= 2
+          #  score /= 3*last/wtf_time_max
+          score -= 2*last/wtf_time
+          if score < 0:
+            score = 0
+          #  score = 0
+          #  w[1] = 1
+        #  else:
+        tmp = min(last, w[1], wtf_limit)
 
-      j[3] = time.time()
+        w[0] = score + long*wtf_time/last - tmp
+        #  if last > wtf_time:
+        #    score -= last
+        #  if last < 1:
+        #    score += wtf_limit/5
 
-      #  if is_admin:
-      #    await send(f"now: {w[0]} / {wtf_limit}", jid=muc)
-      if w[0] > wtf_limit/2:
-        await send(f"{nick}, 不要发消息太快 {w[0]} / {wtf_limit}", jid=muc)
-      elif w[0] > wtf_limit:
-        role = "visitor"
-        reason = "不要刷屏"
-        j[2] = int(time.time() + 600)
-        res = await room.muc_set_role(nick, role, reason=reason)
-        warn("有人刷屏: {nick}\njid: {jid}\nmuc: {muc}\n{res}")
+        #  if long > 300:
+        #    last /= 2
+        #  w[0] += long
+        w[1] += 1
+
+        j[3] = time.time()
+
+        #  if is_admin:
+        #    await send(f"now: {w[0]} / {wtf_limit}", jid=muc)
+        if w[0] > wtf_limit:
+          j[2] = int(time.time() + wtf_ban_time)
+          role = "visitor"
+          reason = "不要刷屏"
+          res = await room.muc_set_role(nick, role, reason=reason)
+          warn("有人刷屏: {nick}\njid: {jid}\nmuc: {muc}\n{res}")
+        elif need_warn and w[0] > wtf_limit/2:
+          await send(f"{nick}, 不要发消息太快 {w[0]} / {wtf_limit}", jid=muc)
         
 
   elif muc == myjid:
@@ -3837,22 +3850,6 @@ async def add_cmd():
   cmd_for_admin.add('eval')
 
   async def _(cmds, src):
-    if len(cmds) == 1:
-      return f"{cmds[0]}\n.{cmds[0]} $jid/$nick"
-    res = get_jid_room(cmds, src)
-    if type(res) is str:
-      return res
-    nick = res[0]
-    room = res[1]
-    reason = "cmds[0]命令"
-    for i in room.members:
-      if i.nick == nick:
-        res = await room.ban(i, reason)
-        return f"ok: {res}"
-  cmd_funs["ban"] = _
-  cmd_for_admin.add('ban')
-
-  async def _(cmds, src):
     #  if len(cmds) == 1:
     #    return f"{cmds[0]}\n.{cmds[0]}"
     global member_only_mode
@@ -3906,8 +3903,24 @@ async def add_cmd():
 
   async def _(cmds, src):
     if len(cmds) == 1:
+      return f"{cmds[0]}\n.{cmds[0]} $jid/$nick"
+    res = get_nick_room(cmds, src)
+    if type(res) is str:
+      return res
+    nick = res[0]
+    room = res[1]
+    reason = "cmds[0]命令"
+    for i in room.members:
+      if i.nick == nick:
+        res = await room.ban(i, reason)
+        return f"ok: {res}"
+  cmd_funs["ban"] = _
+  cmd_for_admin.add('ban')
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
       return f"临时踢出\n.{cmds[0]} $jid/$nick"
-    res = get_jid_room(cmds, src)
+    res = get_nick_room(cmds, src)
     if type(res) is str:
       return res
     nick = res[0]
@@ -3923,7 +3936,7 @@ async def add_cmd():
   async def _(cmds, src):
     if len(cmds) == 1:
       return f"禁言\n.{cmds[0]} $jid/$nick"
-    res = get_jid_room(cmds, src)
+    res = get_nick_room(cmds, src)
     if type(res) is str:
       return res
     nick = res[0]
@@ -3950,8 +3963,17 @@ async def add_cmd():
       return res
     jid = res[0]
     room = res[1]
-    affiliation = "outcast"
-    res = await room.muc_set_affiliation(jid, affiliation, reason)
+    if len(cmds) == 3 and cmds[2] == "clear":
+      muc = str(room.jid)
+      jids = users[muc]
+      j = jids[jid]
+      w = j[4]
+      tmp = w[0]
+      w[0] = 0
+      res = f"{tmp} -> w[0]"
+    else:
+      affiliation = "outcast"
+      res = await room.muc_set_affiliation(jid, affiliation, reason)
     return f"ok: {res}"
   cmd_funs["sb"] = _
   cmd_for_admin.add('sb')
