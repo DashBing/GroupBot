@@ -3340,6 +3340,7 @@ async def parse_xmpp_msg(msg):
                     await room.muc_set_role(rnick, "visitor", reason=reason)
                   #  res = await room.muc_set_role(rnick, "participant", reason="禁言结束")
               else:
+                j[2] = item.role
                 if member_only_mode:
                   reason = "非成员暂时禁止发言"
                   if item.affiliation == "none":
@@ -3347,7 +3348,6 @@ async def parse_xmpp_msg(msg):
                       await room.muc_set_role(rnick, "visitor", reason=reason)
                       j[2] = 1
                 else:
-                  j[2] = item.role
                   if item.role == "visitor":
                     if muc in public_groups:
                       reason = "不限制新人发言"
@@ -4040,6 +4040,30 @@ async def add_cmd():
       j = jids[jid]
       w = j[4]
       res = f"{w}"
+    elif option == "fix":
+      res = ""
+      i = 0
+      ii = 0
+      for muc in rooms:
+        room = rooms[muc]
+        jids = users[muc]
+        for m in room.members:
+          jid = str(m.direct_jid.bare())
+          if jid not in jids:
+            res += f"\nW: {jid} not in jids({muc})"
+            continue
+          j = jids[jid]
+          if type(j[2]) is str and j[2] != m.role:
+            ii += 1
+            j[2] = m.role
+            j[1] = m.affiliation
+            j[0] = m.nick
+            res += f"fix: {muc} {m.nick}"
+
+      if res:
+        pass
+      else:
+        res = "no error"
     else:
       muc = str(room.jid)
       jids = users[muc]
