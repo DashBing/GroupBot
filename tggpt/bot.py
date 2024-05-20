@@ -3960,22 +3960,35 @@ async def add_cmd():
 
   async def _(cmds, src):
     if len(cmds) == 1:
-      return f"驱逐\n.{cmds[0]} $jid/$nick"
-    reason = "cmds[0]命令"
+      return f"驱逐\n.{cmds[0]} [clear/se] $jid/$nick"
+
+    option = False
+    if len(cmds) == 3:
+      option = cmds[1]
+      cmds.pop(1)
+
     res = get_jid_room(cmds, src)
     if type(res) is str:
       return res
     jid = res[0]
     room = res[1]
-    if len(cmds) == 3 and cmds[2] == "clear":
+
+    if option == "clear":
       muc = str(room.jid)
       jids = users[muc]
       j = jids[jid]
       w = j[4]
       tmp = w[0]
       w[0] = 0
-      res = f"{tmp} -> w[0]"
+      res = f"{tmp} -> {w[0]}"
+    elif option == "se":
+      muc = str(room.jid)
+      jids = users[muc]
+      j = jids[jid]
+      #  w = j[4]
+      res = f"{j}\n\n{w}"
     else:
+      reason = "cmds[0]命令"
       affiliation = "outcast"
       res = await room.muc_set_affiliation(jid, affiliation, reason)
     return f"ok: {res}"
