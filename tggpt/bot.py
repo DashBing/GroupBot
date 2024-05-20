@@ -3310,15 +3310,19 @@ async def parse_xmpp_msg(msg):
                     if member_only_mode is False or item.affiliation == "member":
                       res = await room.muc_set_role(rnick, "participant", reason="临时禁言结束")
                       j[2] = "participant"
+                      w = j[4]
+                      w[0] = 0
                     else:
                       # 不用解除禁言
                       j[2] = 1
+                      if item.role == "participant":
+                        await room.muc_set_role(rnick, "visitor", reason=reason)
                   else:
                       #  if j[2] > 99:
                     if item.role == "participant":
-                        if item.affiliation == "member":
-                          await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
-                        await room.muc_set_role(rnick, "visitor", reason=reason)
+                      if item.affiliation == "member":
+                        await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
+                      await room.muc_set_role(rnick, "visitor", reason=reason)
                 elif j[2] == 1:
                   if member_only_mode:
                     reason = "非成员暂时禁止发言"
