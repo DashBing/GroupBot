@@ -3885,6 +3885,7 @@ async def add_cmd():
       reason = "非成员暂时禁止发言"
       role = "visitor"
       i = 0
+      j = 0
       for muc in rooms:
         if muc not in public_groups:
           continue
