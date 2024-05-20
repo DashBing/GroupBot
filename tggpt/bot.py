@@ -3721,37 +3721,44 @@ def get_jid_room(cmds, src):
     else:
       muc = src
       nick = cmds[1]
-    if muc not in rooms:
-      return f"没找到room: {muc}"
+    #  if muc not in rooms:
+    #    return f"没找到room: {muc}"
     room = rooms[muc]
     jids = users[muc]
-    jid = None
-    for i in room.members:
-      if i.direct_jid:
-        if str(i.direct_jid.bare()) not in jids:
-          jids[str(i.direct_jid.bare())] = [i.nick, i.affiliation, i.role]
-        if i.nick == nick:
-          jid = str(i.direct_jid.bare())
-    if jid is None:
-      return f"没找到: {nick}\nmuc: {muc}"
+    #  jid = None
+    #  for i in room.members:
+    #    if i.direct_jid:
+    #      if str(i.direct_jid.bare()) not in jids:
+    #        jids[str(i.direct_jid.bare())] = [i.nick, i.affiliation, i.role]
+    #      if i.nick == nick:
+    #        jid = str(i.direct_jid.bare())
+    for j in jids:
+      if jids[j][0] == nick:
+        return j, room
+    #  if jid is None:
+    return f"没找到: {nick}\nmuc: {muc}"
   elif "@" in cmds[1] and src in my_groups:
-    jid = cmds[1]
     muc = src
     if muc not in rooms:
       return f"没找到room: {muc}"
+    jid = cmds[1]
     room = rooms[muc]
     jids = users[muc]
     if jid in jids:
-      pass
+      return jid, room
     else:
-      for i in room.members:
-        if i.direct_jid:
-          if str(i.direct_jid.bare()) not in jids:
-            jids[str(i.direct_jid.bare())] = [i.nick, i.affiliation, i.role]
-      if jid not in jids:
-        return f"没找到该jid对应的nick: {jid}\nmuc: {muc}"
-      else:
-        pass
+      return f"没找到该jid: {jid}\nmuc: {muc}"
+    #  if jid in jids:
+    #    pass
+    #  else:
+    #    for i in room.members:
+    #      if i.direct_jid:
+    #        if str(i.direct_jid.bare()) not in jids:
+    #          jids[str(i.direct_jid.bare())] = [i.nick, i.affiliation, i.role]
+    #    if jid not in jids:
+    #      return f"没找到该jid对应的nick: {jid}\nmuc: {muc}"
+    #    else:
+    #      pass
   else:
     return "格式不正确"
   return jid, room
@@ -3764,16 +3771,16 @@ def get_nick_room(cmds, src):
     else:
       muc = src
       nick = cmds[1]
-    if muc not in rooms:
-      return f"没找到room: {muc}"
-    room = rooms[muc]
-    is_ok = False
-    for i in room.members:
-      if i.nick == nick:
-        is_ok = True
-        break
-    if is_ok is False:
-      return f"没找到nick: {nick}\nmuc: {muc}"
+    #  if muc not in rooms:
+    #    return f"没找到room: {muc}"
+    #  room = rooms[muc]
+    #  is_ok = False
+    #  for i in room.members:
+    #    if i.nick == nick:
+    #      is_ok = True
+    #      break
+    #  if is_ok is False:
+    #    return f"没找到nick: {nick}\nmuc: {muc}"
   elif "@" in cmds[1] and src in my_groups:
     muc = src
     if muc not in rooms:
@@ -3784,14 +3791,15 @@ def get_nick_room(cmds, src):
     if jid in jids:
       nick = jids[jid][0]
     else:
-      for i in room.members:
-        if i.direct_jid:
-          if str(i.direct_jid.bare()) not in jids:
-            jids[str(i.direct_jid.bare())] = [i.nick, i.affiliation, i.role]
-      if jid not in jids:
-        return f"没找到该jid对应的nick: {jid}\nmuc: {muc}"
-      else:
-        nick = jids[jid][0]
+      return f"没找到该jid对应的nick: {jid}\nmuc: {muc}"
+      #  for i in room.members:
+      #    if i.direct_jid:
+      #      if str(i.direct_jid.bare()) not in jids:
+      #        jids[str(i.direct_jid.bare())] = [i.nick, i.affiliation, i.role]
+      #  if jid not in jids:
+      #    return f"没找到该jid对应的nick: {jid}\nmuc: {muc}"
+      #  else:
+      #    nick = jids[jid][0]
         
   else:
     return "格式不正确"
