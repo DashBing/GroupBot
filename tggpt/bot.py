@@ -4018,6 +4018,9 @@ async def add_cmd():
         for m in room.members:
           jid = str(m.direct_jid.bare())
           if jid not in jids:
+            j = [m.nick, m.affiliation, m.role]
+            set_default_value(j)
+            jids[jid] = j
             res += f"\nW: {jid} not in jids({muc})"
             continue
           j = jids[jid]
