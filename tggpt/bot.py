@@ -4007,7 +4007,7 @@ async def add_cmd():
 
   async def _(cmds, src):
     if len(cmds) == 1:
-      return f"search\n.{cmds[0]} [clear/se/wtf] $jid/$nick"
+      return f"search\n.{cmds[0]} [clear/se/wtf/fix] $jid/$nick"
 
     option = False
     if len(cmds) == 3:
