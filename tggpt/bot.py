@@ -3904,7 +3904,7 @@ async def add_cmd():
             jids[jid][2] = 1
             if muc == src:
               k += 1
-      return "%s, 禁言账户总数：%s/%s" % (reason, k, i)
+      return "%s, 禁言账户：%s/%s" % (reason, k, i)
     else:
       member_only_mode = False
       reason = "非成员允许发言"
@@ -3931,7 +3931,7 @@ async def add_cmd():
             i += 1
             if muc == src:
               k += 1
-      return "%s, 禁言解除账户数：%s/%s" % (reason, k, i)
+      return "%s, 解除账户：%s/%s" % (reason, k, i)
   cmd_funs["mo"] = _
   cmd_for_admin.add('mo')
 
