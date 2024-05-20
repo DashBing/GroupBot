@@ -3901,12 +3901,15 @@ async def add_cmd():
             info(res)
             i += 1
             jids[jid][2] = 1
-      return "%s, 禁言账户总数：%s" % (reason, i)
+            if muc == src:
+              j += 1
+      return "%s, 禁言账户总数：%s/%s" % (reason, j, i)
     else:
       member_only_mode = False
       reason = "非成员允许发言"
       role = "participant"
       i = 0
+      j = 0
       for muc in rooms:
         if muc not in public_groups:
           continue
@@ -3925,7 +3928,9 @@ async def add_cmd():
             res = await room.muc_set_role(m.nick, role, reason=reason)
             info(res)
             i += 1
-      return "%s, 禁言解除账户数：%s" % (reason, i)
+            if muc == src:
+              j += 1
+      return "%s, 禁言解除账户数：%s/%s" % (reason, j, i)
   cmd_funs["mo"] = _
   cmd_for_admin.add('mo')
 
@@ -3984,7 +3989,24 @@ async def add_cmd():
 
   async def _(cmds, src):
     if len(cmds) == 1:
-      return f"驱逐\n.{cmds[0]} [clear/se] $jid/$nick"
+      return f"驱逐\n.{cmds[0]} $jid/$nick"
+
+    res = get_jid_room(cmds, src)
+    if type(res) is str:
+      return res
+    jid = res[0]
+    room = res[1]
+
+    reason = "cmds[0]命令"
+    affiliation = "outcast"
+    res = await room.muc_set_affiliation(jid, affiliation, reason)
+    return f"ok: {res}"
+  cmd_funs["sb"] = _
+  cmd_for_admin.add('sb')
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"search\n.{cmds[0]} [clear/se/wtf] $jid/$nick"
 
     option = False
     if len(cmds) == 3:
@@ -4011,13 +4033,23 @@ async def add_cmd():
       j = jids[jid]
       w = j[4]
       res = f"{j}\n\n{w}"
+    elif option == "wtf":
+      muc = str(room.jid)
+      jids = users[muc]
+      j = jids[jid]
+      w = j[4]
+      res = f"{w}"
     else:
-      reason = "cmds[0]命令"
-      affiliation = "outcast"
-      res = await room.muc_set_affiliation(jid, affiliation, reason)
-    return f"ok: {res}"
-  cmd_funs["sb"] = _
-  cmd_for_admin.add('sb')
+      muc = str(room.jid)
+      jids = users[muc]
+      if jid in jids:
+        j = jids[jid]
+        res = "%s" % j
+      else:
+        res = "not found"
+    return res
+  cmd_funs["se"] = _
+  cmd_for_admin.add('se')
 
   async def _(cmds, src):
     if len(cmds) == 1:
