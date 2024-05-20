@@ -4009,41 +4009,9 @@ async def add_cmd():
     if len(cmds) == 1:
       return f"search\n.{cmds[0]} [clear/se/wtf/fix] $jid/$nick"
 
-    option = False
-    if len(cmds) == 3:
-      option = cmds[1]
-      cmds.pop(1)
-
-    res = get_jid_room(cmds, src)
-    if type(res) is str:
-      return res
-    jid = res[0]
-    room = res[1]
-
-    if option == "clear":
-      muc = str(room.jid)
-      jids = users[muc]
-      j = jids[jid]
-      w = j[4]
-      tmp = w[0]
-      w[0] = 0
-      res = f"{tmp} -> {w[0]}"
-    elif option == "se":
-      muc = str(room.jid)
-      jids = users[muc]
-      j = jids[jid]
-      w = j[4]
-      res = f"{j}\n\n{w}"
-    elif option == "wtf":
-      muc = str(room.jid)
-      jids = users[muc]
-      j = jids[jid]
-      w = j[4]
-      res = f"{w}"
-    elif option == "fix":
+    if cmds[1] == "fix":
       res = ""
       i = 0
-      ii = 0
       for muc in rooms:
         room = rooms[muc]
         jids = users[muc]
@@ -4054,24 +4022,55 @@ async def add_cmd():
             continue
           j = jids[jid]
           if type(j[2]) is str and j[2] != m.role:
-            ii += 1
+            i += 1
             j[2] = m.role
             j[1] = m.affiliation
             j[0] = m.nick
-            res += f"fix: {muc} {m.nick}"
-
+            res += f"\nfix: {muc} {m.nick}"
       if res:
         pass
       else:
         res = "no error"
     else:
-      muc = str(room.jid)
-      jids = users[muc]
-      if jid in jids:
+      option = False
+      if len(cmds) == 3:
+        option = cmds[1]
+        cmds.pop(1)
+
+      res = get_jid_room(cmds, src)
+      if type(res) is str:
+        return res
+      jid = res[0]
+      room = res[1]
+
+      if option == "clear":
+        muc = str(room.jid)
+        jids = users[muc]
         j = jids[jid]
-        res = "%s" % j
+        w = j[4]
+        tmp = w[0]
+        w[0] = 0
+        res = f"{tmp} -> {w[0]}"
+      elif option == "se":
+        muc = str(room.jid)
+        jids = users[muc]
+        j = jids[jid]
+        w = j[4]
+        res = f"{j}\n\n{w}"
+      elif option == "wtf":
+        muc = str(room.jid)
+        jids = users[muc]
+        j = jids[jid]
+        w = j[4]
+        res = f"{w}"
       else:
-        res = "not found"
+        muc = str(room.jid)
+        jids = users[muc]
+        if jid in jids:
+          j = jids[jid]
+          res = "%s" % j
+        else:
+          res = "not found"
     return res
   cmd_funs["se"] = _
   cmd_for_admin.add('se')
