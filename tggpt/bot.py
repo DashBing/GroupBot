@@ -126,7 +126,7 @@ wtf_time_max = 3600
 wtf_line = 20
 wtf_line_max = 300
 
-wtf_limit = 80
+wtf_limit = 800
 wtf_ban_time = 300
 
 async def wtf_loop():
@@ -3608,7 +3608,7 @@ async def parse_xmpp_msg(msg):
           role = "visitor"
           reason = "不要刷屏"
           res = await room.muc_set_role(nick, role, reason=reason)
-          warn("有人刷屏: {nick}\njid: {jid}\nmuc: {muc}\n{res}")
+          warn(f"有人刷屏: {nick}\njid: {jid}\nmuc: {muc}\nnow: {w[0]}\n{res}")
         elif need_warn and w[0] > wtf_limit/2:
           await send(f"{nick}, 不要发消息太快 {w[0]} / {wtf_limit}", jid=muc)
         
@@ -3633,6 +3633,7 @@ async def parse_xmpp_msg(msg):
     #  pprint(msg)
 
   print("%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+  text0 = text
   if msg.type_ == MessageType.GROUPCHAT:
     if muc == acg_group:
       if is_admin:
@@ -3640,8 +3641,6 @@ async def parse_xmpp_msg(msg):
       else:
         await send("仅管理可用", src)
       return
-
-
 
     #  if nick == "bot":
     #    #  if muc not in check_bot_groups:
@@ -3657,8 +3656,6 @@ async def parse_xmpp_msg(msg):
     #  else:
     username=f"**X {nick}:** "
     name=f"X {nick}"
-    qt=None
-    text0 = text
     #  if text.startswith('> ') or text.startswith('>> '):
     if text.startswith('>'):
       qt=[]
@@ -3682,7 +3679,6 @@ async def parse_xmpp_msg(msg):
         username = f"> {qt2}\n{username}"
     #    else:
     #      info(f"{tmp=} {qt=}")
-    #
     #  info(f"{text=} {text2=}")
     ms = get_mucs(muc)
     for m in ms - {muc}:
@@ -3693,9 +3689,7 @@ async def parse_xmpp_msg(msg):
       #  if await mt_send_for_long_text(text, name=f"X {nick}") is False:
       if await mt_send_for_long_text(text0, name=name, qt=qt) is False:
         return
-
     #  text = text2
-
   else:
     if get_jid(msg.to) in my_groups:
       nick = msg.from_.resource
@@ -3708,7 +3702,7 @@ async def parse_xmpp_msg(msg):
     await send(reply)
     return
 
-  res = await run_cmd(text, get_src(msg), f"X {nick}: ", is_admin)
+  res = await run_cmd(text, get_src(msg), f"X {nick}: ", is_admin, text0)
   if res is True:
     return
   if res:
@@ -4016,7 +4010,7 @@ async def add_cmd():
 
     reason = "cmds[0]命令"
     affiliation = "outcast"
-    res = await room.muc_set_affiliation(jid, affiliation, reason)
+    res = await room.muc_set_affiliation(jid, affiliation, reason=reason)
     return f"ok: {res}"
   cmd_funs["sb"] = _
   cmd_for_admin.add('sb')
@@ -4103,7 +4097,7 @@ async def add_cmd():
     jid = res[0]
     room = res[1]
     affiliation = "member"
-    res = await room.muc_set_affiliation(jid, affiliation, reason)
+    res = await room.muc_set_affiliation(jid, affiliation, reason=reason)
     return f"ok: {res}"
   cmd_funs["op"] = _
   cmd_for_admin.add('op')
@@ -4327,7 +4321,7 @@ async def run_cmd(*args, **kwargs):
     res = wtf_str(res, "xmpp")
   return res
 
-async def _run_cmd(text, src, name="X test: ", is_admin=False):
+async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
   if text[0:1] == ".":
     if text[1:2] == " ":
       return
@@ -4400,7 +4394,11 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False):
   else:
     # tilebot
     tmp=""
-    for i in text.splitlines():
+    if textq:
+      tt = textq
+    else:
+      tt = text
+    for i in tt.splitlines():
       if not i.startswith("> ") and  i != ">":
         tmp += i+"\n"
 
