@@ -3844,6 +3844,22 @@ def get_addr(s):
   #  raise ValueError("需要数字")
 
 
+def unban(muc, nick=None, jid=None):
+  #  w = j[4]
+  jids = users[muc]
+  for jj in jids:
+    if nick:
+      j = jids[jj]
+      if i[0] == nick:
+        j[2] = "participant"
+    elif jid:
+      if jid == jj:
+        j = jids[jj]
+        j[2] = "participant"
+    else:
+      return
+
+
 
 
 member_only_mode = False
@@ -4000,6 +4016,65 @@ async def add_cmd():
 
   async def _(cmds, src):
     if len(cmds) == 1:
+      return f"禁言\n.{cmds[0]} $jid/$nick"
+    res = get_nick_room(cmds, src)
+    if type(res) is str:
+      return res
+    nick = res[0]
+    room = res[1]
+
+    muc = str(room.jid)
+    unban(muc, nick)
+
+    reason = "cmds[0]命令"
+    #  if len(cmds) == 2 or cmds[2] == "v":
+    #    role = "visitor"
+    #  #  elif cmds[2] == "a":
+    #  #    role = "moderator"
+    #  else:
+    #    role = "participant"
+    role = "participant"
+    res = await room.muc_set_role(nick, role, reason=reason)
+    return f"ok: {res}"
+  cmd_funs["unban"] = _
+  cmd_for_admin.add('unban')
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"解除驱逐（添加成员身份）\n.{cmds[0]} $jid/$nick"
+    reason = "cmds[0]命令"
+    res = get_jid_room(cmds, src)
+    if type(res) is str:
+      return res
+    jid = res[0]
+    room = res[1]
+    #  muc = str(room.jid)
+    #  unban(muc, jid=jid)
+    affiliation = "member"
+    res = await room.muc_set_affiliation(jid, affiliation, reason=reason)
+
+
+    res = get_nick_room(cmds, src)
+    if type(res) is str:
+      return res
+    nick = res[0]
+    room = res[1]
+
+    muc = str(room.jid)
+    unban(muc, nick)
+
+    reason = "cmds[0]命令"
+    role = "participant"
+    res2 = await room.muc_set_role(nick, role, reason=reason)
+
+    return f"ok: {res} {res2}"
+  cmd_funs["op"] = _
+  cmd_for_admin.add('op')
+  cmd_funs["ub"] = _
+  cmd_for_admin.add('ub')
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
       return f"驱逐\n.{cmds[0]} $jid/$nick"
 
     res = get_jid_room(cmds, src)
@@ -4086,23 +4161,6 @@ async def add_cmd():
     return res
   cmd_funs["se"] = _
   cmd_for_admin.add('se')
-
-  async def _(cmds, src):
-    if len(cmds) == 1:
-      return f"解除驱逐（添加成员身份）\n.{cmds[0]} $jid/$nick"
-    reason = "cmds[0]命令"
-    res = get_jid_room(cmds, src)
-    if type(res) is str:
-      return res
-    jid = res[0]
-    room = res[1]
-    affiliation = "member"
-    res = await room.muc_set_affiliation(jid, affiliation, reason=reason)
-    return f"ok: {res}"
-  cmd_funs["op"] = _
-  cmd_for_admin.add('op')
-  cmd_funs["ub"] = _
-  cmd_for_admin.add('ub')
 
   async def _(cmds, src):
     res = None
