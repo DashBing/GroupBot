@@ -3619,6 +3619,7 @@ async def parse_xmpp_msg(msg):
   elif muc in me:
     is_admin = True
     logger.info(f"admin pm msg: {text[:16]}")
+    nick = msg.from_.localpart
   elif muc == rssbot:
     #  if msg.type_ == None:
     await send(text, acg_group, name="", delay=5)
@@ -3633,6 +3634,8 @@ async def parse_xmpp_msg(msg):
     #  pprint(msg)
 
   print("%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+
+
   text0 = text
   if msg.type_ == MessageType.GROUPCHAT:
     if muc == acg_group:
@@ -3656,6 +3659,7 @@ async def parse_xmpp_msg(msg):
     #  else:
     username=f"**X {nick}:** "
     name=f"X {nick}"
+    qt = None
     #  if text.startswith('> ') or text.startswith('>> '):
     if text.startswith('>'):
       qt=[]
@@ -3691,7 +3695,9 @@ async def parse_xmpp_msg(msg):
         return
     #  text = text2
   else:
-    if get_jid(msg.to) in my_groups:
+    #  if get_jid(msg.to) in my_groups:
+    #  if get_jid(msg.from_) in my_groups:
+    if muc in my_groups:
       nick = msg.from_.resource
     else:
       nick = msg.from_.localpart
