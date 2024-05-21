@@ -1851,13 +1851,18 @@ async def send(text, jid=None, *args, **kwargs):
   if 'name' in kwargs:
     name = kwargs["name"]
     #  kwargs.pop("name")
-    if name:
-      kwargs["name"] = name[2:-4]
-    else:
-      kwargs["name"] = None
   else:
     name = "**C bot:** "
+  if name:
     kwargs["name"] = name[2:-4]
+    nick = name[2:-4]
+  else:
+    kwargs["name"] = None
+    nick = name
+  if 'correct' in kwargs:
+    correct = kwargs["correct"]
+  else:
+    correct = False
 
   if jid is None:
     if isinstance(text, aioxmpp.Message):
@@ -1897,11 +1902,9 @@ async def send(text, jid=None, *args, **kwargs):
           #  text.body = body
         continue
       return False
-    if main_group in ms:
-      if len(name) > 4:
-        await mt_send_for_long_text(text0, name=name[2:-4])
-      else:
-        await mt_send_for_long_text(text0, name=name)
+    if correct is False:
+      if main_group in ms:
+        await mt_send_for_long_text(text0, name=nick)
     return True
   else:
     #  info(f"准备发送到: {muc=} {jid=}")
