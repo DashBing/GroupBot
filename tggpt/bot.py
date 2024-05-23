@@ -1492,7 +1492,7 @@ def set_default_value(j=None, m=None):
     j.append( time.time() )
   if len(j) < 5:
     #  j.append( [2*wtf_time/(time.time()-j[3]), 0] )
-    j.append( [wtf_time/5, 0] )
+    j.append( [wtf_time/4, 0] )
   return j
 
 
@@ -3565,6 +3565,7 @@ async def parse_xmpp_msg(msg):
       #  j[4] = ( j[4] + (text.count('\n') + len(text)/wtf_line)*wtf_time/(time.time()-j[5]) ) / 2
       w = j[4]
       score = w[0]
+      #  global wtf_limit
       #  if score > wtf_limit:
       if score > wtf_limit/(9/(w[1]+8) +0.1):
         if type(j[2]) is str:
@@ -3580,34 +3581,17 @@ async def parse_xmpp_msg(msg):
 
         #  last = time.time() - j[3]
         last = real_time - j[3]
-
-        long = text.count('\n') + len(text)//wtf_line + 1
+        j[3] = time.time()
 
         if last > wtf_time_max:
-          #  if score > 0:
-          #  score /= 2
-          #  score /= 3*last/wtf_time_max
           score -= 2*last/wtf_time
           if score < 0:
             score = 0
-          #  score = 0
-          #  w[1] = 1
-        #  else:
         #  tmp = min(last/wtf_time, w[1], wtf_limit)
 
+        long = text.count('\n') + len(text)//wtf_line + 1
         w[0] = score + long*wtf_time/last
-        #  if last > wtf_time:
-        #    score -= last
-        #  if last < 1:
-        #    score += wtf_limit/5
-
-        #  if long > 300:
-        #    last /= 2
-        #  w[0] += long
         w[1] += 1
-
-        j[3] = time.time()
-
         #  if is_admin:
         #    await send(f"now: {w[0]} / {wtf_limit}", jid=muc)
         if w[1] > 1 and w[0] > wtf_limit/(9/(w[1]+8) +0.1):
@@ -3618,7 +3602,7 @@ async def parse_xmpp_msg(msg):
           warn(f"有人刷屏: {nick}\njid: {jid}\nmuc: {muc}\nnow: {w[0]}/{wtf_limit}/{w[1]}\n{res}")
           await send(f"检测到刷屏，禁言{wtf_ban_time}s: {nick} {w[0]}/{wtf_limit}", jid=muc)
         elif need_warn:
-          if w[1] == 1 and w[0] > wtf_limit:
+          if w[1] == 1 and w[0] > wtf_limit/2:
             await send(f"{nick}, 不要刷屏 {w[0]}/{wtf_limit}", jid=muc)
             w[0] = wtf_limit/2
           elif w[0] > wtf_limit/2:
