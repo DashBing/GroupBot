@@ -122,11 +122,12 @@ music_bot_name = 'Music163bot'
 interval = 3
 
 wtf_time = 5
-wtf_time_max = 3600
+wtf_time_max = 1800
+
 wtf_line = 20
 wtf_line_max = 300
 
-wtf_limit = 800
+wtf_limit = 512
 wtf_ban_time = 300
 
 async def wtf_loop():
@@ -142,7 +143,6 @@ async def wtf_loop():
         if w[0] > 1:
           w[0] = w[0]/2
     info("wtf_loop is running...")
-
 
 def pprint(e):
   print('---')
@@ -3430,15 +3430,20 @@ async def parse_xmpp_msg(msg):
       pprint(msg)
     return
 
+  real_time = None
   if msg.xep0203_delay:
     delay = msg.xep0203_delay[0]
     #  pprint(delay)
     #  await asyncio.sleep(1)
-    if time.time() - delay.stamp.timestamp() > 60:
+    real_time = delay.stamp.timestamp()
+    if time.time() - real_sent_time > 60:
       print("跳过旧消息: %s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, delay))
       return
     else:
-      print("旧消息: %s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, time.time() - delay.stamp.timestamp()))
+      print("旧消息: %s %s %s %s %s 延迟%ss" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, time.time() - delay.stamp.timestamp()))
+  else:
+    info(f"假定消息无延迟: {msg}")
+    real_time = time.time()
 
   if msg.type_ == MessageType.NORMAL:
     logger.info(f"normal msg: {msg}")
@@ -3564,7 +3569,7 @@ async def parse_xmpp_msg(msg):
         if type(j[2]) is str:
           pass
         else:
-          info(f"跳过已禁言用户的消息{int(j[2]-time.time())}: {muc} {nick} {text[:64]}")
+          info(f"跳过已禁言用户的消息{int(j[2]-real_time)}: {muc} {nick} {text[:64]}")
           j[2] = int(j[2] + wtf_ban_time)
       else:
         if score < wtf_limit/2:
@@ -3572,9 +3577,10 @@ async def parse_xmpp_msg(msg):
         else:
           need_warn = False
 
-        last = time.time() - j[3]
+        #  last = time.time() - j[3]
+        last = real_time - j[3]
 
-        long = text.count('\n') + len(text)//wtf_line + 2
+        long = text.count('\n') + len(text)//wtf_line + 1
 
         if last > wtf_time_max:
           #  if score > 0:
@@ -3586,9 +3592,9 @@ async def parse_xmpp_msg(msg):
           #  score = 0
           #  w[1] = 1
         #  else:
-        tmp = min(last, w[1], wtf_limit)
+        #  tmp = min(last/wtf_time, w[1], wtf_limit)
 
-        w[0] = score + long*wtf_time/last - tmp
+        w[0] = score + long*wtf_time/last
         #  if last > wtf_time:
         #    score -= last
         #  if last < 1:
@@ -3603,14 +3609,19 @@ async def parse_xmpp_msg(msg):
 
         #  if is_admin:
         #    await send(f"now: {w[0]} / {wtf_limit}", jid=muc)
-        if w[0] > wtf_limit:
+        if w[1] > 1 and w[0] > wtf_limit/(9/(w[1]+8) +0.1):
           j[2] = int(time.time() + wtf_ban_time)
           role = "visitor"
           reason = "不要刷屏"
           res = await room.muc_set_role(nick, role, reason=reason)
-          warn(f"有人刷屏: {nick}\njid: {jid}\nmuc: {muc}\nnow: {w[0]}\n{res}")
-        elif need_warn and w[0] > wtf_limit/2:
-          await send(f"{nick}, 不要发消息太快 {w[0]} / {wtf_limit}", jid=muc)
+          warn(f"有人刷屏: {nick}\njid: {jid}\nmuc: {muc}\nnow: {w[0]}/{wtf_limit}/{w[1]}\n{res}")
+          await send(f"检测到刷屏，禁言{wtf_ban_time}s: {nick} {w[0]}/{wtf_limit}", jid=muc)
+        elif need_warn:
+          if w[1] == 1 and w[0] > wtf_limit:
+            await send(f"{nick}, 不要刷屏 {w[0]}/{wtf_limit}", jid=muc)
+            w[0] = wtf_limit/2
+          elif w[0] > wtf_limit/2:
+            await send(f"{nick}, 不要刷屏（第一次警告） {w[0]}/{wtf_limit}", jid=muc)
         
 
   elif muc == myjid:
