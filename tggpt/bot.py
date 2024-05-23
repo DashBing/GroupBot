@@ -3442,7 +3442,7 @@ async def parse_xmpp_msg(msg):
     else:
       print("旧消息: %s %s %s %s %s 延迟%ss" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, time.time() - delay.stamp.timestamp()))
   else:
-    dbg(f"假定消息无延迟: {msg}")
+    #  info(f"假定消息无延迟: {msg}")
     real_time = time.time()
 
   if msg.type_ == MessageType.NORMAL:
@@ -3565,9 +3565,10 @@ async def parse_xmpp_msg(msg):
       #  j[4] = ( j[4] + (text.count('\n') + len(text)/wtf_line)*wtf_time/(time.time()-j[5]) ) / 2
       w = j[4]
       score = w[0]
-      if score > wtf_limit:
+      #  if score > wtf_limit:
+      if score > wtf_limit/(9/(w[1]+8) +0.1):
         if type(j[2]) is str:
-          pass
+          info(f"fixme: 跳过已禁言用户的消息{int(j[2]-real_time)}: {muc} {nick} {text[:64]}")
         else:
           info(f"跳过已禁言用户的消息{int(j[2]-real_time)}: {muc} {nick} {text[:64]}")
           j[2] = int(j[2] + wtf_ban_time)
