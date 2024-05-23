@@ -3442,7 +3442,7 @@ async def parse_xmpp_msg(msg):
     else:
       print("旧消息: %s %s %s %s %s 延迟%ss" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, time.time() - delay.stamp.timestamp()))
   else:
-    info(f"假定消息无延迟: {msg}")
+    dbg(f"假定消息无延迟: {msg}")
     real_time = time.time()
 
   if msg.type_ == MessageType.NORMAL:
