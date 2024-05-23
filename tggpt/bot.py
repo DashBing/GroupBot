@@ -3436,7 +3436,7 @@ async def parse_xmpp_msg(msg):
     #  pprint(delay)
     #  await asyncio.sleep(1)
     real_time = delay.stamp.timestamp()
-    if time.time() - real_sent_time > 60:
+    if time.time() - real_time > 60:
       print("跳过旧消息: %s %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body, delay))
       return
     else:
