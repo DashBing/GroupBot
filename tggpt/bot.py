@@ -172,7 +172,9 @@ def err(text):
   if type(text) is not str:
     text = f"{text=}"
   #  lineno = currentframe().f_back.f_lineno
-  lineno = sys._getframe(1).f_lineno
+  #  lineno = sys._getframe(1).f_lineno
+  tb = sys._getframe()
+  lineno = get_lineno(tb)
   text = f"E: {lineno}: {text}"
   logger.error(text, exc_info=True, stack_info=True)
   #  raise ValueError
@@ -183,7 +185,9 @@ def warn(text, more=False):
   if type(text) is not str:
     text = f"{text=}"
   #  lineno = currentframe().f_back.f_lineno
-  lineno = sys._getframe(1).f_lineno
+  #  lineno = sys._getframe(1).f_lineno
+  tb = sys._getframe()
+  lineno = get_lineno(tb)
   text = f"W: {lineno}: {text}"
   if more:
     logger.warning(text, exc_info=True, stack_info=True)
@@ -194,7 +198,9 @@ def warn(text, more=False):
 def info(text):
   if type(text) is not str:
     text = f"{text=}"
-  lineno = sys._getframe(1).f_lineno
+  #  lineno = sys._getframe(1).f_lineno
+  tb = sys._getframe()
+  lineno = get_lineno(tb)
   text = f"{lineno}: {text}"
   logger.info(text)
 
@@ -205,7 +211,9 @@ def log(text):
   if type(text) is not str:
     text = f"{text=}"
   #  lineno = currentframe().f_back.f_lineno
-  lineno = sys._getframe(1).f_lineno
+  #  lineno = sys._getframe(1).f_lineno
+  tb = sys._getframe()
+  lineno = get_lineno(tb)
   text = f"{lineno}: {text}"
   send_log(text)
   logger.warning(text)
@@ -414,14 +422,19 @@ def exceptions_handler(func):
   return wrapper
 
 
-def _exceptions_handler(e, *args, **kwargs):
-  more = True
-  #  res = f'内部错误: {e=} line: {e.__traceback__.tb_next.tb_lineno}'
-  tb = e.__traceback__
+
+def get_lineno(tb):
   lineno = "%s" % tb.tb_lineno
   while tb.tb_next is not None:
     lineno += " %s" % tb.tb_next.tb_lineno
     tb = tb.tb_next
+  return lineno
+
+def _exceptions_handler(e, *args, **kwargs):
+  more = True
+  #  res = f'内部错误: {e=} line: {e.__traceback__.tb_next.tb_lineno}'
+  tb = e.__traceback__
+  lineno = get_lineno(tb)
   res = f'内部错误: {e=} line: {lineno}'
   try:
     #  res = f'{e=} line: {e.__traceback__.tb_next.tb_next.tb_lineno}'
