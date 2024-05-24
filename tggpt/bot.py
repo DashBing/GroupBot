@@ -1543,18 +1543,19 @@ async def get_title(url):
     res = await asyncio.to_thread(reader.title, url)
   except TypeError as e:
     res=f"{e=}"
-    logger.info(res)
+    #  logger.info(res)
+    warn(res)
     #  prof.cons_show(res)
   #  except urltitle.urltitle.URLTitleError as e:
   except URLTitleError as e:
     res=f"URLTitleError: {e=}"
     #  prof.cons_show(res)
-    logger.info(res)
+    warn(res)
   except Exception as e:
-    logger.warning(f"E: {e=}", exc_info=True, stack_info=True)
+    #  logger.warning(f"E: {e=}", exc_info=True, stack_info=True)
     res=f"{e=}"
     #  prof.cons_show(res)
-    logger.info(res)
+    warn(res)
   return res
 
 
