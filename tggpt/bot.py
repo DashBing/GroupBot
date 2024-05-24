@@ -1514,7 +1514,7 @@ urltitle_config.MAX_REQUEST_SIZES = 8
 urltitle_config.MAX_REQUEST_ATTEMPTS = 2
 
 urltitle_config.DEFAULT_REQUEST_SIZE = 1024 ** 2
-urltitle_config.MAX_REQUEST_SIZES['html'] = 1024 ** 2 * 5
+urltitle_config.MAX_REQUEST_SIZES.update({ 'html': 1024 ** 2 * 5 })
 
 # Titles for HTML content
 reader = URLTitleReader(verify_ssl=True)
