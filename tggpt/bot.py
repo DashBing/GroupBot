@@ -24,6 +24,7 @@ import zstandard
 
 from  urltitle.urltitle import URLTitleError
 from urltitle import URLTitleReader
+from urltitle import config as urltitle_config
 
 from aiohttp import FormData
 from aiohttp.client_exceptions import ClientPayloadError
@@ -1508,13 +1509,23 @@ async def save_data():
 
 
 
-
 # Titles for HTML content
 reader = URLTitleReader(verify_ssl=True)
+
+EXTRA_HEADERS = {
+    #  "Accept": "*/*",
+    #  "Accept-Language": "en-US,en;q=0.5",
+    "Accept-Language": "zh-CN,zh-TW;q=0.9,zh;q=0.8,en-US;q=0.7,en;q=0.6",
+}
 
 async def get_title(url):
   try:
     #  res = reader.title(url)
+    netloc = reader.netloc(url)
+    if netloc not in urltitle_config.NETLOC_OVERRIDES:
+      urltitle_config.NETLOC_OVERRIDES[netloc] = {"extra_headers": {}}
+    EXTRA_CONFIG_HEADERS = urltitle_config.NETLOC_OVERRIDES[netloc]["extra_headers"]
+    EXTRA_CONFIG_HEADERS.update(EXTRA_HEADERS)
     res = await asyncio.to_thread(reader.title, url)
   except TypeError as e:
     res=f"{e=}"
@@ -1522,7 +1533,7 @@ async def get_title(url):
     #  prof.cons_show(res)
   #  except urltitle.urltitle.URLTitleError as e:
   except URLTitleError as e:
-    res=f"{e=}"
+    res=f"URLTitleError: {e=}"
     #  prof.cons_show(res)
     logger.info(res)
   except Exception as e:
