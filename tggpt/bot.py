@@ -1524,6 +1524,8 @@ async def get_title(url):
     netloc = reader.netloc(url)
     if netloc not in urltitle_config.NETLOC_OVERRIDES:
       urltitle_config.NETLOC_OVERRIDES[netloc] = {"extra_headers": {}}
+    elif "extra_headers" not in urltitle_config.NETLOC_OVERRIDES[netloc]:
+      urltitle_config.NETLOC_OVERRIDES[netloc]["extra_headers"] = {}
     EXTRA_CONFIG_HEADERS = urltitle_config.NETLOC_OVERRIDES[netloc]["extra_headers"]
     EXTRA_CONFIG_HEADERS.update(EXTRA_HEADERS)
     res = await asyncio.to_thread(reader.title, url)
