@@ -1509,13 +1509,20 @@ async def save_data():
 
 
 
+
+urltitle_config.MAX_REQUEST_SIZES = 8
+urltitle_config.MAX_REQUEST_ATTEMPTS = 2
+
+urltitle_config.DEFAULT_REQUEST_SIZE = 1024 ** 2
+urltitle_config.MAX_REQUEST_SIZES['html'] = 1024 ** 2 * 5
+
 # Titles for HTML content
 reader = URLTitleReader(verify_ssl=True)
 
 EXTRA_HEADERS = {
     #  "Accept": "*/*",
-    "Accept-Language": "en-US,en;q=0.5",
-    #  "Accept-Language": "zh-CN,zh-TW;q=0.9,zh;q=0.8,en-US;q=0.7,en;q=0.6",
+    #  "Accept-Language": "en-US,en;q=0.5",
+    "Accept-Language": "zh-CN,zh-TW;q=0.9,zh;q=0.8,en-US;q=0.7,en;q=0.6",
 }
 
 async def get_title(url):
