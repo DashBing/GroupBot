@@ -204,8 +204,6 @@ def info(text):
   text = f"{lineno}: {text}"
   logger.info(text)
 
-def dbg(text):
-  logger.debug(text)
 
 def log(text):
   if type(text) is not str:
@@ -217,6 +215,9 @@ def log(text):
   text = f"{lineno}: {text}"
   send_log(text)
   logger.warning(text)
+
+def dbg(text):
+  logger.debug(text)
 
 def get_cmd(text):
   if text.endswith(": "):
@@ -424,17 +425,21 @@ def exceptions_handler(func):
 
 
 def get_lineno(tb):
-  lineno = "%s" % tb.tb_lineno
-  while tb.tb_next is not None:
-    lineno += " %s" % tb.tb_next.tb_lineno
-    tb = tb.tb_next
+  lineno = "%s" % tb.f_lineno
+  while tb.f_back is not None:
+    lineno += " %s" % tb.f_back.f_lineno
+    tb = tb.f_back
   return lineno
 
 def _exceptions_handler(e, *args, **kwargs):
   more = True
   #  res = f'内部错误: {e=} line: {e.__traceback__.tb_next.tb_lineno}'
   tb = e.__traceback__
-  lineno = get_lineno(tb)
+  #  lineno = get_lineno2(tb)
+  lineno = "%s" % tb.tb_lineno
+  while tb.tb_next is not None:
+    lineno += " %s" % tb.tb_next.tb_lineno
+    tb = tb.tb_next
   res = f'内部错误: {e=} line: {lineno}'
   try:
     #  res = f'{e=} line: {e.__traceback__.tb_next.tb_next.tb_lineno}'
