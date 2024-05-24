@@ -58,7 +58,11 @@ link_to_file() {
   # local curl_res=$(curl -L -m 8 --max-filesize $MAX_SHARE_FILE_SIZE -s -o "$fn" -w '%{http_code}'  "$URL") || error=$?
     local curl_res=$(curl -L -m 8 --max-filesize $MAX_SHARE_FILE_SIZE -s -o "$fn" -w '%{http_code}' -H "Accept-Language: zh-CN,zh-TW;q=0.9,zh;q=0.8,en-US;q=0.7,en;q=0.6" "$URL" -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' ) || error=$?
     # [[ "$curl_res" != "200" ]] && curl_res=$(curl -L -m 8 --max-filesize $MAX_SHARE_FILE_SIZE -s -o "$fn" -w '%{http_code}'  "$URL" -A 'Mozilla/5.0 (Linux; Android 11; KB2000) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.56 Mobile Safari/537.36' )
-    [[ "$curl_res" != "200" ]] && local curl_res=$(curl -L -m 8 --max-filesize $MAX_SHARE_FILE_SIZE -s -o "$fn" -w '%{http_code}' -H "Accept-Language: zh-CN,zh-TW;q=0.9,zh;q=0.8,en-US;q=0.7,en;q=0.6" "$URL") || error=$?
+    [[ "$curl_res" != "200" ]] && {
+      unset http_proxy
+      unset https_proxy
+      local curl_res=$(curl -L -m 8 --max-filesize $MAX_SHARE_FILE_SIZE -s -o "$fn" -w '%{http_code}' -H "Accept-Language: zh-CN,zh-TW;q=0.9,zh;q=0.8,en-US;q=0.7,en;q=0.6" "$URL") || error=$?
+    }
 
   if [[ "$curl_res" == "200" ]]; then
     if [[ -e "$fn" ]]; then

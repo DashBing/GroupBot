@@ -1514,11 +1514,12 @@ urltitle_config.MAX_REQUEST_SIZES = 8
 urltitle_config.MAX_REQUEST_ATTEMPTS = 2
 
 urltitle_config.DEFAULT_REQUEST_SIZE = 1024 ** 2
-MiB = 1024 ** 2
-urltitle_config.MAX_REQUEST_SIZES = {"html": MiB, "ipynb": 8 * MiB, "pdf": 8 * MiB}  # Title observed toward the bottom.
-print(urltitle_config)
-print(urltitle_config.MAX_REQUEST_SIZES)
-urltitle_config.MAX_REQUEST_SIZES.update({ 'html': 1024 ** 2 * 5 })
+
+#  MiB = 1024 ** 2
+#  urltitle_config.MAX_REQUEST_SIZES = {"html": MiB, "ipynb": 8 * MiB, "pdf": 8 * MiB}  # Title observed toward the bottom.
+#  #  print(urltitle_config)
+#  #  print(urltitle_config.MAX_REQUEST_SIZES)
+#  urltitle_config.MAX_REQUEST_SIZES.update({ 'html': 1024 ** 2 * 5 })
 
 # Titles for HTML content
 reader = URLTitleReader(verify_ssl=True)
