@@ -3343,8 +3343,12 @@ async def parse_xmpp_msg(msg):
                 #  j = [room.me.nick, room.me.affiliation, room.me.role]
                 j = [rnick, item.affiliation, item.role]
                 jids[jid] = j
-              if room.me.role != 'moderator':
-                err(f"没有管理权限: {muc} {item.affiliation} {item.role}")
+              if item.role == 'moderator':
+                pass
+              elif room.me is not None and room.me.role == 'moderator':
+                pass
+              else:
+                err(f"没有管理权限: {muc} {rnick} {item.affiliation} {item.role} {room.me}")
               #  else:
               #    info(f"已存在nick记录: {jids[jid]}")
               continue
