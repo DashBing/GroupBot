@@ -2599,9 +2599,9 @@ async def download_media(msg, src='gateway1', path=f"{DOWNLOAD_PATH}/", in_memor
         #  if music_bot_state[src] != 3:
         #    await send("取消：{}".format(now, res), src, correct=True)
         #    break
-        if now > 120:
-          send_log("下载超时: {res}")
-          break
+        #  if now > 300:
+        #    send_log("下载超时: {res}")
+        #    break
         if len(last_time) == 2:
           await send("执行中({:.0f}s)：{}".format(now, res), src, correct=True)
         else:
@@ -2615,17 +2615,23 @@ async def download_media(msg, src='gateway1', path=f"{DOWNLOAD_PATH}/", in_memor
           last_current = current
 
     t = asyncio.create_task(update_tmp_msg())
+    res = None
     try:
-      path = await asyncio.wait_for(msg.download_media(path, progress_callback=download_media_callback), timeout=120)
-      t.cancel()
+      path = await asyncio.wait_for(msg.download_media(path, progress_callback=download_media_callback), timeout=300)
     except TimeoutError as e:
-      path = f"{res}\n下载失败(超时): {path} {e=}"
+      path = None
+      res = f"{res} 下载失败(超时): {e=}"
+      return
+    if not t.done():
+      t.cancel()
+
     if path:
       return path
     else:
-      warn(f"{res}\n下载失败: {path}")
-      #  await mt_send(f"下载失败: {path}", gateway=gateway)
-      await send(f"{res}\n下载失败: {path}", src)
+      if res is None:
+        res = f"{res} 下载失败: {path}"
+      await send(res, src)
+      warn(res)
 
 def get_buttons(bs):
   tmp = []
@@ -2810,14 +2816,14 @@ async def parse_tg_msg(event):
         #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
       #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
         path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
-      res = f"{mtmsgs[qid][0]}{path}\n{text}"
-      if msg.buttons:
-        for i in get_buttons(msg.buttons):
-          #  if isinstance(i, KeyboardButtonUrl):
-          if isinstance(i.button, KeyboardButtonUrl):
-            res += f"\n原始链接: {i.url}"
-      #  await mt_send_for_long_text(res, gateway)
-      await send(res, src)
+        res = f"{mtmsgs[qid][0]}{path}\n{text}"
+        if msg.buttons:
+          for i in get_buttons(msg.buttons):
+            #  if isinstance(i, KeyboardButtonUrl):
+            if isinstance(i.button, KeyboardButtonUrl):
+              res += f"\n原始链接: {i.url}"
+        #  await mt_send_for_long_text(res, gateway)
+        await send(res, src)
       if music_bot_state[src] == 3:
         music_bot_state[src] = 2
     else:
@@ -4522,12 +4528,14 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
           logger.info(f"已找到：{text}")
           await i.click()
           i = True
+          await send(f"命中：{text}", src, correct=True)
           break
 
     if i is True:
       music_bot_state[src] += 1
     else:
       logger.info(f"没找到：{text}")
+      await send(f"没找到：{text}", src)
     return
   else:
     # tilebot
