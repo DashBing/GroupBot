@@ -4336,7 +4336,6 @@ async def add_cmd():
   async def _(cmds, src):
     if len(cmds) == 1:
       return f"查询xmpp端口\n.{cmds[0]} $domain"
-    text = cmds[1]
     res = await node.discover_connectors(cmds[1])
     return f"可用的xmpp端口: {cmds[1]} {res}"
   cmd_funs["xmpp"] = _
