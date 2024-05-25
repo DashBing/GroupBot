@@ -1759,6 +1759,10 @@ async def _send(*args, **kwargs):
 @exceptions_handler
 async def __send(msg, client=None, room=None, name=None, correct=False, fromname=None, nick=None, delay=None):
   #  info(f"{msg}")
+  muc = str(msg.to.bare())
+  if muc not in rooms:
+    return False
+
   jid = str(msg.to)
   if jid not in send_locks:
     send_locks[jid] = asyncio.Lock()
@@ -1776,51 +1780,50 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
       # https://stackoverflow.com/questions/69778194/how-can-i-check-whether-a-unicode-codepoint-is-assigned-or-not
       if nick is not None:
       #  if None:
-        muc = str(msg.to.bare())
         room = rooms[muc]
         #  if muc in rooms:
-        if room is not None:
-          #  await set_nick(room, fromname)
-          nick = wtf_str(nick)
-          #  nick_old = room.me.nick
+        #  if room is not None:
+        #  await set_nick(room, fromname)
+        nick = wtf_str(nick)
+        #  nick_old = room.me.nick
 
-          jids = users[muc]
-          if myjid in jids:
-            nick_old = jids[myjid][0]
+        jids = users[muc]
+        if myjid in jids:
+          nick_old = jids[myjid][0]
+        else:
+          nick_old = room.me.nick
+          jids[myjid] = [nick_old, room.me.affiliation, room.me.role]
+          err(f"不存在nick记录，已添加: {muc} {myjid} {msg} {jids[jid]}")
+        if nick_old != nick:
+          fu = asyncio.Future()
+          #  jid = str(room.me.direct_jid)
+          on_nick_changed_futures[muc] = fu
+          try:
+            await room.set_nick(nick)
+          except ValueError as e:
+            jids[myjid][0] = nick
+            warn(f"改名失败, 不支持特殊字符: {nick=} {e=}")
           else:
-            nick_old = room.me.nick
-            jids[myjid] = [nick_old, room.me.affiliation, room.me.role]
-            err(f"不存在nick记录，已添加: {muc} {myjid} {msg} {jids[jid]}")
-          if nick_old != nick:
-            fu = asyncio.Future()
-            #  jid = str(room.me.direct_jid)
-            on_nick_changed_futures[muc] = fu
+            #  await fu
             try:
-              await room.set_nick(nick)
-            except ValueError as e:
+              #  await asyncio.wait_for(await asyncio.shield(fu), timeout=8)
+              await asyncio.wait_for(fu, timeout=5)
+            #  except Exception as e:
+            except TimeoutError as e:
+              on_nick_changed_futures.pop(muc)
               jids[myjid][0] = nick
-              warn(f"改名失败, 不支持特殊字符: {nick=} {e=}")
+              info(f"改名失败(超时)：{muc} {nick_old} -> {nick} {e=}")
             else:
-              #  await fu
-              try:
-                #  await asyncio.wait_for(await asyncio.shield(fu), timeout=8)
-                await asyncio.wait_for(fu, timeout=5)
-              #  except Exception as e:
-              except TimeoutError as e:
-                on_nick_changed_futures.pop(muc)
-                jids[myjid][0] = nick
-                info(f"改名失败(超时)：{muc} {nick_old} -> {nick} {e=}")
-              else:
-                on_nick_changed_futures.pop(muc)
-                jids[myjid][0] = fu.result()
-                if fu.result() != nick:
-                  info(f"改名结果有问题: {muc} {fu.result()=} != {nick=}")
-                #  else:
-                #    logger.info(f"set nick: {muc} {nick_old} -> {nick}")
+              on_nick_changed_futures.pop(muc)
+              jids[myjid][0] = fu.result()
+              if fu.result() != nick:
+                info(f"改名结果有问题: {muc} {fu.result()=} != {nick=}")
               #  else:
-              #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
-              #  else:
-              #    logger.info(f"not found room: {msg.to}")
+              #    logger.info(f"set nick: {muc} {nick_old} -> {nick}")
+            #  else:
+            #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
+            #  else:
+            #    logger.info(f"not found room: {msg.to}")
         else:
           await send(f"fixme: not found room: {muc}")
           #  return False
@@ -1935,8 +1938,6 @@ async def send(text, jid=None, *args, **kwargs):
     #  info(f"准备发送同步消息到: {get_mucs(muc)} {text=} {text0=}")
     ms = get_mucs(muc)
     for m in ms:
-      if m not in rooms:
-        continue
       if await send1(text, jid=m, *args, **kwargs):
         if isinstance(text, aioxmpp.Message):
           text = text.body[None]
@@ -4965,9 +4966,8 @@ async def join(jid=None, nick=None, client=None):
 
           await fut
           logger.info(f"进群成功: {myid} {jid}")
-        else:
-          pass
-        rooms[jid] = room
+        if room is not None:
+          rooms[jid] = room
         room.on_muc_role_request.connect(on_muc_role_request)
         room.on_nick_changed.connect(on_nick_changed)
         return room
