@@ -1935,6 +1935,8 @@ async def send(text, jid=None, *args, **kwargs):
     #  info(f"准备发送同步消息到: {get_mucs(muc)} {text=} {text0=}")
     ms = get_mucs(muc)
     for m in ms:
+      if m not in rooms:
+        continue
       if await send1(text, jid=m, *args, **kwargs):
         if isinstance(text, aioxmpp.Message):
           text = text.body[None]
