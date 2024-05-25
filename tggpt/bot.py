@@ -1466,7 +1466,7 @@ async def load_config():
     for muc in my_groups:
       if muc not in users:
         users[muc] = {}
-      rooms[muc] = None
+      #  rooms[muc] = None
 
     for muc in users:
       #  if muc not in public_groups:
@@ -3597,7 +3597,10 @@ async def parse_xmpp_msg(msg):
       #  print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
       return
     if muc not in rooms:
-      err("not found room: {muc}")
+      if muc != log_group_private:
+        err(f"not found room: {muc}")
+      else:
+        logger.error(f"not found room: {muc}", exc_info=True, stack_info=True)
       return
     room = rooms[muc]
     existed = False
