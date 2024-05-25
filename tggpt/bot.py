@@ -2612,6 +2612,7 @@ async def download_media(msg, src='gateway1', path=f"{DOWNLOAD_PATH}/", in_memor
             break
           await send("执行中({:.0f}s)：{} {:.2%} {:.2f}/{:.2f}MB {:.1f}MB/s".format(now, res, current / total, current/1024/1024, total/1024/1024, (current-last_current)/(time.time()-last_time[0])/1024/1024), src, correct=True)
           last_time[0] = time.time()
+          last_current = current
 
     t = asyncio.create_task(update_tmp_msg())
     try:
