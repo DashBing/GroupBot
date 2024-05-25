@@ -529,14 +529,6 @@ irc.*)
 # # api.gpt)
 # #   LABLE="C"
 # #   ;;
-# api.xmpp)
-#   # LABLE="X"
-#   LABLE="0"
-#   if [[ "$(echo "$NAME" | wc -l)" -ge 2 ]]; then
-#     QT=$( echo "$NAME" | sed '/^[^>]/,$d')
-#     NAME=$( echo "$NAME" | tail -n1)
-#   fi
-#   ;;
 # api.simplex)
 #   LABLE="S"
 #   if [[ "$NAME" == "simplexbot" ]]; then
@@ -553,7 +545,6 @@ api.*)
     QT=$( echo "$NAME" | sed '/^[^>]/,$d')
     NAME=$( echo "$NAME" | tail -n1)
   fi
-  ;;
   ;;
 # mattermost.*)
 #   LABLE="m"
