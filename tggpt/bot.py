@@ -2577,27 +2577,54 @@ async def download_media(msg, src='gateway1', path=f"{DOWNLOAD_PATH}/", in_memor
 
     # Printing download progress
     def download_media_callback(current, total):
+      #  last_time[0] = time.time()
+      last_time[1] = current
+      if len(last_time) == 2:
+        last_time.append(total)
       #  print('Downloaded', current, 'out of', total,
       #    'bytes: {:.2%}'.format(current / total))
       #  if time.time() - last_time[src] > interval:
-      if time.time() - last_time[0] > interval:
-        #  await mt_send("{:.2%} %s/%s".format(current / total, current, total), gateway=gateway)
-        #  asyncio.create_task(mt_send("{:.2%} {}/{} bytes".format(current / total, current, total), gateway=gateway))
-        asyncio.create_task(send("{} {:.2%} {:.2f}/{:.2f}MB {:.1f}MB/s".format(res, current / total, current/1024/1024, total/1024/1024, (current-last_time[1])/(time.time()-last_time[0])/1024/1024), src, correct=True))
-        #  last_time[src] = time.time()
-        last_time[0] = time.time()
-        last_time[1] = current
+      #  if time.time() - last_time[0] > interval:
+      #    #  await mt_send("{:.2%} %s/%s".format(current / total, current, total), gateway=gateway)
+      #    #  asyncio.create_task(mt_send("{:.2%} {}/{} bytes".format(current / total, current, total), gateway=gateway))
+      #    asyncio.create_task(send("{} {:.2%} {:.2f}/{:.2f}MB {:.1f}MB/s".format(res, current / total, current/1024/1024, total/1024/1024, (current-last_time[1])/(time.time()-last_time[0])/1024/1024), src, correct=True))
+      #    #  last_time[src] = time.time()
 
-    path = await msg.download_media(path, progress_callback=download_media_callback)
+    async def update_tmp_msg():
+      start_time = last_time[0]
+      last_current = 0
+      while True:
+        await asyncio.sleep(interval)
+        now = time.time()-start_time
+        #  if music_bot_state[src] != 3:
+        #    await send("取消：{}".format(now, res), src, correct=True)
+        #    break
+        if now > 120:
+          send_log("下载超时: {res}")
+          break
+        if len(last_time) == 2:
+          await send("执行中({:.0f}s)：{}".format(now, res), src, correct=True)
+        else:
+          current = last_time[1]
+          total = last_time[2]
+          if current == total:
+            info("下载完成：{res}")
+            break
+          await send("执行中({:.0f}s)：{} {:.2%} {:.2f}/{:.2f}MB {:.1f}MB/s".format(now, res, current / total, current/1024/1024, total/1024/1024, (current-last_current)/(time.time()-last_time[0])/1024/1024), src, correct=True)
+          last_time[0] = time.time()
+
+    t = asyncio.create_task(update_tmp_msg())
+    try:
+      path = await asyncio.wait_for(msg.download_media(path, progress_callback=download_media_callback), timeout=120)
+      t.cancel()
+    except TimeoutError as e:
+      path = f"{res}\n下载失败(超时): {path} {e=}"
     if path:
       return path
     else:
       warn(f"{res}\n下载失败: {path}")
       #  await mt_send(f"下载失败: {path}", gateway=gateway)
       await send(f"{res}\n下载失败: {path}", src)
-
-
-
 
 def get_buttons(bs):
   tmp = []
@@ -2776,6 +2803,7 @@ async def parse_tg_msg(event):
       mtmsgs.pop(qid)
       return
     elif msg.file and music_bot_state[src] == 3:
+      info(f"download... {text}")
       path = await download_media(msg, src)
       if path is not None:
         #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
@@ -2790,7 +2818,7 @@ async def parse_tg_msg(event):
       #  await mt_send_for_long_text(res, gateway)
       await send(res, src)
       if music_bot_state[src] == 3:
-        music_bot_state[src] -= 1
+        music_bot_state[src] = 2
     else:
       warn(f"未知状态，已忽略: music bot: {gid_src=} {music_bot_state[src]}\nmsg:\n{msg.stringify()}")
       return
@@ -4594,7 +4622,7 @@ async def login(client=None):
 
     await regisger_handler(client)
 
-  except TimeoutError as e:
+  except TimeoutError:
     warn(f"登录失败(超时)：{jid}, {e=}")
     await stop(client)
     return False
