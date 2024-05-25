@@ -1761,6 +1761,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
   #  info(f"{msg}")
   muc = str(msg.to.bare())
   if muc not in rooms:
+    info(f"not found room: {muc}")
     return False
 
   jid = str(msg.to)
@@ -1824,9 +1825,6 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
             #    logger.info(f"same nick: {str(msg.to.bare())} {room.me.nick} = {nick}")
             #  else:
             #    logger.info(f"not found room: {msg.to}")
-        else:
-          await send(f"fixme: not found room: {muc}")
-          #  return False
 
     text = None
     for i in msg.body:
