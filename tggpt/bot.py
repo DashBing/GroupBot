@@ -4861,6 +4861,50 @@ def on_muc_role_request(form, submission_future):
 rooms = {}
 auto_input = False
 
+async def join_all():
+  tasks = set()
+  groups = my_groups.copy()
+  tmp = []
+  while True:
+    #  await join(test_group)
+    #  break
+    #  tmp = []
+    #  for i in ms:
+    #    if await join(i):
+    #      continue
+    #    tmp.append(i)
+    #  if tmp:
+    #    logger.info(f"无法进入的群组: {tmp}")
+    #    #  await mt_send_for_long_text(f"无法进入的群组: {tmp}")
+    #    ms = tmp
+    #    await asyncio.sleep(5)
+    #  else:
+    #    break
+
+    how_long = int(time.time()-start_time)
+    if len(tasks) < (how_long-1)*4 if how_long > 2 else 4:
+      if groups:
+        muc = groups.pop()
+        t = asyncio.create_task(join(muc), name=muc)
+        tasks.add(t)
+        continue
+      if len(tasks) == 0:
+        break
+    logger.info(f"等待任务队列: {len(tasks)}/{len(groups)}")
+    done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+    for i in done:
+      #  if i.result() is False:
+      if i.result():
+        pass
+      else:
+        #  groups.add(i.get_name())
+        tmp.append(i.get_name())
+        warn(f"进群失败一次: {i.result()} {i.get_name()} {len(tasks)}/{len(groups)}")
+  if tmp:
+    send_log("进群失败：\n%s" % "\n".join(tmp))
+  return True
+
+
 @exceptions_handler
 async def join(jid=None, nick=None, client=None):
   if jid is None:
@@ -4922,7 +4966,13 @@ async def join(jid=None, nick=None, client=None):
         warn(f"进群超时(废弃){sum_try}: {myid} {jid} {nick} {e=}")
       except errors.XMPPCancelError as e:
         # XMPPCancelError("{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')")
-        if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')" or e.args[0].startswith("{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found"):
+        if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: connection refused')":
+          logger.info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
+          return False
+        if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')":
+          logger.info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
+          return False
+        if e.args[0].startswith("{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found"):
           logger.info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
           return False
         elif e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}conflict ('That nickname is already in use by another occupant')" or e.args[0] == '{urn:ietf:params:xml:ns:xmpp-stanzas}conflict' or '{urn:ietf:params:xml:ns:xmpp-stanzas}conflict' in e.args[0]:
@@ -4989,46 +5039,10 @@ async def xmppbot():
     await t
     logger.info(f"join all groups...\n%s" % my_groups)
     #  await join()
-    global mucsv
+    #  global mucsv
     #  mucsv = client.summon(aioxmpp.MUCClient)
-    ms = my_groups
     #  for coro in asyncio.as_completed(map(join, my_groups),
-    tasks = set()
-    groups = my_groups.copy()
-    while True:
-      #  await join(test_group)
-      #  break
-      #  tmp = []
-      #  for i in ms:
-      #    if await join(i):
-      #      continue
-      #    tmp.append(i)
-      #  if tmp:
-      #    logger.info(f"无法进入的群组: {tmp}")
-      #    #  await mt_send_for_long_text(f"无法进入的群组: {tmp}")
-      #    ms = tmp
-      #    await asyncio.sleep(5)
-      #  else:
-      #    break
-
-      how_long = int(time.time()-start_time)
-      if len(tasks) < (how_long-1)*4 if how_long > 2 else 4:
-        if groups:
-          muc = groups.pop()
-          t = asyncio.create_task(join(muc), name=muc)
-          tasks.add(t)
-          continue
-        if len(tasks) == 0:
-          break
-      logger.info(f"等待任务队列: {len(tasks)}/{len(groups)}")
-      done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
-      for i in done:
-        #  if i.result() is False:
-        if i.result():
-          pass
-        else:
-          groups.add(i.get_name())
-          warn(f"进群失败一次: {i.result()} {i.get_name()} {len(tasks)}/{len(groups)}")
+    await join_all()
 
   global allright_task
   allright_task -= 1
