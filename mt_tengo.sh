@@ -516,27 +516,27 @@ irc.*)
 # api.in)
 #   LABLE="0"
 #   ;;
-api.cmd)
-  LABLE="0"
-  ;;
-api.cmdres)
-  LABLE="0"
-  if [[ "$(echo "$NAME" | wc -l)" -ge 2 ]]; then
-    QT=$( echo "$NAME" | sed '/^[^>]/,$!d')
-    NAME=$( echo "$NAME" | tail -n1)
-  fi
-  ;;
-api.gpt)
-  LABLE="C"
-  ;;
-api.xmpp)
-  # LABLE="X"
-  LABLE="0"
-  if [[ "$(echo "$NAME" | wc -l)" -ge 2 ]]; then
-    QT=$( echo "$NAME" | sed '/^[^>]/,$!d')
-    NAME=$( echo "$NAME" | tail -n1)
-  fi
-  ;;
+# api.cmd)
+#   LABLE="0"
+#   ;;
+# api.cmdres)
+#   LABLE="0"
+#   if [[ "$(echo "$NAME" | wc -l)" -ge 2 ]]; then
+#     QT=$( echo "$NAME" | sed '/^[^>]/,$d')
+#     NAME=$( echo "$NAME" | tail -n1)
+#   fi
+#   ;;
+# # api.gpt)
+# #   LABLE="C"
+# #   ;;
+# api.xmpp)
+#   # LABLE="X"
+#   LABLE="0"
+#   if [[ "$(echo "$NAME" | wc -l)" -ge 2 ]]; then
+#     QT=$( echo "$NAME" | sed '/^[^>]/,$d')
+#     NAME=$( echo "$NAME" | tail -n1)
+#   fi
+#   ;;
 # api.simplex)
 #   LABLE="S"
 #   if [[ "$NAME" == "simplexbot" ]]; then
@@ -547,7 +547,13 @@ api.xmpp)
 #   LABLE="G"
 #   ;;
 api.*)
-  LABLE="A"
+  # LABLE="A"
+  LABLE="0"
+  if [[ "$(echo "$NAME" | wc -l)" -ge 2 ]]; then
+    QT=$( echo "$NAME" | sed '/^[^>]/,$d')
+    NAME=$( echo "$NAME" | tail -n1)
+  fi
+  ;;
   ;;
 # mattermost.*)
 #   LABLE="m"
@@ -562,7 +568,7 @@ if [[ "$(echo "$QT" | head -n1 | grep -c -G "^> >" )" -eq 1 ]]; then
 fi
 
 # if [[ "$(echo "$QT" | tail -n1 | grep -c -G "^$" )" -eq 1 ]]; then
-if echo "$QT" | tail -n1 | grep -q -G "^$"; then
+if echo "$QT" | tail -n 1 | grep -q -G "^$"; then
   QT=$( echo "$QT" | sed '$d')
 fi
 
@@ -864,28 +870,28 @@ $M *$NAME*: "
     fi
     newline
     ;;
-  api.cmd)
-    if [[ -n "$NAME" ]]; then
-      get_full_text
-      # username=$(echo "$NAME" | tail -n1)
-      username="$NAME"
-      [[ "${username:0:2}" != "C " ]] && [[ "${username: -5}" != "bot: " ]] && {
-        # QT=$(echo "$NAME" | sed -e '/^> [^>]/!d')
-        qt=$(echo "$QT" | sed -e 's/^> //')
-        if [[ -n "$qt" ]]; then
-          text="$TEXT
-
-$qt"
-        else
-          text="$TEXT"
-        fi
-        # nohup bash "$SH_PATH/cmd2.sh" "$gateway" "$username" "$text" &>/dev/null &
-        nohup bash "$SH_PATH/cmd2.sh" "${11}" "$username" "$text" &>/dev/null &
-      }
-    fi
-    block_msg
-    ;;
-  api.xmpp)
+#   api.cmd)
+#     if [[ -n "$NAME" ]]; then
+#       get_full_text
+#       # username=$(echo "$NAME" | tail -n1)
+#       username="$NAME"
+#       [[ "${username:0:2}" != "C " ]] && [[ "${username: -5}" != "bot: " ]] && {
+#         # QT=$(echo "$NAME" | sed -e '/^> [^>]/!d')
+#         qt=$(echo "$QT" | sed -e 's/^> //')
+#         if [[ -n "$qt" ]]; then
+#           text="$TEXT
+#
+# $qt"
+#         else
+#           text="$TEXT"
+#         fi
+#         # nohup bash "$SH_PATH/cmd2.sh" "$gateway" "$username" "$text" &>/dev/null &
+#         nohup bash "$SH_PATH/cmd2.sh" "${11}" "$username" "$text" &>/dev/null &
+#       }
+#     fi
+#     block_msg
+#     ;;
+  api.*)
     if [[ -n "$NAME" ]]; then
       get_full_text
       # username=$(echo "$NAME" | tail -n1)
@@ -899,9 +905,6 @@ ${NAME}"
     else
       block_msg
     fi
-    ;;
-  api.*)
-    :
     ;;
   esac
   # fi
