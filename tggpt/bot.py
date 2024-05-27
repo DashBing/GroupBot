@@ -3895,9 +3895,9 @@ def get_nick_room(cmds, src):
     else:
       muc = src
       nick = cmds[1]
-    #  if muc not in rooms:
-    #    return f"没找到room: {muc}"
-    #  room = rooms[muc]
+    if muc not in rooms:
+      return f"没找到room: {muc}"
+    room = rooms[muc]
     #  is_ok = False
     #  for i in room.members:
     #    if i.nick == nick:
