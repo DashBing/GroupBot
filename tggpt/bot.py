@@ -3349,13 +3349,16 @@ async def parse_xmpp_msg(msg):
         #  print(f"结果：{res}")
         await send("ok", msg.from_)
       else:
-        await send("not allowed", msg.from_)
+        await send("不可以", msg.from_)
     elif msg.type_ == PresenceType.AVAILABLE:
       if msg.xep0045_muc_user:
         if muc in my_groups:
           jids = users[muc]
           room = rooms[muc]
           #  item = msg.xep0045_muc_user.items[0]
+          print("---")
+          print(msg)
+          print(f"---{len(msg.xep0045_muc_user.items)}")
           for item in msg.xep0045_muc_user.items:
             if item.jid is None:
               #  pprint(msg)
@@ -3497,22 +3500,28 @@ async def parse_xmpp_msg(msg):
       #  for i in msg.xep0045_muc_user.items:
       #    pprint(i)
     elif msg.type_ == PresenceType.UNAVAILABLE:
+      print(f"离线: {msg.from_} {msg.status}")
       #  if muc in my_groups:
       #    pass
       #  else:
       #    await sendg(f"离线: {msg.from_} {msg.status}")
-      if hasattr(msg, "xep0045_muc_user"):
-        print(f"离线: {msg.from_} {msg.status} {msg.xep0045_muc_user}")
-        if msg.xep0045_muc_user is None:
-          #  if msg.xep0045_muc_user:
-          #  pprint(msg.xep0045_muc_user)
-          await sendg(f"离线: {msg.from_} {msg.status}")
-      else:
-        print(f"离线: {msg.from_} {msg.status}")
-        #  pprint(msg)
-        await sendg(f"离线n: {msg.from_} {msg.status}")
+      #  if hasattr(msg, "xep0045_muc_user"):
+      #    print(f"离线: {msg.from_} {msg.status} {msg.xep0045_muc_user}")
+      #    if msg.xep0045_muc_user is None:
+      #      #  if msg.xep0045_muc_user:
+      #      #  pprint(msg.xep0045_muc_user)
+      #      await sendg(f"离线: {msg.from_} {msg.status}")
+      #  else:
+      #    print(f"离线: {msg.from_} {msg.status}")
+      #    #  pprint(msg)
+      #    await sendg(f"离线n: {msg.from_} {msg.status}")
+      if muc in me:
+        await sendg(f"离线: {msg.from_} {msg.status} {msg.xep0045_muc_user}")
     else:
-      pprint(msg)
+      #  pprint(msg)
+      print(f"未知状态{msg.type_}: {msg.from_} {msg.status}")
+      if muc in me:
+        await sendg(f"{msg.type_}: {msg.from_} {msg.status}")
     return
 
   real_time = None
@@ -4064,22 +4073,35 @@ async def add_cmd():
       if i.nick == nick:
         res = await room.ban(i, reason)
         return f"ok: {res}"
+    return "not found"
   cmd_funs["ban"] = _
   cmd_for_admin.add('ban')
 
   async def _(cmds, src):
     if len(cmds) == 1:
-      return f"临时踢出\n.{cmds[0]} $jid/$nick"
+      return f"临时踢出\n.{cmds[0]} [-f] $jid/$nick"
+
+    option = False
+    if len(cmds) == 3:
+      option = cmds[1]
+      cmds.pop(1)
+
     res = get_nick_room(cmds, src)
     if type(res) is str:
       return res
     nick = res[0]
     room = res[1]
     reason = "cmds[0]命令"
-    for i in room.members:
-      if i.nick == nick:
-        res = await room.kick(i, reason)
-        return f"ok: {res}"
+    if option == "-f":
+      res = await room.kick(cmds[1], reason)
+      return f"ok: {res}"
+    else:
+      for i in room.members:
+        if i.nick == nick:
+          res = await room.kick(i, reason)
+          return f"ok: {res}"
+      return "not found"
+
   cmd_funs["kick"] = _
   cmd_for_admin.add('kick')
 
@@ -4142,7 +4164,6 @@ async def add_cmd():
     #  unban(muc, jid=jid)
     affiliation = "member"
     res = await room.muc_set_affiliation(jid, affiliation, reason=reason)
-
 
     res = get_nick_room(cmds, src)
     if type(res) is str:
