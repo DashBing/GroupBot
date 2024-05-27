@@ -3835,8 +3835,6 @@ async def parse_xmpp_msg(msg):
   src = msg.from_
   text = msg.body
 
-
-
 def get_jid_room(cmds, src):
   if src in my_groups or '/' in cmds[1]:
     muc = cmds[1].split('/', 1)[0]
@@ -3856,9 +3854,9 @@ def get_jid_room(cmds, src):
     #        jids[str(i.direct_jid.bare())] = [i.nick, i.affiliation, i.role]
     #      if i.nick == nick:
     #        jid = str(i.direct_jid.bare())
-    for j in jids:
-      if jids[j][0] == nick:
-        return j, room
+    for jid, j in jids.items():
+      if j[0] == nick:
+        return jid, room
     #  if jid is None:
     return f"没找到: {nick}\nmuc: {muc}"
   elif "@" in cmds[1] and src in my_groups:
@@ -4079,12 +4077,12 @@ async def add_cmd():
 
   async def _(cmds, src):
     if len(cmds) == 1:
-      return f"临时踢出\n.{cmds[0]} [-f] $jid/$nick"
+      return f"临时踢出\n.{cmds[0]} $jid/$nick"
 
-    option = False
-    if len(cmds) == 3:
-      option = cmds[1]
-      cmds.pop(1)
+    #  option = False
+    #  if len(cmds) == 3:
+    #    option = cmds[1]
+    #    cmds.pop(1)
 
     res = get_nick_room(cmds, src)
     if type(res) is str:
@@ -4092,22 +4090,27 @@ async def add_cmd():
     nick = res[0]
     room = res[1]
     reason = "cmds[0]命令"
-    if option == "-f":
-      res = await room.kick(cmds[1], reason)
-      return f"ok: {res}"
-    else:
-      for i in room.members:
-        if i.nick == nick:
-          res = await room.kick(i, reason)
-          return f"ok: {res}"
-      return "not found"
-
+    #  if option == "-f":
+    #    res = await room.kick(cmds[1], reason)
+    #    return f"ok: {res}"
+    #  else:
+    for i in room.members:
+      if i.nick == nick:
+        res = await room.kick(i, reason)
+        return f"ok: {res}"
+    return "not found"
   cmd_funs["kick"] = _
   cmd_for_admin.add('kick')
 
   async def _(cmds, src):
     if len(cmds) == 1:
-      return f"禁言\n.{cmds[0]} $jid/$nick"
+      return f"禁言\n.{cmds[0]} $jid/$nick [时间(默认300)]"
+
+    option = 300
+    if len(cmds) == 3:
+      option = int(cmds[2])
+      cmds.pop(2)
+
     res = get_nick_room(cmds, src)
     if type(res) is str:
       return res
@@ -4121,6 +4124,16 @@ async def add_cmd():
     #  else:
     #    role = "participant"
     role = "visitor"
+
+    muc = str(room.jid)
+    jids = users[muc]
+    for jid, j in jids.items():
+      if j[0] == nick:
+        #  j = jids[jid]
+        w = j[4]
+        w[0] = time.time() + option
+        break
+
     res = await room.muc_set_role(nick, role, reason=reason)
     return f"ok: {res}"
   cmd_funs["wtf"] = _
