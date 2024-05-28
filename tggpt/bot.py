@@ -1765,9 +1765,9 @@ async def _send(*args, **kwargs):
 async def __send(msg, client=None, room=None, name=None, correct=False, fromname=None, nick=None, delay=None, xmpp_only=False):
   #  info(f"{msg}")
   muc = str(msg.to.bare())
-  if muc not in rooms:
-    info(f"not found room: {muc}")
-    return False
+  #  if muc not in rooms:
+  #    info(f"not found room: {muc}")
+  #    return False
 
   jid = str(msg.to)
   if jid not in send_locks:
@@ -1775,6 +1775,11 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
   async with send_locks[jid]:
     msg.from_ = None
     if msg.type_ == MessageType.GROUPCHAT:
+
+      if room is None:
+        if muc in rooms:
+          room = rooms[muc]
+
       if nick is None:
         if fromname is None:
           if name is None:
@@ -1783,10 +1788,11 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
             nick = name
         else:
           nick = fromname
+
       # https://stackoverflow.com/questions/69778194/how-can-i-check-whether-a-unicode-codepoint-is-assigned-or-not
-      if nick is not None:
+      if room is not None and nick is not None:
       #  if None:
-        room = rooms[muc]
+        #  room = rooms[muc]
         #  if muc in rooms:
         #  if room is not None:
         #  await set_nick(room, fromname)
