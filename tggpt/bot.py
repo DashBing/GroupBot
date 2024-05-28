@@ -4669,7 +4669,10 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
             mtmsgsg[src] ={}
           mtmsgs = mtmsgsg[src]
 
+          if pid not in bridges:
+            bridges[pid] = {}
           target = bridges[pid]
+
           i = 0
           while True:
             need_delete = []
