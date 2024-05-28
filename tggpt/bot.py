@@ -1143,7 +1143,7 @@ async def my_popen(cmd,
             logger.info(f"临时输出: {tmp}")
             #  msg = await cmd_answer(tmp, client, msg, **args)
             #  logger.info(f"临时输出: {tmp}")
-            await send(tmp, src, correct=True)
+            await send(tmp, src, xmpp_only=True, correct=True)
             tmp_last = tmp
           except Exception as e:
             #  logger.error(f"can not send tmp: {e=}")
@@ -1897,7 +1897,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
 
 
 @exceptions_handler
-async def send(text, jid=None, *args, **kwargs):
+async def send(text, jid=None, xmpp_only=False, *args, **kwargs):
   muc = None
   if 'name' in kwargs:
     name = kwargs["name"]
@@ -1910,10 +1910,10 @@ async def send(text, jid=None, *args, **kwargs):
   else:
     kwargs["name"] = None
     nick = name
-  if 'correct' in kwargs:
-    correct = kwargs["correct"]
-  else:
-    correct = False
+  #  if 'correct' in kwargs:
+  #    correct = kwargs["correct"]
+  #  else:
+  #    correct = False
 
   if jid is None:
     if isinstance(text, aioxmpp.Message):
@@ -1953,7 +1953,7 @@ async def send(text, jid=None, *args, **kwargs):
           #  text.body = body
         continue
       return False
-    if correct is False:
+    if xmpp_only is False:
       if main_group in ms:
         await mt_send_for_long_text(text0, name=nick)
     return True
@@ -2579,7 +2579,7 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
     #  await mt_send(f"{res} 下载中...", gateway=gateway)
     res = f"{res} 下载中..."
     if src:
-      await send(res, src, correct=True)
+      await send(res, src, xmpp_only=True, correct=True)
     #  last_time[src] = time.time()
     last_time = [time.time(), 0]
 
@@ -2611,14 +2611,14 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
         #    send_log("下载超时: {res}")
         #    break
         if len(last_time) == 2:
-          await send("执行中({:.0f}s)：{}".format(now, res), src, correct=True)
+          await send("执行中({:.0f}s)：{}".format(now, res), src, xmpp_only=True, correct=True)
         else:
           current = last_time[1]
           total = last_time[2]
           if current == total:
             info("下载完成：{res}")
             break
-          await send("执行中({:.0f}s)：{} {:.2%} {:.2f}/{:.2f}MB {:.1f}MB/s".format(now, res, current / total, current/1024/1024, total/1024/1024, (current-last_current)/(time.time()-last_time[0])/1024/1024), src, correct=True)
+          await send("执行中({:.0f}s)：{} {:.2%} {:.2f}/{:.2f}MB {:.1f}MB/s".format(now, res, current / total, current/1024/1024, total/1024/1024, (current-last_current)/(time.time()-last_time[0])/1024/1024), src, xmpp_only=True, correct=True)
           last_time[0] = time.time()
           last_current = current
 
