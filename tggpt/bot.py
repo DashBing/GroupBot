@@ -2291,7 +2291,7 @@ async def mt2tg(msg):
 
 
 async def send_to_tg_bot(text, chat_id, src=None):
-  chat = await get_entity(chat_id)
+  chat = await get_entity(chat_id, True)
   msg = await UB.send_message(chat, text)
   gid_src[msg.id] = src
   if src not in mtmsgsg:
@@ -2643,7 +2643,7 @@ def get_buttons(bs):
       tmp.append(i)
   return tmp
 
-async def get_entity(chat_id):
+async def get_entity(chat_id, id_only=False):
   #  if isinstance(peer, PeerUser):
   #    #  logger.info(f"PeerUser: {peer}")
   #    peer = await UB.get_input_entity(peer)
@@ -2661,14 +2661,22 @@ async def get_entity(chat_id):
     #  chat_id = get_addr(chat_id)
     if type(chat_id) is int:
       peer = await UB.get_input_entity(chat_id)
-    elif url.startswith("https://t.me/"):
-      peer = url.rsplit('/',1)[1]
-    elif url.startswith("@"):
-      peer = url[1:]
+      if id_only:
+        return peer
+    elif type(chat_id) is str:
+      if url.startswith("https://t.me/"):
+        peer = url.rsplit('/',1)[1]
+      elif url.startswith("@"):
+        peer = url[1:]
+      else:
+        peer = url
     else:
       return False
     if peer:
-      entity = await UB.get_entity(peer)
+      if id_only:
+        entity = await UB.get_input_entity(peer)
+      else:
+        entity = await UB.get_entity(peer)
       if entity:
         return entity
   except Exception as e:
@@ -2741,15 +2749,16 @@ music_bot_state = {}
 @exceptions_handler
 async def parse_tg_msg(event):
   msg = event.message
+  chat_id = event.chat_id
   
   #  if event.chat_id not in id2gateway:
   #    #  print("W: skip: got a unknown: chat_id: %s\nmsg: %s" % (event.chat_id, msg.stringify()))
   #    return
   #  if event.chat_id in id2gateway:
-  if event.chat_id == gpt_bot:
+  if chat_id == gpt_bot:
     pass
 
-  elif event.chat_id == music_bot:
+  elif chat_id == music_bot:
     #  print("I: music bot: chat_id: %s\nmsg: %s" % (event.chat_id, msg.stringify()))
     if msg.is_reply:
       pass
@@ -2851,13 +2860,27 @@ async def parse_tg_msg(event):
     #  print("N: skip: %s != %s" % (event.chat_id, gpt_bot))
   else:
     #  print("W: skip unknown chat_id: %s %s" % (event.chat_id, msg.text[:64]))
+    if chat_id in bridges:
+      target = bridges[chat_id]
+      if type(target) is dict:
+        gid = msg.id
+        #  res, nick, delay = await print_tg_msg(event)
+        if gid-1 in target:
+          #  if msg.edit_date is None:
+          #    target[gid] = target[gid-1]
+          #    target.pop(gid-1)
+          #  await send(msg.text, jid=target[gid-1], name=f"**{nick}:** ", nick=nick, correct=True)
+          await send(msg.text, jid=target[gid-1], correct=True)
+
+      else:
+        res, nick, delay = await print_tg_msg(event)
+        logger.info(f"转发桥接消息: {event.chat_id} -> {bridges[event.chat_id]}: {msg.text}")
+        await send(msg.text, jid=target, name=f"**{nick}:** ", nick=nick, delay=delay)
+      #  elif event.is_private:
+      #    pass
+  else:
     res, nick, delay = await print_tg_msg(event)
-    if event.chat_id in bridges:
-      logger.info(f"转发桥接消息: {event.chat_id} -> {bridges[event.chat_id]}: {msg.text}")
-      await send(msg.text, jid=bridges[event.chat_id], name=f"**{nick}:** ", nick=nick, delay=delay)
-    #  elif event.is_private:
-    #    pass
-    elif res:
+    if res:
       #  await send(res, jid=log_group, name="", nick=nick, delay=delay)
       await send(res, jid=log_group, name="", delay=delay)
 
@@ -3197,6 +3220,7 @@ def add_id_to_msg(msg, correct):
     msg.autoset_id()
     last_outmsg[j] = [msg, msg.id_]
 
+
 async def ___add_id_to_msg(msg, correct):
   j = get_msg_jid(msg)
   if correct:
@@ -3333,9 +3357,9 @@ def hide_nick(msg):
 async def parse_xmpp_msg(msg):
   #  if str(msg.from_.bare()) == rssbot:
   #    pprint(msg)
+  muc = str(msg.from_.bare())
   if not hasattr(msg, "body"):
     #  print("%s %s" % (type(msg), msg.type_))
-    muc = str(msg.from_.bare())
     if msg.type_ == PresenceType.SUBSCRIBE:
       #  pprint(msg)
       log(f"状态订阅请求：{msg.from_}")
@@ -3566,8 +3590,6 @@ async def parse_xmpp_msg(msg):
   #    #  print("跳过空消息: %s %s %s %s" % (msg.type_, msg.from_, msg.to, msg.body))
   #    return
 
-  muc = str(msg.from_.bare())
-
   #  if text == "ping":
   #    #  await send("pong", ME)
   #    if msg.type_ == MessageType.GROUPCHAT:
@@ -3728,6 +3750,13 @@ async def parse_xmpp_msg(msg):
 
   print("%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
 
+
+
+
+
+  j = get_msg_jid(msg)
+  if j in last_outmsg:
+    last_outmsg.pop(j)
 
   text0 = text
   if msg.type_ == MessageType.GROUPCHAT:
@@ -3955,6 +3984,7 @@ def unban(muc, nick=None, jid=None):
         j[2] = "participant"
     else:
       return
+
 
 
 
@@ -4380,6 +4410,8 @@ async def add_cmd():
   cmd_for_admin.add('xmpp')
 
 
+
+
   async def _(cmds, src):
     if len(cmds) == 1:
       return f"阿里千问\n.{cmds[0]} $text"
@@ -4418,6 +4450,18 @@ async def add_cmd():
     return 1, mid
   cmd_funs["gtg"] = _
 
+  async def _(cmds, src):
+    bot_name = "MishkaAI_bot"
+    if len(cmds) == 1:
+      return f"Mishka\n.{cmds[0]} $text\n--\nhttps://t.me/{bot_name}"
+    text = ' '.join(cmds[1:])
+    #  mid = await send_to_tg_bot(text, await UB.get_input_entity(bot_name), src)
+    #  e = await UB.get_entity(bot_name)
+    e = await UB.get_input_entity(bot_name)
+    pid = await UB.get_peer_id(e)
+    mid = await send_to_tg_bot(text, pid, src)
+    return 2, mid, pid
+  cmd_funs["mk"] = _
 
   async def _(cmds, src):
     if len(cmds) == 1:
@@ -4535,7 +4579,22 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
       res = await cmd_funs[cmd](cmds, src)
       if type(res) is tuple:
         if res[0] == 1:
-          mtmsgsg[src][res[1]][0] = name
+          mid = res[1]
+          mtmsgsg[src][mid][0] = name
+        elif res[0] == 2:
+          mid = res[1]
+          mtmsgsg[src][mid][0] = name
+          pid = res[2]
+          if pid not in bridges:
+            bridges[pid] = {}
+          target = bridges[pid]
+          need_delete = []
+          for mid, jid in target.items():
+            if jid == src:
+              need_delete.append(mid)
+          for mid in need_delete:
+            target.pop(mid)
+          target[mid] = src
         return True
       if res:
         return res
