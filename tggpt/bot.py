@@ -4590,6 +4590,16 @@ async def add_cmd():
     return 3, bot_name, text
   cmd_funs["gpt4"] = _
 
+  async def _(cmds, src):
+    bot_name = "chatGPTwrapperbot"
+    if len(cmds) == 1:
+      return f"Gemini\n.{cmds[0]} $text\n.{cmds[0]} reset: 清空上下文\n--\nhttps://t.me/{bot_name}"
+    text = ' '.join(cmds[1:])
+    if text == "reset":
+      text = "/reset"
+    return 3, bot_name, text
+  cmd_funs["gm"] = _
+
 
   async def _(cmds, src):
     bot_name = "stable_diffusion_bot"
