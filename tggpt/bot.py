@@ -4592,11 +4592,11 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
             bridges[pid] = {}
           target = bridges[pid]
           need_delete = []
-          for mid_, jid in target.items():
-            if jid == src:
-              need_delete.append(mid_)
-          for mid_ in need_delete:
-            target.pop(mid)
+          for i, j in target.items():
+            if j == src:
+              need_delete.append(i)
+          for i in need_delete:
+            target.pop(i)
           target[mid] = src
         return True
       if res:
