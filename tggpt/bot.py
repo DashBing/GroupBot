@@ -1855,6 +1855,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
     for msg in msgs:
       if text:
         add_id_to_msg(msg, correct)
+        msg.xep0085_chatstate = chatstates.ChatState.ACTIVE
       if msg.to.is_bare or msg.type_ == MessageType.GROUPCHAT or str(msg.to.bare()) not in my_groups:
       #  if gpm is False:
         if client is not None:
@@ -3259,7 +3260,7 @@ async def send_typing(muc):
   )
   msg.xep0085_chatstate = chatstates.ChatState.COMPOSING
   info(f"{msg.body=}")
-  await __send(msg)
+  await _send(msg)
 
 
 last_outmsg = {}
