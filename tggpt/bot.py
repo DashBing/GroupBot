@@ -3257,6 +3257,7 @@ async def send_typing(muc):
       type_=type_,
   )
   msg.xep0085_chatstate = chatstates.ChatState.COMPOSING
+  await send(msg)
 
 
 last_outmsg = {}
