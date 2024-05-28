@@ -2306,8 +2306,8 @@ async def send_to_tg_bot(text, chat_id, src=None):
   msg = await UB.send_message(chat, text)
   #  info(f"res of send: {msg.stringify()}")
   gid_src[msg.id] = src
-  if src not in mtmsgsg:
-    mtmsgsg[src] = {}
+  #  if src not in mtmsgsg:
+  #    mtmsgsg[src] = {}
   #  mtmsgsg[src][msg.id] = [msg]
   #  mtmsgsg[src][msg.id] = [None]
   return msg.id
@@ -2922,7 +2922,7 @@ async def parse_tg_msg(event):
             l[0] = now
             l.append(gid)
             await send(text, jid=jid, correct=True)
-          elif src in bot_groups:
+          elif jid in bot_groups:
             l[0] = now
             l.append(gid)
             await send(text, jid=jid, correct=True)
@@ -4675,6 +4675,8 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
       if type(res) is tuple:
         if res[0] == 1:
           mid = res[1]
+          if src not in mtmsgsg:
+            mtmsgsg[src] = {}
           mtmsgs = mtmsgsg[src]
           mtmsgs.clear()
           #  mtmsgs[mid][0] = name
@@ -4724,17 +4726,17 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
               break
             i += 1
             if i > 3:
-              warn(f"{bot_name} {src} {name}: bot太忙({len(target)})")
+              warn(f"{bot_name} {src} {name}: bot太忙({len(target)}): {target}")
               #  return f"bot太忙({len(target)}), 请重试"
               target.clear()
               break
             await asyncio.sleep(4)
 
           mtmsgs.clear()
+          mtmsgs[mid] = [name]
 
           mid = await send_to_tg_bot(text, pid, src)
           #  mid = res[1]
-          mtmsgs[mid] = [name]
           #  pid = res[2]
 
           #  if pid not in bridges:
