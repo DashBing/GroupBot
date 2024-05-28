@@ -2298,7 +2298,7 @@ async def send_to_tg_bot(text, chat_id, src=None):
   if src not in mtmsgsg:
     mtmsgsg[src] = {}
   #  mtmsgsg[src][msg.id] = [msg]
-  mtmsgsg[src][msg.id] = [None]
+  #  mtmsgsg[src][msg.id] = [None]
   return msg.id
 
 
@@ -4646,11 +4646,10 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
       if type(res) is tuple:
         if res[0] == 1:
           mid = res[1]
-          if src not in mtmsgsg:
-            mtmsgsg[src] ={}
           mtmsgs = mtmsgsg[src]
           mtmsgs.clear()
-          mtmsgs[mid][0] = name
+          #  mtmsgs[mid][0] = name
+          mtmsgs[mid] = [name]
         #  elif res[0] == 2:
         #    mid = res[1]
         #    mtmsgsg[src][mid][0] = name
@@ -4671,8 +4670,6 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
           e = await UB.get_input_entity(bot_name)
           pid = await UB.get_peer_id(e)
 
-          if src not in mtmsgsg:
-            mtmsgsg[src] ={}
           mtmsgs = mtmsgsg[src]
 
           if pid not in bridges:
@@ -4706,7 +4703,7 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
 
           mid = await send_to_tg_bot(text, pid, src)
           #  mid = res[1]
-          mtmsgs[mid][0] = name
+          mtmsgs[mid] = [name]
           #  pid = res[2]
 
           #  if pid not in bridges:
