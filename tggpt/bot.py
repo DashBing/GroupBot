@@ -2501,7 +2501,7 @@ async def _mt_send(text="null", gateway="gateway1", name="C bot", qt=None):
   }
   async with mt_send_lock:
     res = await http(url, method="POST", json=data)
-  logger.info("res of mt_send: {}".format(res))
+  #  logger.info("res of mt_send: {}".format(res))
   return True
   return res
 
@@ -2903,7 +2903,14 @@ async def parse_tg_msg(event):
 
         if jid is not None:
           text = msg.text
-          l = mtmsgsg[jid][mid]
+          if jid not in mtmsgsg:
+            warn(f"{jid} not in {mtmsgsg}")
+            return
+          mtmsgs = mtmsgsg[jid]
+          if mid not in mtmsgs:
+            warn(f"{mid} not in {mtmsgs}")
+            return
+          l = mtmsgs[mid]
           text = f"{l[0]}{text}"
           now = msg.date.timestamp()
 
@@ -3443,9 +3450,9 @@ async def parse_xmpp_msg(msg):
           jids = users[muc]
           room = rooms[muc]
           #  item = msg.xep0045_muc_user.items[0]
-          print("---")
-          print(msg)
-          print(f"---{len(msg.xep0045_muc_user.items)}")
+          #  print("---")
+          #  print(msg)
+          #  print(f"---{len(msg.xep0045_muc_user.items)}")
           for item in msg.xep0045_muc_user.items:
             if item.jid is None:
               #  pprint(msg)
@@ -3454,7 +3461,7 @@ async def parse_xmpp_msg(msg):
               err(f"item.jid is None: {msg} {msg.xep0045_muc_user.items} {item}")
               continue
             jid = str(item.jid.bare())
-            res = f"上线: {msg.from_} {jid} {item.nick} {item.role} {item.affiliation} {msg.status}"
+            res = f"上线{len(msg.xep0045_muc_user.items)}: {msg.from_} {jid} {item.nick} {item.role} {item.affiliation} {msg.status}"
             print(res)
             if item.nick is None:
               rnick = msg.from_.resource
@@ -3579,6 +3586,7 @@ async def parse_xmpp_msg(msg):
             #    jids[jid][3] = int(time.time())
             #  else:
             #    jids[jid].append(int(time.time()))
+            break
         else:
           pprint(msg)
           await send(f"未知群组消息: {msg}")
@@ -4733,7 +4741,7 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
             if len(target) == 0:
               break
             i += 1
-            if i > 3:
+            if i > 5:
               warn(f"{bot_name} {src} {name}: bot太忙({len(target)}): {target}")
               #  return f"bot太忙({len(target)}), 请重试"
               target.clear()
