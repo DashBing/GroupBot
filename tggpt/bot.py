@@ -1485,6 +1485,11 @@ async def load_config():
       for jid in tmp:
         jids.pop(jid)
 
+    for chat_id in bridges:
+      target = bridges[chat_id]
+      if type(target) is dict:
+        target.clear()
+
 
     return True
   except Exception as e:
@@ -4668,6 +4673,8 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
           e = await UB.get_input_entity(bot_name)
           pid = await UB.get_peer_id(e)
 
+          if src not in mtmsgsg:
+            mtmsgsg[src] = {}
           mtmsgs = mtmsgsg[src]
 
           if pid not in bridges:
