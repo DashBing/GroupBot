@@ -2865,13 +2865,45 @@ async def parse_tg_msg(event):
       target = bridges[chat_id]
       if type(target) is dict:
         gid = msg.id
+        jid = None
         #  res, nick, delay = await print_tg_msg(event)
-        if gid-1 in target:
+        #  if gid-1 in target or gid > mid_max:
+        if len(target) == 0:
+          return
+        #  elif len(target) == 1:
+        else:
+          for mid, jid in target.items():
+            break
+        #  else:
+        #    mid_min = min(target.keys())
+        #    if msg.edit_date is None:
+        #      mid_max = max(target.keys())
+        #      if gid-1 > mid_max:
+        #        target.pop(mid_min)
+        #        mid_max = max(target.keys())
+        #    jid = target[gid_min]
+        #    mid = gid_min
           #  if msg.edit_date is None:
           #    target[gid] = target[gid-1]
           #    target.pop(gid-1)
           #  await send(msg.text, jid=target[gid-1], name=f"**{nick}:** ", nick=nick, correct=True)
-          await send(msg.text, jid=target[gid-1], correct=True)
+        if jid is not None:
+          text = msg.text
+          if msg.file:
+            path = await download_media(msg, jid)
+            if path is not None:
+              path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
+            if text:
+              text = f"{text} file: {path}"
+            else:
+              text = f"file: {path}"
+          await send(text, jid=jid, correct=True)
+
+          #  if msg.edit_date is None:
+          #    await asyncio.sleep(5)
+          l = mtmsgsg[jid][mid]
+          l[0] = time.time()
+          l.append(gid)
         else:
           info(f"skip msg: {gid} {target} {msg.stringify()}")
 
@@ -2889,65 +2921,47 @@ async def parse_tg_msg(event):
 
     return
 
-
-  if msg.is_reply:
-    qid=msg.reply_to_msg_id
-    print(f"tg msg id: {msg.id=} {event.id=} {qid=}")
-    if qid not in gid_src:
-      logger.error(f"E: not found src for {qid=}, {gid_src=} {msg.text=}")
-      return
-    #  await queues[gid_src[qid]].put( (id(msg), qid, msg) )
-    #  await queues[gid_src[qid]].put( (msg.date, qid, msg) )
-    #  await queues[gid_src[qid]].put( (msg.id, "test") )
-    #  await queues[gid_src[qid]].put( (id(msg), qid, msg) )
-    if msg.file:
-      return
-    text = msg.text
-    if not text:
-      print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
-      return
-    print(f"tg msg: {text}: {msg.id=} {event.id=} {qid=} {gid_src=} {mtmsgsg=}")
-    l = text.splitlines()
-    if l[-1] in loadings:
-      return
-    elif len(l) > 1 and f"{l[-2]}\n{l[-1]}" in loadings:
-      return
-    else:
-      src = gid_src[qid]
-      mtmsgs = mtmsgsg[src]
-      res = f"{mtmsgs[qid][0]}{text}"
-      #  await mt_send_for_long_text(res, src)
-      await send(res, src)
-      gid_src.pop(qid)
-      mtmsgs.pop(qid)
-
-    #  except Exception as e:
-    #    err(f"fixme: {qid=} {gid_src=} {queues=} {e=} line: {e.__traceback__.tb_lineno}")
-      #  raise e
-    return
-    await queues[gid_src[qid]].put( (msg.id, msg, qid) )
-    return
-
-
-    #  gateway = None
-    #  if qid in set(nids.values()):
-    #    for gateway in nids:
-    #      if qid == nids[gateway]:
-    #        break
-    #  else:
-    #    for gateway in queues:
-    #      if qid in set(queues[gateway]):
-    #        break
-    #      gateway = None
-    #  if gateway is None:
-    #    print("W: skip: got a msg with a unkonwon id: all: %s\n queue: %s" % (msg.stringify(), queues))
-    #    return
-    #  nid = nids[gateway]
-    #  queue = queues[gateway]
-    #  is_loading= True
-  else:
-    print("W: skip: got a msg without reply: is_reply: %s\nmsg: %s" % (msg.is_reply, msg.stringify()))
-    return
+  #  if msg.is_reply:
+  #    qid=msg.reply_to_msg_id
+  #    print(f"tg msg id: {msg.id=} {event.id=} {qid=}")
+  #    if qid not in gid_src:
+  #      logger.error(f"E: not found src for {qid=}, {gid_src=} {msg.text=}")
+  #      return
+  #    #  await queues[gid_src[qid]].put( (id(msg), qid, msg) )
+  #    #  await queues[gid_src[qid]].put( (msg.date, qid, msg) )
+  #    #  await queues[gid_src[qid]].put( (msg.id, "test") )
+  #    #  await queues[gid_src[qid]].put( (id(msg), qid, msg) )
+  #    if msg.file:
+  #      return
+  #    text = msg.text
+  #    if not text:
+  #      print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
+  #      return
+  #    print(f"tg msg: {text}: {msg.id=} {event.id=} {qid=} {gid_src=} {mtmsgsg=}")
+  #    l = text.splitlines()
+  #    if l[-1] in loadings:
+  #      return
+  #    elif len(l) > 1 and f"{l[-2]}\n{l[-1]}" in loadings:
+  #      return
+  #    else:
+  #      src = gid_src[qid]
+  #      mtmsgs = mtmsgsg[src]
+  #      res = f"{mtmsgs[qid][0]}{text}"
+  #      #  await mt_send_for_long_text(res, src)
+  #      await send(res, src)
+  #      gid_src.pop(qid)
+  #      mtmsgs.pop(qid)
+  #
+  #    #  except Exception as e:
+  #    #    err(f"fixme: {qid=} {gid_src=} {queues=} {e=} line: {e.__traceback__.tb_lineno}")
+  #      #  raise e
+  #    return
+  #    await queues[gid_src[qid]].put( (msg.id, msg, qid) )
+  #    return
+  #
+  #  else:
+  #    print("W: skip: got a msg without reply: is_reply: %s\nmsg: %s" % (msg.is_reply, msg.stringify()))
+  #    return
 
 
 @exceptions_handler
@@ -4484,6 +4498,32 @@ async def add_cmd():
   cmd_funs["mk"] = _
 
   async def _(cmds, src):
+    bot_name = "gpt3_unlim_chatbot"
+    if len(cmds) == 1:
+      return f"GPT-3.5-turbo\n.{cmds[0]} $text\n--\nhttps://t.me/{bot_name}"
+    text = ' '.join(cmds[1:])
+    return 3, bot_name, text
+  cmd_funs["gpt3"] = _
+
+  async def _(cmds, src):
+    bot_name = "OPENAl_ChatGPT_bot"
+    if len(cmds) == 1:
+      return f"多个模型，暂时选定gpt4\n.{cmds[0]} $text\n--\nhttps://t.me/{bot_name}"
+    text = ' '.join(cmds[1:])
+    return 3, bot_name, text
+  cmd_funs["gpt4"] = _
+
+
+  async def _(cmds, src):
+    bot_name = "stable_diffusion_bot"
+    if len(cmds) == 1:
+      return f"stable diffusion\n.{cmds[0]} $text\n--\nhttps://t.me/{bot_name}"
+    text = ' '.join(cmds[1:])
+    return 3, bot_name, text
+  cmd_funs["sd"] = _
+
+
+  async def _(cmds, src):
     if len(cmds) == 1:
       return f"gpt(telegram bot) translate\n.{cmds[0]} $text\n--\n所有数据来自telegram机器人: https://t.me/littleb_gptBOT"
     text = ' '.join(cmds[1:])
@@ -4600,7 +4640,11 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
       if type(res) is tuple:
         if res[0] == 1:
           mid = res[1]
-          mtmsgsg[src][mid][0] = name
+          if src not in mtmsgsg:
+            mtmsgsg[src] ={}
+          mtmsgs = mtmsgsg[src]
+          mtmsgs.clear()
+          mtmsgs[mid][0] = name
         #  elif res[0] == 2:
         #    mid = res[1]
         #    mtmsgsg[src][mid][0] = name
@@ -4620,19 +4664,52 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
           text = res[2]
           e = await UB.get_input_entity(bot_name)
           pid = await UB.get_peer_id(e)
+
+          if src not in mtmsgsg:
+            mtmsgsg[src] ={}
+          mtmsgs = mtmsgsg[src]
+
+          i = 0
+          while True:
+            need_delete = []
+            for i in target:
+              if i in mtmsgs:
+                #  if len(mtsmgs[i]) > 1:
+                if type(mtsmgs[i][0]) is int:
+                  if time.time() - mtsmgs[i][0] > 5:
+                    need_delete.append(i)
+              else:
+                need_delete.append(i)
+            for i in need_delete:
+              target.pop(i)
+            if len(target) == 0:
+              break
+            i += 1
+            if i > 5:
+              warn(f"{bot_name} {src} {name}: bot太忙({len(target)})")
+              #  return f"bot太忙({len(target)}), 请重试"
+              target.clear()
+              break
+            await asyncio.sleep(3)
+
+          mtmsgs.clear()
+
           mid = await send_to_tg_bot(text, pid, src)
           #  mid = res[1]
-          mtmsgsg[src][mid][0] = name
+          mtmsgs[mid][0] = name
           #  pid = res[2]
-          if pid not in bridges:
-            bridges[pid] = {}
-          target = bridges[pid]
-          need_delete = []
-          for i, j in target.items():
-            if j == src:
-              need_delete.append(i)
-          for i in need_delete:
-            target.pop(i)
+
+          #  if pid not in bridges:
+          #    bridges[pid] = {}
+          #  target = bridges[pid]
+          #  need_delete = []
+          #  for i, j in target.items():
+          #    if j == src:
+          #      if i+1 < mid:
+          #        need_delete.append(i)
+          #  for i in need_delete:
+          #    target.pop(i)
+
           target[mid] = src
         return True
       if res:
