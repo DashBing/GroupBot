@@ -2293,7 +2293,7 @@ async def mt2tg(msg):
 async def send_to_tg_bot(text, chat_id, src=None):
   chat = await get_entity(chat_id, True)
   msg = await UB.send_message(chat, text)
-  info(f"res of send: {msg.stringify()}")
+  #  info(f"res of send: {msg.stringify()}")
   gid_src[msg.id] = src
   if src not in mtmsgsg:
     mtmsgsg[src] = {}
@@ -4592,10 +4592,10 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
             bridges[pid] = {}
           target = bridges[pid]
           need_delete = []
-          for mid, jid in target.items():
+          for mid_, jid in target.items():
             if jid == src:
-              need_delete.append(mid)
-          for mid in need_delete:
+              need_delete.append(mid_)
+          for mid_ in need_delete:
             target.pop(mid)
           target[mid] = src
         return True
