@@ -2905,20 +2905,29 @@ async def parse_tg_msg(event):
           if msg.file:
             path = await download_media(msg)
             if path is not None:
-              path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
+              info(f"wtf path: {path}")
+              info(f"wtf path: {urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})}")
+              path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[1:])
               if text:
                 text = f"{text} file: {path}"
               else:
                 text = f"file: {path}"
                 await send(text, jid=jid)
                 return
-          await send(text, jid=jid, correct=True)
 
-          #  if msg.edit_date is None:
-          #    await asyncio.sleep(5)
+          now = msg.date.timestamp()
           l = mtmsgsg[jid][mid]
-          l[0] = time.time()
-          l.append(gid)
+          if msg.edit_date is None:
+            l[0] = now
+            l.append(gid)
+            await send(text, jid=jid, correct=True)
+          else:
+            if now > l[0]:
+              l[0] = now
+            await asyncio.sleep(5)
+            if now == l[0]:
+              l.append(gid)
+              await send(text, jid=jid, correct=True)
         else:
           info(f"skip msg: {gid} {target} {msg.stringify()}")
 
