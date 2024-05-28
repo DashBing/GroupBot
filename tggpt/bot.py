@@ -1948,19 +1948,23 @@ async def send(text, jid=None, *args, **kwargs):
   if muc in my_groups:
     #  info(f"准备发送同步消息到: {get_mucs(muc)} {text=} {text0=}")
     ms = get_mucs(muc)
-    for m in ms:
-      if await send1(text, jid=m, *args, **kwargs):
-        if isinstance(text, aioxmpp.Message):
-          text = text.body[None]
-          #  #  text.body[None] = text0
-          #  body = text.body
-          #  text = aioxmpp.Message(
-          #      to=JID.fromstr(text.to),  # recipient_jid must be an aioxmpp.JID
-          #      type_=text.type_,
-          #  )
-          #  text.body = body
-        continue
-      return False
+    if main_group in ms and xmpp_only:
+      for m in ms:
+        await send_typing(m)
+    else:
+      for m in ms:
+        if await send1(text, jid=m, *args, **kwargs):
+          if isinstance(text, aioxmpp.Message):
+            text = text.body[None]
+            #  #  text.body[None] = text0
+            #  body = text.body
+            #  text = aioxmpp.Message(
+            #      to=JID.fromstr(text.to),  # recipient_jid must be an aioxmpp.JID
+            #      type_=text.type_,
+            #  )
+            #  text.body = body
+          continue
+        return False
     if xmpp_only is False:
       if main_group in ms:
         await mt_send_for_long_text(text0, name=nick)
