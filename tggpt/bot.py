@@ -2900,8 +2900,13 @@ async def parse_tg_msg(event):
           #    target[gid] = target[gid-1]
           #    target.pop(gid-1)
           #  await send(msg.text, jid=target[gid-1], name=f"**{nick}:** ", nick=nick, correct=True)
+
         if jid is not None:
           text = msg.text
+          l = mtmsgsg[jid][mid]
+          text = f"{l[0]}{text}"
+          now = msg.date.timestamp()
+
           if msg.file:
             path = await download_media(msg)
             if path is not None:
@@ -2915,23 +2920,23 @@ async def parse_tg_msg(event):
                 await send(text, jid=jid)
                 return
 
-          now = msg.date.timestamp()
-          l = mtmsgsg[jid][mid]
-          if msg.edit_date is None:
-            text = f"{l[0]}{text}"
-            l[0] = now
+          #  if msg.edit_date is None:
+          if len(l) == 1:
+            #  if type(l[0]) is str:
+            #  l[0] = now
+            l.append(now)
             l.append(gid)
             await send(text, jid=jid, correct=True)
           elif jid in bot_groups:
-            l[0] = now
+            l[1] = now
             l.append(gid)
             await send(text, jid=jid, correct=True)
           else:
-            if now > l[0]:
-              l[0] = now
+            if now > l[1]:
+              l[1] = now
               l.append(gid)
             await asyncio.sleep(5)
-            if now == l[0]:
+            if mid in mtmsgsg[jid] and now == l[1]:
               await send(text, jid=jid, correct=True)
             else:
               info(f"忽略旧的临时消息: {text[:64]}")
@@ -4715,8 +4720,9 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
             for i in target:
               if i in mtmsgs:
                 #  if len(mtsmgs[i]) > 1:
-                if type(mtmsgs[i][0]) is int:
-                  if time.time() - mtmsgs[i][0] > 6:
+                #  if type(mtmsgs[i][0]) is int:
+                if len(mtmsgs[i]) > 1:
+                  if time.time() - mtmsgs[i][1] > 6:
                     need_delete.append(i)
               else:
                 need_delete.append(i)
