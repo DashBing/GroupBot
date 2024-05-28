@@ -2928,6 +2928,8 @@ async def parse_tg_msg(event):
             if now == l[0]:
               l.append(gid)
               await send(text, jid=jid, correct=True)
+            else:
+              info(f"忽略旧的临时消息: {text[:64]}")
         else:
           info(f"skip msg: {gid} {target} {msg.stringify()}")
 
