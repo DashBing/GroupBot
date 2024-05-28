@@ -4704,6 +4704,7 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
       return
     #  print(f"> I: {cmds}")
     logger.info("got cmds: {}".format(cmds))
+    await send_typing(src)
     cmd = cmds[0]
     res = False
     if cmd in cmd_for_admin:
@@ -4794,7 +4795,7 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
           #    target.pop(i)
 
           target[mid] = src
-        await send_typing(src)
+        #  await send_typing(src)
         return True
       if res:
         return res
