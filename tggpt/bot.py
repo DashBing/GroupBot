@@ -2918,15 +2918,20 @@ async def parse_tg_msg(event):
           now = msg.date.timestamp()
           l = mtmsgsg[jid][mid]
           if msg.edit_date is None:
+            text = f"{l[0]}{text}"
+            l[0] = now
+            l.append(gid)
+            await send(text, jid=jid, correct=True)
+          elif src in bot_groups:
             l[0] = now
             l.append(gid)
             await send(text, jid=jid, correct=True)
           else:
             if now > l[0]:
               l[0] = now
+              l.append(gid)
             await asyncio.sleep(5)
             if now == l[0]:
-              l.append(gid)
               await send(text, jid=jid, correct=True)
             else:
               info(f"忽略旧的临时消息: {text[:64]}")
@@ -3310,6 +3315,8 @@ async def ___add_id_to_msg(msg, correct):
       last_outmsg[j].append(0)
 
 def get_mucs(muc):
+  if muc == "gateway1":
+    muc = main_group
   for s in sync_groups_all:
     if muc in s:
       return s
@@ -4526,8 +4533,10 @@ async def add_cmd():
   async def _(cmds, src):
     bot_name = "gpt3_unlim_chatbot"
     if len(cmds) == 1:
-      return f"GPT-3.5-turbo\n.{cmds[0]} $text\n--\nhttps://t.me/{bot_name}"
+      return f"GPT-3.5-turbo\n.{cmds[0]} $text\n.{cmds[0]} reset: 清空上下文\n--\nhttps://t.me/{bot_name}"
     text = ' '.join(cmds[1:])
+    if text == "reset":
+      text = "/start"
     return 3, bot_name, text
   cmd_funs["gpt3"] = _
 
@@ -4705,7 +4714,7 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
               if i in mtmsgs:
                 #  if len(mtsmgs[i]) > 1:
                 if type(mtmsgs[i][0]) is int:
-                  if time.time() - mtmsgs[i][0] > 5:
+                  if time.time() - mtmsgs[i][0] > 6:
                     need_delete.append(i)
               else:
                 need_delete.append(i)
@@ -4714,12 +4723,12 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
             if len(target) == 0:
               break
             i += 1
-            if i > 5:
+            if i > 3:
               warn(f"{bot_name} {src} {name}: bot太忙({len(target)})")
               #  return f"bot太忙({len(target)}), 请重试"
               target.clear()
               break
-            await asyncio.sleep(3)
+            await asyncio.sleep(4)
 
           mtmsgs.clear()
 
