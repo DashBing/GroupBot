@@ -2756,10 +2756,10 @@ async def parse_tg_msg(event):
   #    #  print("W: skip: got a unknown: chat_id: %s\nmsg: %s" % (event.chat_id, msg.stringify()))
   #    return
   #  if event.chat_id in id2gateway:
-  if chat_id == gpt_bot:
-    pass
+  #  if chat_id == gpt_bot:
+  #    pass
 
-  elif chat_id == music_bot:
+  if chat_id == music_bot:
     #  print("I: music bot: chat_id: %s\nmsg: %s" % (event.chat_id, msg.stringify()))
     if msg.is_reply:
       pass
@@ -4453,12 +4453,20 @@ async def add_cmd():
     return 1, mid
   cmd_funs["music"] = _
 
+  #  async def _(cmds, src):
+  #    if len(cmds) == 1:
+  #      return f"gpt bot\n.{cmds[0]} $text\n--\n所有数据来自telegram机器人: https://t.me/littleb_gptBOT"
+  #    text = ' '.join(cmds[1:])
+  #    mid = await send_to_tg_bot(text, gpt_bot, src)
+  #    return 1, mid
+  #  cmd_funs["gtg"] = _
+
   async def _(cmds, src):
+    bot_name = "littleb_gptBOT"
     if len(cmds) == 1:
-      return f"gpt bot\n.{cmds[0]} $text\n--\n所有数据来自telegram机器人: https://t.me/littleb_gptBOT"
+      return f"gpt bot\n.{cmds[0]} $text\n--\nhttps://t.me/{bot_name}"
     text = ' '.join(cmds[1:])
-    mid = await send_to_tg_bot(text, gpt_bot, src)
-    return 1, mid
+    return 3, bot_name, text
   cmd_funs["gtg"] = _
 
   async def _(cmds, src):
@@ -4466,6 +4474,7 @@ async def add_cmd():
     if len(cmds) == 1:
       return f"Mishka\n.{cmds[0]} $text\n--\nhttps://t.me/{bot_name}"
     text = ' '.join(cmds[1:])
+    return 3, bot_name, text
     #  mid = await send_to_tg_bot(text, await UB.get_input_entity(bot_name), src)
     #  e = await UB.get_entity(bot_name)
     e = await UB.get_input_entity(bot_name)
@@ -4592,10 +4601,29 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
         if res[0] == 1:
           mid = res[1]
           mtmsgsg[src][mid][0] = name
-        elif res[0] == 2:
-          mid = res[1]
+        #  elif res[0] == 2:
+        #    mid = res[1]
+        #    mtmsgsg[src][mid][0] = name
+        #    pid = res[2]
+        #    if pid not in bridges:
+        #      bridges[pid] = {}
+        #    target = bridges[pid]
+        #    need_delete = []
+        #    for i, j in target.items():
+        #      if j == src:
+        #        need_delete.append(i)
+        #    for i in need_delete:
+        #      target.pop(i)
+        #    target[mid] = src
+        elif res[0] == 3:
+          bot_name = res[1]
+          text = res[2]
+          e = await UB.get_input_entity(bot_name)
+          pid = await UB.get_peer_id(e)
+          mid = await send_to_tg_bot(text, pid, src)
+          #  mid = res[1]
           mtmsgsg[src][mid][0] = name
-          pid = res[2]
+          #  pid = res[2]
           if pid not in bridges:
             bridges[pid] = {}
           target = bridges[pid]
