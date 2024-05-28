@@ -3192,12 +3192,20 @@ last_outmsg = {}
 
 
 def get_msg_jid(msg):
+  J = msg.to
+  jid = str(J.bare())
+  if jid == myjid:
+    J = msg.from_
+    jid = str(J.bare())
   if msg.type_ == MessageType.GROUPCHAT:
-    jid = get_jid(msg.to)
+    pass
+    #  jid = get_jid(msg.to)
+    #  jid = str(J.bare())
   elif msg.type_ == MessageType.CHAT:
-    jid = get_jid(msg.to)
+    #  jid = str(J.bare())
     if jid in my_groups:
-      jid = get_jid(msg.to, True)
+      #  jid = get_jid(msg.to, True)
+      jid = str(J)
   else:
     return
   return jid
