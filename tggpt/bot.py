@@ -14,7 +14,7 @@ from telethon.tl.types import KeyboardButton, KeyboardButtonUrl, PeerUser, PeerC
 from telethon import events
 
 #  import aioxmpp
-from aioxmpp import stream, ibr, protocol, node, dispatcher, connector, JID, im, errors, MessageType, PresenceType, misc
+from aioxmpp import stream, ibr, protocol, node, dispatcher, connector, JID, im, errors, MessageType, PresenceType, misc, chatstates
 
 import aiofiles
 #  from aiofile import async_open
@@ -3245,8 +3245,21 @@ async def regisger_handler(client):
   #  client.stream.app_outbound_message_filter.register(msg_out, 1)
 
 
-last_outmsg = {}
 
+async def send_typing(muc):
+  if muc in my_groups:
+    type_=MessageType.GROUPCHAT
+  else:
+    type_=MessageType.CHAT
+
+  msg = aioxmpp.Message(
+      to=JID.fromstr(muc),
+      type_=type_,
+  )
+  msg.xep0085_chatstate = chatstates.ChatState.COMPOSING
+
+
+last_outmsg = {}
 
 def get_msg_jid(msg):
   J = msg.to
@@ -4767,6 +4780,7 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
           #    target.pop(i)
 
           target[mid] = src
+        await send_typing(src)
         return True
       if res:
         return res
