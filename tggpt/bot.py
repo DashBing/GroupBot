@@ -2556,7 +2556,7 @@ async def mt_send_for_long_text(text, gateway="gateway1", name="C bot", *args, *
 
 #  last_time = {}
 
-async def download_media(msg, src='gateway1', path=f"{DOWNLOAD_PATH}/", in_memory=False):
+async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=False):
 #  await client.download_media(message, progress_callback=callback)
   async with downlaod_lock:
     if msg.file and msg.file.name:
@@ -2572,8 +2572,9 @@ async def download_media(msg, src='gateway1', path=f"{DOWNLOAD_PATH}/", in_memor
         else:
           logger.info(f"ignore button: {i}")
     #  await mt_send(f"{res} 下载中...", gateway=gateway)
-    res = f"{res} 下载中..."
-    await send(res, src, correct=True)
+    if src:
+      res = f"{res} 下载中..."
+      await send(res, src, correct=True)
     #  last_time[src] = time.time()
     last_time = [time.time(), 0]
 
@@ -2616,7 +2617,8 @@ async def download_media(msg, src='gateway1', path=f"{DOWNLOAD_PATH}/", in_memor
           last_time[0] = time.time()
           last_current = current
 
-    t = asyncio.create_task(update_tmp_msg())
+    if src:
+      t = asyncio.create_task(update_tmp_msg())
     res = None
     try:
       path = await asyncio.wait_for(msg.download_media(path, progress_callback=download_media_callback), timeout=300)
@@ -2624,15 +2626,17 @@ async def download_media(msg, src='gateway1', path=f"{DOWNLOAD_PATH}/", in_memor
       path = None
       res = f"{res} 下载失败(超时): {e=}"
       return
-    if not t.done():
-      t.cancel()
+    if src:
+      if not t.done():
+        t.cancel()
 
     if path:
       return path
     else:
       if res is None:
         res = f"{res} 下载失败: {path}"
-      await send(res, src)
+      if src:
+        await send(res, src)
       warn(res)
 
 def get_buttons(bs):
@@ -2826,7 +2830,7 @@ async def parse_tg_msg(event):
       if path is not None:
         #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
       #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
-        path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
+        path = "https://%s%s" % (DOMAIN, (urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20'))
         res = f"{mtmsgs[qid][0]}{path}\n{text}"
         if msg.buttons:
           for i in get_buttons(msg.buttons):
@@ -2890,13 +2894,15 @@ async def parse_tg_msg(event):
         if jid is not None:
           text = msg.text
           if msg.file:
-            path = await download_media(msg, jid)
+            path = await download_media(msg)
             if path is not None:
-              path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
+              path = "https://%s%s" % (DOMAIN, (urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20'))
             if text:
               text = f"{text} file: {path}"
             else:
               text = f"file: {path}"
+              await send(text, jid=jid)
+              return
           await send(text, jid=jid, correct=True)
 
           #  if msg.edit_date is None:
