@@ -4733,9 +4733,9 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
             await asyncio.sleep(4)
 
           mtmsgs.clear()
-          mtmsgs[mid] = [name]
 
           mid = await send_to_tg_bot(text, pid, src)
+          mtmsgs[mid] = [name]
           #  mid = res[1]
           #  pid = res[2]
 
