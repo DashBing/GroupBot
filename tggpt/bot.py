@@ -2871,6 +2871,8 @@ async def parse_tg_msg(event):
           #    target.pop(gid-1)
           #  await send(msg.text, jid=target[gid-1], name=f"**{nick}:** ", nick=nick, correct=True)
           await send(msg.text, jid=target[gid-1], correct=True)
+        else:
+          info(f"skip msg: {gid} {msg.stringify()}")
 
       else:
         res, nick, delay = await print_tg_msg(event)
