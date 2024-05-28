@@ -2293,6 +2293,7 @@ async def mt2tg(msg):
 async def send_to_tg_bot(text, chat_id, src=None):
   chat = await get_entity(chat_id, True)
   msg = await UB.send_message(chat, text)
+  info(f"res of send: {msg.stringify()}")
   gid_src[msg.id] = src
   if src not in mtmsgsg:
     mtmsgsg[src] = {}
