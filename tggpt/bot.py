@@ -2572,8 +2572,8 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
         else:
           logger.info(f"ignore button: {i}")
     #  await mt_send(f"{res} 下载中...", gateway=gateway)
+    res = f"{res} 下载中..."
     if src:
-      res = f"{res} 下载中..."
       await send(res, src, correct=True)
     #  last_time[src] = time.time()
     last_time = [time.time(), 0]
@@ -2619,7 +2619,6 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
 
     if src:
       t = asyncio.create_task(update_tmp_msg())
-    res = None
     try:
       path = await asyncio.wait_for(msg.download_media(path, progress_callback=download_media_callback), timeout=300)
     except TimeoutError as e:
@@ -2633,8 +2632,7 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
     if path:
       return path
     else:
-      if res is None:
-        res = f"{res} 下载失败: {path}"
+      res = f"{res} 下载失败: {path}"
       if src:
         await send(res, src)
       warn(res)
@@ -2830,7 +2828,7 @@ async def parse_tg_msg(event):
       if path is not None:
         #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
       #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
-        path = "https://%s%s" % (DOMAIN, (urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20'))
+        path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
         res = f"{mtmsgs[qid][0]}{path}\n{text}"
         if msg.buttons:
           for i in get_buttons(msg.buttons):
@@ -2896,13 +2894,13 @@ async def parse_tg_msg(event):
           if msg.file:
             path = await download_media(msg)
             if path is not None:
-              path = "https://%s%s" % (DOMAIN, (urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20'))
-            if text:
-              text = f"{text} file: {path}"
-            else:
-              text = f"file: {path}"
-              await send(text, jid=jid)
-              return
+              path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
+              if text:
+                text = f"{text} file: {path}"
+              else:
+                text = f"file: {path}"
+                await send(text, jid=jid)
+                return
           await send(text, jid=jid, correct=True)
 
           #  if msg.edit_date is None:
