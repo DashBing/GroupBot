@@ -4669,14 +4669,15 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
             mtmsgsg[src] ={}
           mtmsgs = mtmsgsg[src]
 
+          target = bridges[pid]
           i = 0
           while True:
             need_delete = []
             for i in target:
               if i in mtmsgs:
                 #  if len(mtsmgs[i]) > 1:
-                if type(mtsmgs[i][0]) is int:
-                  if time.time() - mtsmgs[i][0] > 5:
+                if type(mtmsgs[i][0]) is int:
+                  if time.time() - mtmsgs[i][0] > 5:
                     need_delete.append(i)
               else:
                 need_delete.append(i)
