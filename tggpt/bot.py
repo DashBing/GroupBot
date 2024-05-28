@@ -1762,7 +1762,7 @@ async def _send(*args, **kwargs):
   return True
 
 @exceptions_handler
-async def __send(msg, client=None, room=None, name=None, correct=False, fromname=None, nick=None, delay=None):
+async def __send(msg, client=None, room=None, name=None, correct=False, fromname=None, nick=None, delay=None, xmpp_only=False):
   #  info(f"{msg}")
   muc = str(msg.to.bare())
   if muc not in rooms:
@@ -1838,7 +1838,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
 
     if text:
       msgs = []
-      for text in split_long_text(text, 2000):
+      for text in split_long_text(text, 8000):
         if msgs:
           msg = aioxmpp.Message(
               to=msg.to,
@@ -1846,7 +1846,8 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
           )
         msg.body[None] = text
         msgs.append(msg)
-        if correct:
+        #  if correct:
+        if xmpp_only:
           break
     else:
       msgs = [msg]
@@ -1897,7 +1898,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
 
 
 @exceptions_handler
-async def send(text, jid=None, xmpp_only=False, *args, **kwargs):
+async def send(text, jid=None, *args, **kwargs):
   muc = None
   if 'name' in kwargs:
     name = kwargs["name"]
@@ -1914,6 +1915,11 @@ async def send(text, jid=None, xmpp_only=False, *args, **kwargs):
   #    correct = kwargs["correct"]
   #  else:
   #    correct = False
+
+  if 'xmpp_only' in kwargs:
+    xmpp_only = kwargs["xmpp_only"]
+  else:
+    xmpp_only = False
 
   if jid is None:
     if isinstance(text, aioxmpp.Message):
