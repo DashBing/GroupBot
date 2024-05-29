@@ -4448,6 +4448,9 @@ async def add_cmd():
             if j is None:
               info(f"{jid} log is None")
               continue
+            if j[0] is None:
+              info(f"{jid} log: {j}")
+              continue
             if cmds[1] in j[0]:
               tmp.append(str(j))
           if tmp:
