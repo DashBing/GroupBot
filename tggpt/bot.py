@@ -5315,9 +5315,11 @@ async def join(jid=None, nick=None, client=None):
             logger.info(f"进群成功: {myid} {jid}")
           if room is not None:
             rooms[jid] = room
-          room.on_muc_role_request.connect(on_muc_role_request)
-          room.on_nick_changed.connect(on_nick_changed)
-          return room
+            room.on_muc_role_request.connect(on_muc_role_request)
+            room.on_nick_changed.connect(on_nick_changed)
+            return room
+          else:
+            warn(f"failed to join: room is None {jid}")
         
         except TimeoutError as e:
           #  logger.warning(f"进群超时(废弃): {jid} {muc} {e=}")
