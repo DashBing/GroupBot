@@ -3435,12 +3435,14 @@ async def xmpp_msgp(msg):
         #  print(msg)
         #  print(f"---{len(msg.xep0045_muc_user.items)}")
         for item in msg.xep0045_muc_user.items:
+
           if item.jid is None:
             #  pprint(msg)
             #  pprint(msg.xep0045_muc_user.items)
             #  pprint(item)
             err(f"item.jid is None: {msg} {msg.xep0045_muc_user.items} {item}")
             continue
+
           jid = str(item.jid.bare())
           res = f"上线{len(msg.xep0045_muc_user.items)}: {msg.from_} {jid} {item.nick} {item.role} {item.affiliation} {msg.status}"
           print(res)
@@ -3452,96 +3454,99 @@ async def xmpp_msgp(msg):
           if rnick is None:
             warn(f"没找到nick：{item.jid} {item.nick} -> {rnick} {msg}")
             continue
-          if jid == myjid:
-            if jid not in jids:
-              #  j = [room.me.nick, room.me.affiliation, room.me.role]
-              j = [rnick, item.affiliation, item.role]
-              jids[jid] = j
-            if item.role == 'moderator':
-              pass
-            elif room.me is not None and room.me.role == 'moderator':
-              pass
-            else:
-              err(f"没有管理权限: {muc} {rnick} {item.affiliation} {item.role} {room.me}")
-            #  else:
-            #    info(f"已存在nick记录: {jids[jid]}")
-            continue
-          #  if jid == myjid:
-          #    #  logger.info(f"不记录bot: {jid}")
-          #    continue
-          #  nick = f".ban {muc}/{msg.from_.resource}"
 
           nick = f".ban {muc}/{rnick}"
-          if jid in me:
-            #  j = [msg.from_.resource, item.affiliation, item.role]
-            j = [rnick, item.affiliation, item.role]
-            jids[jid] = j
-            #  continue
 
-          elif jid in jids:
-            j = jids[jid]
-            if j[0] is None:
-              j[0] = rnick
-            if type(j[2]) is int:
-              reason = "重新进群没用哦"
-              if j[2] > 99:
-                if j[2] < time.time():
-                  if member_only_mode is False or item.affiliation == "member":
-                    res = await room.muc_set_role(rnick, "participant", reason="临时禁言结束")
-                    j[2] = "participant"
-                    w = j[4]
-                    w[0] = 0
+          if jid in jids:
+            if jid == myjid:
+              if jid not in jids:
+                #  j = [room.me.nick, room.me.affiliation, room.me.role]
+                j = [rnick, item.affiliation, item.role]
+                jids[jid] = j
+              if item.role == 'moderator':
+                pass
+              elif room.me is not None and room.me.role == 'moderator':
+                pass
+              else:
+                err(f"没有管理权限: {muc} {rnick} {item.affiliation} {item.role} {room.me}")
+              #  else:
+              #    info(f"已存在nick记录: {jids[jid]}")
+              #  continue
+            #  if jid == myjid:
+            #    #  logger.info(f"不记录bot: {jid}")
+            #    continue
+            #  nick = f".ban {muc}/{msg.from_.resource}"
+
+            elif jid in me:
+              #  j = [msg.from_.resource, item.affiliation, item.role]
+              j = [rnick, item.affiliation, item.role]
+              jids[jid] = j
+              #  continue
+
+            else:
+              j = jids[jid]
+              if j[0] is None:
+                j[0] = rnick
+              if type(j[2]) is int:
+                reason = "重新进群没用哦"
+                if j[2] > 99:
+                  if j[2] < time.time():
+                    if member_only_mode is False or item.affiliation == "member":
+                      res = await room.muc_set_role(rnick, "participant", reason="临时禁言结束")
+                      j[2] = "participant"
+                      w = j[4]
+                      w[0] = 0
+                    else:
+                      # 不用解除禁言
+                      j[2] = 1
+                      if item.role == "participant":
+                        await room.muc_set_role(rnick, "visitor", reason=reason)
                   else:
-                    # 不用解除禁言
-                    j[2] = 1
+                      #  if j[2] > 99:
+                    if item.role == "participant":
+                      if item.affiliation == "member":
+                        await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
+                      await room.muc_set_role(rnick, "visitor", reason=reason)
+                elif j[2] == 1:
+                  if member_only_mode:
+                    reason = "非成员暂时禁止发言"
                     if item.role == "participant":
                       await room.muc_set_role(rnick, "visitor", reason=reason)
-                else:
-                    #  if j[2] > 99:
+                  else:
+                    reason = "非成员允许发言"
+                    j[2] = "participant"
+                    if item.role == "visitor":
+                      res = await room.muc_set_role(rnick, "participant", reason=reason)
+                elif j[2] == 0:
                   if item.role == "participant":
                     if item.affiliation == "member":
                       await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
                     await room.muc_set_role(rnick, "visitor", reason=reason)
-              elif j[2] == 1:
+                  #  res = await room.muc_set_role(rnick, "participant", reason="禁言结束")
+              else:
+                j[2] = item.role
                 if member_only_mode:
                   reason = "非成员暂时禁止发言"
-                  if item.role == "participant":
-                    await room.muc_set_role(rnick, "visitor", reason=reason)
+                  if item.affiliation == "none":
+                    if item.role == "participant":
+                      j[2] = 1
+                      await room.muc_set_role(rnick, "visitor", reason=reason)
                 else:
-                  reason = "非成员允许发言"
-                  j[2] = "participant"
                   if item.role == "visitor":
-                    res = await room.muc_set_role(rnick, "participant", reason=reason)
-              elif j[2] == 0:
+                    if muc in public_groups:
+                      reason = "不限制新人发言"
+                      #  j[2] = "participant"
+                      res = await room.muc_set_role(rnick, "participant", reason=reason)
+              #  if j[0] != msg.from_.resource:
+              if j[0] != rnick:
+                res = f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}"
+                #  j[0] = msg.from_.resource
+                j[0] = rnick
                 if item.role == "participant":
-                  if item.affiliation == "member":
-                    await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
-                  await room.muc_set_role(rnick, "visitor", reason=reason)
-                #  res = await room.muc_set_role(rnick, "participant", reason="禁言结束")
-            else:
-              j[2] = item.role
-              if member_only_mode:
-                reason = "非成员暂时禁止发言"
-                if item.affiliation == "none":
-                  if item.role == "participant":
-                    j[2] = 1
-                    await room.muc_set_role(rnick, "visitor", reason=reason)
-              else:
-                if item.role == "visitor":
-                  if muc in public_groups:
-                    reason = "不限制新人发言"
-                    #  j[2] = "participant"
-                    res = await room.muc_set_role(rnick, "participant", reason=reason)
-            #  if j[0] != msg.from_.resource:
-            if j[0] != rnick:
-              res = f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}"
-              #  j[0] = msg.from_.resource
-              j[0] = rnick
-              if item.role == "participant":
-                await send(res, muc, nick=nick)
-              await send(f"{res}\njid: {jid}\nmuc: {muc}", nick=nick)
-            j[1] = item.affiliation
-            j[3] = time.time()
+                  await send(res, muc, nick=nick)
+                await send(f"{res}\njid: {jid}\nmuc: {muc}", nick=nick)
+              j[1] = item.affiliation
+              j[3] = time.time()
           else:
             if member_only_mode:
               reason = "非成员暂时禁止发言"
