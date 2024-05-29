@@ -3159,6 +3159,7 @@ async def get_disco(jid, client=None):
   res = await dc.query_info(JID.fromstr(jid))
   pprint(res)
   print(jid, res.to_dict())
+  return res
 
 
 
@@ -3195,7 +3196,7 @@ async def regisger_handler(client):
       #  aioxmpp.MessageType.GROUPCHAT,
       None,
       None,
-      msg_in,
+      xmpp_msg_in,
   )
   #  message_dispatcher.register_callback(
   #      aioxmpp.MessageType.NORMAL,
@@ -3215,7 +3216,7 @@ async def regisger_handler(client):
   presence_dispatcher.register_callback(
       None,
       None,
-      msg_in,
+      xmpp_msgp_in,
   )
 
 #  client.stream.register_iq_request_handler(
@@ -3235,7 +3236,7 @@ async def regisger_handler(client):
 
   from aioxmpp.version.xso import Query
 
-  async def handler(iq):
+  async def _(iq):
       print("software version request from {!r}".format(iq.from_))
       result = Query()
       result.name = "xmppbot"
@@ -3246,7 +3247,7 @@ async def regisger_handler(client):
   client.stream.register_iq_request_handler(
       aioxmpp.IQType.GET,
       Query,
-      handler,
+      _,
   )
 
   #  pprint(client.stream)
@@ -3410,19 +3411,205 @@ def msg_out(msg):
   return msg
 
 
-#  def gmsg(msg, member, source, **kwargs):
-def msg_in(msg):
+
+@exceptions_handler
+def xmpp_msgp_in(msg):
   if not allright.is_set():
-    #  logger.info("skip msg: allright is not ok")
     return
-  #  if hasattr(msg, "xep0203_delay"):
-  #    pprint(msg.xep0203_delay)
-  #    logger.info("skip msg: delayed: {msg.xep0203_delay}")
-  #  if hasattr(msg, "xep308_replace"):
-  #    pprint(msg.xep308_replace)
-  asyncio.create_task(parse_xmpp_msg(msg))
-  #  return
-  #  logger.info("\n>>> msg: %s\n" % msg)
+  #  asyncio.create_task(xmpp_msgp(msg))
+
+#  @exceptions_handler
+#  async def xmpp_msgp(msg):
+  muc = str(msg.from_.bare())
+  if msg.type_ == PresenceType.SUBSCRIBE:
+    #  pprint(msg)
+    log(f"状态订阅请求：{msg.from_}")
+    #  if get_jid(msg.from_) in me:
+    if muc in me:
+      rc = XB.summon(aioxmpp.RosterClient)
+      #  pprint(rc)
+      res = rc.approve(msg.from_)
+      #  print(f"结果：{res}")
+      res = rc.subscribe(msg.from_)
+      #  print(f"结果：{res}")
+      await send("ok", msg.from_)
+    else:
+      await send("不可以", msg.from_)
+  elif msg.type_ == PresenceType.AVAILABLE:
+    if msg.xep0045_muc_user:
+      if muc in my_groups:
+        jids = users[muc]
+        room = rooms[muc]
+        #  item = msg.xep0045_muc_user.items[0]
+        #  print("---")
+        #  print(msg)
+        #  print(f"---{len(msg.xep0045_muc_user.items)}")
+        for item in msg.xep0045_muc_user.items:
+          if item.jid is None:
+            #  pprint(msg)
+            #  pprint(msg.xep0045_muc_user.items)
+            #  pprint(item)
+            err(f"item.jid is None: {msg} {msg.xep0045_muc_user.items} {item}")
+            continue
+          jid = str(item.jid.bare())
+          res = f"上线{len(msg.xep0045_muc_user.items)}: {msg.from_} {jid} {item.nick} {item.role} {item.affiliation} {msg.status}"
+          print(res)
+          if item.nick is None:
+            rnick = msg.from_.resource
+            #  info(f"空nick：{item.jid} {item.nick} -> {rnick} {msg}")
+          else:
+            rnick = item.nick
+          if rnick is None:
+            warn(f"没找到nick：{item.jid} {item.nick} -> {rnick} {msg}")
+            continue
+          if jid == myjid:
+            if jid not in jids:
+              #  j = [room.me.nick, room.me.affiliation, room.me.role]
+              j = [rnick, item.affiliation, item.role]
+              jids[jid] = j
+            if item.role == 'moderator':
+              pass
+            elif room.me is not None and room.me.role == 'moderator':
+              pass
+            else:
+              err(f"没有管理权限: {muc} {rnick} {item.affiliation} {item.role} {room.me}")
+            #  else:
+            #    info(f"已存在nick记录: {jids[jid]}")
+            continue
+          #  if jid == myjid:
+          #    #  logger.info(f"不记录bot: {jid}")
+          #    continue
+          #  nick = f".ban {muc}/{msg.from_.resource}"
+
+          nick = f".ban {muc}/{rnick}"
+          if jid in me:
+            #  j = [msg.from_.resource, item.affiliation, item.role]
+            j = [rnick, item.affiliation, item.role]
+            jids[jid] = j
+            #  continue
+
+          elif jid in jids:
+            j = jids[jid]
+            if j[0] is None:
+              j[0] = rnick
+            if type(j[2]) is int:
+              reason = "重新进群没用哦"
+              if j[2] > 99:
+                if j[2] < time.time():
+                  if member_only_mode is False or item.affiliation == "member":
+                    res = await room.muc_set_role(rnick, "participant", reason="临时禁言结束")
+                    j[2] = "participant"
+                    w = j[4]
+                    w[0] = 0
+                  else:
+                    # 不用解除禁言
+                    j[2] = 1
+                    if item.role == "participant":
+                      await room.muc_set_role(rnick, "visitor", reason=reason)
+                else:
+                    #  if j[2] > 99:
+                  if item.role == "participant":
+                    if item.affiliation == "member":
+                      await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
+                    await room.muc_set_role(rnick, "visitor", reason=reason)
+              elif j[2] == 1:
+                if member_only_mode:
+                  reason = "非成员暂时禁止发言"
+                  if item.role == "participant":
+                    await room.muc_set_role(rnick, "visitor", reason=reason)
+                else:
+                  reason = "非成员允许发言"
+                  j[2] = "participant"
+                  if item.role == "visitor":
+                    res = await room.muc_set_role(rnick, "participant", reason=reason)
+              elif j[2] == 0:
+                if item.role == "participant":
+                  if item.affiliation == "member":
+                    await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
+                  await room.muc_set_role(rnick, "visitor", reason=reason)
+                #  res = await room.muc_set_role(rnick, "participant", reason="禁言结束")
+            else:
+              j[2] = item.role
+              if member_only_mode:
+                reason = "非成员暂时禁止发言"
+                if item.affiliation == "none":
+                  if item.role == "participant":
+                    j[2] = 1
+                    await room.muc_set_role(rnick, "visitor", reason=reason)
+              else:
+                if item.role == "visitor":
+                  if muc in public_groups:
+                    reason = "不限制新人发言"
+                    #  j[2] = "participant"
+                    res = await room.muc_set_role(rnick, "participant", reason=reason)
+            #  if j[0] != msg.from_.resource:
+            if j[0] != rnick:
+              res = f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}"
+              #  j[0] = msg.from_.resource
+              j[0] = rnick
+              if item.role == "participant":
+                await send(res, muc, nick=nick)
+              await send(f"{res}\njid: {jid}\nmuc: {muc}", nick=nick)
+            j[1] = item.affiliation
+            j[3] = time.time()
+          else:
+            if item.role == "visitor":
+              if muc in public_groups:
+                reason = "该群不限制新人发言"
+                res = await room.muc_set_role(rnick, "participant", reason=reason)
+                return
+
+            j = [rnick, item.affiliation, item.role]
+            jids[jid] = j
+            if muc in bot_groups:
+              welcome = f"欢迎 {hide_nick(msg)} ,这里是bot频道，专门用来测试bot，避免干扰主群。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
+            elif muc in rss_groups or muc == acg_group:
+              welcome = f"欢迎 {hide_nick(msg)} ,这里是rss频道，机器人推送消息很频繁。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
+            elif muc == "wtfipfs@salas.suchat.org":
+              welcome = f"欢迎 {hide_nick(msg)} ,该群新人默认不能发言。\n如果没有发言权，建议使用gajim或cheogram客户端申请。conversations不支持xmpp原生的申请方式。也可以群内私信bot：“申请发言权”，然后等管理批准。也可以改群内名字，添加“申请发言权”。\n建议经常在该群保持在线，管理看到就会给成员身份和发言权。\n该消息来自机器人(bot)，可不予理会。"
+            else:
+              welcome = f"欢迎 {hide_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
+            await send(welcome, muc, nick=nick)
+            await send(f"有新人入群: {j[0]}\n身份: {j[1]}\n角色: {j[2]}\njid: {jid}\nmuc: {muc}", nick=nick)
+
+          set_default_value(j)
+          #  if len(jids[jid]) > 3:
+          #    jids[jid][3] = int(time.time())
+          #  else:
+          #    jids[jid].append(int(time.time()))
+          break
+      else:
+        pprint(msg)
+        await send(f"未知群组消息: {msg}")
+    else:
+      print(f"上线: {msg.from_} {msg.status}")
+      if muc != rssbot:
+        await send(f"上线: {msg.from_} {msg.status}")
+    #  for i in msg.xep0045_muc_user.items:
+    #    pprint(i)
+  elif msg.type_ == PresenceType.UNAVAILABLE:
+    print(f"离线: {msg.from_} {msg.status}")
+    #  if muc in my_groups:
+    #    pass
+    #  else:
+    #    await sendg(f"离线: {msg.from_} {msg.status}")
+    #  if hasattr(msg, "xep0045_muc_user"):
+    #    print(f"离线: {msg.from_} {msg.status} {msg.xep0045_muc_user}")
+    #    if msg.xep0045_muc_user is None:
+    #      #  if msg.xep0045_muc_user:
+    #      #  pprint(msg.xep0045_muc_user)
+    #      await sendg(f"离线: {msg.from_} {msg.status}")
+    #  else:
+    #    print(f"离线: {msg.from_} {msg.status}")
+    #    #  pprint(msg)
+    #    await sendg(f"离线n: {msg.from_} {msg.status}")
+    if muc in me:
+      await sendg(f"离线: {msg.from_} {msg.status} {msg.xep0045_muc_user}")
+  else:
+    #  pprint(msg)
+    print(f"未知状态{msg.type_}: {msg.from_} {msg.status}")
+    if muc in me:
+      await sendg(f"{msg.type_}: {msg.from_} {msg.status}")
 
 
 
@@ -3450,203 +3637,30 @@ def hide_nick(msg):
 
 
 
+
+#  def gmsg(msg, member, source, **kwargs):
 @exceptions_handler
-async def parse_xmpp_msg(msg):
+def xmpp_msg_in(msg):
+  if not allright.is_set():
+    #  logger.info("skip msg: allright is not ok")
+    return
+  #  if hasattr(msg, "xep0203_delay"):
+  #    pprint(msg.xep0203_delay)
+  #    logger.info("skip msg: delayed: {msg.xep0203_delay}")
+  #  if hasattr(msg, "xep308_replace"):
+  #    pprint(msg.xep308_replace)
+#    asyncio.create_task(xmpp_msg(msg))
+#    #  return
+#    #  logger.info("\n>>> msg: %s\n" % msg)
+#
+#  @exceptions_handler
+#  async def xmpp_msg(msg):
   #  if str(msg.from_.bare()) == rssbot:
   #    pprint(msg)
   muc = str(msg.from_.bare())
-  if not hasattr(msg, "body"):
-    #  print("%s %s" % (type(msg), msg.type_))
-    if msg.type_ == PresenceType.SUBSCRIBE:
-      #  pprint(msg)
-      log(f"状态订阅请求：{msg.from_}")
-      #  if get_jid(msg.from_) in me:
-      if muc in me:
-        rc = XB.summon(aioxmpp.RosterClient)
-        #  pprint(rc)
-        res = rc.approve(msg.from_)
-        #  print(f"结果：{res}")
-        res = rc.subscribe(msg.from_)
-        #  print(f"结果：{res}")
-        await send("ok", msg.from_)
-      else:
-        await send("不可以", msg.from_)
-    elif msg.type_ == PresenceType.AVAILABLE:
-      if msg.xep0045_muc_user:
-        if muc in my_groups:
-          jids = users[muc]
-          room = rooms[muc]
-          #  item = msg.xep0045_muc_user.items[0]
-          #  print("---")
-          #  print(msg)
-          #  print(f"---{len(msg.xep0045_muc_user.items)}")
-          for item in msg.xep0045_muc_user.items:
-            if item.jid is None:
-              #  pprint(msg)
-              #  pprint(msg.xep0045_muc_user.items)
-              #  pprint(item)
-              err(f"item.jid is None: {msg} {msg.xep0045_muc_user.items} {item}")
-              continue
-            jid = str(item.jid.bare())
-            res = f"上线{len(msg.xep0045_muc_user.items)}: {msg.from_} {jid} {item.nick} {item.role} {item.affiliation} {msg.status}"
-            print(res)
-            if item.nick is None:
-              rnick = msg.from_.resource
-              #  info(f"空nick：{item.jid} {item.nick} -> {rnick} {msg}")
-            else:
-              rnick = item.nick
-            if rnick is None:
-              warn(f"没找到nick：{item.jid} {item.nick} -> {rnick} {msg}")
-              continue
-            if jid == myjid:
-              if jid not in jids:
-                #  j = [room.me.nick, room.me.affiliation, room.me.role]
-                j = [rnick, item.affiliation, item.role]
-                jids[jid] = j
-              if item.role == 'moderator':
-                pass
-              elif room.me is not None and room.me.role == 'moderator':
-                pass
-              else:
-                err(f"没有管理权限: {muc} {rnick} {item.affiliation} {item.role} {room.me}")
-              #  else:
-              #    info(f"已存在nick记录: {jids[jid]}")
-              continue
-            #  if jid == myjid:
-            #    #  logger.info(f"不记录bot: {jid}")
-            #    continue
-            #  nick = f".ban {muc}/{msg.from_.resource}"
-
-            nick = f".ban {muc}/{rnick}"
-            if jid in me:
-              #  j = [msg.from_.resource, item.affiliation, item.role]
-              j = [rnick, item.affiliation, item.role]
-              jids[jid] = j
-              #  continue
-
-            elif jid in jids:
-              j = jids[jid]
-              if j[0] is None:
-                j[0] = rnick
-              if type(j[2]) is int:
-                reason = "重新进群没用哦"
-                if j[2] > 99:
-                  if j[2] < time.time():
-                    if member_only_mode is False or item.affiliation == "member":
-                      res = await room.muc_set_role(rnick, "participant", reason="临时禁言结束")
-                      j[2] = "participant"
-                      w = j[4]
-                      w[0] = 0
-                    else:
-                      # 不用解除禁言
-                      j[2] = 1
-                      if item.role == "participant":
-                        await room.muc_set_role(rnick, "visitor", reason=reason)
-                  else:
-                      #  if j[2] > 99:
-                    if item.role == "participant":
-                      if item.affiliation == "member":
-                        await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
-                      await room.muc_set_role(rnick, "visitor", reason=reason)
-                elif j[2] == 1:
-                  if member_only_mode:
-                    reason = "非成员暂时禁止发言"
-                    if item.role == "participant":
-                      await room.muc_set_role(rnick, "visitor", reason=reason)
-                  else:
-                    reason = "非成员允许发言"
-                    j[2] = "participant"
-                    if item.role == "visitor":
-                      res = await room.muc_set_role(rnick, "participant", reason=reason)
-                elif j[2] == 0:
-                  if item.role == "participant":
-                    if item.affiliation == "member":
-                      await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
-                    await room.muc_set_role(rnick, "visitor", reason=reason)
-                  #  res = await room.muc_set_role(rnick, "participant", reason="禁言结束")
-              else:
-                j[2] = item.role
-                if member_only_mode:
-                  reason = "非成员暂时禁止发言"
-                  if item.affiliation == "none":
-                    if item.role == "participant":
-                      j[2] = 1
-                      await room.muc_set_role(rnick, "visitor", reason=reason)
-                else:
-                  if item.role == "visitor":
-                    if muc in public_groups:
-                      reason = "不限制新人发言"
-                      #  j[2] = "participant"
-                      res = await room.muc_set_role(rnick, "participant", reason=reason)
-              #  if j[0] != msg.from_.resource:
-              if j[0] != rnick:
-                res = f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}"
-                #  j[0] = msg.from_.resource
-                j[0] = rnick
-                if item.role == "participant":
-                  await send(res, muc, nick=nick)
-                await send(f"{res}\njid: {jid}\nmuc: {muc}", nick=nick)
-              j[1] = item.affiliation
-              j[3] = time.time()
-            else:
-              if item.role == "visitor":
-                if muc in public_groups:
-                  reason = "该群不限制新人发言"
-                  res = await room.muc_set_role(rnick, "participant", reason=reason)
-                  return
-
-              j = [rnick, item.affiliation, item.role]
-              jids[jid] = j
-              if muc in bot_groups:
-                welcome = f"欢迎 {hide_nick(msg)} ,这里是bot频道，专门用来测试bot，避免干扰主群。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
-              elif muc in rss_groups or muc == acg_group:
-                welcome = f"欢迎 {hide_nick(msg)} ,这里是rss频道，机器人推送消息很频繁。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
-              elif muc == "wtfipfs@salas.suchat.org":
-                welcome = f"欢迎 {hide_nick(msg)} ,该群新人默认不能发言。\n如果没有发言权，建议使用gajim或cheogram客户端申请。conversations不支持xmpp原生的申请方式。也可以群内私信bot：“申请发言权”，然后等管理批准。也可以改群内名字，添加“申请发言权”。\n建议经常在该群保持在线，管理看到就会给成员身份和发言权。\n该消息来自机器人(bot)，可不予理会。"
-              else:
-                welcome = f"欢迎 {hide_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
-              await send(welcome, muc, nick=nick)
-              await send(f"有新人入群: {j[0]}\n身份: {j[1]}\n角色: {j[2]}\njid: {jid}\nmuc: {muc}", nick=nick)
-
-            set_default_value(j)
-            #  if len(jids[jid]) > 3:
-            #    jids[jid][3] = int(time.time())
-            #  else:
-            #    jids[jid].append(int(time.time()))
-            break
-        else:
-          pprint(msg)
-          await send(f"未知群组消息: {msg}")
-      else:
-        print(f"上线: {msg.from_} {msg.status}")
-        if muc != rssbot:
-          await send(f"上线: {msg.from_} {msg.status}")
-      #  for i in msg.xep0045_muc_user.items:
-      #    pprint(i)
-    elif msg.type_ == PresenceType.UNAVAILABLE:
-      print(f"离线: {msg.from_} {msg.status}")
-      #  if muc in my_groups:
-      #    pass
-      #  else:
-      #    await sendg(f"离线: {msg.from_} {msg.status}")
-      #  if hasattr(msg, "xep0045_muc_user"):
-      #    print(f"离线: {msg.from_} {msg.status} {msg.xep0045_muc_user}")
-      #    if msg.xep0045_muc_user is None:
-      #      #  if msg.xep0045_muc_user:
-      #      #  pprint(msg.xep0045_muc_user)
-      #      await sendg(f"离线: {msg.from_} {msg.status}")
-      #  else:
-      #    print(f"离线: {msg.from_} {msg.status}")
-      #    #  pprint(msg)
-      #    await sendg(f"离线n: {msg.from_} {msg.status}")
-      if muc in me:
-        await sendg(f"离线: {msg.from_} {msg.status} {msg.xep0045_muc_user}")
-    else:
-      #  pprint(msg)
-      print(f"未知状态{msg.type_}: {msg.from_} {msg.status}")
-      if muc in me:
-        await sendg(f"{msg.type_}: {msg.from_} {msg.status}")
-    return
+  #  if not hasattr(msg, "body"):
+  #    #  print("%s %s" % (type(msg), msg.type_))
+  #    return
 
   real_time = None
   if msg.xep0203_delay:
@@ -3663,6 +3677,7 @@ async def parse_xmpp_msg(msg):
     #  info(f"假定消息无延迟: {msg}")
     real_time = time.time()
 
+
   if msg.type_ == MessageType.NORMAL:
     logger.info(f"normal msg: {msg}")
   elif msg.type_ == MessageType.GROUPCHAT:
@@ -3673,7 +3688,7 @@ async def parse_xmpp_msg(msg):
     warn(f"收到错误消息：{msg} {msg.error}")
   else:
     pprint(msg)
-    logger.info(f"skip msg type: {msg.type_} {msg}")
+    logger.info(f"skip unknown msg type: {msg.type_} {msg}")
     return
 
   #  clear_msg_jid(msg)
@@ -3684,6 +3699,8 @@ async def parse_xmpp_msg(msg):
   #    break
   if msg.body:
     text = msg.body.any()
+    if len(msg.body) > 1:
+      warn(f"收到多语言消息: {muc} {msg.from_} {msg.body}")
   else:
     return
   #  if text is None:
