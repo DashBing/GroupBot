@@ -3461,10 +3461,11 @@ async def xmpp_msgp(msg):
             if jid == myjid:
               if jid not in jids:
                 #  j = [room.me.nick, room.me.affiliation, room.me.role]
-                j = [rnick, item.affiliation, item.role]
-                jids[jid] = j
-              else:
-                j = jids[jid]
+                jids[jid] = []
+
+              j = jids[jid]
+              j.clear()
+              j.extend([rnick, item.affiliation, item.role])
 
               if item.role == 'moderator':
                 pass
@@ -3819,6 +3820,9 @@ async def xmpp_msg(msg):
     if not is_admin:
     #  if True:
       jids = users[muc]
+      if jid not in jids:
+        err(f"{jid} not in jids of: {muc}")
+        return
       j = jids[jid]
       #  if len(j) < 4:
       #    err(f"缺少记录: {j}")
