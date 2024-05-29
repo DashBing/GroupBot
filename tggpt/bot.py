@@ -1956,13 +1956,9 @@ async def send(text, jid=None, *args, **kwargs):
     ms = get_mucs(muc)
     if main_group in ms and xmpp_only:
       for m in ms:
-        if m not in rooms:
-          continue
         await send_typing(m)
     else:
       for m in ms:
-        if m not in rooms:
-          continue
         if await send1(text, jid=m, *args, **kwargs):
           if isinstance(text, aioxmpp.Message):
             text = text.body[None]
@@ -3363,7 +3359,11 @@ def get_mucs(muc):
     muc = main_group
   for s in sync_groups_all:
     if muc in s:
-      return s
+      tmp = set()
+      for m in s:
+        if m not in rooms:
+          tmp.add(m)
+      return s - tmp
   return set([muc])
 
 def wtf_str(s, for_what="nick"):
