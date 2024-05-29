@@ -1514,6 +1514,8 @@ def set_default_value(j=None, m=None):
       j.extend([m.nick, m.affiliation, m.role])
   if len(j) < 4:
     j.append( time.time() )
+  else:
+    j[3] = time.time()
   if len(j) < 5:
     #  j.append( [2*wtf_time/(time.time()-j[3]), 0] )
     j.append( [wtf_time/4, 0] )
@@ -3565,7 +3567,7 @@ async def xmpp_msgp(msg):
                   await send(res, muc, nick=nick)
                 await send(f"{res}\njid: {jid}\nmuc: {muc}", nick=nick)
               j[1] = item.affiliation
-              j[3] = time.time()
+              #  j[3] = time.time()
           else:
             j = [rnick, item.affiliation, item.role]
             jids[jid] = j
@@ -3779,7 +3781,7 @@ async def xmpp_msg(msg):
     jids = users[muc]
     j = jids[myjid]
     if nick == j[0]:
-      print("跳过自己发送的消息0: %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+      print("跳过自己发送的消息1: %s %s %s" % (str(msg.from_), msg.to, msg.body))
       return
 
     if muc not in rooms:
@@ -3792,7 +3794,7 @@ async def xmpp_msg(msg):
     #  if str(msg.from_) == str(rooms[muc].me.conversation_jid.bare()):
     #  if msg.from_.resource == rooms[muc].me.nick:
     if room.me is not None and nick == room.me.nick:
-      print("跳过自己发送的消息1: %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+      print("跳过自己发送的消息2: %s %s %s" % (str(msg.from_), msg.to, msg.body))
       return
     existed = False
     for i in room.members:
@@ -3811,6 +3813,7 @@ async def xmpp_msg(msg):
             return
         #  if str(i.direct_jid.bare()) == myjid:
         if jid == myjid:
+          print("跳过自己发送的消息3: %s %s %s" % (str(msg.from_), msg.to, msg.body))
           return
         #  if str(i.direct_jid.bare()) in me:
         if jid in me:
