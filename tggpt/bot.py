@@ -3238,9 +3238,9 @@ async def regisger_handler(client):
   async def handler(iq):
       print("software version request from {!r}".format(iq.from_))
       result = Query()
-      result.name = "bot"
-      result.version = ":)"
-      result.os = "by liqsliu"
+      result.name = "xmppbot"
+      result.version = "xmpp:{main_group}?join"
+      result.os = f"by {ME}"
       return result
 
   client.stream.register_iq_request_handler(
@@ -3269,7 +3269,7 @@ async def send_typing(muc):
       type_=type_,
   )
   msg.xep0085_chatstate = chatstates.ChatState.COMPOSING
-  info(f"{msg.body=}")
+  #  info(f"{msg.body=}") # ={}
   await _send(msg)
 
 
