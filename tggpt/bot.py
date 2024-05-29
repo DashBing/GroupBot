@@ -5325,20 +5325,25 @@ async def join(jid=None, nick=None, client=None):
         except errors.XMPPCancelError as e:
           # XMPPCancelError("{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')")
           if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: connection refused')":
-            logger.info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
+            logger.info(f"进群失败, 网络问题，拒绝连接: {myid} {jid} {e=}")
             return False
           if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')":
-            logger.info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
+            logger.info(f"进群失败, 网络问题，找不到主机: {myid} {jid} {e=}")
+            return False
+          if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: connection timeout')":
+            logger.info(f"进群失败, 网络问题，连接超时: {myid} {jid} {e=}")
             return False
           if e.args[0].startswith("{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found"):
-            logger.info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
+            logger.info(f"进群失败, 网络问题，找不到地址: {myid} {jid} {e=}")
             return False
+
           elif e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}conflict ('That nickname is already in use by another occupant')" or e.args[0] == '{urn:ietf:params:xml:ns:xmpp-stanzas}conflict' or '{urn:ietf:params:xml:ns:xmpp-stanzas}conflict' in e.args[0]:
             if '_' in nick:
               nick = f"{nick}%s" % generand(1)
             else:
               nick = f"{nick}_%s" % generand(1)
             logger.warning(f"群名字冲突{sum_try}: {myid} {jid} {nick} {e=}")
+
           else:
             logger.info(f"进群失败{e.args}: {myid} {jid} {e=}")
             return False
