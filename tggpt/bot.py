@@ -3496,21 +3496,24 @@ async def xmpp_msgp(msg):
                 if j[2] > 99:
                   if j[2] < time.time():
                     if member_only_mode is False or item.affiliation == "member":
-                      res = await room.muc_set_role(rnick, "participant", reason="临时禁言结束")
-                      j[2] = "participant"
                       w = j[4]
                       w[0] = 0
+                      j[2] = "participant"
+                      res = await room.muc_set_role(rnick, "participant", reason="临时禁言结束")
+                      return
                     else:
                       # 不用解除禁言
                       j[2] = 1
                       if item.role == "participant":
                         await room.muc_set_role(rnick, "visitor", reason=reason)
+                        return
                   else:
                       #  if j[2] > 99:
                     if item.role == "participant":
                       if item.affiliation == "member":
                         await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
                       await room.muc_set_role(rnick, "visitor", reason=reason)
+                      return
                 elif j[2] == 1:
                   if member_only_mode:
                     if item.affiliation == "member":
@@ -3518,20 +3521,24 @@ async def xmpp_msgp(msg):
                       if item.role == "visitor":
                         reason = "成员允许发言"
                         res = await room.muc_set_role(rnick, "participant", reason=reason)
+                        return
                     else:
                       reason = "非成员暂时禁止发言"
                       if item.role == "participant":
                         await room.muc_set_role(rnick, "visitor", reason=reason)
+                        return
                   else:
                     j[2] = "participant"
                     if item.role == "visitor":
                       reason = "非成员允许发言"
                       res = await room.muc_set_role(rnick, "participant", reason=reason)
+                      return
                 elif j[2] == 0:
                   if item.role == "participant":
                     if item.affiliation == "member":
                       await room.muc_set_affiliation(item.jid.bare(), "none", "被临时禁言了请保持在线")
                     await room.muc_set_role(rnick, "visitor", reason=reason)
+                    return
                   #  res = await room.muc_set_role(rnick, "participant", reason="禁言结束")
               else:
                 j[2] = item.role
@@ -3541,12 +3548,14 @@ async def xmpp_msgp(msg):
                     if item.role == "participant":
                       j[2] = 1
                       await room.muc_set_role(rnick, "visitor", reason=reason)
+                      return
                 else:
                   if item.role == "visitor":
                     if muc in public_groups:
                       reason = "不限制新人发言"
                       #  j[2] = "participant"
                       res = await room.muc_set_role(rnick, "participant", reason=reason)
+                      return
               #  if j[0] != msg.from_.resource:
               if j[0] != rnick:
                 res = f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}"
@@ -3564,6 +3573,7 @@ async def xmpp_msgp(msg):
                   j[2] = 1
                   reason = "非成员暂时禁止发言"
                   await room.muc_set_role(rnick, "visitor", reason=reason)
+                  return
               return
             if item.role == "visitor":
               if muc in public_groups:
