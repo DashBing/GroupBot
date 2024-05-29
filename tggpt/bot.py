@@ -3239,7 +3239,7 @@ async def regisger_handler(client):
       print("software version request from {!r}".format(iq.from_))
       result = Query()
       result.name = "xmppbot"
-      result.version = "xmpp:{main_group}?join"
+      result.version = f"xmpp:{main_group}?join"
       result.os = f"by {ME}"
       return result
 
