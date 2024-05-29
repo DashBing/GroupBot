@@ -3517,9 +3517,9 @@ async def xmpp_msgp(msg):
                     if item.role == "participant":
                       await room.muc_set_role(rnick, "visitor", reason=reason)
                   else:
-                    reason = "非成员允许发言"
                     j[2] = "participant"
                     if item.role == "visitor":
+                      reason = "非成员允许发言"
                       res = await room.muc_set_role(rnick, "participant", reason=reason)
                 elif j[2] == 0:
                   if item.role == "participant":
@@ -3553,10 +3553,10 @@ async def xmpp_msgp(msg):
               j[3] = time.time()
           else:
             if member_only_mode:
-              reason = "非成员暂时禁止发言"
               if item.affiliation == "none":
                 if item.role == "participant":
                   j[2] = 1
+                  reason = "非成员暂时禁止发言"
                   await room.muc_set_role(rnick, "visitor", reason=reason)
               return
             if item.role == "visitor":
