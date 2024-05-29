@@ -5255,7 +5255,7 @@ async def join_all():
       send_log("进群失败，会继续尝试：\n%s" % "\n".join(tmp))
       await asyncio.sleep(3600)
       asyncio.create_task(join_all())
-    asycnsio.create_task(f())
+    asyncio.create_task(f())
   return True
 
 
