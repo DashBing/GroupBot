@@ -4216,13 +4216,14 @@ async def add_cmd():
           if jid not in jids:
             info(f"{jid} not in jids({muc})")
             continue
-          if m.affiliation == "none" and m.role == "participant":
-            res = await room.muc_set_role(m.nick, role, reason=reason)
-            info(res)
-            i += 1
+          if m.affiliation == "none":
             jids[jid][2] = 1
-            if muc == src:
-              k += 1
+            if m.role == "participant":
+              res = await room.muc_set_role(m.nick, role, reason=reason)
+              info(res)
+              i += 1
+              if muc == src:
+                k += 1
       return "%s, 禁言账户：%s/%s" % (reason, k, i)
     else:
       member_only_mode = False
@@ -4242,14 +4243,20 @@ async def add_cmd():
           if jid not in jids:
             info(f"{jid} not in jids({muc})")
             continue
+
           j = jids[jid]
-          if j[2] == 1 or j[2] == "visitor":
+          #  if j[2] == "visitor":
+          if m.role == "visitor":
             j[2] = "participant"
             res = await room.muc_set_role(m.nick, role, reason=reason)
             info(res)
             i += 1
             if muc == src:
               k += 1
+
+          elif j[2] == 1:
+            j[2] = "participant"
+
       return "%s, 解除账户：%s/%s" % (reason, k, i)
   cmd_funs["mo"] = _
   cmd_for_admin.add('mo')
