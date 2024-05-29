@@ -3412,14 +3412,14 @@ def msg_out(msg):
 
 
 
-@exceptions_handler
+#  @exceptions_handler
 def xmpp_msgp_in(msg):
   if not allright.is_set():
     return
-  #  asyncio.create_task(xmpp_msgp(msg))
+  asyncio.create_task(xmpp_msgp(msg))
 
-#  @exceptions_handler
-#  async def xmpp_msgp(msg):
+@exceptions_handler
+async def xmpp_msgp(msg):
   muc = str(msg.from_.bare())
   if msg.type_ == PresenceType.SUBSCRIBE:
     #  pprint(msg)
@@ -3639,7 +3639,7 @@ def hide_nick(msg):
 
 
 #  def gmsg(msg, member, source, **kwargs):
-@exceptions_handler
+#  @exceptions_handler
 def xmpp_msg_in(msg):
   if not allright.is_set():
     #  logger.info("skip msg: allright is not ok")
@@ -3649,12 +3649,12 @@ def xmpp_msg_in(msg):
   #    logger.info("skip msg: delayed: {msg.xep0203_delay}")
   #  if hasattr(msg, "xep308_replace"):
   #    pprint(msg.xep308_replace)
-#    asyncio.create_task(xmpp_msg(msg))
-#    #  return
-#    #  logger.info("\n>>> msg: %s\n" % msg)
-#
-#  @exceptions_handler
-#  async def xmpp_msg(msg):
+  asyncio.create_task(xmpp_msg(msg))
+  #  return
+  #  logger.info("\n>>> msg: %s\n" % msg)
+
+@exceptions_handler
+async def xmpp_msg(msg):
   #  if str(msg.from_.bare()) == rssbot:
   #    pprint(msg)
   muc = str(msg.from_.bare())
