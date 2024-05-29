@@ -2851,7 +2851,7 @@ async def parse_tg_msg(event):
       if path is not None:
         #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
       #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
-        path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[2:])
+        path = "https://%s%s" % (DOMAIN, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[2:])
         res = f"{mtmsgs[qid][0]}{path}\n{text}"
         if msg.buttons:
           for i in get_buttons(msg.buttons):
@@ -2931,7 +2931,7 @@ async def parse_tg_msg(event):
             if path is not None:
               info(f"wtf path: {path}")
               info(f"wtf path: {urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})}")
-              path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})).replace('+', '%20')[1:])
+              path = "https://%s%s" % (DOMAIN, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[2:])
               if text:
                 text = f"{text} file: {path}"
               else:
@@ -4367,6 +4367,18 @@ async def add_cmd():
 
   async def _(cmds, src):
     if len(cmds) == 1:
+      return f"join all\n.{cmds[0]} all\n.{cmds[0]} $muc"
+    if cmds[1] == "all":
+      await join_all()
+    else:
+      res = await join(cmds[1])
+      return "res: %s" % res
+    return "ok"
+  cmd_funs["join"] = _
+  cmd_for_admin.add('join')
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
       return f"search\n.{cmds[0]} [clear/se/wtf/fix] $jid/$nick"
 
     if cmds[1] == "fix":
@@ -5239,7 +5251,11 @@ async def join_all():
         tmp.append(i.get_name())
         warn(f"进群失败一次: {i.result()} {i.get_name()} {len(tasks)}/{len(groups)}")
   if tmp:
-    send_log("进群失败：\n%s" % "\n".join(tmp))
+    async def f():
+      send_log("进群失败，会继续尝试：\n%s" % "\n".join(tmp))
+      await asyncio.sleep(3600)
+      asyncio.create_task(join_all())
+    asycnsio.create_task(f())
   return True
 
 
@@ -5247,115 +5263,120 @@ async def join_all():
 async def join(jid=None, nick=None, client=None):
   if jid is None:
     jid = test_group
-  if nick is None:
-    #  if "wtf" in myjid:
-    #    nick = 'bot'
-    #  else:
-    #    nick = 'liqsliu_bot'
-    nick = 'bot'
-  if client == None:
-    client = XB
 
-  global mucsv
-  if "mucsv" not in globals():
-    mucsv = client.summon(aioxmpp.MUCClient)
-  J = JID.fromstr(jid)
+  if jid not in send_locks:
+    send_locks[jid] = asyncio.Lock()
+  async with send_locks[jid]:
 
-  #  client.stream.register_iq_request_handler(
-  #  try:
-  #    client.stream.unregister_message_callback(
-  #        aioxmpp.MessageType.NORMAL,
-  #        None,
-  #    )
-  #  except KeyError as e:
-  #    pass
+    if nick is None:
+      #  if "wtf" in myjid:
+      #    nick = 'bot'
+      #  else:
+      #    nick = 'liqsliu_bot'
+      nick = 'bot'
+    if client == None:
+      client = XB
 
-  if auto_input:
-    client.stream.register_message_callback(
-    #  stream.message_handler(client.stream,
-        aioxmpp.MessageType.NORMAL,
-        J,
-    #      #  None,
-        jbypass,
-    )
+    global mucsv
+    if "mucsv" not in globals():
+      mucsv = client.summon(aioxmpp.MUCClient)
+    J = JID.fromstr(jid)
 
-  myid = get_jid(client.local_jid)
-  #  client.stream.on_message_received.connect(bypass)
-  try:
-    sum_try = 0
-    while True:
-      try:
-        room, fut = mucsv.join(J, nick=nick, autorejoin=True)
-        #  if fut is not None and room.muc_joined is False:
-        if room.muc_joined is False:
-          logger.info(f"等待进群: {get_jid(client.local_jid)} {jid}")
+    #  client.stream.register_iq_request_handler(
+    #  try:
+    #    client.stream.unregister_message_callback(
+    #        aioxmpp.MessageType.NORMAL,
+    #        None,
+    #    )
+    #  except KeyError as e:
+    #    pass
 
-          await fut
-          logger.info(f"进群成功: {myid} {jid}")
-        if room is not None:
-          rooms[jid] = room
-        room.on_muc_role_request.connect(on_muc_role_request)
-        room.on_nick_changed.connect(on_nick_changed)
-        return room
-      
-      except TimeoutError as e:
-        #  logger.warning(f"进群超时(废弃): {jid} {muc} {e=}")
-        warn(f"进群超时(废弃){sum_try}: {myid} {jid} {nick} {e=}")
-      except errors.XMPPCancelError as e:
-        # XMPPCancelError("{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')")
-        if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: connection refused')":
-          logger.info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
-          return False
-        if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')":
-          logger.info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
-          return False
-        if e.args[0].startswith("{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found"):
-          logger.info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
-          return False
-        elif e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}conflict ('That nickname is already in use by another occupant')" or e.args[0] == '{urn:ietf:params:xml:ns:xmpp-stanzas}conflict' or '{urn:ietf:params:xml:ns:xmpp-stanzas}conflict' in e.args[0]:
-          if '_' in nick:
-            nick = f"{nick}%s" % generand(1)
-          else:
-            nick = f"{nick}_%s" % generand(1)
-          logger.warning(f"群名字冲突{sum_try}: {myid} {jid} {nick} {e=}")
-        else:
-          logger.info(f"进群失败{e.args}: {myid} {jid} {e=}")
-          return False
-      except errors.XMPPAuthError as e:
-        #  pprint(e.args)
-        #  if e.args == ("{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized ('The CAPTCHA verification has failed')", ):
-        if e.args:
-          if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized ('The CAPTCHA verification has failed')" or e.args[0].startswith("{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized"):
-            if auto_input is False:
-              return False
-            logger.info(f"进群失败, 验证码不正确，准备重试: {myid} {jid} {e=}")
-          else:
-            if e.args[0] == '{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden':
-              logger.info(f"进群失败，被ban了(forbiden): {myid} {jid} {e=}")
-            elif e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden ('You have been banned from this room')" or e.args[0].startswith("{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden"):
-              logger.info(f"进群失败，被ban了: {myid} {jid} {e=}")
-            else:
-              logger.info(f"进群失败{e.args}: {myid} {jid} {e=}")
-            return False
-        else:
-          logger.info(f"进群失败(无权限): {myid} {jid} {e=}")
-          return False
-      except Exception as e:
-        logger.info(f"进群失败: {myid} {jid} {e=}")
-        return False
-      sum_try += 1
-      if sum_try > 3:
-        logger.info(f"进群失败(重试次数达到最大值): {myid} {jid}")
-        return False
-      await asyncio.sleep(0.1)
-
-  finally:
     if auto_input:
-      client.stream.unregister_message_callback(
+      client.stream.register_message_callback(
+      #  stream.message_handler(client.stream,
           aioxmpp.MessageType.NORMAL,
           J,
+      #      #  None,
+          jbypass,
       )
-  return False
+
+    myid = get_jid(client.local_jid)
+    #  client.stream.on_message_received.connect(bypass)
+    try:
+      sum_try = 0
+      while True:
+        try:
+          room, fut = mucsv.join(J, nick=nick, autorejoin=True)
+          #  if fut is not None and room.muc_joined is False:
+          if room.muc_joined is False:
+            logger.info(f"等待进群: {get_jid(client.local_jid)} {jid}")
+
+            await fut
+            logger.info(f"进群成功: {myid} {jid}")
+          if room is not None:
+            rooms[jid] = room
+          room.on_muc_role_request.connect(on_muc_role_request)
+          room.on_nick_changed.connect(on_nick_changed)
+          return room
+        
+        except TimeoutError as e:
+          #  logger.warning(f"进群超时(废弃): {jid} {muc} {e=}")
+          warn(f"进群超时(废弃){sum_try}: {myid} {jid} {nick} {e=}")
+        except errors.XMPPCancelError as e:
+          # XMPPCancelError("{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')")
+          if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: connection refused')":
+            logger.info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
+            return False
+          if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found ('Server-to-server connection failed: No route to host')":
+            logger.info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
+            return False
+          if e.args[0].startswith("{urn:ietf:params:xml:ns:xmpp-stanzas}remote-server-not-found"):
+            logger.info(f"进群失败, 网络问题{e.args}: {myid} {jid} {e=}")
+            return False
+          elif e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}conflict ('That nickname is already in use by another occupant')" or e.args[0] == '{urn:ietf:params:xml:ns:xmpp-stanzas}conflict' or '{urn:ietf:params:xml:ns:xmpp-stanzas}conflict' in e.args[0]:
+            if '_' in nick:
+              nick = f"{nick}%s" % generand(1)
+            else:
+              nick = f"{nick}_%s" % generand(1)
+            logger.warning(f"群名字冲突{sum_try}: {myid} {jid} {nick} {e=}")
+          else:
+            logger.info(f"进群失败{e.args}: {myid} {jid} {e=}")
+            return False
+        except errors.XMPPAuthError as e:
+          #  pprint(e.args)
+          #  if e.args == ("{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized ('The CAPTCHA verification has failed')", ):
+          if e.args:
+            if e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized ('The CAPTCHA verification has failed')" or e.args[0].startswith("{urn:ietf:params:xml:ns:xmpp-stanzas}not-authorized"):
+              if auto_input is False:
+                return False
+              logger.info(f"进群失败, 验证码不正确，准备重试: {myid} {jid} {e=}")
+            else:
+              if e.args[0] == '{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden':
+                logger.info(f"进群失败，被ban了(forbiden): {myid} {jid} {e=}")
+              elif e.args[0] == "{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden ('You have been banned from this room')" or e.args[0].startswith("{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden"):
+                logger.info(f"进群失败，被ban了: {myid} {jid} {e=}")
+              else:
+                logger.info(f"进群失败{e.args}: {myid} {jid} {e=}")
+              return False
+          else:
+            logger.info(f"进群失败(无权限): {myid} {jid} {e=}")
+            return False
+        except Exception as e:
+          logger.info(f"进群失败: {myid} {jid} {e=}")
+          return False
+        sum_try += 1
+        if sum_try > 3:
+          logger.info(f"进群失败(重试次数达到最大值): {myid} {jid}")
+          return False
+        await asyncio.sleep(0.1)
+
+    finally:
+      if auto_input:
+        client.stream.unregister_message_callback(
+            aioxmpp.MessageType.NORMAL,
+            J,
+        )
+    return False
 
 
 @exceptions_handler
