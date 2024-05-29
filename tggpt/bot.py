@@ -4445,6 +4445,9 @@ async def add_cmd():
           jids = users[muc]
           tmp = []
           for jid, j in jids.items():
+            if j is None:
+              info(f"{jid} log is None")
+              continue
             if cmds[1] in j[0]:
               tmp.append(str(j))
           if tmp:
