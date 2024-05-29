@@ -1956,9 +1956,13 @@ async def send(text, jid=None, *args, **kwargs):
     ms = get_mucs(muc)
     if main_group in ms and xmpp_only:
       for m in ms:
+        if m not in rooms:
+          continue
         await send_typing(m)
     else:
       for m in ms:
+        if m not in rooms:
+          continue
         if await send1(text, jid=m, *args, **kwargs):
           if isinstance(text, aioxmpp.Message):
             text = text.body[None]
