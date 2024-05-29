@@ -4439,6 +4439,16 @@ async def add_cmd():
 
       res = get_jid_room(cmds, src)
       if type(res) is str:
+        if src in my_groups:
+          info(res)
+          muc = src
+          jids = users[muc]
+          tmp = []
+          for jid, j in jids.items():
+            if cmds[1] in j[0]:
+              tmp.append(str(j))
+          if tmp:
+            res += "\n\n模糊查找结果\n" + "\n".join(tmp)
         return res
       jid = res[0]
       room = res[1]
