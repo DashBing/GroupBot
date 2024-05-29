@@ -3463,6 +3463,9 @@ async def xmpp_msgp(msg):
                 #  j = [room.me.nick, room.me.affiliation, room.me.role]
                 j = [rnick, item.affiliation, item.role]
                 jids[jid] = j
+              else:
+                j = jids[jid]
+
               if item.role == 'moderator':
                 pass
               elif room.me is not None and room.me.role == 'moderator':
