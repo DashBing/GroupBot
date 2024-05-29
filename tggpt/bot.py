@@ -3743,11 +3743,13 @@ async def xmpp_msg(msg):
   is_admin = False
   if muc in my_groups:
     nick = msg.from_.resource
-    #  if str(msg.from_) == str(rooms[muc].me.conversation_jid.bare()):
-    #  if msg.from_.resource == rooms[muc].me.nick:
-    if nick == rooms[muc].me.nick:
-      #  print("跳过自己发送的消息%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+
+    jids = users[muc]
+    j = jids[myjid]
+    if nick == j[0]:
+      print("跳过自己发送的消息0: %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
       return
+
     if muc not in rooms:
       if muc != log_group_private:
         err(f"not found room: {muc}")
@@ -3755,6 +3757,11 @@ async def xmpp_msg(msg):
         logger.error(f"not found room: {muc}", exc_info=True, stack_info=True)
       return
     room = rooms[muc]
+    #  if str(msg.from_) == str(rooms[muc].me.conversation_jid.bare()):
+    #  if msg.from_.resource == rooms[muc].me.nick:
+    if room.me is not None and nick == room.me.nick:
+      print("跳过自己发送的消息1: %s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+      return
     existed = False
     for i in room.members:
       if i.direct_jid is None:
