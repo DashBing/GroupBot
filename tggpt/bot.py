@@ -3567,6 +3567,8 @@ async def xmpp_msgp(msg):
               j[1] = item.affiliation
               j[3] = time.time()
           else:
+            j = [rnick, item.affiliation, item.role]
+            jids[jid] = j
             if member_only_mode:
               if item.affiliation == "none":
                 if item.role == "participant":
@@ -3574,25 +3576,23 @@ async def xmpp_msgp(msg):
                   reason = "非成员暂时禁止发言"
                   await room.muc_set_role(rnick, "visitor", reason=reason)
                   return
-              return
-            if item.role == "visitor":
-              if muc in public_groups:
-                reason = "该群不限制新人发言"
-                res = await room.muc_set_role(rnick, "participant", reason=reason)
-                return
-
-            j = [rnick, item.affiliation, item.role]
-            jids[jid] = j
-            if muc in bot_groups:
-              welcome = f"欢迎 {hide_nick(msg)} ,这里是bot频道，专门用来测试bot，避免干扰主群。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
-            elif muc in rss_groups or muc == acg_group:
-              welcome = f"欢迎 {hide_nick(msg)} ,这里是rss频道，机器人推送消息很频繁。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
-            elif muc == "wtfipfs@salas.suchat.org":
-              welcome = f"欢迎 {hide_nick(msg)} ,该群新人默认不能发言。\n如果没有发言权，建议使用gajim或cheogram客户端申请。conversations不支持xmpp原生的申请方式。也可以群内私信bot：“申请发言权”，然后等管理批准。也可以改群内名字，添加“申请发言权”。\n建议经常在该群保持在线，管理看到就会给成员身份和发言权。\n该消息来自机器人(bot)，可不予理会。"
             else:
-              welcome = f"欢迎 {hide_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
-            await send(welcome, muc, nick=nick)
-            await send(f"有新人入群: {j[0]}\n身份: {j[1]}\n角色: {j[2]}\njid: {jid}\nmuc: {muc}", nick=nick)
+              if item.role == "visitor":
+                if muc in public_groups:
+                  reason = "该群不限制新人发言"
+                  res = await room.muc_set_role(rnick, "participant", reason=reason)
+                  return
+
+              if muc in bot_groups:
+                welcome = f"欢迎 {hide_nick(msg)} ,这里是bot频道，专门用来测试bot，避免干扰主群。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
+              elif muc in rss_groups or muc == acg_group:
+                welcome = f"欢迎 {hide_nick(msg)} ,这里是rss频道，机器人推送消息很频繁。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
+              elif muc == "wtfipfs@salas.suchat.org":
+                welcome = f"欢迎 {hide_nick(msg)} ,该群新人默认不能发言。\n如果没有发言权，建议使用gajim或cheogram客户端申请。conversations不支持xmpp原生的申请方式。也可以群内私信bot：“申请发言权”，然后等管理批准。也可以改群内名字，添加“申请发言权”。\n建议经常在该群保持在线，管理看到就会给成员身份和发言权。\n该消息来自机器人(bot)，可不予理会。"
+              else:
+                welcome = f"欢迎 {hide_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
+              await send(welcome, muc, nick=nick)
+              await send(f"有新人入群: {j[0]}\n身份: {j[1]}\n角色: {j[2]}\njid: {jid}\nmuc: {muc}", nick=nick)
 
           set_default_value(j)
           #  if len(jids[jid]) > 3:
