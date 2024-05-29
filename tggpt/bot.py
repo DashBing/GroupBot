@@ -3425,21 +3425,7 @@ def xmpp_msgp_in(msg):
 @exceptions_handler
 async def xmpp_msgp(msg):
   muc = str(msg.from_.bare())
-  if msg.type_ == PresenceType.SUBSCRIBE:
-    #  pprint(msg)
-    log(f"状态订阅请求：{msg.from_}")
-    #  if get_jid(msg.from_) in me:
-    if muc in me:
-      rc = XB.summon(aioxmpp.RosterClient)
-      #  pprint(rc)
-      res = rc.approve(msg.from_)
-      #  print(f"结果：{res}")
-      res = rc.subscribe(msg.from_)
-      #  print(f"结果：{res}")
-      await send("ok", msg.from_)
-    else:
-      await send("不可以", msg.from_)
-  elif msg.type_ == PresenceType.AVAILABLE:
+  if msg.type_ == PresenceType.AVAILABLE:
     if msg.xep0045_muc_user:
       if muc in my_groups:
         jids = users[muc]
@@ -3557,6 +3543,13 @@ async def xmpp_msgp(msg):
             j[1] = item.affiliation
             j[3] = time.time()
           else:
+            if member_only_mode:
+              reason = "非成员暂时禁止发言"
+              if item.affiliation == "none":
+                if item.role == "participant":
+                  j[2] = 1
+                  await room.muc_set_role(rnick, "visitor", reason=reason)
+              return
             if item.role == "visitor":
               if muc in public_groups:
                 reason = "该群不限制新人发言"
@@ -3591,6 +3584,20 @@ async def xmpp_msgp(msg):
         await send(f"上线: {msg.from_} {msg.status}")
     #  for i in msg.xep0045_muc_user.items:
     #    pprint(i)
+  elif msg.type_ == PresenceType.SUBSCRIBE:
+    #  pprint(msg)
+    log(f"状态订阅请求：{msg.from_}")
+    #  if get_jid(msg.from_) in me:
+    if muc in me:
+      rc = XB.summon(aioxmpp.RosterClient)
+      #  pprint(rc)
+      res = rc.approve(msg.from_)
+      #  print(f"结果：{res}")
+      res = rc.subscribe(msg.from_)
+      #  print(f"结果：{res}")
+      await send("ok", msg.from_)
+    else:
+      await send("不可以", msg.from_)
   elif msg.type_ == PresenceType.UNAVAILABLE:
     print(f"离线: {msg.from_} {msg.status}")
     #  if muc in my_groups:
