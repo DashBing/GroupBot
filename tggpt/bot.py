@@ -3772,18 +3772,16 @@ async def xmpp_msg(msg):
   #      reply.body[None] = "pong"
   #      await send(reply)
   #    return
-
-
   is_admin = False
   if muc in my_groups:
 
-    if muc not in rooms:
-      if muc != log_group_private:
-        err(f"not found room: {muc}")
-      else:
-        logger.error(f"not found room: {muc}", exc_info=True, stack_info=True)
-        await send(f"not found room: {muc}", jid=ME)
-      return
+    #  if muc not in rooms:
+    #    if muc != log_group_private:
+    #      err(f"not found room: {muc}")
+    #    else:
+    #      logger.error(f"not found room: {muc}", exc_info=True, stack_info=True)
+    #      await send(f"not found room: {muc}", jid=ME)
+    #    return
     room = rooms[muc]
     #  if str(msg.from_) == str(rooms[muc].me.conversation_jid.bare()):
     #  if msg.from_.resource == rooms[muc].me.nick:
@@ -3828,15 +3826,7 @@ async def xmpp_msg(msg):
       return
 
 
-    if msg.type_ == MessageType.CHAT:
-      if is_admin is False:
-        if text == "ping":
-          reply = msg.make_reply()
-          reply.body[None] = "pong"
-          await send(reply)
-          return
-        logger.info("已忽略群内私聊: %s" % msg)
-        return
+    #  if msg.type_ == MessageType.CHAT:
 
 
     if is_admin is False:
@@ -3994,6 +3984,14 @@ async def xmpp_msg(msg):
     warn(f"normal msg: {msg}")
     return
   elif msg.type_ == MessageType.CHAT:
+    if is_admin is False:
+      if text == "ping":
+        reply = msg.make_reply()
+        reply.body[None] = "pong"
+        await send(reply)
+        return
+      #  logger.info("已忽略群内私聊: %s" % msg)
+      return
     #  if get_jid(msg.to) in my_groups:
     #  if get_jid(msg.from_) in my_groups:
     if muc in my_groups:
