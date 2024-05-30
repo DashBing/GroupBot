@@ -3558,26 +3558,33 @@ async def xmpp_msgp(msg):
                       #  j[2] = "participant"
                       res = await room.muc_set_role(rnick, "participant", reason=reason)
                       return
+
               #  if j[0] != msg.from_.resource:
               if j[0] != rnick:
-                res = f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}"
                 #  j[0] = msg.from_.resource
-                j[0] = rnick
                 if item.role == "participant":
+                  #  res = f"改名通知: {hide_nick(j[0])} -> {hide_nick(msg)}"
+                  res = f"改名通知: {hide_nick(j[0])} -> {hide_nick(rnick)}"
                   await send(res, muc, nick=nick)
+                res = f"改名通知: {j[0]} -> {rnick}"
+                j[0] = rnick
                 await send(f"{res}\njid: {jid}\nmuc: {muc}", nick=nick)
               j[1] = item.affiliation
               #  j[3] = time.time()
           else:
-            j = [rnick, item.affiliation, item.role]
-            jids[jid] = j
             if member_only_mode:
               if item.affiliation == "none":
                 if item.role == "participant":
-                  j[2] = 1
                   reason = "非成员暂时禁止发言"
+                  #  j = jids[jid]
                   await room.muc_set_role(rnick, "visitor", reason=reason)
                   return
+                elif item.role == "visitor":
+                  j = [rnick, item.affiliation, item.role]
+                  j[2] = 1
+                  jids[jid] = j
+                  #  set_default_value(j)
+                  #  return
             else:
               if item.role == "visitor":
                 if muc in public_groups:
@@ -3585,6 +3592,8 @@ async def xmpp_msgp(msg):
                   res = await room.muc_set_role(rnick, "participant", reason=reason)
                   return
 
+              j = [rnick, item.affiliation, item.role]
+              jids[jid] = j
               if muc in bot_groups:
                 welcome = f"欢迎 {hide_nick(msg)} ,这里是bot频道，专门用来测试bot，避免干扰主群。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
               elif muc in rss_groups or muc == acg_group:
@@ -3696,6 +3705,10 @@ async def xmpp_msg(msg):
   #  if str(msg.from_.bare()) == rssbot:
   #    pprint(msg)
   muc = str(msg.from_.bare())
+  nick = msg.from_.resource
+  if nick is None:
+    warn(f"收到系统消息: {muc} {msg.from_} {msg.body} {msg}")
+    return
   #  if not hasattr(msg, "body"):
   #    #  print("%s %s" % (type(msg), msg.type_))
   #    return
@@ -3715,19 +3728,6 @@ async def xmpp_msg(msg):
     #  info(f"假定消息无延迟: {msg}")
     real_time = time.time()
 
-
-  if msg.type_ == MessageType.NORMAL:
-    logger.info(f"normal msg: {msg}")
-  elif msg.type_ == MessageType.GROUPCHAT:
-    pass
-  elif msg.type_ == MessageType.CHAT:
-    pass
-  elif msg.type_ == MessageType.ERROR:
-    warn(f"收到错误消息：{msg} {msg.error}")
-  else:
-    pprint(msg)
-    logger.info(f"skip unknown msg type: {msg.type_} {msg}")
-    return
 
   #  clear_msg_jid(msg)
 
@@ -3776,53 +3776,57 @@ async def xmpp_msg(msg):
 
   is_admin = False
   if muc in my_groups:
-    nick = msg.from_.resource
-
-    jids = users[muc]
-    j = jids[myjid]
-    if nick == j[0]:
-      print("跳过自己发送的消息1: %s %s %s" % (str(msg.from_), msg.to, msg.body))
-      return
 
     if muc not in rooms:
       if muc != log_group_private:
         err(f"not found room: {muc}")
       else:
         logger.error(f"not found room: {muc}", exc_info=True, stack_info=True)
+        await send(f"not found room: {muc}", jid=ME)
       return
     room = rooms[muc]
     #  if str(msg.from_) == str(rooms[muc].me.conversation_jid.bare()):
     #  if msg.from_.resource == rooms[muc].me.nick:
     if room.me is not None and nick == room.me.nick:
+      print("跳过自己发送的消息1: %s %s %s" % (str(msg.from_), msg.to, msg.body))
+      return
+
+    jids = users[muc]
+    j = jids[myjid]
+    if nick == j[0]:
       print("跳过自己发送的消息2: %s %s %s" % (str(msg.from_), msg.to, msg.body))
       return
+
     existed = False
     for i in room.members:
-      if i.direct_jid is None:
-        err("没有权限查看jid: {muc}")
-        return
-      if i.nick == msg.from_.resource:
-        existed = True
+      #  if i.direct_jid is None:
+      #    err("没有权限查看jid: {muc}")
+      #    return
+      #  if i.nick == msg.from_.resource:
+      if i.nick == nick:
         jid = str(i.direct_jid.bare())
-        if member_only_mode:
-          reason = "非成员暂时禁止发言"
-          if i.affiliation == 'none':
-            jids = users[muc]
-            await room.muc_set_role(i.nick, "visitor", reason=reason)
-            jids[jid][2] = 1
-            return
-        #  if str(i.direct_jid.bare()) == myjid:
         if jid == myjid:
           print("跳过自己发送的消息3: %s %s %s" % (str(msg.from_), msg.to, msg.body))
           return
+        existed = True
+
+        #  if str(i.direct_jid.bare()) == myjid:
+        if member_only_mode:
+          if i.affiliation == 'none':
+            reason = "非成员暂时禁止发言"
+            #  jids = users[muc]
+            await room.muc_set_role(i.nick, "visitor", reason=reason)
+            jids[jid][2] = 1
+            return
         #  if str(i.direct_jid.bare()) in me:
         if jid in me:
           is_admin = True
           logger.info(f"admin msg: {text[:16]}")
         break
     if not existed:
-      print("忽略幽灵发言%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+      send_log("忽略幽灵发言%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
       return
+
 
     if msg.type_ == MessageType.CHAT:
       if is_admin is False:
@@ -3833,6 +3837,8 @@ async def xmpp_msg(msg):
           return
         logger.info("已忽略群内私聊: %s" % msg)
         return
+
+
     if is_admin is False:
       logger.info(f"group msg: {text[:16]}")
 
@@ -3982,13 +3988,25 @@ async def xmpp_msg(msg):
       if await mt_send_for_long_text(text0, name=name, qt=qt) is False:
         return
     #  text = text2
-  else:
+  #  if msg.type_ == MessageType.GROUPCHAT:
+  #    pass
+  elif msg.type_ == MessageType.NORMAL:
+    warn(f"normal msg: {msg}")
+    return
+  elif msg.type_ == MessageType.CHAT:
     #  if get_jid(msg.to) in my_groups:
     #  if get_jid(msg.from_) in my_groups:
     if muc in my_groups:
       nick = msg.from_.resource
     else:
       nick = msg.from_.localpart
+  elif msg.type_ == MessageType.ERROR:
+    warn(f"收到错误消息：{msg} {msg.error}")
+    return
+  else:
+    pprint(msg)
+    logger.info(f"skip unknown type: {msg.type_} {msg}")
+    return
 
   if text == "ping":
     reply = msg.make_reply()
