@@ -10,7 +10,7 @@ if [[ -z "$1" ]]; then
 else
 # ai "$@"
 # ai "$*"
-text=$(bash "$SH_PATH/trans.sh" -brief :en "$*")
+text=$(bash "$SH_PATH/trans.sh" -brief :en "$*") || exit $?
 ai "$text
 Please answer in Chinese."
 fi
