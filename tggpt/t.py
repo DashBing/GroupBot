@@ -52,6 +52,13 @@ def _exceptions_handler(e, *args, **kwargs):
     return f"{e=}"
 
 
+def pprint(e):
+  print('---')
+  print("||%s: %s" % (type(e), e))
+  print('---')
+  for i in dir(e):
+    print("  %s: %s: %s" % (i, type(getattr(e, i)), getattr(e, i)))
+  print('===')
 
 
 
@@ -81,4 +88,22 @@ async def main():
   await t1
   await t2
 
+
+
+def get_lineno(tb):
+  lineno = "%s" % tb.f_lineno
+  while tb.f_back is not None:
+    lineno += " %s" % tb.f_back.f_lineno
+    tb = tb.f_back
+  return lineno
+
+
+async def main():
+  import sys
+  tb = sys._getframe()
+  lineno = get_lineno(tb)
+  pprint(tb.f_code)
+  print(lineno)
+
 asyncio.run(main())
+print(__file__)

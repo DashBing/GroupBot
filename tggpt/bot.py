@@ -427,8 +427,11 @@ def exceptions_handler(func):
 def get_lineno(tb):
   lineno = "%s" % tb.f_lineno
   while tb.f_back is not None:
-    lineno += " %s" % tb.f_back.f_lineno
-    tb = tb.f_back
+    if tb.f_code.co_filename == __file__:
+      lineno += " %s" % tb.f_back.f_lineno
+      tb = tb.f_back
+    else:
+      break
   return lineno
 
 def _exceptions_handler(e, *args, **kwargs):
@@ -3707,6 +3710,9 @@ async def xmpp_msg(msg):
   muc = str(msg.from_.bare())
   nick = msg.from_.resource
   if nick is None:
+    if msg.type_ == MessageType.ERROR:
+      warn(f"收到错误消息：{msg} {msg.error}")
+      return
     warn(f"收到系统消息: {muc} {msg.from_} {msg.body} {msg}")
     return
   #  if not hasattr(msg, "body"):
