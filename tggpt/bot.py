@@ -1410,7 +1410,7 @@ async def load_config():
   config = await read_file(path.as_posix())
   config = load_str(config)
 
-  logger.info("config\n%s" % json.dumps(config, indent='  '))
+  #  logger.info("config\n%s" % json.dumps(config, indent='  '))
   
   if config is None:
     warn("配置文件有问题: config.json")
@@ -1463,7 +1463,7 @@ async def load_config():
           #  gpt_bot: "gateway1",
           }
 
-    logger.info("loaded gd\n%s" % json.dumps(gd, indent='  '))
+    #  logger.info("loaded gd\n%s" % json.dumps(gd, indent='  '))
     globals().update(gd)
 
     for muc in my_groups:
@@ -3265,7 +3265,10 @@ async def regisger_handler(client):
 
 
 async def send_typing(muc):
-  if muc in my_groups:
+  if muc == "gateway1":
+    muc = main_group
+    type_=MessageType.GROUPCHAT
+  elif muc in my_groups:
     type_=MessageType.GROUPCHAT
   else:
     type_=MessageType.CHAT
