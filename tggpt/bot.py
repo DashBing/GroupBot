@@ -3266,9 +3266,8 @@ async def regisger_handler(client):
 
 async def send_typing(muc):
   if muc == "gateway1":
-    muc = main_group
-    type_=MessageType.GROUPCHAT
-  elif muc in my_groups:
+    return True
+  if muc in my_groups:
     type_=MessageType.GROUPCHAT
   else:
     type_=MessageType.CHAT
