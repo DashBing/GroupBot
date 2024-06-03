@@ -1944,14 +1944,14 @@ async def send(text, jid=None, *args, **kwargs):
       #  err(f"需要jid")
       #  return False
       jid = log_group_private
-  elif jid == "gateway1":
-    jid = main_group
+  #  elif jid == "gateway1":
+  #    jid = main_group
   else:
     muc = jid
 
   if isinstance(text, aioxmpp.Message):
     text0 = text.body[None]
-    text.body[None] = f"{name}{text.body[None]}"
+    text.body[None] = f"{name}{text0}"
   else:
     text0 = text
     text = f"{name}{text}"
@@ -1959,27 +1959,41 @@ async def send(text, jid=None, *args, **kwargs):
   ms = get_mucs(muc)
   if ms:
   #  if muc in my_groups:
-    #  info(f"准备发送同步消息到: {get_mucs(muc)} {text=} {text0=}")
-    if main_group in ms and xmpp_only:
-      for m in ms:
-        await send_typing(m)
-    else:
-      for m in ms:
-        if await send1(text, jid=m, *args, **kwargs):
-          if isinstance(text, aioxmpp.Message):
-            text = text.body[None]
-            #  #  text.body[None] = text0
-            #  body = text.body
-            #  text = aioxmpp.Message(
-            #      to=JID.fromstr(text.to),  # recipient_jid must be an aioxmpp.JID
-            #      type_=text.type_,
-            #  )
-            #  text.body = body
-          continue
-        return False
-    if xmpp_only is False:
-      if main_group in ms:
+    info(f"准备发送同步消息到: {ms} {text=}")
+    if main_group in ms:
+      if xmpp_only:
+        for m in ms:
+          await send_typing(m)
+        return True
+        ms = set()
+      else:
         await mt_send_for_long_text(text0, name=nick)
+
+    for m in ms:
+      if await send1(text, jid=m, *args, **kwargs):
+        if isinstance(text, aioxmpp.Message):
+          text = text.body[None]
+
+    #  if main_group in ms and xmpp_only:
+    #    for m in ms:
+    #      await send_typing(m)
+    #  else:
+    #    for m in ms:
+    #      if await send1(text, jid=m, *args, **kwargs):
+    #        if isinstance(text, aioxmpp.Message):
+    #          text = text.body[None]
+    #          #  #  text.body[None] = text0
+    #          #  body = text.body
+    #          #  text = aioxmpp.Message(
+    #          #      to=JID.fromstr(text.to),  # recipient_jid must be an aioxmpp.JID
+    #          #      type_=text.type_,
+    #          #  )
+    #          #  text.body = body
+    #        continue
+    #      return False
+    #  if xmpp_only is False:
+    #    if main_group in ms:
+    #      await mt_send_for_long_text(text0, name=nick)
     return True
   else:
     #  info(f"准备发送到: {muc=} {jid=}")
@@ -3370,7 +3384,7 @@ async def ___add_id_to_msg(msg, correct):
 def get_mucs(muc):
   if muc == "gateway1":
     muc = main_group
-  if muc not in my_groups:
+  elif muc not in my_groups:
     return
   for s in sync_groups_all:
     if muc in s:
