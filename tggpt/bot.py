@@ -2295,6 +2295,8 @@ async def mt2tg(msg):
         return
 
     res = await run_cmd(text, gateway, name)
+    if res is True:
+      return
     if res:
       await mt_send_for_long_text(res, gateway)
       res = f"**C bot:** {res}"
@@ -2531,6 +2533,8 @@ async def _mt_send(text="null", gateway="gateway1", name="C bot", qt=None):
 #      return await asyncio.to_thread(os.system, f"{SH_PATH}/sm4gpt.sh {fn} {gateway}")
 
 async def mt_send_for_long_text(text, gateway="gateway1", name="C bot", *args, **kwargs):
+  if not isinstance(text, str):
+    text = "%s" % text
   async with mt_send_lock:
     need_delete = False
     if os.path.exists(f"{SH_PATH}"):
