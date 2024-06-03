@@ -1956,9 +1956,10 @@ async def send(text, jid=None, *args, **kwargs):
     text0 = text
     text = f"{name}{text}"
 
-  if muc in my_groups:
+  ms = get_mucs(muc)
+  if ms:
+  #  if muc in my_groups:
     #  info(f"准备发送同步消息到: {get_mucs(muc)} {text=} {text0=}")
-    ms = get_mucs(muc)
     if main_group in ms and xmpp_only:
       for m in ms:
         await send_typing(m)
@@ -2535,6 +2536,7 @@ async def _mt_send(text="null", gateway="gateway1", name="C bot", qt=None):
 async def mt_send_for_long_text(text, gateway="gateway1", name="C bot", *args, **kwargs):
   if not isinstance(text, str):
     text = "%s" % text
+  info(f"send to mt: {gateway} {text}")
   async with mt_send_lock:
     need_delete = False
     if os.path.exists(f"{SH_PATH}"):
@@ -2860,7 +2862,7 @@ async def parse_tg_msg(event):
       if path is not None:
         #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
       #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
-        path = "https://%s%s" % (DOMAIN, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[2:])
+        path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[5:])
         res = f"{mtmsgs[qid][0]}{path}\n{text}"
         if msg.buttons:
           for i in get_buttons(msg.buttons):
@@ -2940,7 +2942,7 @@ async def parse_tg_msg(event):
             if path is not None:
               info(f"wtf path: {path}")
               info(f"wtf path: {urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})}")
-              path = "https://%s%s" % (DOMAIN, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[2:])
+              path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[5:])
               if text:
                 text = f"{text} file: {path}"
               else:
@@ -3368,6 +3370,8 @@ async def ___add_id_to_msg(msg, correct):
 def get_mucs(muc):
   if muc == "gateway1":
     muc = main_group
+  if muc not in my_groups:
+    return
   for s in sync_groups_all:
     if muc in s:
       tmp = set()
