@@ -2678,6 +2678,7 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
         t.cancel()
 
     if path:
+      path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[5:])
       return path
     else:
       res = f"{res} 下载失败: {path}"
@@ -2773,24 +2774,38 @@ async def print_tg_msg(event, to_xmpp=False):
         else:
         #  if isinstance(peer, Channel):
           res += " %s" % peer.title
-  res2 = None
+  #  res2 = None
   if msg.text:
-    if not event.is_private:
-      res2 = f"{res}: {msg.text}"
-    res += ": %s" % msg.text.splitlines()[0][:64]
+    #  if not event.is_private:
+    #    res2 = f"{res}: {msg.text}"
+    #  res += ": %s" % msg.text.splitlines()[0][:64]
+    res += ": %s" % msg.text
   else:
     res += ": "
   if msg.file:
-    res += " %s" % msg.file
-    if msg.file.name:
-      res += " %s" % msg.file.name
-      if res2:
-        res2 += "\n%s" % msg.file.name
+    path = await download_media(msg)
+    if path is not None:
+      if res:
+        res += " file: %s" % path
+        #  text = f"{text} file: {path}"
+      else:
+        res = " file: %s" % path
+        #  text = f"file: {path}"
+        #  await send(text, jid=jid)
+        #  return
+
+    #  res += " %s" % msg.file
+    #  if msg.file.name:
+    #    res += " %s" % msg.file.name
+    #    if res2:
+    #      res2 += "\n%s" % msg.file.name
   #  if res2:
   #    #  await send(res2, jid=log_group, name="", nick=nick, delay=1)
   #    await send(res2, name="", nick=nick, delay=1)
   print(res)
-  return res2, nick, delay
+  if event.is_private:
+    return None, nick, delay
+  return res, nick, delay
 
 
 
@@ -2874,9 +2889,6 @@ async def parse_tg_msg(event):
       info(f"download... {text}")
       path = await download_media(msg, src)
       if path is not None:
-        #  path = "https://%s/%s" % (DOMAIN, path.lstrip(DOWNLOAD_PATH))
-      #  req = request.Request(url=url, data=parse.urlencode(data).encode('utf-8'))
-        path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[5:])
         res = f"{mtmsgs[qid][0]}{path}\n{text}"
         if msg.buttons:
           for i in get_buttons(msg.buttons):
@@ -2954,9 +2966,6 @@ async def parse_tg_msg(event):
           if msg.file:
             path = await download_media(msg)
             if path is not None:
-              info(f"wtf path: {path}")
-              info(f"wtf path: {urllib.parse.urlencode({1: path.lstrip(DOWNLOAD_PATH)})}")
-              path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[5:])
               if text:
                 text = f"{text} file: {path}"
               else:
@@ -2988,9 +2997,12 @@ async def parse_tg_msg(event):
           info(f"skip msg: {gid} {target} {msg.stringify()}")
 
       else:
+        #  if msg.text:
         res, nick, delay = await print_tg_msg(event)
-        logger.info(f"转发桥接消息: {event.chat_id} -> {bridges[event.chat_id]}: {msg.text}")
-        await send(msg.text, jid=target, name=f"**{nick}:** ", nick=nick, delay=delay)
+        if res:
+          logger.info(f"转发桥接消息: {chat_id} -> {bridges[chat_id]}: {msg.text[:64]}")
+          await send(msg.text, jid=target, name=f"**{nick}:** ", nick=nick, delay=delay)
+
       #  elif event.is_private:
       #    pass
     #  else:
