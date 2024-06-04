@@ -3599,6 +3599,7 @@ async def xmpp_msgp(msg):
               j[1] = item.affiliation
               #  j[3] = time.time()
           else:
+            j = [rnick, item.affiliation, item.role]
             if member_only_mode:
               if item.affiliation == "none":
                 if item.role == "participant":
@@ -3607,11 +3608,11 @@ async def xmpp_msgp(msg):
                   await room.muc_set_role(rnick, "visitor", reason=reason)
                   return
                 elif item.role == "visitor":
-                  j = [rnick, item.affiliation, item.role]
                   j[2] = 1
-                  jids[jid] = j
+                  #  jids[jid] = j
                   #  set_default_value(j)
                   #  return
+              jids[jid] = j
             else:
               if item.role == "visitor":
                 if muc in public_groups:
@@ -3619,7 +3620,6 @@ async def xmpp_msgp(msg):
                   res = await room.muc_set_role(rnick, "participant", reason=reason)
                   return
 
-              j = [rnick, item.affiliation, item.role]
               jids[jid] = j
               if muc in bot_groups:
                 welcome = f"欢迎 {hide_nick(msg)} ,这里是bot频道，专门用来测试bot，避免干扰主群。如有任何问题，建议根据群介绍前往主群沟通。该消息来自机器人(bot)，可不予理会。"
@@ -3630,7 +3630,9 @@ async def xmpp_msgp(msg):
               else:
                 welcome = f"欢迎 {hide_nick(msg)} ,如需查看群介绍，请发送 “.help”。该消息来自机器人(bot)，可不予理会。"
               await send(welcome, muc, nick=nick)
-              await send(f"有新人入群: {j[0]}\n身份: {j[1]}\n角色: {j[2]}\njid: {jid}\nmuc: {muc}", nick=nick)
+
+            #  await send(f"有新人入群: {j[0]}\n身份: {j[1]}\n角色: {j[2]}\njid: {jid}\nmuc: {muc}", nick=nick)
+            await send(f"有新人入群: {j[0]}\n身份: {j[1]}\n角色: {item.role}\njid: {jid}\nmuc: {muc}", nick=nick)
 
           set_default_value(j)
           #  if len(jids[jid]) > 3:
