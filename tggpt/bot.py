@@ -2802,9 +2802,9 @@ async def print_tg_msg(event, to_xmpp=False):
   #  if res2:
   #    #  await send(res2, jid=log_group, name="", nick=nick, delay=1)
   #    await send(res2, name="", nick=nick, delay=1)
+  #  if not event.is_private:
   print(res)
-  if event.is_private:
-    return None, nick, delay
+  #    return None, nick, delay
   return res, nick, delay
 
 
@@ -2999,8 +2999,9 @@ async def parse_tg_msg(event):
       else:
         #  if msg.text:
         res, nick, delay = await print_tg_msg(event)
+        #  logger.info(f"转发桥接消息: {chat_id} -> {bridges[chat_id]}: {msg.text[:64]}")
         if res:
-          logger.info(f"转发桥接消息: {chat_id} -> {bridges[chat_id]}: {msg.text[:64]}")
+          logger.info(f"转发桥接消息: {chat_id} -> {bridges[chat_id]}: {res}")
           await send(msg.text, jid=target, name=f"**{nick}:** ", nick=nick, delay=delay)
 
       #  elif event.is_private:
