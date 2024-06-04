@@ -1959,7 +1959,7 @@ async def send(text, jid=None, *args, **kwargs):
   ms = get_mucs(muc)
   if ms:
   #  if muc in my_groups:
-    info(f"准备发送同步消息到: {ms} {text=}")
+    #  info(f"准备发送同步消息到: {ms} {text=}")
     if main_group in ms:
       if xmpp_only:
         for m in ms:
@@ -3833,13 +3833,13 @@ async def xmpp_msg(msg):
     #  if str(msg.from_) == str(rooms[muc].me.conversation_jid.bare()):
     #  if msg.from_.resource == rooms[muc].me.nick:
     if room.me is not None and nick == room.me.nick:
-      print("跳过自己发送的消息1: %s %s %s" % (str(msg.from_), msg.to, msg.body))
+      print("跳过自己发送的消息1: %s %s %s" % (msg.from_, msg.to, text[:16]))
       return
 
     jids = users[muc]
     j = jids[myjid]
     if nick == j[0]:
-      print("跳过自己发送的消息2: %s %s %s" % (str(msg.from_), msg.to, msg.body))
+      print("跳过自己发送的消息2: %s %s %s" % (msg.from_, msg.to, text[:16]))
       return
 
     existed = False
@@ -3851,7 +3851,7 @@ async def xmpp_msg(msg):
       if i.nick == nick:
         jid = str(i.direct_jid.bare())
         if jid == myjid:
-          print("跳过自己发送的消息3: %s %s %s" % (str(msg.from_), msg.to, msg.body))
+          print("跳过自己发送的消息3: %s %s %s" % (msg.from_, msg.to, text[:16]))
           return
         existed = True
 
