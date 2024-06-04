@@ -2775,13 +2775,14 @@ async def print_tg_msg(event, to_xmpp=False):
         #  if isinstance(peer, Channel):
           res += " %s" % peer.title
   #  res2 = None
+  res1 = res
   if msg.text:
     #  if not event.is_private:
     #    res2 = f"{res}: {msg.text}"
     #  res += ": %s" % msg.text.splitlines()[0][:64]
-    res += ": %s" % msg.text
+    res = msg.text
   else:
-    res += ": "
+    res = None
   if msg.file:
     path = await download_media(msg)
     if path is not None:
@@ -2789,7 +2790,7 @@ async def print_tg_msg(event, to_xmpp=False):
         res += " file: %s" % path
         #  text = f"{text} file: {path}"
       else:
-        res = " file: %s" % path
+        res = "file: %s" % path
         #  text = f"file: {path}"
         #  await send(text, jid=jid)
         #  return
@@ -2803,7 +2804,7 @@ async def print_tg_msg(event, to_xmpp=False):
   #    #  await send(res2, jid=log_group, name="", nick=nick, delay=1)
   #    await send(res2, name="", nick=nick, delay=1)
   #  if not event.is_private:
-  print(res)
+  print(f"{res1}: {res[:64]}")
   #    return None, nick, delay
   return res, nick, delay
 
@@ -3001,8 +3002,9 @@ async def parse_tg_msg(event):
         res, nick, delay = await print_tg_msg(event)
         #  logger.info(f"转发桥接消息: {chat_id} -> {bridges[chat_id]}: {msg.text[:64]}")
         if res:
-          logger.info(f"转发桥接消息: {chat_id} -> {bridges[chat_id]}: {res}")
-          await send(msg.text, jid=target, name=f"**{nick}:** ", nick=nick, delay=delay)
+          logger.info(f"转发桥接消息: {chat_id} -> {bridges[chat_id]}: {res[:16]}")
+          #  await send(msg.text, jid=target, name=f"**{nick}:** ", nick=nick, delay=delay)
+          await send(res, jid=target, name=f"**{nick}:** ", nick=nick, delay=delay)
 
       #  elif event.is_private:
       #    pass
