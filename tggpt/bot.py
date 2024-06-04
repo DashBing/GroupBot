@@ -2787,7 +2787,7 @@ async def print_tg_msg(event, to_xmpp=False):
     path = await download_media(msg)
     if path is not None:
       if res:
-        res += " file: %s" % path
+        res += "\n--\nfile: %s" % path
         #  text = f"{text} file: {path}"
       else:
         res = "file: %s" % path
