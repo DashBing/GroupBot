@@ -2841,6 +2841,11 @@ async def parse_tg_msg(event):
       print(f"W: skip msg without text in chat with gpt bot, wtf: {msg.stringify()}")
       return
     
+    if text == '搜索中...':
+      #         message='搜索中...',
+      logger.info(text)
+      return
+
     if text == '等待下载中...':
       #   message='等待下载中...',
       #  logger.info(text)
@@ -2850,10 +2855,7 @@ async def parse_tg_msg(event):
       #         message='正在获取歌曲信息...',
       logger.info(text)
       return
-    if text == '搜索中...':
-      #         message='搜索中...',
-      logger.info(text)
-      return
+
     if text.endswith('正在发送中...'):
       # message='大熊猫\n专辑: 火火兔儿歌\nflac 14.87MB\n命中缓存, 正在发送中...',
       #  logger.info(text)
@@ -2867,6 +2869,7 @@ async def parse_tg_msg(event):
 
     src = gid_src[qid]
     mtmsgs = mtmsgsg[src]
+
     if music_bot_state[src] == 1:
       logger.info(msg.buttons)
       #  logger.info(f"找到了几个音乐:{len(msg.buttons)} {msg.text}")
@@ -2890,17 +2893,20 @@ async def parse_tg_msg(event):
       mtmsgs.pop(qid)
       return
     elif msg.file and music_bot_state[src] == 3:
-      info(f"download... {text}")
-      path = await download_media(msg, src)
-      if path is not None:
-        res = f"{mtmsgs[qid][0]}{path}\n{text}"
-        if msg.buttons:
-          for i in get_buttons(msg.buttons):
-            #  if isinstance(i, KeyboardButtonUrl):
-            if isinstance(i.button, KeyboardButtonUrl):
-              res += f"\n原始链接: {i.url}"
-        #  await mt_send_for_long_text(res, gateway)
-        await send(res, src)
+      if '发送失败' in text:
+        await send(text, src)
+      else:
+        info(f"download... {text}")
+        path = await download_media(msg, src)
+        if path is not None:
+          res = f"{mtmsgs[qid][0]}{path}\n{text}"
+          if msg.buttons:
+            for i in get_buttons(msg.buttons):
+              #  if isinstance(i, KeyboardButtonUrl):
+              if isinstance(i.button, KeyboardButtonUrl):
+                res += f"\n原始链接: {i.url}"
+          #  await mt_send_for_long_text(res, gateway)
+          await send(res, src)
       if music_bot_state[src] == 3:
         music_bot_state[src] = 2
     else:
