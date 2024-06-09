@@ -2846,16 +2846,18 @@ async def parse_tg_msg(event):
       logger.info(text)
       return
 
-    if text == '等待下载中...':
-      #   message='等待下载中...',
-      #  logger.info(text)
-      await send(text, src, correct=True)
-      return
     if text == '正在获取歌曲信息...':
       #         message='正在获取歌曲信息...',
       logger.info(text)
       return
 
+    src = gid_src[qid]
+
+    if text == '等待下载中...':
+      #   message='等待下载中...',
+      #  logger.info(text)
+      await send(text, src, correct=True)
+      return
     if text.endswith('正在发送中...'):
       # message='大熊猫\n专辑: 火火兔儿歌\nflac 14.87MB\n命中缓存, 正在发送中...',
       #  logger.info(text)
@@ -2867,7 +2869,6 @@ async def parse_tg_msg(event):
       await send(text, src, correct=True)
       return
 
-    src = gid_src[qid]
     mtmsgs = mtmsgsg[src]
 
     if music_bot_state[src] == 1:
