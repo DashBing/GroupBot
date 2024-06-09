@@ -2843,7 +2843,8 @@ async def parse_tg_msg(event):
     
     if text == '等待下载中...':
       #   message='等待下载中...',
-      logger.info(text)
+      #  logger.info(text)
+      await send(text, src, correct=True)
       return
     if text == '正在获取歌曲信息...':
       #         message='正在获取歌曲信息...',
@@ -2855,11 +2856,13 @@ async def parse_tg_msg(event):
       return
     if text.endswith('正在发送中...'):
       # message='大熊猫\n专辑: 火火兔儿歌\nflac 14.87MB\n命中缓存, 正在发送中...',
-      logger.info(text)
+      #  logger.info(text)
+      await send(text, src, correct=True)
       return
     if '中...' in text:
       #         message='搜索中...',
-      warn(f"已忽略疑似临时消息: {text}", False)
+      #  warn(f"已忽略疑似临时消息: {text}", False)
+      await send(text, src, correct=True)
       return
 
     src = gid_src[qid]
