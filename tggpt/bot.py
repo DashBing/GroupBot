@@ -3869,13 +3869,20 @@ async def xmpp_msg(msg):
           return
         existed = True
 
+        if jid not in jids:
+          err(f"{jid} not in jids of: {muc}")
+          #  return
+          j = [nick, i.affiliation, i.role]
+          set_default_value(j)
+          jids[jid] = j
+
         #  if str(i.direct_jid.bare()) == myjid:
         if member_only_mode:
           if i.affiliation == 'none':
             reason = "非成员暂时禁止发言"
             #  jids = users[muc]
-            await room.muc_set_role(i.nick, "visitor", reason=reason)
             jids[jid][2] = 1
+            await room.muc_set_role(i.nick, "visitor", reason=reason)
             return
         #  if str(i.direct_jid.bare()) in me:
         if jid in me:
@@ -3894,11 +3901,6 @@ async def xmpp_msg(msg):
       logger.info(f"group msg: {text[:16]}")
 
     if not is_admin:
-    #  if True:
-      jids = users[muc]
-      if jid not in jids:
-        err(f"{jid} not in jids of: {muc}")
-        return
       j = jids[jid]
       #  if len(j) < 4:
       #    err(f"缺少记录: {j}")
