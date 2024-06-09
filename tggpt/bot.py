@@ -2893,10 +2893,11 @@ async def parse_tg_msg(event):
       gid_src.pop(qid)
       mtmsgs.pop(qid)
       return
-    elif msg.file and music_bot_state[src] == 3:
+    elif music_bot_state[src] == 3:
       if '发送失败' in text:
         await send(text, src)
-      else:
+        music_bot_state[src] = 2
+      elif msg.file:
         info(f"download... {text}")
         path = await download_media(msg, src)
         if path is not None:
@@ -2908,7 +2909,10 @@ async def parse_tg_msg(event):
                 res += f"\n原始链接: {i.url}"
           #  await mt_send_for_long_text(res, gateway)
           await send(res, src)
-      if music_bot_state[src] == 3:
+        if music_bot_state[src] == 3:
+          music_bot_state[src] = 2
+      else:
+        await send(text, src, correct=True)
         music_bot_state[src] = 2
     else:
       warn(f"未知状态，已忽略: music bot: {gid_src=} {music_bot_state[src]}\nmsg:\n{msg.stringify()}")
