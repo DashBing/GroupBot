@@ -1964,6 +1964,7 @@ async def send(text, jid=None, *args, **kwargs):
       if xmpp_only:
         for m in ms:
           await send_typing(m)
+        await send1(text, jid=log_group_private, *args, **kwargs):
         return True
         ms = set()
       else:
