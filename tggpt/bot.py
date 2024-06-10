@@ -5023,13 +5023,14 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
       #  else:
         if i.text == text:
           logger.info(f"已找到：{text}")
+          music_bot_state[src] += 1
           await i.click()
           i = True
           await send(f"命中：{text}", src, correct=True)
           break
 
     if i is True:
-      music_bot_state[src] += 1
+      pass
     else:
       logger.info(f"没找到：{text}")
       await send(f"没找到：{text}", src)
