@@ -2662,7 +2662,8 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
           if current == total:
             info("下载完成：{res}")
             break
-          await send("执行中({:.0f}s)：{} {:.2%} {:.2f}/{:.2f}MB {:.1f}MB/s".format(now, res, current / total, current/1024/1024, total/1024/1024, (current-last_current)/(time.time()-last_time[0])/1024/1024), src, xmpp_only=True, correct=True)
+          #  await send("执行中({:.0f}s)：{} {:.2%} {:.2f}/{:.2f}MB {:.1f}MB/s".format(now, res, current / total, current/1024/1024, total/1024/1024, (current-last_current)/(time.time()-last_time[0])/1024/1024), src, xmpp_only=True, correct=True)
+          await send("执行中({:.0f}s)：{} {:.2%} {:.2f}/{:.2f}MB {:.1f}MB/s".format(now, res, current / total, current/1024/1024, total/1024/1024, (current-last_current)/(time.time()-last_time[0])/1024/1024), src, correct=True)
           last_time[0] = time.time()
           last_current = current
 
@@ -3006,7 +3007,7 @@ async def parse_tg_msg(event):
               l.append(gid)
             await asyncio.sleep(5)
             if mid in mtmsgsg[jid] and now == l[1]:
-              await send(text, jid=jid, correct=True)
+              await send(text, jid=jid)
             else:
               info(f"忽略旧的临时消息: {text[:64]}")
         else:
