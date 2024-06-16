@@ -317,8 +317,8 @@ TMP_PATH=HOME+"/tera/tmp"
 DOWNLOAD_PATH = "/var/www/dav/tmp"
 URL_PATH = ""
 
-DOWNLOAD_PATH = "/var/www/dav/home"
-URL_PATH = "/public"
+#  DOWNLOAD_PATH = "/var/www/dav/home"
+#  URL_PATH = "/public"
 
 SH_PATH='/run/user/1000/bot'
 
