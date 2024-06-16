@@ -120,7 +120,7 @@ music_bot = 1404457467
 music_bot_name = 'Music163bot'
 
 
-interval = 3
+interval = 10
 
 wtf_time = 5
 wtf_time_max = 1800
@@ -2670,11 +2670,11 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
     if src:
       t = asyncio.create_task(update_tmp_msg())
     try:
-      path = await asyncio.wait_for(msg.download_media(path, progress_callback=download_media_callback), timeout=300)
+      path = await asyncio.wait_for(msg.download_media(path, progress_callback=download_media_callback), timeout=1000)
     except TimeoutError as e:
       path = None
       res = f"{res} 下载失败(超时): {e=}"
-      return
+      #  return
     if src:
       if not t.done():
         t.cancel()
