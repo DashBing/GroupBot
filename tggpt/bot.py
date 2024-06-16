@@ -313,8 +313,12 @@ MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
 HTTP_RES_MAX_BYTES = 15000000
 FILE_DOWNLOAD_MAX_BYTES = 64000000
 TMP_PATH=HOME+"/tera/tmp"
+
 DOWNLOAD_PATH = "/var/www/dav/tmp"
+URL_PATH = ""
+
 DOWNLOAD_PATH = "/var/www/dav/home"
+URL_PATH = "/public"
 
 SH_PATH='/run/user/1000/bot'
 
@@ -2682,7 +2686,7 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
 
     if path:
       #  path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[5:])
-      path = "https://%s/public/%s" % (DOMAIN, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[5:])
+      path = "https://%s%s/%s" % (DOMAIN, URL_PATH, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[5:])
       return path
     else:
       res = f"{res} 下载失败: {path}"
