@@ -4787,6 +4787,8 @@ async def add_cmd():
       text = "/reset"
     return 3, bot_name, text
   cmd_funs["gm"] = _
+  cmd_funs["ai"] = _
+  cmd_funs["bd"] = _
 
 
   async def _(cmds, src):
