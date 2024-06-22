@@ -4429,7 +4429,12 @@ async def add_cmd():
     res = get_jid_room(cmds, src)
     if type(res) is str:
       warn(res)
-      res = await room.muc_set_role(nick, role, reason=reason)
+      role = "visitor"
+      try:
+        res = await room.muc_set_role(nick, role, reason=reason)
+      except Exception as e:
+        muc = str(room.jid.bare())
+        return f"failed: {muc}"
       return f"ok2: {res}"
     jid = res[0]
     room = res[1]
