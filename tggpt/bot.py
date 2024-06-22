@@ -4357,10 +4357,25 @@ async def add_cmd():
     nick = res[0]
     room = res[1]
     reason = "cmds[0]命令"
+
     for i in room.members:
       if i.nick == nick:
         res = await room.ban(i, reason)
         return f"ok: {res}"
+
+    res = get_jid_room(cmds, src)
+    if type(res) is str:
+      warn(res)
+      res = await room.muc_set_role(nick, role, reason=reason)
+      return f"ok2: {res}"
+    jid = res[0]
+    room = res[1]
+    #  muc = str(room.jid)
+    #  unban(muc, jid=jid)
+    affiliation = "outcast"
+    res = await room.muc_set_affiliation(jid, affiliation, reason=reason)
+    return f"ok3: {res}"
+
     return "not found"
   cmd_funs["ban"] = _
   cmd_for_admin.add('ban')
