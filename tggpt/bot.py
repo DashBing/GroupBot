@@ -4138,6 +4138,7 @@ def get_jid_room(cmds, src):
     #        jid = str(i.direct_jid.bare())
     for jid, j in jids.items():
       if j[0] == nick:
+        jid = JID.fromstr(jid)
         return jid, room
     #  if jid is None:
     return f"没找到: {nick}\nmuc: {muc}"
@@ -4149,6 +4150,7 @@ def get_jid_room(cmds, src):
     room = rooms[muc]
     jids = users[muc]
     if jid in jids:
+      jid = JID.fromstr(jid)
       return jid, room
     else:
       return f"没找到该jid: {jid}\nmuc: {muc}"
@@ -4172,6 +4174,8 @@ def get_nick_room(cmds, src):
     muc = cmds[1].split('/', 1)[0]
     if muc in my_groups:
       nick = cmds[1].split('/', 1)[1]
+      if nick.endswith(": "):
+        nick = nick[:-2]
     else:
       muc = src
       nick = cmds[1]
