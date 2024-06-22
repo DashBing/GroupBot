@@ -4386,6 +4386,42 @@ async def add_cmd():
 
   async def _(cmds, src):
     if len(cmds) == 1:
+      return f"{cmds[0]}\n.{cmds[0]} $jid/$nick"
+
+    nick = cmds[1]
+    reason = "cmds[0]命令"
+    for room in rooms:
+      for i in room.members:
+        if i.nick == nick:
+          res = await room.ban(i, reason)
+          return f"ok: {res}"
+
+    res = get_jid_room(cmds, src)
+    if type(res) is str:
+      warn(res)
+      res2 = ""
+      for room in rooms:
+        try:
+          role = "visitor"
+          res = await room.muc_set_role(nick, role, reason=reason)
+        except Exception as e:
+          muc = str(room.jid.bare())
+          res2 += f"failed: {muc}"
+      if res2:
+        res = f"{nick}{res2}"
+        err(res2)
+      return f"ok2: {res}"
+    jid = res[0]
+    affiliation = "outcast"
+    for room in rooms:
+      res = await room.muc_set_affiliation(jid, affiliation, reason=reason)
+    return f"ok3: {res}"
+
+  cmd_funs["banall"] = _
+  cmd_for_admin.add('banall')
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
       return f"临时踢出\n.{cmds[0]} $jid/$nick"
 
     #  option = False
