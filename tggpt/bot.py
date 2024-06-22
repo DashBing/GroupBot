@@ -4154,6 +4154,36 @@ def get_jid_room(cmds, src):
       return jid, room
     else:
       return f"没找到该jid: {jid}\nmuc: {muc}"
+
+  #  elif cmds[1].startswith("X ") and src in my_groups:
+  elif src in my_groups:
+
+    muc = None
+    nick = cmds[1]
+    if cmds[1].startswith("X "):
+      nick = nick[2:]
+      if nick[-1] == ' ':
+        nick = nick[:-1]
+
+    for m in get_mucs(src):
+      room = rooms[m]
+      for i in room.members:
+        if i.nick == nick:
+          jid = str(i.direct_jid.bare())
+          break
+      if muc is not None:
+        break
+    if muc is None:
+      for m in get_mucs(src):
+        jids = users[m]
+        for jid, j in jids.items():
+          if j[0] == nick:
+            room = rooms[m]
+            break
+        if muc is not None:
+          break
+    if muc is None:
+      return f"没找到nick: {nick}"
     #  if jid in jids:
     #    pass
     #  else:
@@ -4208,6 +4238,35 @@ def get_nick_room(cmds, src):
       #    return f"没找到该jid对应的nick: {jid}\nmuc: {muc}"
       #  else:
       #    nick = jids[jid][0]
+  elif src in my_groups:
+  #  elif cmds[1].startswith("X ") and src in my_groups:
+    muc = None
+    nick = cmds[1]
+    if cmds[1].startswith("X "):
+      nick = nick[2:]
+      if nick[-1] == ' ':
+        nick = nick[:-1]
+
+    for m in get_mucs(src):
+      room = rooms[m]
+      for i in room.members:
+        if i.nick == nick:
+          muc = m
+          break
+      if muc is not None:
+        break
+    if muc is None:
+      for m in get_mucs(src):
+        jids = users[m]
+        for jid, j in jids.items():
+          if j[0] == nick:
+            room = rooms[m]
+            muc = m
+            break
+        if muc is not None:
+          break
+    if muc is None:
+      return f"没找到nick: {nick}"
         
   else:
     return "格式不正确"
