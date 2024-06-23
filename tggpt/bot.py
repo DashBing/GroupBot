@@ -4478,6 +4478,7 @@ async def add_cmd():
     if type(res) is str:
       warn(res)
       res2 = ""
+      res3 = ""
       for room in rooms.values():
         muc = str(room.jid.bare())
         #  for i in room.members:
@@ -4486,14 +4487,15 @@ async def add_cmd():
           res = await room.muc_set_role(nick, role, reason=reason)
           res2 += f"\nok: {muc} {res}"
         except Exception as e:
-          res2 += f"\nfailed: {muc}"
+          res3 += f"\nfailed: {muc}"
       if res2:
-        res = f"ok2: {nick}{res2}"
+        res = f"ok2: {nick}{res2}\n--{res3}"
         err(res)
       return res
 
     jid = res[0]
     res2 = ""
+    res3 = ""
     affiliation = "outcast"
     for room in rooms.values():
       muc = str(room.jid.bare())
@@ -4501,10 +4503,10 @@ async def add_cmd():
         res = await room.muc_set_affiliation(jid, affiliation, reason=reason)
         res2 += f"\nok: {muc} {res}"
       except Exception as e:
-        res2 += f"\nfailed: {muc}"
+        res3 += f"\nfailed: {muc}"
 
     if res2:
-      res = f"ok3: {nick}{res2}"
+      res = f"ok3: {nick}{res2}\n--{res3}"
     else:
       res = f"failed3: {nick}"
     return res
