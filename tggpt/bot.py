@@ -4458,8 +4458,15 @@ async def add_cmd():
       #    nick = cmds[1].split('/', 1)[1]
       res = get_nick_room(cmds, src)
       if type(res) is str:
-        return res
-      nick = res[0]
+        if src == log_group_private:
+          nick = cmds[1]
+          muc = cmds[1].split('/', 1)[0]
+          if muc in my_groups:
+            nick = cmds[1].split('/', 1)[1]
+        else:
+          return res
+      else:
+        nick = res[0]
     else:
       nick = cmds[1]
 
