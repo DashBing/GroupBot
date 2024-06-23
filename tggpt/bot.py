@@ -4464,33 +4464,50 @@ async def add_cmd():
       nick = cmds[1]
 
     reason = "cmds[0]命令"
+    res2 = ""
     for room in rooms.values():
+      muc = str(room.jid.bare())
       for i in room.members:
         if i.nick == nick:
           res = await room.ban(i, reason)
-          return f"ok: {res}"
+          res2 += f"\nok: {muc} {res}"
 
+    if res2:
+      return f"ok: {nick}{res2}"
     res = get_jid_room(cmds, src)
     if type(res) is str:
       warn(res)
       res2 = ""
-    for room in rooms.values():
-      for i in room.members:
+      for room in rooms.values():
+        muc = str(room.jid.bare())
+        #  for i in room.members:
         try:
           role = "visitor"
           res = await room.muc_set_role(nick, role, reason=reason)
+          res2 += f"\nok: {muc} {res}"
         except Exception as e:
-          muc = str(room.jid.bare())
-          res2 += f"failed: {muc}"
+          res2 += f"\nfailed: {muc}"
       if res2:
-        res = f"{nick}{res2}"
-        err(res2)
-      return f"ok2: {res}"
+        res = f"ok2: {nick}{res2}"
+        err(res)
+      return res
+
     jid = res[0]
+    res2 = ""
     affiliation = "outcast"
     for room in rooms.values():
-      res = await room.muc_set_affiliation(jid, affiliation, reason=reason)
-    return f"ok3: {res}"
+      muc = str(room.jid.bare())
+      try:
+        res = await room.muc_set_affiliation(jid, affiliation, reason=reason)
+        res2 += f"\nok: {muc} {res}"
+      except Exception as e:
+        res2 += f"\nfailed: {muc}"
+
+    if res2:
+      res = f"ok3: {nick}{res2}"
+    else:
+      res = f"failed3: {nick}"
+    return res
   cmd_funs["banall"] = _
   cmd_for_admin.add('banall')
 
