@@ -4454,7 +4454,7 @@ async def add_cmd():
 
     nick = cmds[1]
     reason = "cmds[0]命令"
-    for room in rooms:
+    for room in rooms.values():
       for i in room.members:
         if i.nick == nick:
           res = await room.ban(i, reason)
@@ -4464,7 +4464,8 @@ async def add_cmd():
     if type(res) is str:
       warn(res)
       res2 = ""
-      for room in rooms:
+    for room in rooms.values():
+      for i in room.members:
         try:
           role = "visitor"
           res = await room.muc_set_role(nick, role, reason=reason)
@@ -4477,7 +4478,7 @@ async def add_cmd():
       return f"ok2: {res}"
     jid = res[0]
     affiliation = "outcast"
-    for room in rooms:
+    for room in rooms.values():
       res = await room.muc_set_affiliation(jid, affiliation, reason=reason)
     return f"ok3: {res}"
 
