@@ -4452,7 +4452,17 @@ async def add_cmd():
     if len(cmds) == 1:
       return f"{cmds[0]}\n.{cmds[0]} $jid/$nick"
 
-    nick = cmds[1]
+    if '/' in cmds[1]:
+      #  muc = cmds[1].split('/', 1)[0]
+      #  if muc in my_groups:
+      #    nick = cmds[1].split('/', 1)[1]
+      res = get_nick_room(cmds, src)
+      if type(res) is str:
+        return res
+      nick = res[0]
+    else:
+      nick = cmds[1]
+
     reason = "cmds[0]命令"
     for room in rooms.values():
       for i in room.members:
@@ -4481,7 +4491,6 @@ async def add_cmd():
     for room in rooms.values():
       res = await room.muc_set_affiliation(jid, affiliation, reason=reason)
     return f"ok3: {res}"
-
   cmd_funs["banall"] = _
   cmd_for_admin.add('banall')
 
