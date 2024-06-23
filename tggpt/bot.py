@@ -4481,26 +4481,52 @@ async def add_cmd():
 
     if res2:
       return f"ok: {nick}{res2}"
-    res = get_jid_room(cmds, src)
-    if type(res) is str:
-      warn(res)
-      res2 = ""
-      res3 = ""
-      for room in rooms.values():
-        muc = str(room.jid.bare())
-        #  for i in room.members:
-        try:
-          role = "visitor"
-          res = await room.muc_set_role(nick, role, reason=reason)
-          res2 += f"\nok: {muc} {res}"
-        except Exception as e:
-          res3 += f"\nfailed: {muc}"
-      if res2:
-        res = f"ok2: {nick}{res2}\n--{res3}"
-        err(res)
+
+    res2 = ""
+    res3 = ""
+    for room in rooms.values():
+      muc = str(room.jid.bare())
+      #  for i in room.members:
+      try:
+        role = "visitor"
+        res = await room.muc_set_role(nick, role, reason=reason)
+        res2 += f"\nok: {muc} {res}"
+      except Exception as e:
+        res3 += f"\nfailed: {muc}"
+    if res2:
+      res = f"ok2: {nick}{res2}\n--{res3}"
+      err(res)
       return res
 
-    jid = res[0]
+    res = get_jid_room(cmds, src)
+    if type(res) is str:
+      if src == log_group_private:
+        nick = cmds[1]
+        muc = cmds[1].split('/', 1)[0]
+        if muc in my_groups:
+          nick = cmds[1].split('/', 1)[1]
+
+        jid = None
+        for room in rooms.values():
+          room = rooms[muc]
+          jids = users[muc]
+          for jid, j in jids.items():
+            if j[0] == nick:
+              jid = JID.fromstr(jid)
+              break
+          if jid is not None:
+            break
+
+        if jid is None:
+          warn(f"没找到: {nick}")
+          return f"没找到: {nick}"
+      else:
+        return res
+    #    else:
+    #      warn(res)
+    else:
+      jid = res[0]
+
     res2 = ""
     res3 = ""
     affiliation = "outcast"
@@ -4513,9 +4539,9 @@ async def add_cmd():
         res3 += f"\nfailed: {muc}"
 
     if res2:
-      res = f"ok3: {nick}{res2}\n--{res3}"
+      res = f"ok3: {nick} {jid}{res2}\n--{res3}"
     else:
-      res = f"failed3: {nick}"
+      res = f"failed3: {nick} {jid}"
     return res
   cmd_funs["banall"] = _
   cmd_for_admin.add('banall')
