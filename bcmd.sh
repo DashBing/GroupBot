@@ -514,15 +514,15 @@ H1=${H% *}
 ex=$(echo "$text"| sed 1d)
 if [[ "$H" != "$H1" ]]; then
   if [[ -n "$ex" ]]; then
-    H=$H1
     text="${H##* }
 $ex"
+    H=$H1
   fi
 fi
 
 e=0
 if [[ -z "$ex" ]]; then
-  echo $H >> $LOG
+  echo "$H" >> $LOG
   text=$(cmds $H) || e=$?
 else
   echo $H "$text" >> $LOG
