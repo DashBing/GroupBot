@@ -2344,8 +2344,10 @@ async def mt2tg(msg):
 async def send_to_tg_bot(text, chat_id, src=None):
   chat = await get_entity(chat_id, True)
   msg = await UB.send_message(chat, text)
+  #  if src:
+  #    mtmsgsg[src][msg.id] = []
   #  info(f"res of send: {msg.stringify()}")
-  gid_src[msg.id] = src
+  #  gid_src[msg.id] = src
   #  if src not in mtmsgsg:
   #    mtmsgsg[src] = {}
   #  mtmsgsg[src][msg.id] = [msg]
@@ -2891,8 +2893,10 @@ async def parse_tg_msg(event):
       await send(res, src)
 
       gid_src[msg.id] = src
+
       mtmsgs[qid].append(msg.buttons)
       mtmsgs[msg.id] = mtmsgs[qid]
+
       gid_src.pop(qid)
       mtmsgs.pop(qid)
 
@@ -4907,9 +4911,27 @@ async def add_cmd():
     text = ' '.join(cmds[1:])
     music_bot_state[src] = 1
     text="/search "+text
-    mid = await send_to_tg_bot(text, music_bot, src)
-    return 1, mid
+    #  mid = await send_to_tg_bot(text, music_bot, src)
+    #  return 1, mid
+    return 1, music_bot, text
   cmd_funs["music"] = _
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"gpt(telegram bot) translate\n.{cmds[0]} $text\n--\n所有数据来自telegram机器人: https://t.me/littleb_gptBOT"
+    text = ' '.join(cmds[1:])
+    text = f'{PROMPT_TR_MY}“{text}”'
+    return 1, gpt_bot
+  cmd_funs["gtr"] = _
+
+  async def _(cmds, src):
+    if len(cmds) == 1:
+      return f"gpt(telegram bot) translate 中文专用翻译\n.{cmds[0]} $text\n--\n所有数据来自telegram机器人: https://t.me/littleb_gptBOT"
+    text = ' '.join(cmds[1:])
+    text = f'{PROMPT_TR_ZH}“{text}”'
+    return 1, gpt_bot
+  cmd_funs["gtz"] = _
+
 
   #  async def _(cmds, src):
   #    if len(cmds) == 1:
@@ -4954,7 +4976,7 @@ async def add_cmd():
   async def _(cmds, src):
     bot_name = "OPENAl_ChatGPT_bot"
     if len(cmds) == 1:
-      return f"多个模型，暂时选定gpt4\n.{cmds[0]} $text\n--\nhttps://t.me/{bot_name}"
+      return f"模型不固定\n.{cmds[0]} $text\n--\nhttps://t.me/{bot_name}"
     text = ' '.join(cmds[1:])
     return 3, bot_name, text
   cmd_funs["gpt4"] = _
@@ -4980,24 +5002,6 @@ async def add_cmd():
     return 3, bot_name, text
   cmd_funs["sd"] = _
 
-
-  async def _(cmds, src):
-    if len(cmds) == 1:
-      return f"gpt(telegram bot) translate\n.{cmds[0]} $text\n--\n所有数据来自telegram机器人: https://t.me/littleb_gptBOT"
-    text = ' '.join(cmds[1:])
-    text = f'{PROMPT_TR_MY}“{text}”'
-    mid = await send_to_tg_bot(text, gpt_bot, src)
-    return 1, mid
-  cmd_funs["gtr"] = _
-
-  async def _(cmds, src):
-    if len(cmds) == 1:
-      return f"gpt(telegram bot) translate 中文专用翻译\n.{cmds[0]} $text\n--\n所有数据来自telegram机器人: https://t.me/littleb_gptBOT"
-    text = ' '.join(cmds[1:])
-    text = f'{PROMPT_TR_ZH}“{text}”'
-    mid = await send_to_tg_bot(text, gpt_bot, src)
-    return 1, mid
-  cmd_funs["gtz"] = _
 
   async def _(cmds, src):
     if len(cmds) == 1:
@@ -5098,13 +5102,15 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
       res = await cmd_funs[cmd](cmds, src)
       if type(res) is tuple:
         if res[0] == 1:
-          mid = res[1]
+          #  mid = res[1]
           if src not in mtmsgsg:
             mtmsgsg[src] = {}
           mtmsgs = mtmsgsg[src]
           mtmsgs.clear()
           #  mtmsgs[mid][0] = name
+          mid = await send_to_tg_bot(res[2], res[1], src)
           mtmsgs[mid] = [name]
+          gid_src[mid] = src
         #  elif res[0] == 2:
         #    mid = res[1]
         #    mtmsgsg[src][mid][0] = name
@@ -5161,6 +5167,7 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
 
           mid = await send_to_tg_bot(text, pid, src)
           mtmsgs[mid] = [name]
+          gid_src[mid] = src
           #  mid = res[1]
           #  pid = res[2]
 
@@ -5197,8 +5204,11 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
       if gid_src[i] == src:
         tmp.append(i)
     qid = max(tmp)
-    logger.info(f"尝试下载：{text} {qid}")
+    #  logger.info(f"尝试下载：{text} {qid}")
     bs = mtmsgs[qid][1]
+    if bs is None:
+      warn(f"fixme: bs is None, 尝试下载：{text} {qid} msg: {bs}")
+      return
     logger.info(f"尝试下载：{text} {qid} msg: {bs}")
     i = None
     for i in get_buttons(bs):
