@@ -3908,6 +3908,7 @@ async def xmpp_msg(msg):
         if rejoin is False:
           await room.leave()
           rejoin = True
+          rooms.pop(muc)
           send_log("检测到幽灵发言%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
           if await join(muc):
             room = rooms[muc]
