@@ -5082,6 +5082,8 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
   if text[0:1] == ".":
     if text[1:2] == " ":
       return
+    if text[1:2] == ".":
+      return
     cmds = get_cmd(text[1:])
     if cmds:
       pass
@@ -5207,7 +5209,10 @@ async def _run_cmd(text, src, name="X test: ", is_admin=False, textq=None):
     #  logger.info(f"尝试下载：{text} {qid}")
     bs = mtmsgs[qid][1]
     if bs is None:
-      warn(f"fixme: bs is None, 尝试下载：{text} {qid} msg: {bs}")
+      warn(f"fixme: bs is None, 尝试下载：{text} {qid} msg: {mtmsgs[qid]}")
+      return
+    if bs is float:
+      warn(f"fixme: bs is float, 尝试下载：{text} {qid} msg: {mtmsgs[qid]}")
       return
     logger.info(f"尝试下载：{text} {qid} msg: {bs}")
     i = None
