@@ -3868,42 +3868,54 @@ async def xmpp_msg(msg):
       print("跳过自己发送的消息2: %s %s %s" % (msg.from_, msg.to, text[:16]))
       return
 
-    existed = False
-    for i in room.members:
-      #  if i.direct_jid is None:
-      #    err("没有权限查看jid: {muc}")
-      #    return
-      #  if i.nick == msg.from_.resource:
-      if i.nick == nick:
-        jid = str(i.direct_jid.bare())
-        if jid == myjid:
-          print("跳过自己发送的消息3: %s %s %s" % (msg.from_, msg.to, text[:16]))
-          return
-        existed = True
-
-        if jid not in jids:
-          err(f"{jid} not in jids of: {muc}")
-          #  return
-          j = [nick, i.affiliation, i.role]
-          set_default_value(j)
-          jids[jid] = j
-
-        #  if str(i.direct_jid.bare()) == myjid:
-        if member_only_mode:
-          if i.affiliation == 'none':
-            reason = "非成员暂时禁止发言"
-            #  jids = users[muc]
-            jids[jid][2] = 1
-            await room.muc_set_role(i.nick, "visitor", reason=reason)
+    rejoin = False
+    while True:
+      existed = False
+      for i in room.members:
+        #  if i.direct_jid is None:
+        #    err("没有权限查看jid: {muc}")
+        #    return
+        #  if i.nick == msg.from_.resource:
+        if i.nick == nick:
+          jid = str(i.direct_jid.bare())
+          if jid == myjid:
+            print("跳过自己发送的消息3: %s %s %s" % (msg.from_, msg.to, text[:16]))
             return
-        #  if str(i.direct_jid.bare()) in me:
-        if jid in me:
-          is_admin = True
-          logger.info(f"admin msg: {text[:16]}")
-        break
-    if not existed:
-      send_log("忽略幽灵发言%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
-      return
+          existed = True
+
+          if jid not in jids:
+            err(f"{jid} not in jids of: {muc}")
+            #  return
+            j = [nick, i.affiliation, i.role]
+            set_default_value(j)
+            jids[jid] = j
+
+          #  if str(i.direct_jid.bare()) == myjid:
+          if member_only_mode:
+            if i.affiliation == 'none':
+              reason = "非成员暂时禁止发言"
+              #  jids = users[muc]
+              jids[jid][2] = 1
+              await room.muc_set_role(i.nick, "visitor", reason=reason)
+              return
+          #  if str(i.direct_jid.bare()) in me:
+          if jid in me:
+            is_admin = True
+            logger.info(f"admin msg: {text[:16]}")
+          break
+
+      if not existed:
+        if rejoin is False:
+          await room.leave()
+          rejoin = True
+          send_log("检测到幽灵发言%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+          if await join(muc):
+            room = rooms[muc]
+            continue
+        else:
+          send_log("忽略幽灵发言%s %s %s %s %s" % (msg.type_, msg.id_,  str(msg.from_), msg.to, msg.body))
+          return
+      break
 
 
     #  if msg.type_ == MessageType.CHAT:
