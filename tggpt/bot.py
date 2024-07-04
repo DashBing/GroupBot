@@ -257,7 +257,7 @@ def generand(N=4, M=None, *, no_uppercase=False):
   return ''.join(random.choice(l) for x in range(N))
 
 
-def split_long_text(text, msg_max_length=500):
+def split_long_text(text, msg_max_length=MAX_MTMSG_BYTES):
   texts = []
   if len(text.encode()) > msg_max_length:
     ls = text.splitlines()
@@ -309,6 +309,9 @@ def split_long_text(text, msg_max_length=500):
 
 MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
 
+
+MAX_MSG_BYTES = 8000
+MAX_MTMSG_BYTES = 500
 
 HTTP_RES_MAX_BYTES = 15000000
 FILE_DOWNLOAD_MAX_BYTES = 64000000
@@ -1202,6 +1205,8 @@ async def my_popen(cmd,
       elif p.returncode:
         res = "%s\n--\nE: %s" % (res, p.returncode)
       if res:
+        if len(res) > MAX_MSG_BYTES:
+          res = await pastebin(res)
         return res
       else:
         return
@@ -1244,6 +1249,8 @@ async def run_my_bash(cmd, shell=True, max_time=64):
     if errs:
       res = res + "\n" + errs
     #await msg.delete()
+  if len(res) > MAX_MSG_BYTES:
+    res = await pastebin(res)
   return res
 
 
@@ -1854,7 +1861,7 @@ async def __send(msg, client=None, room=None, name=None, correct=False, fromname
 
     if text:
       msgs = []
-      for text in split_long_text(text, 8000):
+      for text in split_long_text(text, MAX_MSG_BYTES):
         if msgs:
           msg = aioxmpp.Message(
               to=msg.to,
