@@ -4347,6 +4347,8 @@ async def add_cmd():
       k1 = k
 
       for k2, v2 in cmd_funs.items():
+        if k2 == k:
+          continue
         if v is v2:
           k1 += ' / '
           k1 += k2
@@ -4357,10 +4359,10 @@ async def add_cmd():
       else:
         cmds.add(k1)
 
-    res = '可用的命令:'
+    res = '可用的命令:\n'
     res += '\n'.join(cmds)
     if cmds_admin:
-      res += '\n\n仅管理可用的命令:'
+      res += '\n\n仅管理可用的命令:\n'
       res += '\n'.join(cmds_admin)
     return res
   cmd_funs["cmd"] = _
