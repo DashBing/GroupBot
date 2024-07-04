@@ -257,7 +257,7 @@ def generand(N=4, M=None, *, no_uppercase=False):
   return ''.join(random.choice(l) for x in range(N))
 
 
-def split_long_text(text, msg_max_length=MAX_MTMSG_BYTES):
+def split_long_text(text, msg_max_length=500):
   texts = []
   if len(text.encode()) > msg_max_length:
     ls = text.splitlines()
@@ -311,7 +311,6 @@ MY_ID = int(get_my_key("TELEGRAM_MY_ID"))
 
 
 MAX_MSG_BYTES = 8000
-MAX_MTMSG_BYTES = 500
 
 HTTP_RES_MAX_BYTES = 15000000
 FILE_DOWNLOAD_MAX_BYTES = 64000000
