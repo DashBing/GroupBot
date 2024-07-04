@@ -143,7 +143,8 @@ text=$(echo "$text" | sed -r '1s/^\s*\S+\s*//' )
 
 # date >> ~/tera/mt_msg.log
 # echo "$*" >> ~/tera/mt_msg.log
-log_msg note "$@" >> $LOG_FILE
+# log_msg note "$@" >> $LOG_FILE
+log_msg note "$@" >> $LOG
 #
 NOTE_FILE="$SH_PATH/group_note.txt"
 
@@ -240,6 +241,12 @@ fi
 [[ -z "$text" ]] && [[ "$cmd" != "list" ]] && echo '内容不能为空' && exit 0
 echo "finally text: $text" >> $LOG_FILE
 text=$(my_encode "$text")
+
+
+# echo $cmd
+# echo $tag
+# echo "$tag $username$text"
+# exit
 
 case "${cmd}" in
 list)

@@ -357,14 +357,14 @@ cmds() {
     fi
     ;;
   note)
-    shift
+    # shift
     # bash "$SH_PATH/note.sh" "$username" "$@" || echo "E: $?"
     # echo bash "$SH_PATH/note.sh" "$username" "${text:6}" &>>~/tera/mt_msg.log
     # bash "$SH_PATH/note.sh" "$username" "${text:6}" &>>~/tera/mt_msg.log
     bash "$SH_PATH/note.sh" "$username" "${text:6}" || echo "E: $?"
     ;;
   qun)
-    shift
+    # shift
     bash "$SH_PATH/qun.sh" "$username" "${text:5}" || echo "E: $?"
     ;;
   faq)
