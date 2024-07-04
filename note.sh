@@ -150,7 +150,7 @@ NOTE_FILE="$SH_PATH/group_note.txt"
 
 username=$1
 username=$(my_encode "$1")
-text="$2"
+text=$2
 [[ -z "$text" ]] && print_help && exit 0
 text_1=$(echo "$text"|head -n1)
 cmd_1=$(echo "$text_1" | awk '{print $1}' )
@@ -158,7 +158,8 @@ cmd_2=$(echo "$text_1" | awk '{print $2}' )
 
 echo "cmd_1: $cmd_1, cmd_2: $cmd_2" >> $LOG_FILE
 # if echo "$cmd_1" | grep -q -P "^#\S+$"; then
-if echo "$cmd_1" | grep -q -P '^#\S+$'; then
+# if echo "$cmd_1" | grep -q -P '^#\S+$'; then
+if echo "$cmd_1" | grep -q -P '^#[^\s]+$'; then
 echo "cmd_1 is a tag: $tag" >> $LOG_FILE
   tag="$cmd_1"
   # text=$(echo " $text" | cut -d ' ' -f3-)
@@ -229,7 +230,7 @@ else
     ;;
   esac
   # if echo "$cmd_2" | grep -q -P "^#\S+$"; then
-  if echo "$cmd_2" | grep -q -P '^#\S+$'; then
+  if echo "$cmd_2" | grep -q -P '^#[^\s]+$'; then
     echo "cmd_2 is a tag: $tag" >> $LOG_FILE
     tag="$cmd_2"
     shorter
