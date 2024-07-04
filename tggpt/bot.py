@@ -4349,6 +4349,8 @@ async def add_cmd():
       for k2, v2 in cmd_funs.items():
         if k2 == k:
           continue
+        if k2 in cmds_all:
+          continue
         if v is v2:
           k1 += ' / '
           k1 += k2
