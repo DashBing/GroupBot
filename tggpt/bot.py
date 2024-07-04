@@ -4334,6 +4334,38 @@ async def add_cmd():
   cmd_funs["ping"] = _
 
   async def _(cmds, src):
+    cmds = set()
+    cmds_admin = set()
+    cmds_all = set()
+    for k, v in cmd_funs.items():
+      if k == 'cmd':
+        continue
+      if k in cmds_all:
+        continue
+
+      cmds_all.add(k)
+      k1 = k
+
+      for k2, v2 in cmd_funs.items():
+        if v is v2:
+          k1 += ' / '
+          k1 += k2
+          cmds_all.add(k2)
+
+      if k in cmd_for_admin:
+        cmds_admin.add(k1)
+      else:
+        cmds.add(k1)
+
+    res = '可用的命令:'
+    res += '\n'.join(cmds)
+    if cmds_admin:
+      res += '\n\n仅管理可用的命令:'
+      res += '\n'.join(cmds_admin)
+    return res
+  cmd_funs["cmd"] = _
+
+  async def _(cmds, src):
     if len(cmds) == 1:
       return f"bash\n.{cmds[0]} $code"
     #  cmds[0] = "bash"
