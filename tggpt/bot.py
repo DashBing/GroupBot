@@ -3692,8 +3692,8 @@ async def xmpp_msgp(msg):
         await send(f"未知群组消息: {msg}")
     else:
       print(f"上线: {msg.from_} {msg.status}")
-      if muc != rssbot:
-        await send(f"上线: {msg.from_} {msg.status}")
+      #  if muc != rssbot:
+      #    await send(f"上线: {msg.from_} {msg.status}")
     #  for i in msg.xep0045_muc_user.items:
     #    pprint(i)
   elif msg.type_ == PresenceType.SUBSCRIBE:
@@ -3726,8 +3726,8 @@ async def xmpp_msgp(msg):
     #    print(f"离线: {msg.from_} {msg.status}")
     #    #  pprint(msg)
     #    await sendg(f"离线n: {msg.from_} {msg.status}")
-    if muc in me:
-      await sendg(f"离线: {msg.from_} {msg.status} {msg.xep0045_muc_user}")
+    #  if muc in me:
+    #    await sendg(f"离线: {msg.from_} {msg.status} {msg.xep0045_muc_user}")
   else:
     #  pprint(msg)
     print(f"未知状态{msg.type_}: {msg.from_} {msg.status}")
