@@ -2621,90 +2621,90 @@ async def mt_send_for_long_text(text, gateway="gateway1", name="C bot", *args, *
 
 async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=False):
 #  await client.download_media(message, progress_callback=callback)
-  async with downlaod_lock:
-    if msg.file and msg.file.name:
-      res = f"{msg.file.name}"
-    else:
-      res = ''
-    if msg.buttons:
-      logger.info(msg.buttons)
-      for i in get_buttons(msg.buttons):
-        if isinstance(i.button, KeyboardButtonUrl):
-          logger.info(f"add url from: {i}")
-          res += f" {i.url}"
-        else:
-          logger.info(f"ignore button: {i}")
-    #  await mt_send(f"{res} 下载中...", gateway=gateway)
-    res = f"{res} 下载中..."
-    if src:
-      await send(res, src, xmpp_only=True, correct=True)
-    #  last_time[src] = time.time()
-    last_time = [time.time(), 0]
+  #  async with downlaod_lock:
+  if msg.file and msg.file.name:
+    res = f"{msg.file.name}"
+  else:
+    res = ''
+  if msg.buttons:
+    logger.info(msg.buttons)
+    for i in get_buttons(msg.buttons):
+      if isinstance(i.button, KeyboardButtonUrl):
+        logger.info(f"add url from: {i}")
+        res += f" {i.url}"
+      else:
+        logger.info(f"ignore button: {i}")
+  #  await mt_send(f"{res} 下载中...", gateway=gateway)
+  res = f"{res} 下载中..."
+  if src:
+    await send(res, src, xmpp_only=True, correct=True)
+  #  last_time[src] = time.time()
+  last_time = [time.time(), 0]
 
-    # Printing download progress
-    def download_media_callback(current, total):
-      #  last_time[0] = time.time()
-      last_time[1] = current
+  # Printing download progress
+  def download_media_callback(current, total):
+    #  last_time[0] = time.time()
+    last_time[1] = current
+    if len(last_time) == 2:
+      last_time.append(total)
+    #  print('Downloaded', current, 'out of', total,
+    #    'bytes: {:.2%}'.format(current / total))
+    #  if time.time() - last_time[src] > interval:
+    #  if time.time() - last_time[0] > interval:
+    #    #  await mt_send("{:.2%} %s/%s".format(current / total, current, total), gateway=gateway)
+    #    #  asyncio.create_task(mt_send("{:.2%} {}/{} bytes".format(current / total, current, total), gateway=gateway))
+    #    asyncio.create_task(send("{} {:.2%} {:.2f}/{:.2f}MB {:.1f}MB/s".format(res, current / total, current/1024/1024, total/1024/1024, (current-last_time[1])/(time.time()-last_time[0])/1024/1024), src, correct=True))
+    #    #  last_time[src] = time.time()
+
+  async def update_tmp_msg():
+    start_time = last_time[0]
+    last_current = 0
+    while True:
+      await asyncio.sleep(interval)
+      if src not in music_bot_state or music_bot_state[src] < 3:
+        info("下载中止：{res}")
+        break
+      now = time.time()-start_time
+      #  if music_bot_state[src] != 3:
+      #    await send("取消：{}".format(now, res), src, correct=True)
+      #    break
       if len(last_time) == 2:
-        last_time.append(total)
-      #  print('Downloaded', current, 'out of', total,
-      #    'bytes: {:.2%}'.format(current / total))
-      #  if time.time() - last_time[src] > interval:
-      #  if time.time() - last_time[0] > interval:
-      #    #  await mt_send("{:.2%} %s/%s".format(current / total, current, total), gateway=gateway)
-      #    #  asyncio.create_task(mt_send("{:.2%} {}/{} bytes".format(current / total, current, total), gateway=gateway))
-      #    asyncio.create_task(send("{} {:.2%} {:.2f}/{:.2f}MB {:.1f}MB/s".format(res, current / total, current/1024/1024, total/1024/1024, (current-last_time[1])/(time.time()-last_time[0])/1024/1024), src, correct=True))
-      #    #  last_time[src] = time.time()
-
-    async def update_tmp_msg():
-      start_time = last_time[0]
-      last_current = 0
-      while True:
-        await asyncio.sleep(interval)
-        if src not in music_bot_state or music_bot_state[src] < 3:
-          info("下载中止：{res}")
+        if now > 60:
+          await send(f"等待超时: {res}", src, xmpp_only=True, correct=True)
           break
-        now = time.time()-start_time
-        #  if music_bot_state[src] != 3:
-        #    await send("取消：{}".format(now, res), src, correct=True)
-        #    break
-        if len(last_time) == 2:
-          if now > 120:
-            await send("等待超时(120s): {res}", src, xmpp_only=True, correct=True)
-            break
-          await send("执行中({:.0f}s)：{}".format(now, res), src, xmpp_only=True, correct=True)
-        else:
-          current = last_time[1]
-          total = last_time[2]
-          if current == total:
-            info("下载完成：{res}")
-            break
-          #  await send("执行中({:.0f}s)：{} {:.2%} {:.2f}/{:.2f}MB {:.1f}MB/s".format(now, res, current / total, current/1024/1024, total/1024/1024, (current-last_current)/(time.time()-last_time[0])/1024/1024), src, xmpp_only=True, correct=True)
-          await send("执行中({:.0f}s)：{} {:.2%} {:.2f}/{:.2f}MB {:.1f}MB/s".format(now, res, current / total, current/1024/1024, total/1024/1024, (current-last_current)/(time.time()-last_time[0])/1024/1024), src, correct=True)
-          last_time[0] = time.time()
-          last_current = current
+        await send("执行中({:.0f}s)：{}".format(now, res), src, xmpp_only=True, correct=True)
+      else:
+        current = last_time[1]
+        total = last_time[2]
+        if current == total:
+          info(f"下载完成：{res}")
+          break
+        #  await send("执行中({:.0f}s)：{} {:.2%} {:.2f}/{:.2f}MB {:.1f}MB/s".format(now, res, current / total, current/1024/1024, total/1024/1024, (current-last_current)/(time.time()-last_time[0])/1024/1024), src, xmpp_only=True, correct=True)
+        await send("执行中({:.0f}s)：{} {:.2%} {:.2f}/{:.2f}MB {:.1f}MB/s".format(now, res, current / total, current/1024/1024, total/1024/1024, (current-last_current)/(time.time()-last_time[0])/1024/1024), src, correct=True)
+        last_time[0] = time.time()
+        last_current = current
 
-    if src:
-      t = asyncio.create_task(update_tmp_msg())
-    try:
-      path = await asyncio.wait_for(msg.download_media(path, progress_callback=download_media_callback), timeout=1000)
-    except TimeoutError as e:
-      path = None
-      res = f"{res} 下载失败(超时): {e=}"
-      #  return
-    if src:
-      if not t.done():
-        t.cancel()
+  if src:
+    t = asyncio.create_task(update_tmp_msg())
+  try:
+    path = await asyncio.wait_for(msg.download_media(path, progress_callback=download_media_callback), timeout=1000)
+  except TimeoutError as e:
+    path = None
+    res = f"{res} 下载失败(超时): {e=}"
+    #  return
+  if src:
+    if not t.done():
+      t.cancel()
 
-    if path:
-      #  path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[5:])
-      path = "https://%s%s/%s" % (DOMAIN, URL_PATH, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[5:])
-      return path
-    else:
-      res = f"{res} 下载失败: {path}"
-      if src:
-        await send(res, src)
-      warn(res)
+  if path:
+    #  path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[5:])
+    path = "https://%s%s/%s" % (DOMAIN, URL_PATH, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[5:])
+    return path
+  else:
+    res = f"{res} 下载失败: {path}"
+    if src:
+      await send(res, src)
+    warn(res)
 
 def get_buttons(bs):
   tmp = []
@@ -2931,7 +2931,7 @@ async def parse_tg_msg(event):
                 res += f"\n原始链接: {i.url}"
           #  await mt_send_for_long_text(res, gateway)
           await send(res, src)
-        if music_bot_state[src] == 3:
+        if src in music_bot_state and music_bot_state[src] == 3:
           music_bot_state[src] = 2
       else:
         await send(text, src, correct=True)
