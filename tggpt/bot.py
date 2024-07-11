@@ -2684,13 +2684,32 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
         last_time[0] = time.time()
         last_current = current
 
+
+  async def _download_media(msg, path):
+    try:
+      path = await asyncio.wait_for(msg.download_media(path, progress_callback=download_media_callback), timeout=1000)
+    except TimeoutError as e:
+      path = None
+    return path
+
   if src:
     t = asyncio.create_task(update_tmp_msg())
-  try:
-    path = await asyncio.wait_for(msg.download_media(path, progress_callback=download_media_callback), timeout=1000)
-  except TimeoutError as e:
-    path = None
-    res = f"{res} 下载失败(超时): {e=}"
+
+  t1 = asyncio.create_task(_download_media(msg, path))
+  now = time.time()
+  while True:
+    if t1.done():
+      path = t1.result()
+      if path is None:
+        res = f"{res} 下载失败(下载速度太慢): {e=}"
+      break
+    if len(last_time) == 2:
+      if time.time() - now > 60:
+        t1.cancel()
+        path = None
+        res = f"{res} 下载失败(等待超时): {e=}"
+        break
+
     #  return
   if src:
     if not t.done():
@@ -2705,6 +2724,8 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
     if src:
       await send(res, src)
     warn(res)
+
+
 
 def get_buttons(bs):
   tmp = []
