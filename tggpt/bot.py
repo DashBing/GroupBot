@@ -2368,6 +2368,7 @@ async def clear_history(src=None):
     warn("wait for allright...")
     await allright.wait()
     return
+  music_bot_state.clear()
   allright.clear()
   #  await asyncio.sleep(1)
   #  for g in queues:
@@ -2660,14 +2661,17 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
       last_current = 0
       while True:
         await asyncio.sleep(interval)
+        if src not in music_bot_state or music_bot_state[src] < 3:
+          info("下载中止：{res}")
+          break
         now = time.time()-start_time
         #  if music_bot_state[src] != 3:
         #    await send("取消：{}".format(now, res), src, correct=True)
         #    break
-        #  if now > 300:
-        #    send_log("下载超时: {res}")
-        #    break
         if len(last_time) == 2:
+          if now > 120:
+            await send("等待超时(120s): {res}", src, xmpp_only=True, correct=True)
+            break
           await send("执行中({:.0f}s)：{}".format(now, res), src, xmpp_only=True, correct=True)
         else:
           current = last_time[1]
@@ -3726,13 +3730,13 @@ async def xmpp_msgp(msg):
     #    print(f"离线: {msg.from_} {msg.status}")
     #    #  pprint(msg)
     #    await sendg(f"离线n: {msg.from_} {msg.status}")
-    #  if muc in me:
-    #    await sendg(f"离线: {msg.from_} {msg.status} {msg.xep0045_muc_user}")
+    if muc in me:
+      await sendg(f"离线: {msg.from_} {msg.status} {msg.xep0045_muc_user}")
   else:
     #  pprint(msg)
     print(f"未知状态{msg.type_}: {msg.from_} {msg.status}")
-    if muc in me:
-      await sendg(f"{msg.type_}: {msg.from_} {msg.status}")
+    #  if muc in me:
+    #    await sendg(f"{msg.type_}: {msg.from_} {msg.status}")
 
 
 
