@@ -2692,28 +2692,31 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
       path = None
     return path
 
-  if src:
-    t = asyncio.create_task(update_tmp_msg())
 
-  t1 = asyncio.create_task(_download_media(msg, path))
-  now = time.time()
-  while True:
-    if t1.done():
-      path = t1.result()
-      if path is None:
-        res = f"{res} 下载失败(下载速度太慢)"
-      break
-    if len(last_time) == 2:
-      if time.time() - now > 60:
-        t1.cancel()
-        path = None
-        res = f"{res} 下载失败(等待超时)"
+  try:
+    if src:
+      t = asyncio.create_task(update_tmp_msg())
+    t1 = asyncio.create_task(_download_media(msg, path))
+    now = time.time()
+    while True:
+      if t1.done():
+        path = t1.result()
+        if path is None:
+          res = f"{res} 下载失败(下载速度太慢)"
         break
-
-    #  return
-  if src:
-    if not t.done():
-      t.cancel()
+      if len(last_time) == 2:
+        if time.time() - now > 60:
+          t1.cancel()
+          path = None
+          res = f"{res} 下载失败(等待超时)"
+          break
+  finally:
+    if not t1.done():
+      t1.cancel()
+      #  return
+    if src:
+      if not t.done():
+        t.cancel()
 
   if path:
     #  path = "https://%s/%s" % (DOMAIN, (urllib.parse.urlencode({1: path[len(DOWNLOAD_PATH):]})).replace('+', '%20')[5:])
