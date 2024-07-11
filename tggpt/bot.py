@@ -2701,13 +2701,13 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
     if t1.done():
       path = t1.result()
       if path is None:
-        res = f"{res} 下载失败(下载速度太慢): {e=}"
+        res = f"{res} 下载失败(下载速度太慢)"
       break
     if len(last_time) == 2:
       if time.time() - now > 60:
         t1.cancel()
         path = None
-        res = f"{res} 下载失败(等待超时): {e=}"
+        res = f"{res} 下载失败(等待超时)"
         break
 
     #  return
