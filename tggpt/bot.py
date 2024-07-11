@@ -2661,9 +2661,6 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
     last_current = 0
     while True:
       await asyncio.sleep(interval)
-      if src not in music_bot_state or music_bot_state[src] < 3:
-        info("下载中止：{res}")
-        break
       now = time.time()-start_time
       #  if music_bot_state[src] != 3:
       #    await send("取消：{}".format(now, res), src, correct=True)
@@ -2699,6 +2696,13 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
     t1 = asyncio.create_task(_download_media(msg, path))
     now = time.time()
     while True:
+      await asyncio.sleep(interval+1)
+      if src:
+        if src not in music_bot_state or music_bot_state[src] < 3:
+          info("下载中止：{res}")
+          path = None
+          res = f"{res} 下载取消"
+          break
       if t1.done():
         path = t1.result()
         if path is None:
@@ -2710,7 +2714,6 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
           path = None
           res = f"{res} 下载失败(等待超时)"
           break
-      await asyncio.sleep(interval)
   finally:
     if not t1.done():
       t1.cancel()
