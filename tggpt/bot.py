@@ -2669,9 +2669,9 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
       #    await send("取消：{}".format(now, res), src, correct=True)
       #    break
       if len(last_time) == 2:
-        if now > 60:
-          await send(f"等待超时: {res}", src, xmpp_only=True, correct=True)
-          break
+        #  if now > 60:
+        #    await send(f"等待超时: {res}", src, xmpp_only=True, correct=True)
+        #    break
         await send("执行中({:.0f}s)：{}".format(now, res), src, xmpp_only=True, correct=True)
       else:
         current = last_time[1]
@@ -2710,6 +2710,7 @@ async def download_media(msg, src=None, path=f"{DOWNLOAD_PATH}/", in_memory=Fals
           path = None
           res = f"{res} 下载失败(等待超时)"
           break
+      await asyncio.sleep(interval)
   finally:
     if not t1.done():
       t1.cancel()
