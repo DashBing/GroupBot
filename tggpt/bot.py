@@ -3758,8 +3758,8 @@ async def xmpp_msgp(msg):
     #    print(f"离线: {msg.from_} {msg.status}")
     #    #  pprint(msg)
     #    await sendg(f"离线n: {msg.from_} {msg.status}")
-    if muc in me:
-      await sendg(f"离线: {msg.from_} {msg.status} {msg.xep0045_muc_user}")
+    #  if muc in me:
+    #    await sendg(f"离线: {msg.from_} {msg.status} {msg.xep0045_muc_user}")
   else:
     #  pprint(msg)
     print(f"未知状态{msg.type_}: {msg.from_} {msg.status}")
@@ -3818,6 +3818,7 @@ async def xmpp_msg(msg):
     if msg.type_ == MessageType.ERROR:
       warn(f"收到错误消息：{msg} {msg.error}")
       return
+    pprint(msg)
     warn(f"收到系统消息: {muc} {msg.from_} {msg.body} {msg}")
     return
   #  if not hasattr(msg, "body"):
