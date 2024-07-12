@@ -4781,9 +4781,17 @@ async def add_cmd():
     if len(cmds) == 1:
       return f"join all\n.{cmds[0]} all\n.{cmds[0]} $muc"
     if cmds[1] == "all":
+      for tmuc in rooms:
+        room =  rooms[tmuc]
+        await room.leave()
+      rooms.clear()
       await join_all()
     else:
-      res = await join(cmds[1])
+      tmuc = cmds[1]
+      if tmuc in rooms:
+        room =  rooms[tmuc]
+        await room.leave()
+      res = await join(tmuc)
       return "res: %s" % res
     return "ok"
   cmd_funs["join"] = _
@@ -5695,7 +5703,7 @@ async def join_all():
   if tmp:
     async def f():
       send_log("进群失败，会继续尝试：\n%s" % "\n".join(tmp))
-      await asyncio.sleep(3600)
+      await asyncio.sleep(300)
       asyncio.create_task(join_all())
     asyncio.create_task(f())
   return True
