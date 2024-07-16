@@ -5987,7 +5987,22 @@ async def amain():
       send_log(f"启动成功，用时: {int(time.time()-start_time)}s")
       await send(f"启动成功，用时: {int(time.time()-start_time)}s", jid=main_group)
 
-      await UB.run_until_disconnected()
+      while True:
+        try:
+          await UB.run_until_disconnected()
+        # RuntimeError: write() called (invalid in state _State.CLOSED, closing=False)
+        except RuntimeError as e:
+          if e.args[0] == 'write() called (invalid in state _State.CLOSED, closing=False)':
+            warn(f"fixme: xmpp error {e=}")
+          else:
+            warn(f"fixme: unknown xmpp error {e=}")
+          await stop()
+          await asyncio.sleep(5)
+          allright_task += 1
+          asyncio.create_task(xmppbot(), name="xmppbot")
+        else:
+          break
+
 
     logger.info("主程序正常结束")
   #  except KeyboardInterrupt as e:
