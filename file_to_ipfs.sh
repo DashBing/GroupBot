@@ -27,9 +27,10 @@ get_gateways(){
 # http://127.0.0.1:5001 http://127.0.0.1:8080/ipfs/HASH_CID 0 0
 # https://$DOMAIN GATEWAY_URL/ipfs/HASH_CID 0 0
 
+# https://api.nft.storage/upload https://HASH_CID.ipfs.nftstorage.link/ 1 0 ${IPFS_API_KEY}
+
 # upload_URL(need /api/v0/add) IPFS_URL cid_version gfwed [token]
 local IPFS_GATEWAYS="
-https://api.nft.storage/upload https://HASH_CID.ipfs.nftstorage.link/ 1 0 ${IPFS_API_KEY}
 https://ipfs.pixura.io/api/v0/add https://ipfs.pixura.io/ipfs/HASH_CID 0 0
 "
 
