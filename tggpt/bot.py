@@ -5443,8 +5443,6 @@ async def login(client=None):
   return True
 
 
-
-
 ocr_ok = None
 
 def ocr_init():
@@ -5862,6 +5860,31 @@ async def xmppbot():
   global allright_task
   allright_task -= 1
   await add_cmd()
+  asyncio.create_task(xmppbot2(), name="xmppbot2")
+
+
+@exceptions_handler
+async def xmppbot2():
+  while True:
+    if XB.running:
+      await asyncio.sleep(5)
+      continue
+    #  try:
+    #  # RuntimeError: write() called (invalid in state _State.CLOSED, closing=False)
+    #  except RuntimeError as e:
+    #    if e.args[0] == 'write() called (invalid in state _State.CLOSED, closing=False)':
+    #      warn(f"fixme: xmpp error {e=}")
+    #    else:
+    #      warn(f"fixme: unknown xmpp error {e=}")
+    await stop()
+    await asyncio.sleep(5)
+    global allright_task
+    allright_task += 1
+    asyncio.create_task(xmppbot(), name="xmppbot")
+    break
+
+
+
 
 
 async def init():
@@ -5987,21 +6010,7 @@ async def amain():
       send_log(f"启动成功，用时: {int(time.time()-start_time)}s")
       await send(f"启动成功，用时: {int(time.time()-start_time)}s", jid=main_group)
 
-      while True:
-        try:
-          await UB.run_until_disconnected()
-        # RuntimeError: write() called (invalid in state _State.CLOSED, closing=False)
-        except RuntimeError as e:
-          if e.args[0] == 'write() called (invalid in state _State.CLOSED, closing=False)':
-            warn(f"fixme: xmpp error {e=}")
-          else:
-            warn(f"fixme: unknown xmpp error {e=}")
-          await stop()
-          await asyncio.sleep(5)
-          allright_task += 1
-          asyncio.create_task(xmppbot(), name="xmppbot")
-        else:
-          break
+      await UB.run_until_disconnected()
 
 
     logger.info("主程序正常结束")
