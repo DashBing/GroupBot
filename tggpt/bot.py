@@ -5858,9 +5858,10 @@ async def xmppbot():
     await join_all()
 
   global allright_task
-  allright_task -= 1
-  await add_cmd()
-  asyncio.create_task(xmppbot2(), name="xmppbot2")
+  if allright_task > 0:
+    allright_task -= 1
+    await add_cmd()
+    asyncio.create_task(xmppbot2(), name="xmppbot2")
 
 
 @exceptions_handler
@@ -5878,8 +5879,6 @@ async def xmppbot2():
     #      warn(f"fixme: unknown xmpp error {e=}")
     await stop()
     await asyncio.sleep(5)
-    global allright_task
-    allright_task += 1
     asyncio.create_task(xmppbot(), name="xmppbot")
     break
 
