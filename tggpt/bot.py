@@ -5862,6 +5862,8 @@ async def xmppbot():
     allright_task -= 1
     await add_cmd()
     asyncio.create_task(xmppbot2(), name="xmppbot2")
+  else:
+    await sendg("已重新启动xmppbot")
 
 @exceptions_handler
 async def xmppbot2():
@@ -5869,6 +5871,7 @@ async def xmppbot2():
     if XB.running:
       await asyncio.sleep(300)
       continue
+    logger.info("需要重新启动xmppbot")
     #  try:
     #  # RuntimeError: write() called (invalid in state _State.CLOSED, closing=False)
     #  except RuntimeError as e:
