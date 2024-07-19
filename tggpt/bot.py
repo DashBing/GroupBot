@@ -5868,7 +5868,7 @@ async def xmppbot():
 async def xmppbot2():
   while True:
     if XB.running:
-      await asyncio.sleep(5)
+      await asyncio.sleep(300)
       continue
     #  try:
     #  # RuntimeError: write() called (invalid in state _State.CLOSED, closing=False)
