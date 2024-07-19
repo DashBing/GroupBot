@@ -5882,8 +5882,8 @@ async def xmppbot2():
     await stop()
     await save_data()
     await asyncio.sleep(5)
-    asyncio.create_task(xmppbot(), name="xmppbot")
-    break
+    t = asyncio.create_task(xmppbot(), name="xmppbot")
+    await t
 
 
 async def init():
