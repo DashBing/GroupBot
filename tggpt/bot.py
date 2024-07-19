@@ -5680,13 +5680,15 @@ async def join_all():
     #    break
 
     how_long = int(time.time()-start_time)
-    if len(tasks) < (how_long-1)*4 if how_long > 2 else 4:
+    #  if len(tasks) < (how_long-1)*4 if how_long > 2 else 4:
+    if len(tasks) < 4:
       if groups:
         muc = groups.pop()
         t = asyncio.create_task(join(muc), name=muc)
         tasks.add(t)
         continue
       if len(tasks) == 0:
+        logger.info(f"join all ok: {len(tasks)}/{len(groups)}")
         break
     logger.info(f"等待任务队列: {len(tasks)}/{len(groups)}")
     done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
