@@ -5883,6 +5883,7 @@ async def xmppbot2():
     #      warn(f"fixme: unknown xmpp error {e=}")
     await stop()
     await save_data()
+    sys.exit(2)
     await asyncio.sleep(5)
     t = asyncio.create_task(xmppbot(), name="xmppbot")
     await t
