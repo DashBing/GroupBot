@@ -6036,13 +6036,13 @@ async def amain():
     #        await j
     #  mt_read_task.cancel()
     await save_data()
-    try:
-      await mt_send("正在停止")
-      await sendg("正在停止")
-      await sendg("正在停止", jid=main_group)
-    except Exception as e:
-      pass
-    await save_data()
+    #  try:
+    #    await mt_send("正在停止")
+    #    await sendg("正在停止")
+    #    await sendg("正在停止", jid=main_group)
+    #  except Exception as e:
+    #    pass
+    #  await save_data()
     await stop()
     #  loop.run_until_complete(stop())
     #  loop.run_until_complete(loop.shutdown_asyncgens())
